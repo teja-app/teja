@@ -23,4 +23,21 @@ class EmailAuthApi {
       throw e;
     }
   }
+
+  Future<Response> signIn(
+      String username, String password, String device) async {
+    final String url = '$baseUrl/auth/login';
+    final Map<String, dynamic> data = {
+      'username': username,
+      'password': password,
+      'device': device,
+    };
+    try {
+      final Response response = await dio.post(url, data: data);
+      return response;
+    } catch (e) {
+      print('Failed to register: $e');
+      throw e;
+    }
+  }
 }

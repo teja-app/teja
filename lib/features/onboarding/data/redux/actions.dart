@@ -8,6 +8,9 @@ class GoogleSignOutAction {}
 class ClearRegisterMessageAction {}
 
 @immutable
+class ClearSignInMessageAction {}
+
+@immutable
 class SetGoogleClientIdsAction {
   final String googleClientIdIos;
   final String googleServerClientId;
@@ -36,4 +39,28 @@ class RegisterSuccessAction {
 class RegisterFailureAction {
   final String error;
   const RegisterFailureAction(this.error);
+}
+
+@immutable
+class SignInAction {
+  final String username;
+  final String password;
+  final String device;
+
+  const SignInAction(this.username, this.password, this.device);
+}
+
+@immutable
+class SignInSuccessAction {
+  final String accessToken;
+  final String refreshToken;
+
+  const SignInSuccessAction(this.accessToken, this.refreshToken);
+}
+
+@immutable
+class SignInFailureAction {
+  final String error;
+
+  const SignInFailureAction(this.error);
 }

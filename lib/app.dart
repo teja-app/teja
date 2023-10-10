@@ -32,7 +32,7 @@ class _AppState extends State<App> {
       child: MaterialApp.router(
         title: 'Swayam',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
           useMaterial3: true,
         ),
         routerConfig: router,

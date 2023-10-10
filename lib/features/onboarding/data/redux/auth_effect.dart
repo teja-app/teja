@@ -11,12 +11,21 @@ class AuthSaga {
   final EmailAuthApi emailAuthApi = EmailAuthApi();
 
   void saga(Store<AppState> store, dynamic action) {
-    if (action is GoogleSignInAction) {
-      googleSignIn(store);
-    } else if (action is GoogleSignOutAction) {
-      googleSignOut(store);
-    } else if (action is RegisterAction) {
-      emailRegister(store, action);
+    switch (action.runtimeType) {
+      case GoogleSignInAction:
+        googleSignIn(store);
+        break;
+      case GoogleSignOutAction:
+        googleSignOut(store);
+        break;
+      case RegisterAction:
+        emailRegister(store, action);
+        break;
+      case SignInAction:
+        emailSignIn(store, action);
+        break;
+      default:
+        break;
     }
   }
 
@@ -74,6 +83,41 @@ class AuthSaga {
       }
 
       store.dispatch(RegisterFailureAction(errorMessage));
+    }
+  }
+
+  void emailSignIn(Store<AppState> store, SignInAction action) async {
+    try {
+      final response = await emailAuthApi.signIn(
+        action.username,
+        action.password,
+        action.device,
+      );
+      print("Response: ${response.data}");
+      store.dispatch(SignInSuccessAction(
+          response.data['access_token'], response.data['refresh_token']));
+    } catch (e) {
+      String errorMessage;
+      if (e is DioError) {
+        print("errorMessage ${e.response?.data}");
+        switch (e.response?.statusCode) {
+          case 400:
+            // Join the list of error messages into a single string, separating each message with a space
+            print((e.response?.data['message'] as List<dynamic>?)?.join(' '));
+            errorMessage = (e.response?.data['message'] as List<dynamic>?)
+                    ?.join(' ') ??
+                'Bad request. Please check the information provided and try again.';
+            break;
+          case 500:
+            errorMessage = 'Server error. Please try again later.';
+            break;
+          default:
+            errorMessage = 'An error occurred. Please try again later.';
+        }
+      } else {
+        errorMessage = e.toString();
+      }
+      store.dispatch(SignInFailureAction(errorMessage));
     }
   }
 }

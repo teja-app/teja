@@ -29,12 +29,42 @@ AppState clearRegisterMessageReducer(
   );
 }
 
+AppState signInSuccessReducer(AppState state, SignInSuccessAction action) {
+  return state.copyWith(
+    authState: state.authState.copyWith(
+      accessToken: action.accessToken,
+      refreshToken: action.refreshToken,
+    ),
+  );
+}
+
+AppState signInFailureReducer(AppState state, SignInFailureAction action) {
+  return state.copyWith(
+    authState: state.authState.copyWith(
+      signInMessage: action.error,
+    ),
+  );
+}
+
+AppState clearSignInMessageReducer(
+    AppState state, ClearSignInMessageAction action) {
+  return state.copyWith(
+    authState: state.authState.copyWith(
+      signInMessage: "",
+    ),
+  );
+}
+
 Reducer<AppState> appReducer = combineReducers<AppState>([
   TypedReducer<AppState, SetGoogleClientIdsAction>(googleAuthReducer),
   TypedReducer<AppState, RegisterSuccessAction>(registerSuccessReducer),
   TypedReducer<AppState, RegisterFailureAction>(registerFailureReducer),
   TypedReducer<AppState, ClearRegisterMessageAction>(
-      clearRegisterMessageReducer),
+    clearRegisterMessageReducer,
+  ),
+  TypedReducer<AppState, SignInSuccessAction>(signInSuccessReducer),
+  TypedReducer<AppState, SignInFailureAction>(signInFailureReducer),
+  TypedReducer<AppState, ClearSignInMessageAction>(clearSignInMessageReducer),
 ]);
 
 AppState googleAuthReducer(AppState state, SetGoogleClientIdsAction action) {

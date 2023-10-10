@@ -7,14 +7,10 @@ import 'package:passwordfield/passwordfield.dart'; // Import the passwordfield p
 import 'package:redux/redux.dart';
 import 'package:swayam/features/onboarding/data/redux/actions.dart';
 import 'package:swayam/router.dart';
+import 'package:swayam/shared/common/button.dart';
 import 'package:swayam/shared/redux/state/app_state.dart';
 
-class SignUpPage extends StatefulWidget {
-  @override
-  _SignUpPageState createState() => _SignUpPageState();
-}
-
-class _SignUpPageState extends State<SignUpPage> {
+class SignUpPage extends StatelessWidget {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -52,83 +48,158 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     final NavigatorState navigator = Navigator.of(context);
+    final isLargeScreen = MediaQuery.of(context).size.width > 600;
     return Scaffold(
       appBar: AppBar(
         title: Text('Sign Up'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: Center(
         child: SingleChildScrollView(
-          // Wrap your Column with SingleChildScrollView
-          child: Column(
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: InputDecoration(labelText: 'Name'),
-              ),
-              TextField(
-                controller: usernameController,
-                decoration: InputDecoration(labelText: 'Username'),
-              ),
-              TextField(
-                controller: emailController,
-                decoration: InputDecoration(labelText: 'Email'),
-                keyboardType: TextInputType.emailAddress,
-              ),
-              PasswordField(
-                // Use the PasswordField widget instead of TextField
-                controller: passwordController,
-                // You can customize the appearance using various properties
-                // available on the PasswordField widget
-              ),
-              SizedBox(height: 20),
-              StoreConnector<AppState, Store<AppState>>(
-                converter: (store) => store,
-                builder: (context, store) {
-                  return ElevatedButton(
-                    onPressed: () {
-                      final String name = nameController.text;
-                      final String username = usernameController.text;
-                      final String email = emailController.text;
-                      final String password = passwordController.text;
-                      store.dispatch(
-                          RegisterAction(username, password, name, email));
-                    },
-                    child: Text('Sign Up'),
-                  );
-                },
-              ),
-              StoreConnector<AppState, Store<AppState>>(
-                converter: (store) => store,
-                builder: (context, store) {
-                  final message = store.state.authState.registerMessage;
-                  print("message ${message}");
-                  if (message.isNotEmpty) {
-                    if (message.contains('successfully')) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        _showSuccessDialog(
-                            context, store, () => navigator.pop());
-                      });
-                    } else {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                                message), // Show error message in a snackbar
-                          ),
-                        );
-                        store.dispatch(
-                            ClearRegisterMessageAction()); // Clear the registerMessage
-                      });
-                    }
-                  }
-                  return Container(); // Return an empty container as the builder must return a widget
-                },
-              ),
-            ],
+          child: Container(
+            width: 400,
+            padding: const EdgeInsets.all(20.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              border: Border.all(color: Colors.black),
+              color: Colors.white,
+            ),
+            child: Column(
+              children: [
+                // Logo or Header
+                Image.asset(
+                  'assets/logo/AppIcon.png',
+                  fit: BoxFit.cover,
+                  height: 60,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Welcome to Swayam',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'Swayam is a platform aimed at fostering emotional resilience and meaningful relationships. \n \n Our features include Emotional Tracking, Journals, and Guided Meditation.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      SizedBox(height: 20),
+                    ],
+                  ),
+                ),
+                // Form fields and Sign Up button
+                _buildFormColumn(context, navigator),
+                // Additional links and information
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: Text(
+                    'By signing up, you agree to our Terms of Service and Privacy Policy.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 12),
+                  ),
+                ),
+                SizedBox(height: 10),
+                GestureDetector(
+                  onTap: () {
+                    // Navigate to Sign In page
+                  },
+                  child: Text(
+                    'Already have an account? Sign In',
+                    style: TextStyle(fontSize: 14, color: Colors.blue),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildFormColumn(BuildContext context, NavigatorState navigator) {
+    return Center(
+      child: Container(
+        width: 400, // Set the maximum width for the form
+        child: StoreConnector<AppState, Store<AppState>>(
+          converter: (store) => store,
+          builder: (context, store) {
+            return Column(
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: InputDecoration(labelText: 'Name'),
+                ),
+                TextField(
+                  controller: usernameController,
+                  decoration: InputDecoration(labelText: 'Username'),
+                ),
+                TextField(
+                  controller: emailController,
+                  decoration: InputDecoration(labelText: 'Email'),
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                PasswordField(
+                  controller: passwordController,
+                ),
+                SizedBox(height: 20),
+                Button(
+                  key: const Key("signUp"),
+                  text: 'Sign up',
+                  width: 300,
+                  onPressed: () {
+                    final String name = nameController.text;
+                    final String username = usernameController.text;
+                    final String email = emailController.text;
+                    final String password = passwordController.text;
+                    store.dispatch(
+                        RegisterAction(username, password, name, email));
+                  },
+                  buttonType: ButtonType.primary,
+                ),
+                // ElevatedButton(
+                //   onPressed: () {
+                //     final String name = nameController.text;
+                //     final String username = usernameController.text;
+                //     final String email = emailController.text;
+                //     final String password = passwordController.text;
+                //     store.dispatch(
+                //         RegisterAction(username, password, name, email));
+                //   },
+                //   child: Text('Sign Up'),
+                // ),
+                _buildMessageWidget(store, context, navigator),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMessageWidget(
+      Store<AppState> store, BuildContext context, NavigatorState navigator) {
+    final message = store.state.authState.registerMessage;
+    if (message.isNotEmpty) {
+      if (message.contains('successfully')) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _showSuccessDialog(context, store, () => navigator.pop());
+        });
+      } else {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(message),
+            ),
+          );
+          store.dispatch(ClearRegisterMessageAction());
+        });
+      }
+    }
+    return Container(); // Return an empty container as the builder must return a widget
   }
 }
