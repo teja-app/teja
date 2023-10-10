@@ -47,6 +47,15 @@ class Button extends StatelessWidget {
       margin: const EdgeInsets.all(8.0),
       child: TextButton(
         onPressed: onPressed,
+        style: TextButton.styleFrom(
+          foregroundColor: textColor, backgroundColor: backgroundColor,
+          maximumSize: const Size(double.infinity, 42),
+          minimumSize: Size(width ?? 40, 42),
+          side: BorderSide(color: borderColor),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+          ),
+        ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Column(
@@ -63,16 +72,6 @@ class Button extends StatelessWidget {
                       color: textColor.withOpacity(0.7), fontSize: 12),
                 ),
             ],
-          ),
-        ),
-        style: TextButton.styleFrom(
-          backgroundColor: backgroundColor,
-          primary: textColor,
-          maximumSize: Size(double.infinity, 42),
-          minimumSize: Size(width ?? 40, 42),
-          side: BorderSide(color: borderColor),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(8)),
           ),
         ),
       ),

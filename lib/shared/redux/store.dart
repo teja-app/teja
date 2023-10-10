@@ -10,7 +10,7 @@ import 'package:swayam/features/onboarding/data/redux/reducers.dart';
 import 'package:swayam/shared/redux/middleware/logging_middleware.dart';
 
 Future<Store<AppState>> createStore() async {
-  final filePath = '.env.dev';
+  const filePath = '.env.dev';
   final fileExists = await File(filePath).exists();
   print('File exists: $fileExists');
   await dotenv.load(fileName: filePath);

@@ -5,10 +5,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
 import 'package:swayam/features/onboarding/data/redux/actions.dart';
-import 'package:swayam/features/onboarding/presentation/ui/pages/sign_in_page.dart';
-import 'package:swayam/features/onboarding/presentation/ui/pages/sign_up_page.dart';
 import 'package:swayam/features/onboarding/presentation/ui/widgets/slider_widget.dart';
-import 'package:swayam/router.dart';
 import 'package:swayam/shared/common/button.dart';
 import 'package:swayam/shared/redux/state/app_state.dart';
 
@@ -35,7 +32,7 @@ class OnboardingPage extends StatelessWidget {
           ),
           body: Column(
             children: [
-              Expanded(
+              const Expanded(
                 flex: 2,
                 child: SliderWidget(),
               ),

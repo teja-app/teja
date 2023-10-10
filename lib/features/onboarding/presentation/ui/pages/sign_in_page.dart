@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:go_router/go_router.dart';
 import 'package:passwordfield/passwordfield.dart'; // Import the passwordfield package
 import 'package:redux/redux.dart';
 import 'package:swayam/features/onboarding/data/redux/actions.dart';
@@ -10,6 +11,8 @@ import 'package:swayam/shared/redux/state/app_state.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 
 class SignInPage extends StatefulWidget {
+  const SignInPage({super.key});
+
   @override
   _SignInPageState createState() => _SignInPageState();
 }
@@ -37,7 +40,7 @@ class _SignInPageState extends State<SignInPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sign In'),
+        title: const Text('Sign In'),
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -60,12 +63,10 @@ class _SignInPageState extends State<SignInPage> {
                 // Form fields and Sign In button
                 _buildFormColumn(context, navigator),
                 // Additional links and information
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 GestureDetector(
-                  onTap: () {
-                    // Navigate to Sign Up page
-                  },
-                  child: Text(
+                  onTap: () => GoRouter.of(context).push('/sign_up'),
+                  child: const Text(
                     'Don\'t have an account? Sign Up',
                     style: TextStyle(fontSize: 14, color: Colors.blue),
                   ),
@@ -80,7 +81,7 @@ class _SignInPageState extends State<SignInPage> {
 
   Widget _buildFormColumn(BuildContext context, NavigatorState navigator) {
     return Center(
-      child: Container(
+      child: SizedBox(
         width: 400, // Set the maximum width for the form
         child: StoreConnector<AppState, Store<AppState>>(
           converter: (store) => store,
@@ -89,12 +90,12 @@ class _SignInPageState extends State<SignInPage> {
               children: [
                 TextField(
                   controller: usernameController,
-                  decoration: InputDecoration(labelText: 'Username'),
+                  decoration: const InputDecoration(labelText: 'Username'),
                 ),
                 PasswordField(
                   controller: passwordController,
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Button(
                   key: const Key("signIn"),
                   text: 'Sign In',

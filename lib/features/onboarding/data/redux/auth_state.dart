@@ -9,7 +9,7 @@ class AuthState {
   final String googleClientIdIos;
   final String googleServerClientId;
 
-  AuthState({
+  const AuthState({
     required this.registerMessage,
     required this.signInMessage,
     required this.accessToken,
@@ -37,7 +37,7 @@ class AuthState {
   }
 
   static AuthState initialState() {
-    return AuthState(
+    return const AuthState(
       registerMessage: '',
       signInMessage: '',
       accessToken: '',

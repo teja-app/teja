@@ -5,7 +5,7 @@ import 'package:swayam/features/onboarding/data/redux/auth_state.dart';
 class AppState {
   final AuthState authState; // Nested AuthState
 
-  AppState({
+  const AppState({
     required this.authState,
   });
 

@@ -5,7 +5,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 class SlideItemWidget extends StatelessWidget {
   final Slide slide;
 
-  SlideItemWidget({required this.slide});
+  const SlideItemWidget({super.key, required this.slide});
 
   @override
   Widget build(BuildContext context) {

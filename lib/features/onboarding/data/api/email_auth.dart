@@ -20,7 +20,7 @@ class EmailAuthApi {
       return response;
     } catch (e) {
       print('Failed to register: $e');
-      throw e;
+      rethrow;
     }
   }
 
@@ -37,7 +37,7 @@ class EmailAuthApi {
       return response;
     } catch (e) {
       print('Failed to register: $e');
-      throw e;
+      rethrow;
     }
   }
 }

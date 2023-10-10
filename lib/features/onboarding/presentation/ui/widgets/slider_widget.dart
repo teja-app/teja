@@ -5,6 +5,8 @@ import 'package:swayam/features/onboarding/data/models/slide_model.dart';
 import 'package:swayam/features/onboarding/presentation/ui/widgets/slide_item_widget.dart';
 
 class SliderWidget extends StatefulWidget {
+  const SliderWidget({super.key});
+
   @override
   _SliderWidgetState createState() => _SliderWidgetState();
 }
@@ -33,17 +35,17 @@ class _SliderWidgetState extends State<SliderWidget> {
   late Timer _timer;
 
   void _startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 6), (Timer timer) {
+    _timer = Timer.periodic(const Duration(seconds: 6), (Timer timer) {
       final currentPage = (_pageController.page ?? 0).round();
       if (currentPage == slides.length - 1) {
         _pageController.animateToPage(
           0,
-          duration: Duration(milliseconds: 800),
+          duration: const Duration(milliseconds: 800),
           curve: Curves.easeInOut,
         );
       } else {
         _pageController.nextPage(
-          duration: Duration(milliseconds: 800),
+          duration: const Duration(milliseconds: 800),
           curve: Curves.easeInOut,
         );
       }
@@ -59,7 +61,7 @@ class _SliderWidgetState extends State<SliderWidget> {
           ScrollDirection.idle) {
         if (!_timer.isActive) {
           // Wait for 10 seconds before restarting the auto-slide
-          Future.delayed(Duration(seconds: 10), () {
+          Future.delayed(const Duration(seconds: 10), () {
             // Only restart the timer if the user hasn't started scrolling again
             if (_pageController.position.userScrollDirection ==
                 ScrollDirection.idle) {

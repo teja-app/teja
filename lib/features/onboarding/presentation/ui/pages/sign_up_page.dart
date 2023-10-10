@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:passwordfield/passwordfield.dart'; // Import the passwordfield package
 import 'package:redux/redux.dart';
 import 'package:swayam/features/onboarding/data/redux/actions.dart';
-import 'package:swayam/router.dart';
 import 'package:swayam/shared/common/button.dart';
 import 'package:swayam/shared/redux/state/app_state.dart';
 
@@ -15,6 +14,8 @@ class SignUpPage extends StatelessWidget {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  SignUpPage({super.key});
 
   void _showSuccessDialog(
     BuildContext dialogContext,
@@ -25,13 +26,13 @@ class SignUpPage extends StatelessWidget {
       context: dialogContext,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Registration Successful'),
-          content: Text(
+          title: const Text('Registration Successful'),
+          content: const Text(
             'User successfully registered, a verification email has been sent.',
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('OK'),
+              child: const Text('OK'),
               onPressed: () {
                 store.dispatch(
                     ClearRegisterMessageAction()); // Clear the registerMessage
@@ -51,7 +52,7 @@ class SignUpPage extends StatelessWidget {
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sign Up'),
+        title: const Text('Sign Up'),
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -71,8 +72,8 @@ class SignUpPage extends StatelessWidget {
                   fit: BoxFit.cover,
                   height: 60,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20.0),
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 20.0),
                   child: Column(
                     children: [
                       Text(
@@ -95,20 +96,18 @@ class SignUpPage extends StatelessWidget {
                 // Form fields and Sign Up button
                 _buildFormColumn(context, navigator),
                 // Additional links and information
-                Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
+                const Padding(
+                  padding: EdgeInsets.only(top: 20.0),
                   child: Text(
                     'By signing up, you agree to our Terms of Service and Privacy Policy.',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 12),
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 GestureDetector(
-                  onTap: () {
-                    // Navigate to Sign In page
-                  },
-                  child: Text(
+                  onTap: () => GoRouter.of(context).push('/sign_in'),
+                  child: const Text(
                     'Already have an account? Sign In',
                     style: TextStyle(fontSize: 14, color: Colors.blue),
                   ),
@@ -123,7 +122,7 @@ class SignUpPage extends StatelessWidget {
 
   Widget _buildFormColumn(BuildContext context, NavigatorState navigator) {
     return Center(
-      child: Container(
+      child: SizedBox(
         width: 400, // Set the maximum width for the form
         child: StoreConnector<AppState, Store<AppState>>(
           converter: (store) => store,
@@ -132,21 +131,21 @@ class SignUpPage extends StatelessWidget {
               children: [
                 TextField(
                   controller: nameController,
-                  decoration: InputDecoration(labelText: 'Name'),
+                  decoration: const InputDecoration(labelText: 'Name'),
                 ),
                 TextField(
                   controller: usernameController,
-                  decoration: InputDecoration(labelText: 'Username'),
+                  decoration: const InputDecoration(labelText: 'Username'),
                 ),
                 TextField(
                   controller: emailController,
-                  decoration: InputDecoration(labelText: 'Email'),
+                  decoration: const InputDecoration(labelText: 'Email'),
                   keyboardType: TextInputType.emailAddress,
                 ),
                 PasswordField(
                   controller: passwordController,
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Button(
                   key: const Key("signUp"),
                   text: 'Sign up',

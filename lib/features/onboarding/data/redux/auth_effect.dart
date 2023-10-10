@@ -58,7 +58,7 @@ class AuthSaga {
         action.email,
       );
       print("Response: ${response.data}");
-      store.dispatch(RegisterSuccessAction(
+      store.dispatch(const RegisterSuccessAction(
           'User successfully registered, a verification email has been sent.'));
     } catch (e) {
       String errorMessage;
