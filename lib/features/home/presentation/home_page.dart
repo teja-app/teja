@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:swayam/router.dart';
 import 'package:swayam/shared/common/button.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -69,7 +70,8 @@ class _HomePageState extends State<HomePage> {
             margin: const EdgeInsets.only(right: 20),
             child: IconButton(
               icon: const Icon(Icons.person),
-              onPressed: () => GoRouter.of(context).push('/settings'),
+              onPressed: () =>
+                  GoRouter.of(context).pushNamed(RootPath.settings),
             ),
           ),
         ],

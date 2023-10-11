@@ -4,10 +4,22 @@ import 'package:redux/redux.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:swayam/rootSaga.dart';
+import 'package:swayam/router.dart';
 import 'package:swayam/shared/redux/state/app_state.dart';
 import 'package:swayam/features/onboarding/data/redux/actions.dart';
 import 'package:swayam/features/onboarding/data/redux/reducers.dart';
 import 'package:swayam/shared/redux/middleware/logging_middleware.dart';
+
+void authMiddleware(
+    Store<AppState> store, dynamic action, NextDispatcher next) async {
+  if (action is SignInSuccessAction) {
+    router.goNamed(RootPath.home);
+  } else if (action is SignOutSuccessAction) {
+    router.goNamed(RootPath.root);
+  }
+
+  next(action);
+}
 
 Future<Store<AppState>> createStore() async {
   const filePath = '.env.dev';
@@ -20,7 +32,7 @@ Future<Store<AppState>> createStore() async {
   final store = Store<AppState>(
     appReducer,
     initialState: AppState.initialState(),
-    middleware: createSagaMiddleware() + [LoggingMiddleware()],
+    middleware: createSagaMiddleware() + [LoggingMiddleware(), authMiddleware],
   );
 
   store.dispatch(

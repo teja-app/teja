@@ -24,59 +24,88 @@ class RouteLoggingObserver extends NavigatorObserver {
     // Log when a route is popped from the navigator stack
     logger.i('Popped route: ${route.settings.name}');
   }
-
-  // You can override other methods like `didReplace`, `didRemove`, etc., as needed
 }
 
-GoRouter createRouter(String initialLocation) {
-  logger.i('Creating router with initial location: $initialLocation');
-
-  return GoRouter(
-    initialLocation: initialLocation, // Use the initialLocation parameter here
-    debugLogDiagnostics: true,
-    observers: [RouteLoggingObserver()],
-    routes: [
-      GoRoute(
-        path: '/',
-        builder: (context, state) => const OnboardingPage(),
-      ),
-      GoRoute(
-        path: '/sign_up',
-        builder: (context, state) => SignUpPage(),
-      ),
-      GoRoute(
-        path: '/sign_in',
-        builder: (context, state) => const SignInPage(),
-      ),
-      GoRoute(
-        path: '/home',
-        builder: (context, state) => HomePage(),
-      ),
-      GoRoute(
-          path: '/settings',
-          builder: (context, state) => const SettingsPage(),
-          routes: [
-            GoRoute(
-              path: 'notification',
-              builder: (context, state) => NotificationSettingsPage(),
-            ),
-            GoRoute(
-              path: 'perferences',
-              builder: (context, state) => PreferencesSettingsPage(),
-            ),
-            GoRoute(
-              path: 'basic',
-              builder: (context, state) => BasicSettingsPage(),
-            ),
-            GoRoute(
-              path: 'security',
-              builder: (context, state) => SecuritySettingsPage(),
-            ),
-            GoRoute(
-              path: 'advanced',
-              builder: (context, state) => AdvancedSettingsPage(),
-            ),
-          ])
-    ],
-  );
+class SettingPath {
+  static const notification = "notification";
+  static const perferences = "perferences";
+  static const basic = "basic";
+  static const security = "security";
+  static const advanced = "advanced";
 }
+
+class RootPath {
+  static const root = "root";
+  static const signUp = "signUp";
+  static const signIn = "signIn";
+  static const home = "home";
+  static const settings = "settings";
+}
+
+final _rootNavigatorKey = GlobalKey<NavigatorState>();
+final _shellNavigatorKey = GlobalKey<NavigatorState>();
+
+final GoRouter router = GoRouter(
+  // initialLocation: initialLocation, // Use the initialLocation parameter here
+  debugLogDiagnostics: true,
+  observers: [RouteLoggingObserver()],
+  navigatorKey: _rootNavigatorKey,
+  routes: [
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RootPath.root,
+      path: '/',
+      builder: (context, state) => const OnboardingPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RootPath.signUp,
+      path: '/sign_up',
+      builder: (context, state) => SignUpPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RootPath.signIn,
+      path: '/sign_in',
+      builder: (context, state) => const SignInPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RootPath.home,
+      path: '/home',
+      builder: (context, state) => HomePage(),
+    ),
+    GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        name: RootPath.settings,
+        path: '/settings',
+        builder: (context, state) => const SettingsPage(),
+        routes: [
+          GoRoute(
+            name: SettingPath.notification,
+            path: 'notification',
+            builder: (context, state) => NotificationSettingsPage(),
+          ),
+          GoRoute(
+            name: SettingPath.perferences,
+            path: 'perferences',
+            builder: (context, state) => PreferencesSettingsPage(),
+          ),
+          GoRoute(
+            name: SettingPath.basic,
+            path: 'basic',
+            builder: (context, state) => BasicSettingsPage(),
+          ),
+          GoRoute(
+            name: SettingPath.security,
+            path: 'security',
+            builder: (context, state) => SecuritySettingsPage(),
+          ),
+          GoRoute(
+            name: SettingPath.advanced,
+            path: 'advanced',
+            builder: (context, state) => AdvancedSettingsPage(),
+          ),
+        ])
+  ],
+);

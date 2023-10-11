@@ -125,7 +125,7 @@ class _SignInPageState extends State<SignInPage> {
     return StoreConnector<AppState, Store<AppState>>(
       converter: (store) => store,
       builder: (context, store) {
-        final message = store.state.authState.registerMessage;
+        final message = store.state.authState.signInMessage;
         if (message.isNotEmpty) {
           if (message.contains('successfully')) {
             WidgetsBinding.instance.addPostFrameCallback((_) {

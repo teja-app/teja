@@ -8,7 +8,7 @@ class PreferencesSettingsPage extends StatefulWidget {
 }
 
 class _PreferencesSettingsPageState extends State<PreferencesSettingsPage> {
-  bool _hapticFeedbackEnabled = false;
+  bool _hapticFeedbackEnabled = true;
   List<String> _allFeatures = [
     "Mood Tracking",
     "Journal",

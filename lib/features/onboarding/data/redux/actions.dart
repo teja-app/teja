@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import 'package:swayam/shared/redux/handle_api_request.dart';
 
 class GoogleSignInAction {}
 
@@ -51,16 +52,26 @@ class SignInAction {
 }
 
 @immutable
-class SignInSuccessAction {
-  final String accessToken;
-  final String refreshToken;
+class SignInSuccessAction extends SuccessAction {
+  final int accessTokenExpiry;
 
-  const SignInSuccessAction(this.accessToken, this.refreshToken);
+  SignInSuccessAction(String message, this.accessTokenExpiry) : super(message);
 }
 
 @immutable
-class SignInFailureAction {
-  final String error;
+class SignInFailureAction extends FailureAction {
+  SignInFailureAction(String error) : super(error);
+}
 
-  const SignInFailureAction(this.error);
+@immutable
+class SignOutAction {}
+
+@immutable
+class SignOutSuccessAction extends SuccessAction {
+  SignOutSuccessAction(String message) : super(message);
+}
+
+@immutable
+class SignOutFailureAction extends FailureAction {
+  SignOutFailureAction(String error) : super(error);
 }

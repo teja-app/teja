@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
+import 'package:redux/redux.dart';
+import 'package:swayam/features/onboarding/data/redux/actions.dart';
+import 'package:swayam/shared/redux/state/app_state.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -20,6 +24,20 @@ class SettingsPage extends StatelessWidget {
     final double contentWidth = (screenWidth > 500)
         ? 500
         : screenWidth; // Assuming 500 is the max width for content
+
+    Widget _logout(BuildContext context) {
+      return StoreConnector<AppState, Store<AppState>>(
+        converter: (store) => store,
+        builder: (context, store) {
+          return ListTile(
+            title: const Text('Logout'),
+            onTap: () {
+              store.dispatch(SignOutAction());
+            },
+          );
+        },
+      );
+    }
 
     return Scaffold(
         appBar: AppBar(
@@ -81,12 +99,7 @@ class SettingsPage extends StatelessWidget {
                   title: const Text('Advanced Account Settings'),
                   onTap: () => GoRouter.of(context).push('/settings/advanced'),
                 ),
-                ListTile(
-                  title: const Text('Logout'),
-                  onTap: () {
-                    // Handle logout
-                  },
-                ),
+                _logout(context),
                 const Divider(),
                 // Community Section
                 const Padding(

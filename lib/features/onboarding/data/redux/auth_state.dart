@@ -4,16 +4,14 @@ import 'package:flutter/material.dart';
 class AuthState {
   final String registerMessage;
   final String signInMessage;
-  final String accessToken;
-  final String refreshToken;
   final String googleClientIdIos;
+  final int? accessTokenExpiry;
   final String googleServerClientId;
 
   const AuthState({
     required this.registerMessage,
     required this.signInMessage,
-    required this.accessToken,
-    required this.refreshToken,
+    this.accessTokenExpiry,
     required this.googleClientIdIos,
     required this.googleServerClientId,
   });
@@ -21,17 +19,15 @@ class AuthState {
   AuthState copyWith({
     String? registerMessage,
     String? signInMessage,
-    String? accessToken,
-    String? refreshToken,
+    int? accessTokenExpiry,
     String? googleClientIdIos,
     String? googleServerClientId,
   }) {
     return AuthState(
       registerMessage: registerMessage ?? this.registerMessage,
       signInMessage: signInMessage ?? this.signInMessage,
-      accessToken: accessToken ?? this.accessToken,
-      refreshToken: refreshToken ?? this.refreshToken,
       googleClientIdIos: googleClientIdIos ?? this.googleClientIdIos,
+      accessTokenExpiry: accessTokenExpiry ?? this.accessTokenExpiry,
       googleServerClientId: googleServerClientId ?? this.googleServerClientId,
     );
   }
@@ -40,8 +36,6 @@ class AuthState {
     return const AuthState(
       registerMessage: '',
       signInMessage: '',
-      accessToken: '',
-      refreshToken: '',
       googleClientIdIos: '',
       googleServerClientId: '',
     );
