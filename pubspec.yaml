@@ -50,6 +50,8 @@ dependencies:
   intl: ^0.18.1
   url_launcher: ^6.1.14
   image_picker: ^1.0.4
+  sentry_flutter: ^7.10.1
+  logger: ^2.0.2+1
 
 dev_dependencies:
   flutter_test:
@@ -108,3 +110,4 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+  

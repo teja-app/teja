@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 class BasicSettingsPage extends StatefulWidget {
   @override
@@ -46,6 +47,7 @@ class _BasicSettingsPageState extends State<BasicSettingsPage> {
     final double contentWidth = (screenWidth > 500)
         ? 500
         : screenWidth; // Assuming 500 is the max width for content
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Personal Information'),

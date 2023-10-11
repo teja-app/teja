@@ -4,6 +4,15 @@ PODS:
   - file_selector_macos (0.0.1):
     - FlutterMacOS
   - FlutterMacOS (1.0.0)
+  - package_info_plus (0.0.1):
+    - FlutterMacOS
+  - Sentry/HybridSDK (8.11.0):
+    - SentryPrivate (= 8.11.0)
+  - sentry_flutter (0.0.1):
+    - Flutter
+    - FlutterMacOS
+    - Sentry/HybridSDK (= 8.11.0)
+  - SentryPrivate (8.11.0)
   - url_launcher_macos (0.0.1):
     - FlutterMacOS
 
@@ -11,7 +20,14 @@ DEPENDENCIES:
   - device_info_plus (from `Flutter/ephemeral/.symlinks/plugins/device_info_plus/macos`)
   - file_selector_macos (from `Flutter/ephemeral/.symlinks/plugins/file_selector_macos/macos`)
   - FlutterMacOS (from `Flutter/ephemeral`)
+  - package_info_plus (from `Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos`)
+  - sentry_flutter (from `Flutter/ephemeral/.symlinks/plugins/sentry_flutter/macos`)
   - url_launcher_macos (from `Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos`)
+
+SPEC REPOS:
+  trunk:
+    - Sentry
+    - SentryPrivate
 
 EXTERNAL SOURCES:
   device_info_plus:
@@ -20,6 +36,10 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/file_selector_macos/macos
   FlutterMacOS:
     :path: Flutter/ephemeral
+  package_info_plus:
+    :path: Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos
+  sentry_flutter:
+    :path: Flutter/ephemeral/.symlinks/plugins/sentry_flutter/macos
   url_launcher_macos:
     :path: Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos
 
@@ -27,6 +47,10 @@ SPEC CHECKSUMS:
   device_info_plus: 5401765fde0b8d062a2f8eb65510fb17e77cf07f
   file_selector_macos: 468fb6b81fac7c0e88d71317f3eec34c3b008ff9
   FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
+  package_info_plus: 02d7a575e80f194102bef286361c6c326e4c29ce
+  Sentry: 39d57e691e311bdb73bc1ab5bbebbd6bc890050d
+  sentry_flutter: b2feefdad5b0f06602347172bc7257e8e9da5562
+  SentryPrivate: 48712023cdfd523735c2edb6b06bedf26c4730a3
   url_launcher_macos: d2691c7dd33ed713bf3544850a623080ec693d95
 
 PODFILE CHECKSUM: 236401fc2c932af29a9fcf0e97baeeb2d750d367

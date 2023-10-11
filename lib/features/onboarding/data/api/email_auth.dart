@@ -1,13 +1,12 @@
-// lib/features/onboarding/data/api/api.dart
 import 'package:dio/dio.dart';
-import 'package:swayam/constants.dart';
+import 'package:swayam/shared/helpers/api_helper.dart';
 
 class EmailAuthApi {
-  final Dio dio = Dio();
+  final ApiHelper _apiHelper = ApiHelper();
 
   Future<Response> register(
       String username, String password, String name, String email) async {
-    final String url = '$baseUrl/auth/register';
+    final String url = '/auth/register'; // Use relative URL
     final Map<String, dynamic> data = {
       'username': username,
       'password': password,
@@ -15,29 +14,22 @@ class EmailAuthApi {
       'email': email,
     };
 
-    try {
-      final Response response = await dio.post(url, data: data);
-      return response;
-    } catch (e) {
-      print('Failed to register: $e');
-      rethrow;
-    }
+    return _apiHelper.post(url, data: data);
   }
 
   Future<Response> signIn(
       String username, String password, String device) async {
-    final String url = '$baseUrl/auth/login';
+    final String url = '/auth/login'; // Use relative URL
     final Map<String, dynamic> data = {
       'username': username,
       'password': password,
       'device': device,
     };
-    try {
-      final Response response = await dio.post(url, data: data);
-      return response;
-    } catch (e) {
-      print('Failed to register: $e');
-      rethrow;
-    }
+
+    return _apiHelper.post(url, data: data);
+  }
+
+  void dispose() {
+    _apiHelper.dispose();
   }
 }
