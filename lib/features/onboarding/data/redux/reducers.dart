@@ -1,6 +1,6 @@
 import 'package:redux/redux.dart';
 import 'package:swayam/features/onboarding/data/redux/actions.dart';
-import 'package:swayam/shared/redux/state/app_state.dart';
+import 'package:swayam/domain/redux/state/app_state.dart';
 
 AppState registerSuccessReducer(AppState state, RegisterSuccessAction action) {
   return state.copyWith(
@@ -64,7 +64,7 @@ AppState googleAuthReducer(AppState state, SetGoogleClientIdsAction action) {
   );
 }
 
-Reducer<AppState> appReducer = combineReducers<AppState>([
+final authReducer = <AppState Function(AppState, dynamic)>[
   TypedReducer<AppState, SetGoogleClientIdsAction>(googleAuthReducer),
   TypedReducer<AppState, RegisterSuccessAction>(registerSuccessReducer),
   TypedReducer<AppState, RegisterFailureAction>(registerFailureReducer),
@@ -74,4 +74,4 @@ Reducer<AppState> appReducer = combineReducers<AppState>([
   TypedReducer<AppState, SignInSuccessAction>(signInSuccessReducer),
   TypedReducer<AppState, SignInFailureAction>(signInFailureReducer),
   TypedReducer<AppState, ClearSignInMessageAction>(clearSignInMessageReducer),
-]);
+];

@@ -7,8 +7,8 @@ import 'package:swayam/features/onboarding/data/api/email_auth.dart';
 import 'package:swayam/features/onboarding/data/api/google_auth_provider.dart';
 import 'package:swayam/features/onboarding/data/api/google_auth_repository.dart';
 import 'package:swayam/features/onboarding/data/redux/actions.dart';
-import 'package:swayam/shared/redux/handle_api_request.dart';
-import 'package:swayam/shared/redux/state/app_state.dart';
+import 'package:swayam/domain/redux/handle_api_request.dart';
+import 'package:swayam/domain/redux/state/app_state.dart';
 import 'package:swayam/shared/storage/secure_storage.dart';
 
 class AuthSaga {

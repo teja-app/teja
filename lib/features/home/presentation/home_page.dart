@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:swayam/features/home/presentation/ui/mood_tracker.dart';
 import 'package:swayam/router.dart';
-import 'package:swayam/shared/common/button.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:swayam/calendar_timeline/calendar_timeline.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -60,6 +61,14 @@ class _HomePageState extends State<HomePage> {
 
     List<DateTime> dateList = [threeDaysAgo, twoDaysAgo, yesterday, today];
 
+    DateTime now = DateTime.now();
+    Duration oneWeek = const Duration(days: 7);
+    Duration oneDay = const Duration(days: 1);
+    DateTime onDayFromNow = now.add(oneDay);
+    Duration threeWeeks = oneWeek * 3; // Calculate the duration for 3 weeks
+    DateTime threeWeeksAgo =
+        now.subtract(threeWeeks); // Subtract the duration to get the past date
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -84,45 +93,6 @@ class _HomePageState extends State<HomePage> {
               style: const TextStyle(fontSize: 24),
             ),
             SizedBox(height: 20),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.calendar_today, color: Colors.black),
-                    onPressed: () {
-                      setState(() {
-                        showCalendar = !showCalendar;
-                      });
-                    },
-                  ), // Adding some space between icon and buttons
-                  ...dateList.map((date) {
-                    String label = getFormattedDate(date);
-                    // String secondaryLabel = DateFormat('EEE').format(date);
-                    if (date == today) {
-                      label = "Today";
-                      // secondaryLabel = getFormattedDate(date);
-                    } else if (date == yesterday) {
-                      label = "Yesterday";
-                      // secondaryLabel = getFormattedDate(date);
-                    } else {
-                      label = getPrimaryFormattedDate(date);
-                    }
-                    return Button(
-                      text: label,
-                      // secondaryText: secondaryLabel,
-                      onPressed: () {
-                        // Button action here
-                      },
-                      buttonType: date == today
-                          ? ButtonType.primary
-                          : ButtonType.defaultButton,
-                    );
-                  }).toList()
-                ],
-              ),
-            ),
             if (showCalendar)
               Container(
                 constraints: const BoxConstraints(maxWidth: 400),
@@ -130,22 +100,54 @@ class _HomePageState extends State<HomePage> {
                 height: 400, // specify height
                 width: MediaQuery.of(context).size.width, // specify width
                 child: TableCalendar(
+                  calendarBuilders: CalendarBuilders(
+                    dowBuilder: (context, day) {
+                      if (day.weekday == DateTime.sunday) {
+                        final text = DateFormat.E().format(day);
+                        return Center(
+                          child: Text(
+                            text,
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        );
+                      }
+                    },
+                  ),
                   calendarStyle: const CalendarStyle(
-                      todayTextStyle: TextStyle(
-                    color: Colors.black,
-                  )),
-                  firstDay: DateTime.utc(2010, 10, 16),
-                  lastDay: DateTime.utc(2030, 3, 14),
+                    isTodayHighlighted: true,
+                    todayTextStyle: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    todayDecoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  headerStyle: const HeaderStyle(
+                    formatButtonVisible: false,
+                  ),
+                  calendarFormat: CalendarFormat.week,
+                  firstDay: threeWeeksAgo,
+                  lastDay: onDayFromNow,
                   focusedDay: DateTime.now(),
                   // Add more TableCalendar configurations if needed
                 ),
               ),
             const SizedBox(height: 20),
-            const Text(
-              "TODA’S SEQUENCE",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w100),
+            CalendarTimeline(
+              initialDate: now,
+              firstDate: threeWeeksAgo,
+              lastDate: onDayFromNow,
+              activeBackgroundDayColor: Colors.white,
+              activeDayColor: Colors.black,
+              onDateSelected: (date) => print(date),
+              leftMargin: 20,
+              selectableDayPredicate: (date) => date.day != 23,
+              locale: 'en_ISO',
             ),
             SizedBox(height: 10),
+            MoodTrackerWidget()
           ],
         ),
       ),

@@ -3,7 +3,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:swayam/features/onboarding/data/redux/auth_state.dart';
 import 'package:swayam/router.dart';
 import 'package:swayam/shared/helpers/logger.dart';
-import 'package:swayam/shared/redux/state/app_state.dart';
+import 'package:swayam/domain/redux/state/app_state.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -36,7 +36,11 @@ class _AppState extends State<App> {
         return MaterialApp.router(
           title: 'Swayam',
           theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.black,
+              primary: Colors.white,
+              secondary: Colors.black,
+            ),
             useMaterial3: true,
           ),
           routerConfig: router,

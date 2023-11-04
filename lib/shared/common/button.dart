@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:icons_flutter/icons_flutter.dart';
 
 enum ButtonType { defaultButton, primary, secondary }
 
@@ -7,6 +8,7 @@ class Button extends StatelessWidget {
   final String? secondaryText;
   final void Function()? onPressed;
   final double? width;
+  final IconData? icon;
   final ButtonType buttonType;
 
   const Button({
@@ -14,6 +16,7 @@ class Button extends StatelessWidget {
     required this.text,
     this.secondaryText,
     this.onPressed,
+    this.icon,
     this.width = 40,
     this.buttonType = ButtonType.defaultButton,
   });
@@ -48,7 +51,8 @@ class Button extends StatelessWidget {
       child: TextButton(
         onPressed: onPressed,
         style: TextButton.styleFrom(
-          foregroundColor: textColor, backgroundColor: backgroundColor,
+          foregroundColor: textColor,
+          backgroundColor: backgroundColor,
           maximumSize: const Size(double.infinity, 42),
           minimumSize: Size(width ?? 40, 42),
           side: BorderSide(color: borderColor),
@@ -58,9 +62,17 @@ class Button extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Column(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              if (icon != null) ...[
+                Icon(
+                  icon,
+                  color: textColor,
+                  size: 16,
+                ),
+                SizedBox(width: 8),
+              ],
               Text(
                 text,
                 style: TextStyle(color: textColor),

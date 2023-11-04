@@ -1,5 +1,5 @@
 import 'package:meta/meta.dart';
-import 'package:swayam/shared/redux/handle_api_request.dart';
+import 'package:swayam/domain/redux/handle_api_request.dart';
 
 class GoogleSignInAction {}
 

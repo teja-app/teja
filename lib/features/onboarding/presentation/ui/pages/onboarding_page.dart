@@ -7,7 +7,7 @@ import 'package:redux/redux.dart';
 import 'package:swayam/features/onboarding/data/redux/actions.dart';
 import 'package:swayam/features/onboarding/presentation/ui/widgets/slider_widget.dart';
 import 'package:swayam/shared/common/button.dart';
-import 'package:swayam/shared/redux/state/app_state.dart';
+import 'package:swayam/domain/redux/state/app_state.dart';
 
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({super.key});

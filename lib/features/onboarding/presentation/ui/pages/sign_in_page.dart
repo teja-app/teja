@@ -7,7 +7,7 @@ import 'package:passwordfield/passwordfield.dart'; // Import the passwordfield p
 import 'package:redux/redux.dart';
 import 'package:swayam/features/onboarding/data/redux/actions.dart';
 import 'package:swayam/shared/common/button.dart';
-import 'package:swayam/shared/redux/state/app_state.dart';
+import 'package:swayam/domain/redux/state/app_state.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 
 class SignInPage extends StatefulWidget {

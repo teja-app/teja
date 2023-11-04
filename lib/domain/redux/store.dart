@@ -5,10 +5,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:swayam/rootSaga.dart';
 import 'package:swayam/router.dart';
-import 'package:swayam/shared/redux/state/app_state.dart';
+import 'package:swayam/domain/redux/state/app_state.dart';
 import 'package:swayam/features/onboarding/data/redux/actions.dart';
 import 'package:swayam/features/onboarding/data/redux/reducers.dart';
-import 'package:swayam/shared/redux/middleware/logging_middleware.dart';
+import 'package:swayam/domain/redux/middleware/logging_middleware.dart';
 
 void authMiddleware(
     Store<AppState> store, dynamic action, NextDispatcher next) async {
@@ -20,6 +20,10 @@ void authMiddleware(
 
   next(action);
 }
+
+Reducer<AppState> appReducer = combineReducers<AppState>([
+  ...authReducer,
+]);
 
 Future<Store<AppState>> createStore() async {
   const filePath = '.env.dev';
