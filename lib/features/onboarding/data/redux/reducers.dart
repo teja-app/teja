@@ -1,6 +1,6 @@
 import 'package:redux/redux.dart';
 import 'package:swayam/features/onboarding/data/redux/actions.dart';
-import 'package:swayam/domain/redux/state/app_state.dart';
+import 'package:swayam/domain/redux/app_state.dart';
 
 AppState registerSuccessReducer(AppState state, RegisterSuccessAction action) {
   return state.copyWith(

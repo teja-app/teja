@@ -1,5 +1,5 @@
 import 'package:redux/redux.dart';
-import 'package:swayam/domain/redux/state/app_state.dart';
+import 'package:swayam/domain/redux/app_state.dart';
 
 class LoggingMiddleware extends MiddlewareClass<AppState> {
   @override

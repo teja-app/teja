@@ -5,7 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:swayam/rootSaga.dart';
 import 'package:swayam/router.dart';
-import 'package:swayam/domain/redux/state/app_state.dart';
+import 'package:swayam/domain/redux/app_state.dart';
 import 'package:swayam/features/onboarding/data/redux/actions.dart';
 import 'package:swayam/features/onboarding/data/redux/reducers.dart';
 import 'package:swayam/domain/redux/middleware/logging_middleware.dart';

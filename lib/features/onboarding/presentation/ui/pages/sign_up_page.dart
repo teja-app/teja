@@ -7,7 +7,7 @@ import 'package:passwordfield/passwordfield.dart'; // Import the passwordfield p
 import 'package:redux/redux.dart';
 import 'package:swayam/features/onboarding/data/redux/actions.dart';
 import 'package:swayam/shared/common/button.dart';
-import 'package:swayam/domain/redux/state/app_state.dart';
+import 'package:swayam/domain/redux/app_state.dart';
 
 class SignUpPage extends StatelessWidget {
   final TextEditingController nameController = TextEditingController();

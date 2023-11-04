@@ -6,7 +6,7 @@ import 'package:swayam/domain/redux/store.dart'; // Make sure to import this
 import 'package:swayam/app.dart';
 import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
-import 'package:swayam/domain/redux/state/app_state.dart';
+import 'package:swayam/domain/redux/app_state.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: '.env.dev');

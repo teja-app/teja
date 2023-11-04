@@ -3,7 +3,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:swayam/features/onboarding/data/redux/auth_state.dart';
 import 'package:swayam/router.dart';
 import 'package:swayam/shared/helpers/logger.dart';
-import 'package:swayam/domain/redux/state/app_state.dart';
+import 'package:swayam/domain/redux/app_state.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
