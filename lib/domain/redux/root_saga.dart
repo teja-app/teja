@@ -1,5 +1,5 @@
 import 'package:redux/redux.dart';
-import 'package:swayam/features/onboarding/data/redux/auth_effect.dart';
+import 'package:swayam/domain/redux/onboarding/auth_effect.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 
 class RootSaga {

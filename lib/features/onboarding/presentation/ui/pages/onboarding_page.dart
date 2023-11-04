@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
-import 'package:swayam/features/onboarding/data/redux/actions.dart';
+import 'package:swayam/domain/redux/onboarding/actions.dart';
 import 'package:swayam/features/onboarding/presentation/ui/widgets/slider_widget.dart';
 import 'package:swayam/shared/common/button.dart';
 import 'package:swayam/domain/redux/app_state.dart';

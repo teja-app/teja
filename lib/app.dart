@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:swayam/features/onboarding/data/redux/auth_state.dart';
+import 'package:swayam/domain/redux/onboarding/auth_state.dart';
 import 'package:swayam/router.dart';
 import 'package:swayam/shared/helpers/logger.dart';
 import 'package:swayam/domain/redux/app_state.dart';

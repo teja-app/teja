@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:swayam/features/onboarding/data/redux/auth_state.dart';
+import 'package:swayam/domain/redux/onboarding/auth_state.dart';
 
 @immutable
 class AppState {

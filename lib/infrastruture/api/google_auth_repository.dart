@@ -1,4 +1,4 @@
-import 'package:swayam/features/onboarding/data/api/google_auth_provider.dart';
+import 'package:swayam/infrastruture/api/google_auth_provider.dart';
 
 class GoogleAuthRepository {
   final GoogleAuthProvider _googleAuthProvider;

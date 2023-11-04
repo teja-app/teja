@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:swayam/shared/helpers/api_helper.dart';
+import 'package:swayam/infrastruture/api_helper.dart';
 
 class EmailAuthApi {
   final ApiHelper _apiHelper = ApiHelper();

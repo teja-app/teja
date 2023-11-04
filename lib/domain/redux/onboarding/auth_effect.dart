@@ -3,10 +3,10 @@ import 'package:dio/dio.dart';
 import 'package:redux/redux.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
-import 'package:swayam/features/onboarding/data/api/email_auth.dart';
-import 'package:swayam/features/onboarding/data/api/google_auth_provider.dart';
-import 'package:swayam/features/onboarding/data/api/google_auth_repository.dart';
-import 'package:swayam/features/onboarding/data/redux/actions.dart';
+import 'package:swayam/infrastruture/api/email_auth.dart';
+import 'package:swayam/infrastruture/api/google_auth_provider.dart';
+import 'package:swayam/infrastruture/api/google_auth_repository.dart';
+import 'package:swayam/domain/redux/onboarding/actions.dart';
 import 'package:swayam/domain/redux/handle_api_request.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 import 'package:swayam/shared/storage/secure_storage.dart';

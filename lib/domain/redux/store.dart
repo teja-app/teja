@@ -3,12 +3,12 @@ import 'dart:io';
 import 'package:redux/redux.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-import 'package:swayam/rootSaga.dart';
+import 'package:swayam/domain/redux/root_saga.dart';
 import 'package:swayam/router.dart';
 import 'package:swayam/domain/redux/app_state.dart';
-import 'package:swayam/features/onboarding/data/redux/actions.dart';
-import 'package:swayam/features/onboarding/data/redux/reducers.dart';
-import 'package:swayam/domain/redux/middleware/logging_middleware.dart';
+import 'package:swayam/domain/redux/onboarding/actions.dart';
+import 'package:swayam/domain/redux/onboarding/reducers.dart';
+import 'package:swayam/domain/redux/logging_middleware.dart';
 
 void authMiddleware(
     Store<AppState> store, dynamic action, NextDispatcher next) async {
