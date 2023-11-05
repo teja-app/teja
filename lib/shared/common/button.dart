@@ -61,17 +61,17 @@ class Button extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 8.0, // space between parts horizontally
+            runSpacing: 4.0, // space between parts vertically when wrapping
             children: [
-              if (icon != null) ...[
+              if (icon != null)
                 Icon(
                   icon,
                   color: textColor,
                   size: 16,
                 ),
-                const SizedBox(width: 8),
-              ],
               Text(
                 text,
                 style: TextStyle(color: textColor),
@@ -80,7 +80,9 @@ class Button extends StatelessWidget {
                 Text(
                   secondaryText!,
                   style: TextStyle(
-                      color: textColor.withOpacity(0.7), fontSize: 12),
+                    color: textColor.withOpacity(0.7),
+                    fontSize: 12,
+                  ),
                 ),
             ],
           ),

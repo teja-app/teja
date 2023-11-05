@@ -1,0 +1,253 @@
+[
+    {
+      "id": "amazed",
+      "name": "Amazed",
+      "mood": 5
+    },
+    {
+      "id": "ecstatic",
+      "name": "Ecstatic",
+      "mood": 5
+    },
+    {
+      "id": "euphoric",
+      "name": "Euphoric",
+      "mood": 5
+    },
+    {
+      "id": "jubilant",
+      "name": "Jubilant",
+      "mood": 5
+    },
+    {
+      "id": "overjoyed",
+      "name": "Overjoyed",
+      "mood": 5
+    },
+    {
+      "id": "exhilarated",
+      "name": "Exhilarated",
+      "mood": 5
+    },
+    {
+      "id": "elated",
+      "name": "Elated",
+      "mood": 5
+    },
+    {
+      "id": "delighted",
+      "name": "Delighted",
+      "mood": 5
+    },
+    {
+      "id": "thrilled",
+      "name": "Thrilled",
+      "mood": 5
+    },
+    {
+      "id": "radiant",
+      "name": "Radiant",
+      "mood": 5
+    },
+    {
+      "id": "pleased",
+      "name": "Pleased",
+      "mood": 4
+    },
+    {
+      "id": "grateful",
+      "name": "Grateful",
+      "mood": 4
+    },
+    {
+      "id": "optimistic",
+      "name": "Optimistic",
+      "mood": 4
+    },
+    {
+      "id": "encouraged",
+      "name": "Encouraged",
+      "mood": 4
+    },
+    {
+      "id": "inspired",
+      "name": "Inspired",
+      "mood": 4
+    },
+    {
+      "id": "hopeful",
+      "name": "Hopeful",
+      "mood": 4
+    },
+    {
+      "id": "thankful",
+      "name": "Thankful",
+      "mood": 4
+    },
+    {
+      "id": "satisfied",
+      "name": "Satisfied",
+      "mood": 4
+    },
+    {
+      "id": "cheerful",
+      "name": "Cheerful",
+      "mood": 4
+    },
+    {
+      "id": "content",
+      "name": "Content",
+      "mood": 4
+    },
+    {
+      "id": "unperturbed",
+      "name": "Unperturbed",
+      "mood": 3
+    },
+    {
+      "id": "resigned",
+      "name": "Resigned",
+      "mood": 3
+    },
+    {
+      "id": "apathetic",
+      "name": "Apathetic",
+      "mood": 3
+    },
+    {
+      "id": "composed",
+      "name": "Composed",
+      "mood": 3
+    },
+    {
+      "id": "placid",
+      "name": "Placid",
+      "mood": 3
+    },
+    {
+      "id": "indifferent",
+      "name": "Indifferent",
+      "mood": 3
+    },
+    {
+      "id": "balanced",
+      "name": "Balanced",
+      "mood": 3
+    },
+    {
+      "id": "equanimous",
+      "name": "Equanimous",
+      "mood": 3
+    },
+    {
+      "id": "stable",
+      "name": "Stable",
+      "mood": 3
+    },
+    {
+      "id": "calm",
+      "name": "Calm",
+      "mood": 3
+    },
+    {
+      "id": "disturbed",
+      "name": "Disturbed",
+      "mood": 2
+    },
+    {
+      "id": "uneasy",
+      "name": "Uneasy",
+      "mood": 2
+    },
+    {
+      "id": "frustrated",
+      "name": "Frustrated",
+      "mood": 2
+    },
+    {
+      "id": "agitated",
+      "name": "Agitated",
+      "mood": 2
+    },
+    {
+      "id": "annoyed",
+      "name": "Annoyed",
+      "mood": 2
+    },
+    {
+      "id": "worried",
+      "name": "Worried",
+      "mood": 2
+    },
+    {
+      "id": "angry",
+      "name": "Angry",
+      "mood": 2
+    },
+    {
+      "id": "upset",
+      "name": "Upset",
+      "mood": 2
+    },
+    {
+      "id": "tense",
+      "name": "Tense",
+      "mood": 2
+    },
+    {
+      "id": "irritated",
+      "name": "Irritated",
+      "mood": 2
+    },
+    {
+      "id": "dejected",
+      "name": "Dejected",
+      "mood": 1
+    },
+    {
+      "id": "hopeless",
+      "name": "Hopeless",
+      "mood": 1
+    },
+    {
+      "id": "despairing",
+      "name": "Despairing",
+      "mood": 1
+    },
+    {
+      "id": "miserable",
+      "name": "Miserable",
+      "mood": 1
+    },
+    {
+      "id": "despondent",
+      "name": "Despondent",
+      "mood": 1
+    },
+    {
+      "id": "gloomy",
+      "name": "Gloomy",
+      "mood": 1
+    },
+    {
+      "id": "downcast",
+      "name": "Downcast",
+      "mood": 1
+    },
+    {
+      "id": "forlorn",
+      "name": "Forlorn",
+      "mood": 1
+    },
+    {
+      "id": "woeful",
+      "name": "Woeful",
+      "mood": 1
+    },
+    {
+      "id": "melancholy",
+      "name": "Melancholy",
+      "mood": 1
+    }
+  ]
+  

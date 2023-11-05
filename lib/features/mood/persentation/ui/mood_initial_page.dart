@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:redux/redux.dart';
+import 'package:swayam/domain/redux/app_state.dart';
+import 'package:swayam/domain/redux/mood/mood_editor_reducer.dart';
 
 // This is the standalone MoodIconsLayout widget.
 class MoodInitialPage extends StatefulWidget {
@@ -15,8 +19,6 @@ class MoodInitialPage extends StatefulWidget {
 }
 
 class _MoodInitialPageState extends State<MoodInitialPage> {
-  int? _selectedMoodIndex;
-
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -45,30 +47,31 @@ class _MoodInitialPageState extends State<MoodInitialPage> {
   }
 
   Widget _buildMoodIcon(String svgPath, int moodIndex) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedMoodIndex = moodIndex; // Set the selected mood on tap
+    return StoreConnector<AppState, Store<AppState>>(
+        converter: (store) => store,
+        builder: (context, store) {
+          return GestureDetector(
+            onTap: () {
+              store.dispatch(SelectMoodAction(moodIndex));
+              store.dispatch(const ChangePageAction(
+                1,
+              ));
+            },
+            child: Opacity(
+              opacity: (store.state.moodEditorState.currentMoodLog
+                              ?.moodRating ==
+                          null ||
+                      store.state.moodEditorState.currentMoodLog?.moodRating ==
+                          moodIndex)
+                  ? 1.0
+                  : 0.5, // Set transparency
+              child: SvgPicture.asset(
+                svgPath,
+                width: 40,
+                height: 40,
+              ),
+            ),
+          );
         });
-        if (widget.onMoodSelected != null) {
-          widget.onMoodSelected!(moodIndex); // If there's a callback, call it
-        }
-        // Navigate to the second page without showing continue or skip buttons
-        widget.controller.nextPage(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-      },
-      child: Opacity(
-        opacity: (_selectedMoodIndex == null || _selectedMoodIndex == moodIndex)
-            ? 1.0
-            : 0.5, // Set transparency
-        child: SvgPicture.asset(
-          svgPath,
-          width: 40,
-          height: 40,
-        ),
-      ),
-    );
   }
 }

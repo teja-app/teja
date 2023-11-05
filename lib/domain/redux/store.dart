@@ -2,6 +2,7 @@
 import 'dart:io';
 import 'package:redux/redux.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:swayam/domain/redux/mood/mood_editor_reducer.dart';
 
 import 'package:swayam/domain/redux/root_saga.dart';
 import 'package:swayam/router.dart';
@@ -23,6 +24,7 @@ void authMiddleware(
 
 Reducer<AppState> appReducer = combineReducers<AppState>([
   ...authReducer,
+  ...moodEditorReducer,
 ]);
 
 Future<Store<AppState>> createStore() async {

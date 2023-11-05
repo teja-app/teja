@@ -30,20 +30,40 @@ class ApiHelper {
     }
   }
 
-  Future<Response> get(String path) async {
-    return _safeRequest(() => _dio.get(path));
+  Future<Response> get(String path, {String? authToken}) async {
+    return _safeRequest(() {
+      if (authToken != null) {
+        _dio.options.headers['Authorization'] = 'Bearer $authToken';
+      }
+      return _dio.get(path);
+    });
   }
 
-  Future<Response> post(String path, {data}) async {
-    return _safeRequest(() => _dio.post(path, data: data));
+  Future<Response> post(String path, {data, String? authToken}) async {
+    return _safeRequest(() {
+      if (authToken != null) {
+        _dio.options.headers['Authorization'] = 'Bearer $authToken';
+      }
+      return _dio.post(path, data: data);
+    });
   }
 
-  Future<Response> put(String path, {data}) async {
-    return _safeRequest(() => _dio.put(path, data: data));
+  Future<Response> put(String path, {data, String? authToken}) async {
+    return _safeRequest(() {
+      if (authToken != null) {
+        _dio.options.headers['Authorization'] = 'Bearer $authToken';
+      }
+      return _dio.put(path, data: data);
+    });
   }
 
-  Future<Response> delete(String path) async {
-    return _safeRequest(() => _dio.delete(path));
+  Future<Response> delete(String path, {String? authToken}) async {
+    return _safeRequest(() {
+      if (authToken != null) {
+        _dio.options.headers['Authorization'] = 'Bearer $authToken';
+      }
+      return _dio.delete(path);
+    });
   }
 
   void dispose() {

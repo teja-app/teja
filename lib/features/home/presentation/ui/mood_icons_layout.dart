@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:redux/redux.dart';
+import 'package:swayam/domain/redux/app_state.dart';
+import 'package:swayam/domain/redux/mood/mood_editor_reducer.dart';
 import 'package:swayam/shared/common/button.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_flutter/icons_flutter.dart';
@@ -75,22 +79,28 @@ class _MoodIconsLayoutState extends State<MoodIconsLayout> {
   }
 
   Widget _buildMoodIcon(String svgPath, int moodIndex) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedMoodIndex = moodIndex; // Set the selected mood on tap
+    return StoreConnector<AppState, Store<AppState>>(
+        converter: (store) => store,
+        builder: (context, store) {
+          return GestureDetector(
+            onTap: () {
+              store.dispatch(SelectMoodAction(moodIndex));
+              store.dispatch(const ChangePageAction(
+                1,
+              ));
+            },
+            child: Opacity(
+              opacity: (_selectedMoodIndex == null ||
+                      _selectedMoodIndex == moodIndex)
+                  ? 1.0
+                  : 0.5, // Set transparency
+              child: SvgPicture.asset(
+                svgPath,
+                width: 40,
+                height: 40,
+              ),
+            ),
+          );
         });
-      },
-      child: Opacity(
-        opacity: (_selectedMoodIndex == null || _selectedMoodIndex == moodIndex)
-            ? 1.0
-            : 0.5, // Set transparency
-        child: SvgPicture.asset(
-          svgPath,
-          width: 40,
-          height: 40,
-        ),
-      ),
-    );
   }
 }
