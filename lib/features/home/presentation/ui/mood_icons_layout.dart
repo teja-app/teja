@@ -88,6 +88,9 @@ class _MoodIconsLayoutState extends State<MoodIconsLayout> {
               store.dispatch(const ChangePageAction(
                 1,
               ));
+              setState(() {
+                _selectedMoodIndex = moodIndex; // Set the selected mood on tap
+              });
             },
             child: Opacity(
               opacity: (_selectedMoodIndex == null ||
