@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class PreferencesSettingsPage extends StatefulWidget {
+  const PreferencesSettingsPage({super.key});
+
   @override
   _PreferencesSettingsPageState createState() =>
       _PreferencesSettingsPageState();
@@ -9,7 +11,7 @@ class PreferencesSettingsPage extends StatefulWidget {
 
 class _PreferencesSettingsPageState extends State<PreferencesSettingsPage> {
   bool _hapticFeedbackEnabled = true;
-  List<String> _allFeatures = [
+  final List<String> _allFeatures = [
     "Mood Tracking",
     "Journal",
     "Meditation",
@@ -18,7 +20,7 @@ class _PreferencesSettingsPageState extends State<PreferencesSettingsPage> {
   ];
   List<String> _preferredFeatures = [];
   List<String> _interests = [];
-  List<String> _allInterests = [
+  final List<String> _allInterests = [
     "Improve mood",
     "Increase focus and productivity",
     "Improve sleep quality",
@@ -42,10 +44,10 @@ class _PreferencesSettingsPageState extends State<PreferencesSettingsPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Select Preferred Features'),
+          title: const Text('Select Preferred Features'),
           content: StatefulBuilder(
             builder: (context, setState) {
-              return Container(
+              return SizedBox(
                 width: double.maxFinite,
                 child: ListView(
                   shrinkWrap: true,
@@ -68,13 +70,13 @@ class _PreferencesSettingsPageState extends State<PreferencesSettingsPage> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('OK'),
+              child: const Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();
                 setState(() {
@@ -94,10 +96,10 @@ class _PreferencesSettingsPageState extends State<PreferencesSettingsPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Anything specific you\'d like to work on?'),
+          title: const Text('Anything specific you\'d like to work on?'),
           content: StatefulBuilder(
             builder: (context, setState) {
-              return Container(
+              return SizedBox(
                 width: double.maxFinite,
                 child: ListView(
                   shrinkWrap: true,
@@ -120,13 +122,13 @@ class _PreferencesSettingsPageState extends State<PreferencesSettingsPage> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('OK'),
+              child: const Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();
                 setState(() {
@@ -149,15 +151,15 @@ class _PreferencesSettingsPageState extends State<PreferencesSettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Preferences Settings'),
+        title: const Text('Preferences Settings'),
       ),
       body: Center(
-        child: Container(
+        child: SizedBox(
           width: contentWidth, // Set the content width
           child: ListView(
             children: <Widget>[
               SwitchListTile(
-                title: Text('Haptic Feedback'),
+                title: const Text('Haptic Feedback'),
                 value: _hapticFeedbackEnabled,
                 onChanged: _toggleHapticFeedback,
               ),
@@ -165,15 +167,15 @@ class _PreferencesSettingsPageState extends State<PreferencesSettingsPage> {
                 height: 40,
               ),
               ListTile(
-                title: Text('Preferred Features'),
+                title: const Text('Preferred Features'),
                 subtitle: Text(_preferredFeatures.join(', ')),
-                trailing: Icon(Icons.arrow_forward_ios),
+                trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: _selectPreferredFeatures,
               ),
               ListTile(
-                title: Text('Specific Interests'),
+                title: const Text('Specific Interests'),
                 subtitle: Text(_interests.join(', ')),
-                trailing: Icon(Icons.arrow_forward_ios),
+                trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: _selectInterests,
               ),
             ],

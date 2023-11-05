@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class SecuritySettingsPage extends StatefulWidget {
+  const SecuritySettingsPage({super.key});
+
   @override
   _SecuritySettingsPageState createState() => _SecuritySettingsPageState();
 }
@@ -45,25 +47,25 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Security Settings'),
+        title: const Text('Security Settings'),
       ),
       body: Center(
         child: Container(
           width: contentWidth,
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: ListView(
             children: [
               ListTile(
-                title: Text('Change Password'),
-                subtitle: Text('Trigger a password reset email'),
+                title: const Text('Change Password'),
+                subtitle: const Text('Trigger a password reset email'),
                 trailing: IconButton(
-                  icon: Icon(Icons.email),
+                  icon: const Icon(Icons.email),
                   onPressed: _changePassword,
                 ),
               ),
-              Divider(),
+              const Divider(),
               ListTile(
-                title: Text('Two-Factor Authentication'),
+                title: const Text('Two-Factor Authentication'),
                 subtitle: Text(_isPremiumUser
                     ? 'Enabled with custom passcode'
                     : 'Upgrade to premium to enable'),
@@ -75,7 +77,7 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
               ),
               if (_isPremiumUser) ...[
                 ListTile(
-                  title: Text('Face ID'),
+                  title: const Text('Face ID'),
                   trailing: Radio(
                     value: AuthMethod.faceID,
                     groupValue: _selectedAuthMethod,
@@ -85,7 +87,7 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
                   ),
                 ),
                 ListTile(
-                  title: Text('Passcode'),
+                  title: const Text('Passcode'),
                   trailing: Radio(
                     value: AuthMethod.passcode,
                     groupValue: _selectedAuthMethod,

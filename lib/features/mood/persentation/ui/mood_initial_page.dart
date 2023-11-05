@@ -55,7 +55,7 @@ class _MoodInitialPageState extends State<MoodInitialPage> {
         }
         // Navigate to the second page without showing continue or skip buttons
         widget.controller.nextPage(
-          duration: Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
         );
       },

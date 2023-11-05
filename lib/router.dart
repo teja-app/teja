@@ -75,7 +75,7 @@ final GoRouter router = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       name: RootPath.home,
       path: '/home',
-      builder: (context, state) => HomePage(),
+      builder: (context, state) => const HomePage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
@@ -92,27 +92,27 @@ final GoRouter router = GoRouter(
           GoRoute(
             name: SettingPath.notification,
             path: 'notification',
-            builder: (context, state) => NotificationSettingsPage(),
+            builder: (context, state) => const NotificationSettingsPage(),
           ),
           GoRoute(
             name: SettingPath.perferences,
             path: 'perferences',
-            builder: (context, state) => PreferencesSettingsPage(),
+            builder: (context, state) => const PreferencesSettingsPage(),
           ),
           GoRoute(
             name: SettingPath.basic,
             path: 'basic',
-            builder: (context, state) => BasicSettingsPage(),
+            builder: (context, state) => const BasicSettingsPage(),
           ),
           GoRoute(
             name: SettingPath.security,
             path: 'security',
-            builder: (context, state) => SecuritySettingsPage(),
+            builder: (context, state) => const SecuritySettingsPage(),
           ),
           GoRoute(
             name: SettingPath.advanced,
             path: 'advanced',
-            builder: (context, state) => AdvancedSettingsPage(),
+            builder: (context, state) => const AdvancedSettingsPage(),
           ),
         ])
   ],

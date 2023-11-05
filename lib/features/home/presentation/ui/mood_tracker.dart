@@ -4,6 +4,8 @@ import 'package:swayam/features/home/presentation/ui/mood_icons_layout.dart';
 import 'package:swayam/shared/common/button.dart';
 
 class MoodTrackerWidget extends StatefulWidget {
+  const MoodTrackerWidget({super.key});
+
   @override
   _MoodTrackerWidgetState createState() => _MoodTrackerWidgetState();
 }
@@ -21,7 +23,7 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 400,
       height: 200,
       child: Stack(
@@ -34,7 +36,7 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
               ),
             ),
           AnimatedSwitcher(
-            duration: Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 300),
             child: _showMoods
                 ? MoodIconsLayout(
                     onMoodSelected: (int moodIndex) {
@@ -70,7 +72,7 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(
                     5,
-                    (index) => Icon(Icons.check, color: Colors.black, size: 20),
+                    (index) => const Icon(Icons.check, color: Colors.black, size: 20),
                   ),
                 ),
               ],

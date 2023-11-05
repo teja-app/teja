@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:icons_flutter/icons_flutter.dart';
 
 enum ButtonType { defaultButton, primary, secondary }
 
@@ -71,7 +70,7 @@ class Button extends StatelessWidget {
                   color: textColor,
                   size: 16,
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
               ],
               Text(
                 text,

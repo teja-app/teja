@@ -44,7 +44,7 @@ class SettingsPage extends StatelessWidget {
           title: const Text('Settings'),
         ),
         body: Center(
-          child: Container(
+          child: SizedBox(
             width: contentWidth, // Set the content width
             child: ListView(
               children: <Widget>[

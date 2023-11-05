@@ -2,9 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 class BasicSettingsPage extends StatefulWidget {
+  const BasicSettingsPage({super.key});
+
   @override
   _BasicSettingsPageState createState() => _BasicSettingsPageState();
 }
@@ -23,17 +24,18 @@ class _BasicSettingsPageState extends State<BasicSettingsPage> {
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
     );
-    if (picked != null && picked != _dateOfBirth)
+    if (picked != null && picked != _dateOfBirth) {
       setState(() {
         _dateOfBirth = picked;
       });
+    }
   }
 
   File? _profileImageFile;
 
   Future<void> _pickImage() async {
-    final ImagePicker _picker = ImagePicker();
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
       setState(() {
         _profileImageFile = File(image.path);
@@ -50,10 +52,10 @@ class _BasicSettingsPageState extends State<BasicSettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Personal Information'),
+        title: const Text('Personal Information'),
       ),
       body: Center(
-        child: Container(
+        child: SizedBox(
           width: contentWidth, // Set the content width
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -61,16 +63,16 @@ class _BasicSettingsPageState extends State<BasicSettingsPage> {
               children: <Widget>[
                 TextField(
                   controller: _nameController,
-                  decoration: InputDecoration(labelText: 'Full Name'),
+                  decoration: const InputDecoration(labelText: 'Full Name'),
                 ),
                 TextField(
                   controller: _emailController,
-                  decoration: InputDecoration(labelText: 'Email Address'),
+                  decoration: const InputDecoration(labelText: 'Email Address'),
                   keyboardType: TextInputType.emailAddress,
                 ),
                 TextField(
                   controller: _phoneController,
-                  decoration: InputDecoration(labelText: 'Phone Number'),
+                  decoration: const InputDecoration(labelText: 'Phone Number'),
                   keyboardType: TextInputType.phone,
                 ),
                 GestureDetector(
@@ -86,12 +88,12 @@ class _BasicSettingsPageState extends State<BasicSettingsPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 _profileImageFile != null
                     ? Image.file(_profileImageFile!)
                     : ElevatedButton(
                         onPressed: _pickImage,
-                        child: Text('Upload Profile Picture'),
+                        child: const Text('Upload Profile Picture'),
                       ),
               ],
             ),

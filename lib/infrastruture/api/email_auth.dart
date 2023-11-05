@@ -6,7 +6,7 @@ class EmailAuthApi {
 
   Future<Response> register(
       String username, String password, String name, String email) async {
-    final String url = '/auth/register'; // Use relative URL
+    const String url = '/auth/register'; // Use relative URL
     final Map<String, dynamic> data = {
       'username': username,
       'password': password,
@@ -19,7 +19,7 @@ class EmailAuthApi {
 
   Future<Response> signIn(
       String username, String password, String device) async {
-    final String url = '/auth/login'; // Use relative URL
+    const String url = '/auth/login'; // Use relative URL
     final Map<String, dynamic> data = {
       'username': username,
       'password': password,

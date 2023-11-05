@@ -7,6 +7,8 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:swayam/calendar_timeline/calendar_timeline.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -55,9 +57,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     DateTime today = DateTime.now();
-    DateTime yesterday = today.subtract(Duration(days: 1));
-    DateTime twoDaysAgo = today.subtract(Duration(days: 2));
-    DateTime threeDaysAgo = today.subtract(Duration(days: 3));
+    DateTime yesterday = today.subtract(const Duration(days: 1));
+    DateTime twoDaysAgo = today.subtract(const Duration(days: 2));
+    DateTime threeDaysAgo = today.subtract(const Duration(days: 3));
 
     List<DateTime> dateList = [threeDaysAgo, twoDaysAgo, yesterday, today];
 
@@ -92,7 +94,7 @@ class _HomePageState extends State<HomePage> {
               getGreetingMessage(),
               style: const TextStyle(fontSize: 24),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             if (showCalendar)
               Container(
                 constraints: const BoxConstraints(maxWidth: 400),
@@ -107,10 +109,11 @@ class _HomePageState extends State<HomePage> {
                         return Center(
                           child: Text(
                             text,
-                            style: TextStyle(color: Colors.red),
+                            style: const TextStyle(color: Colors.red),
                           ),
                         );
                       }
+                      return null;
                     },
                   ),
                   calendarStyle: const CalendarStyle(
@@ -146,8 +149,8 @@ class _HomePageState extends State<HomePage> {
               selectableDayPredicate: (date) => date.day != 23,
               locale: 'en_ISO',
             ),
-            SizedBox(height: 10),
-            MoodTrackerWidget()
+            const SizedBox(height: 10),
+            const MoodTrackerWidget()
           ],
         ),
       ),

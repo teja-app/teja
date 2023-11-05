@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class NotificationSettingsPage extends StatefulWidget {
+  const NotificationSettingsPage({super.key});
+
   @override
   _NotificationSettingsPageState createState() =>
       _NotificationSettingsPageState();
@@ -38,7 +40,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
         title: const Text('Notification Settings'),
       ),
       body: Center(
-        child: Container(
+        child: SizedBox(
           width: contentWidth, // Set the content width
           child: ListView(
             children: <Widget>[
@@ -148,7 +150,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
               children: [
                 Text(title,
                     style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                        const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 Text(subtitle),
               ],
             ),
@@ -161,7 +163,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
               ),
               ElevatedButton(
                 onPressed: () => _selectTime(context, time, onTimeSelected),
-                child: Text('${time.format(context)}'),
+                child: Text(time.format(context)),
               ),
             ],
           ),

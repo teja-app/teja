@@ -13,10 +13,8 @@ Future<void> handleApiRequest<T>({
   } catch (e) {
     String errorMessage;
     if (e is DioException) {
-      print("e.response?.data ${e.response?.data}");
       if (e.response!.statusCode! >= 400 && e.response!.statusCode! < 500) {
         var apiMessage = e.response?.data['message'];
-        print("apiMessage ${apiMessage}");
         if (apiMessage is List<dynamic>) {
           errorMessage = apiMessage.join(' ');
         } else if (apiMessage is String) {

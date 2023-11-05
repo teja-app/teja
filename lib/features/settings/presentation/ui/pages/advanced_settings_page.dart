@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AdvancedSettingsPage extends StatelessWidget {
+  const AdvancedSettingsPage({super.key});
+
   void _exportData(BuildContext context) {
     // Implement data export logic here
     ScaffoldMessenger.of(context).showSnackBar(
@@ -71,14 +73,14 @@ class AdvancedSettingsPage extends StatelessWidget {
   }
 
   void _reportStolenAccount(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Report Stolen Account'),
           content: Form(
-            key: _formKey,
+            key: formKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -121,6 +123,8 @@ class AdvancedSettingsPage extends StatelessWidget {
                   ),
                   maxLines: 3, // Allow multiple lines of input
                   validator: (value) {
+                    return null;
+                  
                     // Optionally validate other information
                   },
                 ),
@@ -137,7 +141,7 @@ class AdvancedSettingsPage extends StatelessWidget {
             TextButton(
               child: const Text('Submit'),
               onPressed: () {
-                if (_formKey.currentState!.validate()) {
+                if (formKey.currentState!.validate()) {
                   // Implement reporting logic here
                   // e.g., send the information to your server
                   Navigator.of(context).pop();
