@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:swayam/features/mood/persentation/ui/feelings.dart';
 import 'package:swayam/shared/common/button.dart';
@@ -77,6 +78,11 @@ class _FeelingScreenState extends State<FeelingScreen> {
     );
   }
 
+  // Return 'active' if the mood is selected, otherwise 'inactive'
+  String getMoodIconPath(int moodIndex) {
+    return 'assets/icons/mood_${moodIndex}_active.svg';
+  }
+
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, int>(
@@ -85,7 +91,7 @@ class _FeelingScreenState extends State<FeelingScreen> {
         onInit: (store) => _initializeFeelings(
             store.state.moodEditorState.currentMoodLog?.moodRating ?? 0),
         builder: (context, currentMood) {
-          print("currentMood ${currentMood}");
+          String moodIconPath = getMoodIconPath(currentMood);
           return SizedBox(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
@@ -96,12 +102,26 @@ class _FeelingScreenState extends State<FeelingScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        emotionTitle[currentMood] ?? 'Default Title',
-                        style: const TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          if (moodIconPath.isNotEmpty)
+                            SvgPicture.asset(
+                              moodIconPath,
+                              width: 32,
+                              height: 32,
+                            ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              emotionTitle[currentMood] ?? 'Default Title',
+                              style: const TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 20),
                       const Text(
