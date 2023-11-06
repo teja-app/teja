@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:redux/redux.dart';
+import 'package:swayam/domain/redux/app_state.dart';
+import 'package:swayam/domain/redux/mood/mood_editor_actions.dart';
 import 'package:swayam/presentation/home/ui/mood_icons_layout.dart';
 import 'package:swayam/shared/common/button.dart';
 
@@ -15,8 +19,25 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
   int? _selectedMoodIndex; // To track the selected mood
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Dispatch the action after the frame is rendered
+      // to avoid any build method side-effects
+      final Store<AppState> store = StoreProvider.of<AppState>(context);
+      store.dispatch(GetTodayMoodAction());
+    });
+  }
+
+  @override
   void reassemble() {
     super.reassemble();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Dispatch the action after the frame is rendered
+      // to avoid any build method side-effects
+      final Store<AppState> store = StoreProvider.of<AppState>(context);
+      store.dispatch(GetTodayMoodAction());
+    });
     _showMoods = false;
     _selectedMoodIndex = null;
   }

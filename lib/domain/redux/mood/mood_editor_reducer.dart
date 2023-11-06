@@ -1,16 +1,8 @@
-// Import the necessary packages and state
-import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
 import 'package:swayam/domain/entities/mood_log.dart';
 import 'package:swayam/domain/redux/app_state.dart';
+import 'package:swayam/domain/redux/mood/mood_editor_actions.dart';
 import 'package:uuid/uuid.dart';
-
-@immutable
-class SelectMoodAction {
-  final int moodRating;
-
-  const SelectMoodAction(this.moodRating);
-}
 
 AppState _selectMood(AppState state, SelectMoodAction action) {
   // Create a new MoodLog or use existing one with the updated mood rating
@@ -32,13 +24,6 @@ AppState _selectMood(AppState state, SelectMoodAction action) {
   );
 }
 
-@immutable
-class ChangePageAction {
-  final int pageIndex;
-
-  const ChangePageAction(this.pageIndex);
-}
-
 AppState _changePage(AppState state, ChangePageAction action) {
   // Return new state with updated page index
   return state.copyWith(
@@ -47,7 +32,6 @@ AppState _changePage(AppState state, ChangePageAction action) {
   );
 }
 
-// Combine the reducers for the mood editor
 final moodEditorReducer = <AppState Function(AppState, dynamic)>[
   TypedReducer<AppState, SelectMoodAction>(_selectMood),
   TypedReducer<AppState, ChangePageAction>(_changePage),

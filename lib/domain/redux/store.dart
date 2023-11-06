@@ -1,5 +1,6 @@
 // lib/shared/redux/store.dart
 import 'dart:io';
+import 'package:isar/isar.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:swayam/domain/redux/mood/mood_editor_reducer.dart';
@@ -27,7 +28,7 @@ Reducer<AppState> appReducer = combineReducers<AppState>([
   ...moodEditorReducer,
 ]);
 
-Future<Store<AppState>> createStore() async {
+Future<Store<AppState>> createStore(Isar isarInstance) async {
   const filePath = '.env.dev';
   final fileExists = await File(filePath).exists();
   print('File exists: $fileExists');
@@ -38,7 +39,8 @@ Future<Store<AppState>> createStore() async {
   final store = Store<AppState>(
     appReducer,
     initialState: AppState.initialState(),
-    middleware: createSagaMiddleware() + [LoggingMiddleware(), authMiddleware],
+    middleware: createSagaMiddleware(isarInstance) +
+        [LoggingMiddleware(), authMiddleware],
   );
 
   store.dispatch(

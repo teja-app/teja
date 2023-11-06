@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:isar/isar.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-
+import 'package:path_provider/path_provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:swayam/infrastructure/database/isar_collections/mood_log.dart';
+import 'package:swayam/infrastructure/database/isar_collections/mood_log_feeling.dart';
 
 import 'shared/helpers/logger.dart';
 
@@ -15,9 +18,11 @@ import 'package:swayam/app.dart';
 Future<void> main() async {
   await dotenv.load(fileName: '.env.dev');
   final String? sentryDsnUrl = dotenv.env['SENTRY_DSN_URL'];
+  // Initialize Isar
+  final Isar isarInstance = await openIsar();
 
   // Initialize the store here
-  final store = await createStore();
+  final store = await createStore(isarInstance);
 
   await SentryFlutter.init(
     (options) {
@@ -31,6 +36,17 @@ Future<void> main() async {
       runApp(MyApp(store: store));
     },
   );
+}
+
+Future<Isar> openIsar() async {
+  final directory = await getApplicationDocumentsDirectory();
+  final path = directory.path;
+  // Set up Isar and return the instance
+  final isar = await Isar.open(
+    [MoodLogSchema, MoodLogFeelingSchema],
+    directory: path,
+  );
+  return isar;
 }
 
 class MyApp extends StatelessWidget {

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:redux/redux.dart';
+import 'package:swayam/domain/redux/core_actions.dart';
 
 Future<void> handleApiRequest<T>({
   required Future<Response> Function() apiCall,
@@ -32,16 +33,4 @@ Future<void> handleApiRequest<T>({
     }
     store.dispatch(onFailure(errorMessage));
   }
-}
-
-abstract class Action {}
-
-class SuccessAction implements Action {
-  final String message;
-  SuccessAction(this.message);
-}
-
-class FailureAction implements Action {
-  final String error;
-  FailureAction(this.error);
 }

@@ -1,3 +1,4 @@
+// lib/infrastructure/models/mood_log_model.dart
 import 'package:json_annotation/json_annotation.dart';
 import 'package:swayam/domain/entities/mood_log.dart';
 import 'package:swayam/infrastructure/models/feeling_model.dart';
