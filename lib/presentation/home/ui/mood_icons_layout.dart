@@ -58,8 +58,8 @@ class _MoodIconsLayoutState extends State<MoodIconsLayout> {
                   },
                 ),
                 Button(
-                  text: "Skip",
-                  icon: AntDesign.close,
+                  text: "Done",
+                  icon: AntDesign.check,
                   buttonType: ButtonType.secondary,
                   onPressed: () {
                     // Define action for skip

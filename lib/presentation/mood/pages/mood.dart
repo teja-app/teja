@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:swayam/domain/redux/app_state.dart';
-import 'package:swayam/features/mood/persentation/ui/feelings.dart';
-import 'package:swayam/features/mood/persentation/ui/mood_initial_page.dart';
-import 'package:swayam/features/mood/persentation/ui/mood_feeling_page.dart';
+import 'package:swayam/presentation/mood/ui/mood_initial_page.dart';
+import 'package:swayam/presentation/mood/ui/mood_feeling_page.dart';
 
 class MoodPage extends StatefulWidget {
   const MoodPage({Key? key}) : super(key: key);

@@ -1,12 +1,16 @@
-import 'package:flutter_redux/flutter_redux.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
-import 'shared/helpers/logger.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:swayam/domain/redux/store.dart'; // Make sure to import this
-import 'package:swayam/app.dart';
 import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+
+import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+import 'shared/helpers/logger.dart';
+
 import 'package:swayam/domain/redux/app_state.dart';
+import 'package:swayam/domain/redux/store.dart'; // Make sure to import this
+
+import 'package:swayam/app.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: '.env.dev');

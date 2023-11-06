@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:swayam/features/home/presentation/ui/mood_icons_layout.dart';
+import 'package:swayam/presentation/home/ui/mood_icons_layout.dart';
 import 'package:swayam/shared/common/button.dart';
 
 class MoodTrackerWidget extends StatefulWidget {
@@ -72,7 +72,8 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(
                     5,
-                    (index) => const Icon(Icons.check, color: Colors.black, size: 20),
+                    (index) =>
+                        const Icon(Icons.check, color: Colors.black, size: 20),
                   ),
                 ),
               ],

@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:swayam/features/onboarding/data/models/slide_model.dart';
-import 'package:swayam/features/onboarding/presentation/ui/widgets/slide_item_widget.dart';
+import 'package:swayam/presentation/onboarding/widgets/slide_item_widget.dart';
 
 class SliderWidget extends StatefulWidget {
   const SliderWidget({super.key});

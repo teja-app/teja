@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:swayam/features/onboarding/data/models/slide_model.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+
+class Slide {
+  final String title;
+  final String image;
+
+  Slide({
+    required this.title,
+    required this.image,
+  })  : assert(title.isNotEmpty, 'Title cannot be empty'),
+        assert(image.isNotEmpty, 'Image path cannot be empty');
+}
 
 class SlideItemWidget extends StatelessWidget {
   final Slide slide;

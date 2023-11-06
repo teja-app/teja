@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
-import 'package:swayam/features/mood/persentation/ui/feelings.dart';
+import 'package:swayam/presentation/mood/ui/feelings.dart';
 import 'package:swayam/shared/common/button.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 
@@ -61,7 +61,7 @@ class _FeelingScreenState extends State<FeelingScreen> {
           initialChildSize: 0.5,
           onConfirm: (values) {
             setState(() {
-              _selectedFeelings = values as List<Emotion>;
+              _selectedFeelings = values;
 
               for (var emotion in _selectedFeelings) {
                 if (!_filteredFeelings.contains(emotion)) {
