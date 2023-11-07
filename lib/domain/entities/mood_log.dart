@@ -5,15 +5,15 @@ class MoodLog {
   final String id;
   final DateTime timestamp;
   final int moodRating;
-  final String comment;
+  String comment;
   final List<Feeling> feelings;
 
   MoodLog({
     required this.id,
     required this.timestamp,
     required this.moodRating,
-    required this.comment,
     required this.feelings,
+    required this.comment,
   });
 
   // CopyWith method for immutability

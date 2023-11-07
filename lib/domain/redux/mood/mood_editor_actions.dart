@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:swayam/domain/entities/mood_log.dart';
 import 'package:swayam/domain/redux/core_actions.dart';
 
 @immutable
@@ -25,3 +26,9 @@ class MoodUpdateFailedAction extends FailureAction {
 
 @immutable
 class GetTodayMoodAction {}
+
+@immutable
+class SetTodayMoodLogAction {
+  final MoodLog moodLog;
+  const SetTodayMoodLogAction(this.moodLog);
+}

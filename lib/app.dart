@@ -36,10 +36,13 @@ class _AppState extends State<App> {
         return MaterialApp.router(
           title: 'Swayam',
           theme: ThemeData(
+            cardColor: Colors.white,
+            cardTheme: const CardTheme(color: Colors.white),
             colorScheme: ColorScheme.fromSeed(
               seedColor: Colors.black,
               primary: Colors.white,
               secondary: Colors.black,
+              surface: Colors.white,
             ),
             useMaterial3: true,
           ),

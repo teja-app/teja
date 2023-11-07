@@ -55,7 +55,12 @@ class _MoodIconsLayoutState extends State<MoodIconsLayout> {
                   buttonType: ButtonType.primary,
                   icon: AntDesign.caretright,
                   onPressed: () {
-                    GoRouter.of(context).push('/mood');
+                    if (_selectedMoodIndex != null) {
+                      final store = StoreProvider.of<AppState>(context);
+                      store.dispatch(SelectMoodAction(_selectedMoodIndex!));
+                      store.dispatch(const ChangePageAction(1));
+                      GoRouter.of(context).push('/mood');
+                    }
                   },
                 ),
                 Button(
@@ -63,7 +68,11 @@ class _MoodIconsLayoutState extends State<MoodIconsLayout> {
                   icon: AntDesign.check,
                   buttonType: ButtonType.secondary,
                   onPressed: () {
-                    // Define action for skip
+                    if (_selectedMoodIndex != null) {
+                      final store = StoreProvider.of<AppState>(context);
+                      store.dispatch(SelectMoodAction(_selectedMoodIndex!));
+                      // Dispatch any other action if needed for 'Done' functionality
+                    }
                   },
                 ),
               ],
@@ -80,31 +89,22 @@ class _MoodIconsLayoutState extends State<MoodIconsLayout> {
   }
 
   Widget _buildMoodIcon(String svgPath, int moodIndex) {
-    return StoreConnector<AppState, Store<AppState>>(
-        converter: (store) => store,
-        builder: (context, store) {
-          return GestureDetector(
-            onTap: () {
-              store.dispatch(SelectMoodAction(moodIndex));
-              store.dispatch(const ChangePageAction(
-                1,
-              ));
-              setState(() {
-                _selectedMoodIndex = moodIndex; // Set the selected mood on tap
-              });
-            },
-            child: Opacity(
-              opacity: (_selectedMoodIndex == null ||
-                      _selectedMoodIndex == moodIndex)
-                  ? 1.0
-                  : 0.5, // Set transparency
-              child: SvgPicture.asset(
-                svgPath,
-                width: 40,
-                height: 40,
-              ),
-            ),
-          );
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedMoodIndex = moodIndex; // Set the selected mood on tap
         });
+      },
+      child: Opacity(
+        opacity: (_selectedMoodIndex == null || _selectedMoodIndex == moodIndex)
+            ? 1.0
+            : 0.5, // Set transparency
+        child: SvgPicture.asset(
+          svgPath,
+          width: 40,
+          height: 40,
+        ),
+      ),
+    );
   }
 }

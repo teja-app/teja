@@ -24,6 +24,13 @@ AppState _selectMood(AppState state, SelectMoodAction action) {
   );
 }
 
+AppState _setTodayMoodLog(AppState state, SetTodayMoodLogAction action) {
+  return state.copyWith(
+    moodEditorState:
+        state.moodEditorState.copyWith(todayMoodLog: action.moodLog),
+  );
+}
+
 AppState _changePage(AppState state, ChangePageAction action) {
   // Return new state with updated page index
   return state.copyWith(
@@ -35,4 +42,5 @@ AppState _changePage(AppState state, ChangePageAction action) {
 final moodEditorReducer = <AppState Function(AppState, dynamic)>[
   TypedReducer<AppState, SelectMoodAction>(_selectMood),
   TypedReducer<AppState, ChangePageAction>(_changePage),
+  TypedReducer<AppState, SetTodayMoodLogAction>(_setTodayMoodLog),
 ];

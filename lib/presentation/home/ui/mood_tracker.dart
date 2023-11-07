@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:redux/redux.dart';
+import 'package:swayam/domain/entities/mood_log.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 import 'package:swayam/domain/redux/mood/mood_editor_actions.dart';
+import 'package:swayam/domain/redux/mood/mood_editor_state.dart';
 import 'package:swayam/presentation/home/ui/mood_icons_layout.dart';
 import 'package:swayam/shared/common/button.dart';
 
@@ -44,6 +47,103 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
 
   @override
   Widget build(BuildContext context) {
+    return StoreConnector<AppState, MoodEditorState>(
+      converter: (store) => store.state.moodEditorState,
+      builder: (_, moodEditorState) {
+        if (moodEditorState.todayMoodLog != null) {
+          // If today's mood is already logged, display the mood log
+          return _todayMoodLayout(moodEditorState.todayMoodLog!);
+        } else {
+          // Otherwise, show the mood tracker
+          return _moodTrackerLayout(context);
+        }
+      },
+    );
+  }
+
+  Widget _todayMoodLayout(MoodLog moodLog) {
+    final svgPath = 'assets/icons/mood_${moodLog.moodRating}_active.svg';
+    final hasComments = moodLog.comment.isNotEmpty;
+    final tags = [];
+    final hasTags = tags.isNotEmpty;
+
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      const Padding(
+        padding: EdgeInsets.only(top: 10),
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: Text(
+            'Mood and Emotions',
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+      const SizedBox(height: 8),
+      Card(
+        color: Colors.white, // Sets the background color of the card to white
+        margin: const EdgeInsets.symmetric(
+          horizontal: 8,
+          vertical: 8,
+        ),
+        elevation: 0.5, // Adjusts the elevation for shadow effect
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 10.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  SvgPicture.asset(
+                    svgPath,
+                    width: 24,
+                    height: 24,
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'Mood Entry',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const Spacer(), // Pushes the timestamp to the right
+                  Text(
+                    DateFormat('hh:mm a').format(moodLog
+                        .timestamp), // Formats the timestamp to show time only
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                ],
+              ),
+              if (hasComments || hasTags) const SizedBox(height: 8),
+              if (hasComments)
+                Text(
+                  moodLog.comment!,
+                  style: const TextStyle(color: Colors.black),
+                ),
+              if (hasTags) const SizedBox(height: 16),
+              if (hasTags)
+                Wrap(
+                  spacing: 8,
+                  children: tags
+                      .map((tag) => Chip(
+                            label: Text(tag),
+                            backgroundColor: Colors.grey[200],
+                          ))
+                      .toList(),
+                ),
+            ],
+          ),
+        ),
+      )
+    ]);
+  }
+
+  @override
+  Widget _moodTrackerLayout(BuildContext context) {
     return SizedBox(
       width: 400,
       height: 200,

@@ -61,6 +61,7 @@ class MoodLogRepository {
         .timestampBetween(startOfDay, endOfDay)
         .findAll();
 
+    print("moodLogs:count ${moodLogs.length}");
     print("getTodaysMoodLog::moodLogs ${moodLogs.first.moodRating}");
     // Assuming you only record one mood per day, you can take the first result.
     return moodLogs.isNotEmpty ? moodLogs.first : null;
