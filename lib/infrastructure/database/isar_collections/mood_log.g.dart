@@ -22,23 +22,29 @@ const MoodLogSchema = CollectionSchema(
       name: r'comment',
       type: IsarType.string,
     ),
-    r'id': PropertySchema(
+    r'feelings': PropertySchema(
       id: 1,
+      name: r'feelings',
+      type: IsarType.objectList,
+      target: r'MoodLogFeeling',
+    ),
+    r'id': PropertySchema(
+      id: 2,
       name: r'id',
       type: IsarType.string,
     ),
     r'moodRating': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'moodRating',
       type: IsarType.long,
     ),
     r'senderId': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'senderId',
       type: IsarType.string,
     ),
     r'timestamp': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'timestamp',
       type: IsarType.dateTime,
     )
@@ -63,15 +69,8 @@ const MoodLogSchema = CollectionSchema(
       ],
     )
   },
-  links: {
-    r'feelings': LinkSchema(
-      id: 2735992556944957362,
-      name: r'feelings',
-      target: r'MoodLogFeeling',
-      single: false,
-    )
-  },
-  embeddedSchemas: {},
+  links: {},
+  embeddedSchemas: {r'MoodLogFeeling': MoodLogFeelingSchema},
   getId: _moodLogGetId,
   getLinks: _moodLogGetLinks,
   attach: _moodLogAttach,
@@ -88,6 +87,20 @@ int _moodLogEstimateSize(
     final value = object.comment;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final list = object.feelings;
+    if (list != null) {
+      bytesCount += 3 + list.length * 3;
+      {
+        final offsets = allOffsets[MoodLogFeeling]!;
+        for (var i = 0; i < list.length; i++) {
+          final value = list[i];
+          bytesCount +=
+              MoodLogFeelingSchema.estimateSize(value, offsets, allOffsets);
+        }
+      }
     }
   }
   bytesCount += 3 + object.id.length * 3;
@@ -107,10 +120,16 @@ void _moodLogSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.comment);
-  writer.writeString(offsets[1], object.id);
-  writer.writeLong(offsets[2], object.moodRating);
-  writer.writeString(offsets[3], object.senderId);
-  writer.writeDateTime(offsets[4], object.timestamp);
+  writer.writeObjectList<MoodLogFeeling>(
+    offsets[1],
+    allOffsets,
+    MoodLogFeelingSchema.serialize,
+    object.feelings,
+  );
+  writer.writeString(offsets[2], object.id);
+  writer.writeLong(offsets[3], object.moodRating);
+  writer.writeString(offsets[4], object.senderId);
+  writer.writeDateTime(offsets[5], object.timestamp);
 }
 
 MoodLog _moodLogDeserialize(
@@ -121,11 +140,17 @@ MoodLog _moodLogDeserialize(
 ) {
   final object = MoodLog();
   object.comment = reader.readStringOrNull(offsets[0]);
-  object.id = reader.readString(offsets[1]);
+  object.feelings = reader.readObjectList<MoodLogFeeling>(
+    offsets[1],
+    MoodLogFeelingSchema.deserialize,
+    allOffsets,
+    MoodLogFeeling(),
+  );
+  object.id = reader.readString(offsets[2]);
   object.isarId = id;
-  object.moodRating = reader.readLong(offsets[2]);
-  object.senderId = reader.readStringOrNull(offsets[3]);
-  object.timestamp = reader.readDateTime(offsets[4]);
+  object.moodRating = reader.readLong(offsets[3]);
+  object.senderId = reader.readStringOrNull(offsets[4]);
+  object.timestamp = reader.readDateTime(offsets[5]);
   return object;
 }
 
@@ -139,12 +164,19 @@ P _moodLogDeserializeProp<P>(
     case 0:
       return (reader.readStringOrNull(offset)) as P;
     case 1:
-      return (reader.readString(offset)) as P;
+      return (reader.readObjectList<MoodLogFeeling>(
+        offset,
+        MoodLogFeelingSchema.deserialize,
+        allOffsets,
+        MoodLogFeeling(),
+      )) as P;
     case 2:
-      return (reader.readLong(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 3:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 4:
+      return (reader.readStringOrNull(offset)) as P;
+    case 5:
       return (reader.readDateTime(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -156,13 +188,11 @@ Id _moodLogGetId(MoodLog object) {
 }
 
 List<IsarLinkBase<dynamic>> _moodLogGetLinks(MoodLog object) {
-  return [object.feelings];
+  return [];
 }
 
 void _moodLogAttach(IsarCollection<dynamic> col, Id id, MoodLog object) {
   object.isarId = id;
-  object.feelings
-      .attach(col, col.isar.collection<MoodLogFeeling>(), r'feelings', id);
 }
 
 extension MoodLogByIndex on IsarCollection<MoodLog> {
@@ -483,6 +513,107 @@ extension MoodLogQueryFilter
         property: r'comment',
         value: '',
       ));
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> feelingsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'feelings',
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> feelingsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'feelings',
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> feelingsLengthEqualTo(
+      int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'feelings',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> feelingsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'feelings',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> feelingsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'feelings',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> feelingsLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'feelings',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition>
+      feelingsLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'feelings',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> feelingsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'feelings',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
     });
   }
 
@@ -922,67 +1053,17 @@ extension MoodLogQueryFilter
 }
 
 extension MoodLogQueryObject
-    on QueryBuilder<MoodLog, MoodLog, QFilterCondition> {}
-
-extension MoodLogQueryLinks
     on QueryBuilder<MoodLog, MoodLog, QFilterCondition> {
-  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> feelings(
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> feelingsElement(
       FilterQuery<MoodLogFeeling> q) {
     return QueryBuilder.apply(this, (query) {
-      return query.link(q, r'feelings');
-    });
-  }
-
-  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> feelingsLengthEqualTo(
-      int length) {
-    return QueryBuilder.apply(this, (query) {
-      return query.linkLength(r'feelings', length, true, length, true);
-    });
-  }
-
-  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> feelingsIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.linkLength(r'feelings', 0, true, 0, true);
-    });
-  }
-
-  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> feelingsIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.linkLength(r'feelings', 0, false, 999999, true);
-    });
-  }
-
-  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> feelingsLengthLessThan(
-    int length, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.linkLength(r'feelings', 0, true, length, include);
-    });
-  }
-
-  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition>
-      feelingsLengthGreaterThan(
-    int length, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.linkLength(r'feelings', length, include, 999999, true);
-    });
-  }
-
-  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> feelingsLengthBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.linkLength(
-          r'feelings', lower, includeLower, upper, includeUpper);
+      return query.object(q, r'feelings');
     });
   }
 }
+
+extension MoodLogQueryLinks
+    on QueryBuilder<MoodLog, MoodLog, QFilterCondition> {}
 
 extension MoodLogQuerySortBy on QueryBuilder<MoodLog, MoodLog, QSortBy> {
   QueryBuilder<MoodLog, MoodLog, QAfterSortBy> sortByComment() {
@@ -1171,6 +1252,13 @@ extension MoodLogQueryProperty
     });
   }
 
+  QueryBuilder<MoodLog, List<MoodLogFeeling>?, QQueryOperations>
+      feelingsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'feelings');
+    });
+  }
+
   QueryBuilder<MoodLog, String, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
@@ -1195,3 +1283,668 @@ extension MoodLogQueryProperty
     });
   }
 }
+
+// **************************************************************************
+// IsarEmbeddedGenerator
+// **************************************************************************
+
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+
+const MoodLogFeelingSchema = Schema(
+  name: r'MoodLogFeeling',
+  id: 5708324340206962655,
+  properties: {
+    r'comment': PropertySchema(
+      id: 0,
+      name: r'comment',
+      type: IsarType.string,
+    ),
+    r'factors': PropertySchema(
+      id: 1,
+      name: r'factors',
+      type: IsarType.stringList,
+    ),
+    r'feeling': PropertySchema(
+      id: 2,
+      name: r'feeling',
+      type: IsarType.string,
+    )
+  },
+  estimateSize: _moodLogFeelingEstimateSize,
+  serialize: _moodLogFeelingSerialize,
+  deserialize: _moodLogFeelingDeserialize,
+  deserializeProp: _moodLogFeelingDeserializeProp,
+);
+
+int _moodLogFeelingEstimateSize(
+  MoodLogFeeling object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  {
+    final value = object.comment;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final list = object.factors;
+    if (list != null) {
+      bytesCount += 3 + list.length * 3;
+      {
+        for (var i = 0; i < list.length; i++) {
+          final value = list[i];
+          bytesCount += value.length * 3;
+        }
+      }
+    }
+  }
+  {
+    final value = object.feeling;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  return bytesCount;
+}
+
+void _moodLogFeelingSerialize(
+  MoodLogFeeling object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeString(offsets[0], object.comment);
+  writer.writeStringList(offsets[1], object.factors);
+  writer.writeString(offsets[2], object.feeling);
+}
+
+MoodLogFeeling _moodLogFeelingDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  final object = MoodLogFeeling();
+  object.comment = reader.readStringOrNull(offsets[0]);
+  object.factors = reader.readStringList(offsets[1]);
+  object.feeling = reader.readStringOrNull(offsets[2]);
+  return object;
+}
+
+P _moodLogFeelingDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
+    case 0:
+      return (reader.readStringOrNull(offset)) as P;
+    case 1:
+      return (reader.readStringList(offset)) as P;
+    case 2:
+      return (reader.readStringOrNull(offset)) as P;
+    default:
+      throw IsarError('Unknown property with id $propertyId');
+  }
+}
+
+extension MoodLogFeelingQueryFilter
+    on QueryBuilder<MoodLogFeeling, MoodLogFeeling, QFilterCondition> {
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      commentIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'comment',
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      commentIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'comment',
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      commentEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'comment',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      commentGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'comment',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      commentLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'comment',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      commentBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'comment',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      commentStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'comment',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      commentEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'comment',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      commentContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'comment',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      commentMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'comment',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      commentIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'comment',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      commentIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'comment',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      factorsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'factors',
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      factorsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'factors',
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      factorsElementEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'factors',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      factorsElementGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'factors',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      factorsElementLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'factors',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      factorsElementBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'factors',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      factorsElementStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'factors',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      factorsElementEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'factors',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      factorsElementContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'factors',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      factorsElementMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'factors',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      factorsElementIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'factors',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      factorsElementIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'factors',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      factorsLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'factors',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      factorsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'factors',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      factorsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'factors',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      factorsLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'factors',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      factorsLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'factors',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      factorsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'factors',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      feelingIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'feeling',
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      feelingIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'feeling',
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      feelingEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'feeling',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      feelingGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'feeling',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      feelingLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'feeling',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      feelingBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'feeling',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      feelingStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'feeling',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      feelingEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'feeling',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      feelingContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'feeling',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      feelingMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'feeling',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      feelingIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'feeling',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogFeeling, MoodLogFeeling, QAfterFilterCondition>
+      feelingIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'feeling',
+        value: '',
+      ));
+    });
+  }
+}
+
+extension MoodLogFeelingQueryObject
+    on QueryBuilder<MoodLogFeeling, MoodLogFeeling, QFilterCondition> {}

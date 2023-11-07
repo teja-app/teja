@@ -1,7 +1,7 @@
 import 'package:redux/redux.dart';
 import 'package:swayam/domain/entities/mood_log.dart';
 import 'package:swayam/domain/redux/app_state.dart';
-import 'package:swayam/domain/redux/mood/mood_editor_actions.dart';
+import 'package:swayam/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:uuid/uuid.dart';
 
 AppState _selectMood(AppState state, SelectMoodAction action) {

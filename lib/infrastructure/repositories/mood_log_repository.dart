@@ -1,16 +1,14 @@
 // lib/infrastructure/repositories/mood_log_repository.dart
 import 'package:isar/isar.dart';
 import 'package:swayam/infrastructure/database/isar_collections/mood_log.dart';
-import 'package:swayam/infrastructure/database/isar_collections/mood_log_feeling.dart';
 
 class MoodLogRepository {
   final Isar isar;
 
   MoodLogRepository(this.isar);
 
-  Future<MoodLog?> getMoodLogById(int id) async {
-    // Directly use the isarId to find the mood log.
-    return isar.moodLogs.get(id);
+  Future<MoodLog?> getMoodLogById(String? id) async {
+    return isar.moodLogs.getById(id!);
   }
 
   Future<List<MoodLog>> getAllMoodLogs() async {
@@ -30,27 +28,19 @@ class MoodLogRepository {
     });
   }
 
-  Future<void> getFeelingsForMoodLog(int moodLogId) async {
-    final moodLog = await getMoodLogById(moodLogId);
+  Future<void> updateFeelingsForMoodLog(
+    String moodLogId,
+    List<MoodLogFeeling> updatedFeelings,
+  ) async {
+    final MoodLog? moodLog = await getMoodLogById(moodLogId);
     if (moodLog != null) {
-      // Load and return the feelings associated with the mood log.
-      return moodLog.feelings.load();
-    }
-  }
-
-  Future<void> addFeelingToMoodLog(
-      int moodLogId, MoodLogFeeling feeling) async {
-    final moodLog = await getMoodLogById(moodLogId);
-    if (moodLog != null) {
-      // Assuming moodLogFeelings is a link set to the feelings, add a new feeling to it.
-      await isar.writeTxn(() async {
-        moodLog.feelings.add(feeling);
-      });
+      moodLog.feelings = updatedFeelings
+          .cast<MoodLogFeeling>(); // Update the embedded feelings
+      await addOrUpdateMoodLog(moodLog); // Save the updated mood log
     }
   }
 
   Future<MoodLog?> getTodaysMoodLog() async {
-    print("getTodaysMoodLog::Called");
     final DateTime now = DateTime.now();
     final DateTime startOfDay = DateTime(now.year, now.month, now.day);
     final DateTime endOfDay =
@@ -61,9 +51,6 @@ class MoodLogRepository {
         .timestampBetween(startOfDay, endOfDay)
         .findAll();
 
-    print("moodLogs:count ${moodLogs.length}");
-    print("getTodaysMoodLog::moodLogs ${moodLogs.first.moodRating}");
-    // Assuming you only record one mood per day, you can take the first result.
     return moodLogs.isNotEmpty ? moodLogs.first : null;
   }
 }

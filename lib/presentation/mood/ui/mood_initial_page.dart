@@ -3,7 +3,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:redux/redux.dart';
 import 'package:swayam/domain/redux/app_state.dart';
-import 'package:swayam/domain/redux/mood/mood_editor_actions.dart';
+import 'package:swayam/domain/redux/mood/editor/mood_editor_actions.dart';
 
 // This is the standalone MoodIconsLayout widget.
 class MoodInitialPage extends StatefulWidget {

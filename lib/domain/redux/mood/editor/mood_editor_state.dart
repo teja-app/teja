@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:swayam/domain/entities/mood_log.dart';
-// lib/domain/redux/mood/mood_editor_state.dart
 
 @immutable
 class MoodEditorState {

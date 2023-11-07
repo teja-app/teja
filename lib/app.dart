@@ -35,9 +35,13 @@ class _AppState extends State<App> {
         logger.i("accessTokenExpiry: ${authState.accessTokenExpiry}");
         return MaterialApp.router(
           title: 'Swayam',
+          debugShowCheckedModeBanner: false,
           theme: ThemeData(
             cardColor: Colors.white,
             cardTheme: const CardTheme(color: Colors.white),
+            popupMenuTheme: const PopupMenuThemeData(
+              color: Colors.white, // Set your desired color here
+            ),
             colorScheme: ColorScheme.fromSeed(
               seedColor: Colors.black,
               primary: Colors.white,

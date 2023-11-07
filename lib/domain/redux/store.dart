@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:isar/isar.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:swayam/domain/redux/mood/mood_editor_reducer.dart';
+import 'package:swayam/domain/redux/mood/detail/mood_detail_reducer.dart';
+import 'package:swayam/domain/redux/mood/editor/mood_editor_reducer.dart';
 
 import 'package:swayam/domain/redux/root_saga.dart';
 import 'package:swayam/router.dart';
@@ -26,6 +27,7 @@ void authMiddleware(
 Reducer<AppState> appReducer = combineReducers<AppState>([
   ...authReducer,
   ...moodEditorReducer,
+  ...moodDetailReducer,
 ]);
 
 Future<Store<AppState>> createStore(Isar isarInstance) async {

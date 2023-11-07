@@ -6,7 +6,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:swayam/infrastructure/database/isar_collections/mood_log.dart';
-import 'package:swayam/infrastructure/database/isar_collections/mood_log_feeling.dart';
 
 import 'shared/helpers/logger.dart';
 
@@ -43,7 +42,7 @@ Future<Isar> openIsar() async {
   final path = directory.path;
   // Set up Isar and return the instance
   final isar = await Isar.open(
-    [MoodLogSchema, MoodLogFeelingSchema],
+    [MoodLogSchema],
     directory: path,
   );
   return isar;

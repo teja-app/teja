@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:swayam/presentation/home/ui/mood_tracker.dart';
+import 'package:swayam/presentation/home/ui/mood/mood_tracker.dart';
 import 'package:swayam/router.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:swayam/calendar_timeline/calendar_timeline.dart';

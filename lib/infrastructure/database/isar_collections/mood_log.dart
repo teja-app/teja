@@ -1,10 +1,15 @@
 // lib/infrastructure/database/isar_collections/mood_log.dart
-
 import 'package:isar/isar.dart';
-import 'package:swayam/infrastructure/database/isar_collections/mood_log_feeling.dart';
 import 'package:swayam/infrastructure/utils/helpers.dart';
 
 part 'mood_log.g.dart';
+
+@Embedded()
+class MoodLogFeeling {
+  String? feeling;
+  String? comment;
+  List<String>? factors;
+}
 
 @Collection()
 class MoodLog {
@@ -18,5 +23,5 @@ class MoodLog {
   String? comment;
   String? senderId;
 
-  final feelings = IsarLinks<MoodLogFeeling>();
+  List<MoodLogFeeling>? feelings;
 }

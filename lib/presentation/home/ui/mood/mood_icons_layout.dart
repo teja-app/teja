@@ -1,10 +1,10 @@
+// lib/presentation/home/ui/mood/mood_icons_layout.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:redux/redux.dart';
 import 'package:swayam/domain/redux/app_state.dart';
-import 'package:swayam/domain/redux/mood/mood_editor_actions.dart';
-import 'package:swayam/domain/redux/mood/mood_editor_reducer.dart';
+import 'package:swayam/domain/redux/mood/editor/mood_editor_actions.dart';
+import 'package:swayam/router.dart';
 import 'package:swayam/shared/common/button.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_flutter/icons_flutter.dart';
@@ -59,7 +59,7 @@ class _MoodIconsLayoutState extends State<MoodIconsLayout> {
                       final store = StoreProvider.of<AppState>(context);
                       store.dispatch(SelectMoodAction(_selectedMoodIndex!));
                       store.dispatch(const ChangePageAction(1));
-                      GoRouter.of(context).push('/mood');
+                      GoRouter.of(context).pushNamed(RootPath.moodEdit);
                     }
                   },
                 ),

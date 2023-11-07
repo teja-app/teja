@@ -1,7 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swayam/presentation/home/pages/home_page.dart';
-import 'package:swayam/presentation/mood/pages/mood.dart';
+import 'package:swayam/presentation/mood/pages/mood_detail.dart';
+import 'package:swayam/presentation/mood/pages/mood_edit.dart';
 import 'package:swayam/presentation/onboarding/pages/onboarding_page.dart';
 import 'package:swayam/presentation/onboarding/pages/sign_in_page.dart';
 import 'package:swayam/presentation/onboarding/pages/sign_up_page.dart';
@@ -41,7 +42,8 @@ class RootPath {
   static const signIn = "signIn";
   static const home = "home";
   static const settings = "settings";
-  static const mood = "mood";
+  static const moodEdit = "mood_edit";
+  static const moodDetail = "mood_detail";
 }
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -79,9 +81,19 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
-      name: RootPath.mood,
-      path: '/mood',
-      builder: (context, state) => const MoodPage(),
+      name: RootPath.moodEdit,
+      path: '/mood_edit',
+      builder: (context, state) => const MoodEditPage(),
+    ),
+    GoRoute(
+      // Add this block for mood detail page
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RootPath.moodDetail,
+      path: '/mood_detail',
+      builder: (context, state) {
+        final String? moodIdStr = state.uri.queryParameters['id'];
+        return MoodDetailPage(moodId: moodIdStr!);
+      },
     ),
     GoRoute(
         parentNavigatorKey: _rootNavigatorKey,

@@ -5,14 +5,14 @@ import 'package:swayam/domain/redux/app_state.dart';
 import 'package:swayam/presentation/mood/ui/mood_initial_page.dart';
 import 'package:swayam/presentation/mood/ui/mood_feeling_page.dart';
 
-class MoodPage extends StatefulWidget {
-  const MoodPage({Key? key}) : super(key: key);
+class MoodEditPage extends StatefulWidget {
+  const MoodEditPage({Key? key}) : super(key: key);
 
   @override
-  _MoodPageState createState() => _MoodPageState();
+  _MoodEditPageState createState() => _MoodEditPageState();
 }
 
-class _MoodPageState extends State<MoodPage> {
+class _MoodEditPageState extends State<MoodEditPage> {
   late final PageController _controller;
 
   @override
