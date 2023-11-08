@@ -21,10 +21,10 @@ class MoodLogRepository {
     });
   }
 
-  Future<void> deleteMoodLogById(int id) async {
+  Future<void> deleteMoodLogById(String? id) async {
     // Use the isarId to delete the mood log.
     await isar.writeTxn(() async {
-      await isar.moodLogs.delete(id);
+      await isar.moodLogs.deleteById(id!);
     });
   }
 

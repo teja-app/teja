@@ -18,3 +18,20 @@ class LoadMoodDetailFailureAction {
   final String errorMessage;
   const LoadMoodDetailFailureAction(this.errorMessage);
 }
+
+@immutable
+class DeleteMoodDetailAction {
+  final String moodId;
+  const DeleteMoodDetailAction(this.moodId);
+}
+
+@immutable
+class DeleteMoodDetailSuccessAction {
+  const DeleteMoodDetailSuccessAction();
+}
+
+@immutable
+class DeleteMoodDetailFailureAction {
+  final String errorMessage;
+  const DeleteMoodDetailFailureAction(this.errorMessage);
+}

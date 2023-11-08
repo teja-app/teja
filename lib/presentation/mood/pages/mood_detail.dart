@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:go_router/go_router.dart';
 import 'package:icons_flutter/icons_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:redux/redux.dart';
@@ -24,103 +25,148 @@ class _MoodDetailPageState extends State<MoodDetailPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Access the store using 'StoreProvider.of<AppState>(context)'
       Store<AppState> store = StoreProvider.of<AppState>(context);
-      // Dispatch the action
-      store.dispatch(LoadMoodDetailAction(widget.moodId));
+
+      if (store.state.moodDetailPage.selectedMoodLog == null &&
+          store.state.moodDetailPage.errorMessage == null) {
+        store.dispatch(LoadMoodDetailAction(widget.moodId));
+      }
     });
   }
 
+  void _showErrorSnackbar(BuildContext context, String? errorMessage) {
+    if (errorMessage != null && errorMessage.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage)),
+      );
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext pageContext) {
     return StoreConnector<AppState, MoodDetailState>(
       converter: (store) => store.state.moodDetailPage,
+      onInitialBuild: (moodDetailPage) {
+        if (moodDetailPage.errorMessage != null) {
+          _showErrorSnackbar(pageContext, moodDetailPage.errorMessage);
+        }
+      },
       builder: (_, moodDetailPage) {
+        Widget bodyContent = const Center(child: CircularProgressIndicator());
         if (moodDetailPage.selectedMoodLog != null) {
-          return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.white,
-              elevation: 0, // Remove shadow
-              iconTheme: const IconThemeData(color: Colors.black),
-              actions: [
-                PopupMenuButton<int>(
-                  key: const Key("mood_settings"),
-                  icon: const Icon(
-                    AntDesign.ellipsis1,
-                    color: Colors.black,
-                    size: 16,
+          bodyContent = Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  DateFormat(
+                    'dd-MMM-yyyy, h:mm a',
+                  ).format(
+                    moodDetailPage.selectedMoodLog!.timestamp,
                   ),
-                  onSelected: (int result) {
-                    if (result == 0) {
-                      // Logic for Edit action
-                    } else if (result == 1) {
-// Logic for Delete action
-                    }
-                  },
-                  itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-                    const PopupMenuItem<int>(
-                      value: 0,
-                      child: Text('Edit'),
-                    ),
-                    const PopupMenuItem<int>(
-                      value: 1,
-                      child: Text('Delete'),
-                    ),
-                  ],
-                )
+                  style: const TextStyle(
+                    color: Colors.black54,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(
+                  height: 24,
+                ),
+                const Text(
+                  'mood entry',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 34,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(
+                  height: 48,
+                ),
+                const Text(
+                  'Mood',
+                  style: TextStyle(color: Colors.grey, fontSize: 22),
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                Text(
+                  '${moodDetailPage.selectedMoodLog?.moodRating}/5',
+                  style: const TextStyle(color: Colors.black, fontSize: 24),
+                ),
               ],
             ),
-            backgroundColor:
-                Colors.white, // Assuming a dark theme from the design
-            body: Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 24.0), // Adding padding to match design
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment:
-                    CrossAxisAlignment.start, // Align text to the left
-                children: <Widget>[
-                  Text(
-                    DateFormat(
-                            'dd-MMM-yyyy, h:mm a') // Format date as in design
-                        .format(moodDetailPage.selectedMoodLog!
-                            .timestamp), // Replace with actual date from moodLog if necessary
-                    style: const TextStyle(color: Colors.black54, fontSize: 16),
-                  ),
-                  const SizedBox(height: 24), // Space between date and title
-                  const Text(
-                    'mood entry',
-                    style: TextStyle(
-                      color: Colors.black, // Assuming a light text color
-                      fontSize: 34,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(
-                      height: 48), // Space between title and mood rating
-                  const Text(
-                    'Mood',
-                    style: TextStyle(color: Colors.grey, fontSize: 22),
-                  ),
-                  const SizedBox(
-                      height: 8), // Space between 'Mood' label and rating
-                  Text(
-                    '${moodDetailPage.selectedMoodLog?.moodRating}/5',
-                    style: const TextStyle(color: Colors.black, fontSize: 24),
-                  ),
-                  // Additional mood details here
-                ],
-              ),
-            ),
           );
-        } else {
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('Mood Details'),
-            ),
-            // You might want to style this page as well to keep consistency
+        } else if (moodDetailPage.errorMessage != null) {
+          bodyContent = Center(
+            child: Text(moodDetailPage.errorMessage ?? 'Something went wrong!'),
           );
         }
+        return Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            iconTheme: const IconThemeData(color: Colors.black),
+            actions: [
+              PopupMenuButton<int>(
+                key: const Key("mood_settings"),
+                icon: const Icon(
+                  AntDesign.ellipsis1,
+                  color: Colors.black,
+                  size: 16,
+                ),
+                onSelected: (int result) {
+                  if (result == 0) {
+                  } else if (result == 1) {
+                    showDialog(
+                      context: pageContext,
+                      builder: (BuildContext dialogContext) {
+                        return AlertDialog(
+                          title: const Text('Confirm Delete'),
+                          content: const Text(
+                            'Are you sure you want to delete this entry?',
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              child: const Text('Cancel'),
+                              onPressed: () {
+                                Navigator.of(dialogContext).pop();
+                              },
+                            ),
+                            TextButton(
+                              child: const Text('Delete'),
+                              onPressed: () {
+                                StoreProvider.of<AppState>(dialogContext)
+                                    .dispatch(
+                                        DeleteMoodDetailAction(widget.moodId));
+                                Navigator.of(dialogContext).pop();
+                                GoRouter.of(pageContext).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                },
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+                  const PopupMenuItem<int>(
+                    value: 0,
+                    child: Text('Edit'),
+                  ),
+                  const PopupMenuItem<int>(
+                    value: 1,
+                    child: Text('Delete'),
+                  ),
+                ],
+              )
+            ],
+          ),
+          backgroundColor: Colors.white,
+          body: bodyContent,
+        );
       },
     );
   }

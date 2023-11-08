@@ -3,6 +3,7 @@ import 'package:isar/isar.dart';
 import 'package:redux/redux.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 import 'package:swayam/domain/redux/mood/detail/mood_detail_actions.dart';
+import 'package:swayam/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:swayam/infrastructure/repositories/mood_log_repository.dart';
 import 'package:swayam/domain/entities/mood_log.dart' as mood_log_entity;
 
@@ -15,6 +16,8 @@ class MoodDetailSaga {
   void saga(Store<AppState> store, dynamic action) {
     if (action is LoadMoodDetailAction) {
       _loadMoodDetail(action, store);
+    } else if (action is DeleteMoodDetailAction) {
+      _deleteMoodDetail(action, store);
     }
   }
 
@@ -38,11 +41,26 @@ class MoodDetailSaga {
         )));
       } else {
         // If no mood log was found, dispatch an appropriate action or error.
-        store.dispatch(LoadMoodDetailFailureAction('No mood log found.'));
+        store.dispatch(const LoadMoodDetailFailureAction('No mood log found.'));
       }
     } catch (e) {
       // In case of an error, dispatch a failure action with the error message.
       store.dispatch(LoadMoodDetailFailureAction(e.toString()));
+    }
+  }
+
+  void _deleteMoodDetail(
+      DeleteMoodDetailAction action, Store<AppState> store) async {
+    try {
+      // Delete the mood log from the repository.
+      await moodLogRepository.deleteMoodLogById(action.moodId);
+      // Dispatch a success action.
+      store.dispatch(const DeleteMoodDetailSuccessAction());
+      store.dispatch(GetTodayMoodAction());
+    } catch (e) {
+      // In case of an error, dispatch a failure action.
+      store.dispatch(DeleteMoodDetailFailureAction(e.toString()));
+      store.dispatch(GetTodayMoodAction());
     }
   }
 }

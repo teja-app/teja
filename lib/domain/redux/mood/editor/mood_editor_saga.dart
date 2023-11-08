@@ -17,7 +17,7 @@ class MoodEditorSaga {
     if (action is SelectMoodAction) {
       _handleSelectMoodAction(action, store);
     } else if (action is GetTodayMoodAction) {
-      _getCurrentMood(action, store);
+      _getTodayMood(action, store);
     }
   }
 
@@ -39,14 +39,11 @@ class MoodEditorSaga {
     });
   }
 
-  void _getCurrentMood(GetTodayMoodAction action, Store<AppState> store) async {
+  void _getTodayMood(GetTodayMoodAction action, Store<AppState> store) async {
     try {
-      // Await the future to get the actual MoodLog object.
       final MoodLog? moodLog = await moodLogRepository.getTodaysMoodLog();
 
       if (moodLog != null) {
-        // Use the moodLog as needed if it is not null.
-        print("moodLog ${moodLog.moodRating} ${moodLog.id} ${moodLog.isarId}");
         store.dispatch(
           SetTodayMoodLogAction(
             mood_log_entity.MoodLog(
@@ -59,9 +56,7 @@ class MoodEditorSaga {
           ),
         );
       } else {
-        // Handle the case where no moodLog was found for today.
-        print("No mood log found for today.");
-        // Optionally, dispatch an action here if you need to update the state.
+        store.dispatch(ClearTodayMoodLogAction());
       }
     } catch (error) {
       // Handle any errors that might occur during the fetch.

@@ -26,11 +26,13 @@ class MoodEditorState {
     bool? isSubmitting,
     String? errorMessage,
     bool? submissionSuccess,
+    bool clearTodayMoodLog = false,
   }) {
     return MoodEditorState(
       currentMoodLog: currentMoodLog ?? this.currentMoodLog,
       currentPageIndex: currentPageIndex ?? this.currentPageIndex,
-      todayMoodLog: todayMoodLog ?? this.todayMoodLog,
+      todayMoodLog:
+          clearTodayMoodLog ? null : todayMoodLog ?? this.todayMoodLog,
       isSubmitting: isSubmitting ?? this.isSubmitting,
       errorMessage: errorMessage ?? this.errorMessage,
       submissionSuccess: submissionSuccess ?? this.submissionSuccess,

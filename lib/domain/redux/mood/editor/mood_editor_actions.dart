@@ -32,3 +32,6 @@ class SetTodayMoodLogAction {
   final MoodLog moodLog;
   const SetTodayMoodLogAction(this.moodLog);
 }
+
+@immutable
+class ClearTodayMoodLogAction {}
