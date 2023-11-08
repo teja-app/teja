@@ -1,5 +1,4 @@
 import 'package:redux/redux.dart';
-import 'package:swayam/app.dart';
 import 'package:swayam/domain/entities/mood_log.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 import 'package:swayam/domain/redux/mood/editor/mood_editor_actions.dart';
@@ -25,13 +24,6 @@ AppState _selectMood(AppState state, SelectMoodAction action) {
   );
 }
 
-AppState _setTodayMoodLog(AppState state, SetTodayMoodLogAction action) {
-  return state.copyWith(
-    moodEditorState:
-        state.moodEditorState.copyWith(todayMoodLog: action.moodLog),
-  );
-}
-
 AppState _changePage(AppState state, ChangePageAction action) {
   // Return new state with updated page index
   return state.copyWith(
@@ -40,15 +32,7 @@ AppState _changePage(AppState state, ChangePageAction action) {
   );
 }
 
-AppState _clearTodayMoodLog(AppState state, ClearTodayMoodLogAction action) {
-  return state.copyWith(
-    moodEditorState: state.moodEditorState.copyWith(clearTodayMoodLog: true),
-  );
-}
-
 final moodEditorReducer = <AppState Function(AppState, dynamic)>[
   TypedReducer<AppState, SelectMoodAction>(_selectMood),
   TypedReducer<AppState, ChangePageAction>(_changePage),
-  TypedReducer<AppState, SetTodayMoodLogAction>(_setTodayMoodLog),
-  TypedReducer<AppState, ClearTodayMoodLogAction>(_clearTodayMoodLog),
 ];

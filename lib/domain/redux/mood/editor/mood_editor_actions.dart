@@ -23,15 +23,3 @@ class MoodUpdatedAction extends SuccessAction {
 class MoodUpdateFailedAction extends FailureAction {
   MoodUpdateFailedAction(String error) : super(error);
 }
-
-@immutable
-class GetTodayMoodAction {}
-
-@immutable
-class SetTodayMoodLogAction {
-  final MoodLog moodLog;
-  const SetTodayMoodLogAction(this.moodLog);
-}
-
-@immutable
-class ClearTodayMoodLogAction {}

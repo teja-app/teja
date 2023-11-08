@@ -53,4 +53,17 @@ class MoodLogRepository {
 
     return moodLogs.isNotEmpty ? moodLogs.first : null;
   }
+
+  Future<List<MoodLog>> getMoodLogsInDateRange(
+      DateTime start, DateTime end) async {
+    try {
+      return await isar.moodLogs
+          .filter()
+          .timestampBetween(start, end)
+          .findAll();
+    } catch (e) {
+      // Again, handle or log exception as needed.
+      return [];
+    }
+  }
 }

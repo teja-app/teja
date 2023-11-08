@@ -3,7 +3,7 @@ import 'package:isar/isar.dart';
 import 'package:redux/redux.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 import 'package:swayam/domain/redux/mood/detail/mood_detail_actions.dart';
-import 'package:swayam/domain/redux/mood/editor/mood_editor_actions.dart';
+import 'package:swayam/domain/redux/mood/logs/mood_logs_actions.dart';
 import 'package:swayam/infrastructure/repositories/mood_log_repository.dart';
 import 'package:swayam/domain/entities/mood_log.dart' as mood_log_entity;
 
@@ -56,11 +56,11 @@ class MoodDetailSaga {
       await moodLogRepository.deleteMoodLogById(action.moodId);
       // Dispatch a success action.
       store.dispatch(const DeleteMoodDetailSuccessAction());
-      store.dispatch(GetTodayMoodAction());
+      store.dispatch(FetchMoodLogsAction());
     } catch (e) {
       // In case of an error, dispatch a failure action.
       store.dispatch(DeleteMoodDetailFailureAction(e.toString()));
-      store.dispatch(GetTodayMoodAction());
+      store.dispatch(FetchMoodLogsAction());
     }
   }
 }

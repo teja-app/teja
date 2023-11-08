@@ -7,11 +7,19 @@ import 'package:intl/intl.dart';
 import 'package:redux/redux.dart';
 import 'package:swayam/domain/entities/mood_log.dart';
 import 'package:swayam/domain/redux/app_state.dart';
-import 'package:swayam/domain/redux/mood/editor/mood_editor_actions.dart';
-import 'package:swayam/domain/redux/mood/editor/mood_editor_state.dart';
+import 'package:swayam/domain/redux/home/home_state.dart';
+import 'package:swayam/domain/redux/mood/logs/mood_logs_actions.dart';
+import 'package:swayam/domain/redux/mood/logs/mood_logs_state.dart';
 import 'package:swayam/presentation/home/ui/mood/mood_icons_layout.dart';
 import 'package:swayam/router.dart';
 import 'package:swayam/shared/common/button.dart';
+
+class CombinedModel {
+  final MoodLogsState moodLogsState;
+  final HomeState homeState;
+
+  CombinedModel({required this.moodLogsState, required this.homeState});
+}
 
 class MoodTrackerWidget extends StatefulWidget {
   const MoodTrackerWidget({super.key});
@@ -28,34 +36,37 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Dispatch the action after the frame is rendered
-      // to avoid any build method side-effects
       final Store<AppState> store = StoreProvider.of<AppState>(context);
-      store.dispatch(GetTodayMoodAction());
+      // Dispatch the action to fetch mood logs here
+      store.dispatch(FetchMoodLogsAction());
     });
   }
 
   @override
   void reassemble() {
     super.reassemble();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Dispatch the action after the frame is rendered
-      // to avoid any build method side-effects
-      final Store<AppState> store = StoreProvider.of<AppState>(context);
-      store.dispatch(GetTodayMoodAction());
-    });
     _showMoods = false;
     _selectedMoodIndex = null;
   }
 
   @override
   Widget build(BuildContext context) {
-    return StoreConnector<AppState, MoodEditorState>(
-      converter: (store) => store.state.moodEditorState,
-      builder: (_, moodEditorState) {
-        if (moodEditorState.todayMoodLog != null) {
-          // If today's mood is already logged, display the mood log
-          return _todayMoodLayout(moodEditorState.todayMoodLog!);
+    return StoreConnector<AppState, CombinedModel>(
+      converter: (store) => CombinedModel(
+        moodLogsState: store.state.moodLogsState,
+        homeState: store.state.homeState,
+      ),
+      builder: (_, combinedModel) {
+        // Assume we have a way to get the currently selected date
+        String formattedSelectedDate = DateFormat('yyyy-MM-dd')
+            .format(combinedModel.homeState.selectedDate!);
+        print(
+            "formattedSelectedDate ${formattedSelectedDate} ${combinedModel.moodLogsState.moodLogsByDate}");
+        MoodLog? selectedDateMoodLog =
+            combinedModel.moodLogsState.moodLogsByDate[formattedSelectedDate];
+        if (selectedDateMoodLog != null) {
+          // If the mood log for the selected date exists, display the mood log
+          return _moodLogLayout(selectedDateMoodLog);
         } else {
           // Otherwise, show the mood tracker
           return _moodTrackerLayout(context);
@@ -64,7 +75,7 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
     );
   }
 
-  Widget _todayMoodLayout(MoodLog moodLog) {
+  Widget _moodLogLayout(MoodLog moodLog) {
     final svgPath = 'assets/icons/mood_${moodLog.moodRating}_active.svg';
     final hasComments = moodLog.comment.isNotEmpty;
     final tags = [];

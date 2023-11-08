@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:swayam/domain/redux/app_state.dart';
+import 'package:swayam/domain/redux/home/home_actions.dart';
 import 'package:swayam/presentation/home/ui/mood/mood_tracker.dart';
 import 'package:swayam/router.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -144,7 +147,11 @@ class _HomePageState extends State<HomePage> {
               lastDate: onDayFromNow,
               activeBackgroundDayColor: Colors.white,
               activeDayColor: Colors.black,
-              onDateSelected: (date) => print(date),
+              onDateSelected: (date) {
+                // Dispatch the action here
+                StoreProvider.of<AppState>(context)
+                    .dispatch(UpdateSelectedDateAction(date));
+              },
               leftMargin: 20,
               selectableDayPredicate: (date) => date.day != 23,
               locale: 'en_ISO',
