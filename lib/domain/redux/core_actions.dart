@@ -7,5 +7,7 @@ class SuccessAction implements Action {
 
 class FailureAction implements Action {
   final String error;
-  FailureAction(this.error);
+  FailureAction(this.error) {
+    print("${this.error}");
+  }
 }

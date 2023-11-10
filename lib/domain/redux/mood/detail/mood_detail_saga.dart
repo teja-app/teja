@@ -1,66 +1,63 @@
-// lib/domain/redux/mood/mood_detail_saga.dart
 import 'package:isar/isar.dart';
-import 'package:redux/redux.dart';
-import 'package:swayam/domain/redux/app_state.dart';
+import 'package:redux_saga/redux_saga.dart';
 import 'package:swayam/domain/redux/mood/detail/mood_detail_actions.dart';
 import 'package:swayam/domain/redux/mood/logs/mood_logs_actions.dart';
 import 'package:swayam/infrastructure/repositories/mood_log_repository.dart';
 import 'package:swayam/domain/entities/mood_log.dart' as mood_log_entity;
+import 'package:swayam/infrastructure/database/isar_collections/mood_log.dart'
+    as mood_collection;
 
 class MoodDetailSaga {
-  final MoodLogRepository moodLogRepository;
-
-  // Pass the Isar instance to the saga which then creates the repository
-  MoodDetailSaga(Isar isar) : moodLogRepository = MoodLogRepository(isar);
-
-  void saga(Store<AppState> store, dynamic action) {
-    if (action is LoadMoodDetailAction) {
-      _loadMoodDetail(action, store);
-    } else if (action is DeleteMoodDetailAction) {
-      _deleteMoodDetail(action, store);
-    }
+  Iterable<void> saga() sync* {
+    yield TakeEvery(_loadMoodDetail, pattern: LoadMoodDetailAction);
+    yield TakeEvery(_deleteMoodDetail, pattern: DeleteMoodDetailAction);
   }
 
-  void _loadMoodDetail(
-      LoadMoodDetailAction action, Store<AppState> store) async {
+  _loadMoodDetail({required LoadMoodDetailAction action}) sync* {
+    var isarResult = Result<Isar>();
+    yield GetContext('isar', result: isarResult);
+    Isar isar = isarResult.value!;
+
+    var moodLogRepository = MoodLogRepository(isar);
+
     try {
-      // Begin by dispatching a loading action.
-      store.dispatch(LoadMoodDetailAction(action.moodId));
+      var moodLog = Result<mood_collection.MoodLog?>();
+      yield Call(
+        moodLogRepository.getMoodLogById,
+        args: [action.moodId],
+        result: moodLog,
+      );
 
-      // Fetch the mood log details from the repository.
-      final moodLog = await moodLogRepository.getMoodLogById(action.moodId);
-
-      if (moodLog != null) {
-        // If the mood log exists, dispatch a success action with the data.
-        store.dispatch(LoadMoodDetailSuccessAction(mood_log_entity.MoodLog(
-          id: moodLog.id,
-          timestamp: moodLog.timestamp,
-          moodRating: moodLog.moodRating,
+      if (moodLog.value != null) {
+        yield Put(LoadMoodDetailSuccessAction(mood_log_entity.MoodLog(
+          id: moodLog.value!.id,
+          timestamp: moodLog.value!.timestamp,
+          moodRating: moodLog.value!.moodRating,
           feelings: [],
-          comment: moodLog.comment ?? "",
+          comment: moodLog.value!.comment ?? "",
         )));
       } else {
-        // If no mood log was found, dispatch an appropriate action or error.
-        store.dispatch(const LoadMoodDetailFailureAction('No mood log found.'));
+        yield Put(const LoadMoodDetailFailureAction('No mood log found.'));
       }
     } catch (e) {
-      // In case of an error, dispatch a failure action with the error message.
-      store.dispatch(LoadMoodDetailFailureAction(e.toString()));
+      yield Put(LoadMoodDetailFailureAction(e.toString()));
     }
   }
 
-  void _deleteMoodDetail(
-      DeleteMoodDetailAction action, Store<AppState> store) async {
+  _deleteMoodDetail({required DeleteMoodDetailAction action}) sync* {
+    var isarResult = Result<Isar>();
+    yield GetContext('isar', result: isarResult);
+    Isar isar = isarResult.value!;
+
+    var moodLogRepository = MoodLogRepository(isar);
+
     try {
-      // Delete the mood log from the repository.
-      await moodLogRepository.deleteMoodLogById(action.moodId);
-      // Dispatch a success action.
-      store.dispatch(const DeleteMoodDetailSuccessAction());
-      store.dispatch(FetchMoodLogsAction());
+      yield Call(moodLogRepository.deleteMoodLogById, args: [action.moodId]);
+      yield Put(const DeleteMoodDetailSuccessAction());
+      yield Put(FetchMoodLogsAction());
     } catch (e) {
-      // In case of an error, dispatch a failure action.
-      store.dispatch(DeleteMoodDetailFailureAction(e.toString()));
-      store.dispatch(FetchMoodLogsAction());
+      yield Put(DeleteMoodDetailFailureAction(e.toString()));
+      yield Put(FetchMoodLogsAction());
     }
   }
 }

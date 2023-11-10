@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:swayam/domain/entities/mood_log.dart';
-import 'package:intl/intl.dart';
 
 @immutable
 class MoodLogsState {

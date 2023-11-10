@@ -60,8 +60,6 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
         // Assume we have a way to get the currently selected date
         String formattedSelectedDate = DateFormat('yyyy-MM-dd')
             .format(combinedModel.homeState.selectedDate!);
-        print(
-            "formattedSelectedDate ${formattedSelectedDate} ${combinedModel.moodLogsState.moodLogsByDate}");
         MoodLog? selectedDateMoodLog =
             combinedModel.moodLogsState.moodLogsByDate[formattedSelectedDate];
         if (selectedDateMoodLog != null) {

@@ -16,6 +16,7 @@ class MoodLogRepository {
   }
 
   Future<void> addOrUpdateMoodLog(MoodLog moodLog) async {
+    print("addOrUpdateMoodLog ${moodLog.moodRating}");
     await isar.writeTxn(() async {
       await isar.moodLogs.put(moodLog);
     });
@@ -57,13 +58,11 @@ class MoodLogRepository {
   Future<List<MoodLog>> getMoodLogsInDateRange(
       DateTime start, DateTime end) async {
     try {
-      return await isar.moodLogs
-          .filter()
-          .timestampBetween(start, end)
-          .findAll();
+      final List<MoodLog> logs =
+          await isar.moodLogs.filter().timestampBetween(start, end).findAll();
+      return logs;
     } catch (e) {
-      // Again, handle or log exception as needed.
-      return [];
+      rethrow; // To ensure the error is propagated
     }
   }
 }

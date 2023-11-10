@@ -149,6 +149,7 @@ class _HomePageState extends State<HomePage> {
               activeDayColor: Colors.black,
               onDateSelected: (date) {
                 // Dispatch the action here
+                print("Date Clicked: ${date}");
                 StoreProvider.of<AppState>(context)
                     .dispatch(UpdateSelectedDateAction(date));
               },

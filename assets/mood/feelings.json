@@ -1,251 +1,251 @@
 [
     {
-      "id": "amazed",
+      "slug": "amazed",
       "name": "Amazed",
       "mood": 5
     },
     {
-      "id": "ecstatic",
+      "slug": "ecstatic",
       "name": "Ecstatic",
       "mood": 5
     },
     {
-      "id": "euphoric",
+      "slug": "euphoric",
       "name": "Euphoric",
       "mood": 5
     },
     {
-      "id": "jubilant",
+      "slug": "jubilant",
       "name": "Jubilant",
       "mood": 5
     },
     {
-      "id": "overjoyed",
+      "slug": "overjoyed",
       "name": "Overjoyed",
       "mood": 5
     },
     {
-      "id": "exhilarated",
+      "slug": "exhilarated",
       "name": "Exhilarated",
       "mood": 5
     },
     {
-      "id": "elated",
+      "slug": "elated",
       "name": "Elated",
       "mood": 5
     },
     {
-      "id": "delighted",
+      "slug": "delighted",
       "name": "Delighted",
       "mood": 5
     },
     {
-      "id": "thrilled",
+      "slug": "thrilled",
       "name": "Thrilled",
       "mood": 5
     },
     {
-      "id": "radiant",
+      "slug": "radiant",
       "name": "Radiant",
       "mood": 5
     },
     {
-      "id": "pleased",
+      "slug": "pleased",
       "name": "Pleased",
       "mood": 4
     },
     {
-      "id": "grateful",
+      "slug": "grateful",
       "name": "Grateful",
       "mood": 4
     },
     {
-      "id": "optimistic",
+      "slug": "optimistic",
       "name": "Optimistic",
       "mood": 4
     },
     {
-      "id": "encouraged",
+      "slug": "encouraged",
       "name": "Encouraged",
       "mood": 4
     },
     {
-      "id": "inspired",
+      "slug": "inspired",
       "name": "Inspired",
       "mood": 4
     },
     {
-      "id": "hopeful",
+      "slug": "hopeful",
       "name": "Hopeful",
       "mood": 4
     },
     {
-      "id": "thankful",
+      "slug": "thankful",
       "name": "Thankful",
       "mood": 4
     },
     {
-      "id": "satisfied",
+      "slug": "satisfied",
       "name": "Satisfied",
       "mood": 4
     },
     {
-      "id": "cheerful",
+      "slug": "cheerful",
       "name": "Cheerful",
       "mood": 4
     },
     {
-      "id": "content",
+      "slug": "content",
       "name": "Content",
       "mood": 4
     },
     {
-      "id": "unperturbed",
+      "slug": "unperturbed",
       "name": "Unperturbed",
       "mood": 3
     },
     {
-      "id": "resigned",
+      "slug": "resigned",
       "name": "Resigned",
       "mood": 3
     },
     {
-      "id": "apathetic",
+      "slug": "apathetic",
       "name": "Apathetic",
       "mood": 3
     },
     {
-      "id": "composed",
+      "slug": "composed",
       "name": "Composed",
       "mood": 3
     },
     {
-      "id": "placid",
+      "slug": "placid",
       "name": "Placid",
       "mood": 3
     },
     {
-      "id": "indifferent",
+      "slug": "indifferent",
       "name": "Indifferent",
       "mood": 3
     },
     {
-      "id": "balanced",
+      "slug": "balanced",
       "name": "Balanced",
       "mood": 3
     },
     {
-      "id": "equanimous",
+      "slug": "equanimous",
       "name": "Equanimous",
       "mood": 3
     },
     {
-      "id": "stable",
+      "slug": "stable",
       "name": "Stable",
       "mood": 3
     },
     {
-      "id": "calm",
+      "slug": "calm",
       "name": "Calm",
       "mood": 3
     },
     {
-      "id": "disturbed",
+      "slug": "disturbed",
       "name": "Disturbed",
       "mood": 2
     },
     {
-      "id": "uneasy",
+      "slug": "uneasy",
       "name": "Uneasy",
       "mood": 2
     },
     {
-      "id": "frustrated",
+      "slug": "frustrated",
       "name": "Frustrated",
       "mood": 2
     },
     {
-      "id": "agitated",
+      "slug": "agitated",
       "name": "Agitated",
       "mood": 2
     },
     {
-      "id": "annoyed",
+      "slug": "annoyed",
       "name": "Annoyed",
       "mood": 2
     },
     {
-      "id": "worried",
+      "slug": "worried",
       "name": "Worried",
       "mood": 2
     },
     {
-      "id": "angry",
+      "slug": "angry",
       "name": "Angry",
       "mood": 2
     },
     {
-      "id": "upset",
+      "slug": "upset",
       "name": "Upset",
       "mood": 2
     },
     {
-      "id": "tense",
+      "slug": "tense",
       "name": "Tense",
       "mood": 2
     },
     {
-      "id": "irritated",
+      "slug": "irritated",
       "name": "Irritated",
       "mood": 2
     },
     {
-      "id": "dejected",
+      "slug": "dejected",
       "name": "Dejected",
       "mood": 1
     },
     {
-      "id": "hopeless",
+      "slug": "hopeless",
       "name": "Hopeless",
       "mood": 1
     },
     {
-      "id": "despairing",
+      "slug": "despairing",
       "name": "Despairing",
       "mood": 1
     },
     {
-      "id": "miserable",
+      "slug": "miserable",
       "name": "Miserable",
       "mood": 1
     },
     {
-      "id": "despondent",
+      "slug": "despondent",
       "name": "Despondent",
       "mood": 1
     },
     {
-      "id": "gloomy",
+      "slug": "gloomy",
       "name": "Gloomy",
       "mood": 1
     },
     {
-      "id": "downcast",
+      "slug": "downcast",
       "name": "Downcast",
       "mood": 1
     },
     {
-      "id": "forlorn",
+      "slug": "forlorn",
       "name": "Forlorn",
       "mood": 1
     },
     {
-      "id": "woeful",
+      "slug": "woeful",
       "name": "Woeful",
       "mood": 1
     },
     {
-      "id": "melancholy",
+      "slug": "melancholy",
       "name": "Melancholy",
       "mood": 1
     }

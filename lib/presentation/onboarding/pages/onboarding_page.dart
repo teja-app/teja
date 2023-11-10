@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
 import 'package:swayam/domain/redux/onboarding/actions.dart';
 import 'package:swayam/presentation/onboarding/widgets/slider_widget.dart';
+import 'package:swayam/router.dart';
 import 'package:swayam/shared/common/button.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 
@@ -65,11 +66,11 @@ class OnboardingPage extends StatelessWidget {
                         buttonType: ButtonType.secondary,
                       ),
                       Button(
-                        key: const Key("login"),
-                        text: 'Log in',
-                        width: 200,
-                        onPressed: () => GoRouter.of(context).push('/sign_in'),
-                      )
+                          key: const Key("login"),
+                          text: 'Log in',
+                          width: 200,
+                          onPressed: () =>
+                              GoRouter.of(context).pushNamed(RootPath.signIn))
                     ],
                   ),
                 ),
