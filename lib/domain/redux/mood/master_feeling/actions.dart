@@ -10,7 +10,7 @@ class FetchMasterFeelingsInProgressAction {}
 
 // Action to handle the successful fetch of master feelings
 class MasterFeelingsFetchedAction {
-  final List<MasterFeeling> feelings;
+  final List<MasterFeelingEntity> feelings;
 
   MasterFeelingsFetchedAction(this.feelings);
 }

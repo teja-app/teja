@@ -5,6 +5,9 @@ import 'package:intl/intl.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 import 'package:swayam/domain/redux/home/home_actions.dart';
 import 'package:swayam/presentation/home/ui/mood/mood_tracker.dart';
+import 'package:swayam/presentation/navigation/buildDesktopDrawer.dart';
+import 'package:swayam/presentation/navigation/buildMobileNavigationBar.dart';
+import 'package:swayam/presentation/navigation/isDesktop.dart';
 import 'package:swayam/router.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:swayam/calendar_timeline/calendar_timeline.dart';
@@ -18,6 +21,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool showCalendar = false;
+
+  get bottomNavigationBar => null;
 
   String getGreetingMessage() {
     final hour = DateTime.now().hour;
@@ -75,6 +80,9 @@ class _HomePageState extends State<HomePage> {
         now.subtract(threeWeeks); // Subtract the duration to get the past date
 
     return Scaffold(
+      bottomNavigationBar:
+          isDesktop(context) ? null : buildMobileNavigationBar(context),
+      drawer: isDesktop(context) ? buildDesktopDrawer() : null,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.black,

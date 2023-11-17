@@ -4,7 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:swayam/domain/entities/master_feeling.dart';
-import 'package:swayam/domain/redux/mood/editor/mood_editor_actions.dart';
+import 'package:swayam/domain/redux/mood/master_feeling/actions.dart';
 import 'package:swayam/presentation/mood/ui/feelings.dart';
 import 'package:swayam/shared/common/button.dart';
 import 'package:swayam/domain/redux/app_state.dart';
@@ -17,11 +17,11 @@ class FeelingScreen extends StatefulWidget {
 }
 
 class _FeelingScreenState extends State<FeelingScreen> {
-  late List<MasterFeeling> _allFeelings;
-  late List<MasterFeeling> _filteredFeelings;
+  late List<MasterFeelingEntity> _allFeelings;
+  late List<MasterFeelingEntity> _filteredFeelings;
   final _multiSelectKey = GlobalKey<FormFieldState>();
-  List<MultiSelectItem<MasterFeeling>> _multiSelectItems = [];
-  List<MasterFeeling> _selectedFeelings = [];
+  List<MultiSelectItem<MasterFeelingEntity>> _multiSelectItems = [];
+  List<MasterFeelingEntity> _selectedFeelings = [];
 
   @override
   void initState() {
@@ -32,24 +32,43 @@ class _FeelingScreenState extends State<FeelingScreen> {
     // Dispatching the action to load feelings when the widget initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        StoreProvider.of<AppState>(context).dispatch(FetchFeelingsAction());
+        StoreProvider.of<AppState>(context)
+            .dispatch(FetchMasterFeelingsAction());
       }
     });
   }
 
-  void _initializeFeelings(List<MasterFeeling> feelings, int currentMood) {
+  void _initializeFeelings(
+      List<MasterFeelingEntity> feelings, int currentMood) {
+    print("_initializeFeelings");
     // Initialize the comprehensive list of emotions mapped to their respective moods
     // setState(() {
-    _allFeelings = feelings.cast<MasterFeeling>();
+    _allFeelings = feelings.cast<MasterFeelingEntity>();
     // Filter the comprehensive _feelings list based on currentMood
     _filteredFeelings =
         _allFeelings.where((emotion) => emotion.moodId == currentMood).toList();
 
     // Initialize _multiSelectItems
     _multiSelectItems = _filteredFeelings
-        .map((e) => MultiSelectItem<MasterFeeling>(e, e.name))
+        .map((e) => MultiSelectItem<MasterFeelingEntity>(e, e.name))
         .toList();
     // });
+  }
+
+  void settingState(List<MasterFeelingEntity> feelings, int currentMood) {
+    print("settingState ${feelings}");
+    setState(() {
+      _allFeelings = feelings.cast<MasterFeelingEntity>();
+      // Filter the comprehensive _feelings list based on currentMood
+      _filteredFeelings = _allFeelings
+          .where((emotion) => emotion.moodId == currentMood)
+          .toList();
+
+      // Initialize _multiSelectItems
+      _multiSelectItems = _filteredFeelings
+          .map((e) => MultiSelectItem<MasterFeelingEntity>(e, e.name))
+          .toList();
+    });
   }
 
   void _showAllFeelings() {
@@ -60,7 +79,7 @@ class _FeelingScreenState extends State<FeelingScreen> {
         return MultiSelectBottomSheet(
           searchable: true,
           items: _allFeelings
-              .map((e) => MultiSelectItem<MasterFeeling>(e, e.name))
+              .map((e) => MultiSelectItem<MasterFeelingEntity>(e, e.name))
               .toList(),
           maxChildSize: 0.7,
           minChildSize: 0.3,
@@ -72,8 +91,8 @@ class _FeelingScreenState extends State<FeelingScreen> {
               for (var emotion in _selectedFeelings) {
                 if (!_filteredFeelings.contains(emotion)) {
                   _filteredFeelings.add(emotion);
-                  _multiSelectItems.add(
-                      MultiSelectItem<MasterFeeling>(emotion, emotion.name));
+                  _multiSelectItems.add(MultiSelectItem<MasterFeelingEntity>(
+                      emotion, emotion.name));
                 }
               }
             });
@@ -94,8 +113,14 @@ class _FeelingScreenState extends State<FeelingScreen> {
     return StoreConnector<AppState, _ViewModel>(
         converter: (store) => _ViewModel.fromStore(store),
         onInit: (store) => _initializeFeelings(
-            store.state.moodEditorState.masterFeelings ?? [],
+            store.state.masterFeelingState.masterFeelings ?? [],
             store.state.moodEditorState.currentMoodLog?.moodRating ?? 0),
+        onDidChange: (previousViewModel, viewModel) => {
+              settingState(
+                viewModel.feelings,
+                viewModel.moodRating,
+              )
+            },
         builder: (context, vm) {
           String moodIconPath = getMoodIconPath(vm.moodRating);
           return SizedBox(
@@ -138,7 +163,7 @@ class _FeelingScreenState extends State<FeelingScreen> {
                         Builder(
                           builder: (BuildContext buildContext) {
                             if (_multiSelectItems.isNotEmpty) {
-                              return MultiSelectChipField<MasterFeeling>(
+                              return MultiSelectChipField<MasterFeelingEntity>(
                                 scroll: false,
                                 items: _multiSelectItems,
                                 key: _multiSelectKey,
@@ -149,13 +174,14 @@ class _FeelingScreenState extends State<FeelingScreen> {
                                     top: BorderSide(color: Colors.black12),
                                   ),
                                 ),
-                                onTap: (List<MasterFeeling?>? values) {
+                                onTap: (List<MasterFeelingEntity?>? values) {
                                   return null; // Explicitly returning null as a dynamic type.
                                 },
                                 chipWidth: 50,
                                 itemBuilder:
-                                    (MultiSelectItem<MasterFeeling?> item,
-                                        FormFieldState<List<MasterFeeling?>>
+                                    (MultiSelectItem<MasterFeelingEntity?> item,
+                                        FormFieldState<
+                                                List<MasterFeelingEntity?>>
                                             state) {
                                   return Button(
                                     text: item.value!.name,
@@ -219,7 +245,7 @@ class _FeelingScreenState extends State<FeelingScreen> {
 
 class _ViewModel {
   final bool isLoading;
-  final List<MasterFeeling> feelings;
+  final List<MasterFeelingEntity> feelings;
   final Function() fetchFeelings;
   final int moodRating;
 
@@ -233,9 +259,9 @@ class _ViewModel {
   static _ViewModel fromStore(Store<AppState> store) {
     return _ViewModel(
       moodRating: store.state.moodEditorState.currentMoodLog?.moodRating ?? 0,
-      isLoading: store.state.moodEditorState.isFetchingFeelings,
-      feelings: store.state.moodEditorState.masterFeelings ?? [],
-      fetchFeelings: () => store.dispatch(FetchFeelingsAction()),
+      isLoading: store.state.masterFeelingState.isLoading,
+      feelings: store.state.masterFeelingState.masterFeelings ?? [],
+      fetchFeelings: () => store.dispatch(FetchMasterFeelingsAction()),
     );
   }
 }

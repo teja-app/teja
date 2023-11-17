@@ -1,0 +1,49 @@
+{
+    "badges": [
+      {
+        "streakDays": 3,
+        "name": "Triad Bloom",
+        "description": "Reflecting the growth and development inherent in reaching the next step."
+      },
+      {
+        "streakDays": 5,
+        "name": "Penta Harmony",
+        "description": "Indicating the harmony and balance achieved after five days."
+      },
+      {
+        "streakDays": 8,
+        "name": "Octa Sync",
+        "description": "Representing the synchronization of the user's efforts with their mood tracking routine."
+      },
+      {
+        "streakDays": 13,
+        "name": "Harmonic Thirteen",
+        "description": "Highlighting the significance of reaching a 13-day streak."
+      },
+      {
+        "streakDays": 21,
+        "name": "Triple Helix",
+        "description": "Reflecting the deepening commitment at the 21-day mark in the Fibonacci sequence."
+      },
+      {
+        "streakDays": 34,
+        "name": "Tetra Flow",
+        "description": "Echoing the continual progress and flow as the user hits a 34-day streak."
+      },
+      {
+        "streakDays": 55,
+        "name": "Double Nickels",
+        "description": "Marking the halfway point to a triple-digit streak, emphasizing sustained effort."
+      },
+      {
+        "streakDays": 89,
+        "name": "Octa-Nona Leap",
+        "description": "Celebrating the leap towards a higher level of commitment at an 89-day streak."
+      },
+      {
+        "streakDays": 100,
+        "name": "Fibonacci Apex",
+        "description": "A special badge that celebrates reaching the 100-day milestone, integrating the Fibonacci concept."
+      }
+    ]
+  }

@@ -26,37 +26,8 @@ MoodEditorState _changePage(MoodEditorState state, ChangePageAction action) {
   return state.copyWith(currentPageIndex: action.pageIndex);
 }
 
-MoodEditorState _fetchFeelingsInProgress(
-    MoodEditorState state, FetchFeelingsInProgressAction action) {
-  return state.copyWith(
-    isFetchingFeelings: true,
-    errorMessage: null,
-  );
-}
-
-MoodEditorState _feelingsFetched(
-    MoodEditorState state, FeelingsFetchedAction action) {
-  return state.copyWith(
-    masterFeelings: action.feelings,
-    isFetchingFeelings: false,
-  );
-}
-
-MoodEditorState _feelingsFetchFailed(
-    MoodEditorState state, FeelingsFetchFailedAction action) {
-  return state.copyWith(
-    errorMessage: action.error,
-    isFetchingFeelings: false,
-  );
-}
-
 // Include the new reducer methods in the combined reducer
 final moodEditorReducer = combineReducers<MoodEditorState>([
   TypedReducer<MoodEditorState, SelectMoodAction>(_selectMood),
   TypedReducer<MoodEditorState, ChangePageAction>(_changePage),
-  TypedReducer<MoodEditorState, FetchFeelingsInProgressAction>(
-      _fetchFeelingsInProgress),
-  TypedReducer<MoodEditorState, FeelingsFetchedAction>(_feelingsFetched),
-  TypedReducer<MoodEditorState, FeelingsFetchFailedAction>(
-      _feelingsFetchFailed),
 ]);

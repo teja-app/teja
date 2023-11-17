@@ -1,23 +1,23 @@
 // lib/domain/entities/feeling.dart
 
-class MasterFeeling {
+class MasterFeelingEntity {
   final String slug;
   final String name;
   final int moodId;
 
-  MasterFeeling({
+  MasterFeelingEntity({
     required this.slug,
     required this.name,
     required this.moodId,
   });
 
   // CopyWith method for immutability
-  MasterFeeling copyWith({
+  MasterFeelingEntity copyWith({
     String? slug,
     String? name,
     int? moodId,
   }) {
-    return MasterFeeling(
+    return MasterFeelingEntity(
       slug: slug ?? this.slug,
       name: name ?? this.name,
       moodId: moodId ?? this.moodId,

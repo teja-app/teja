@@ -1,6 +1,8 @@
 // lib/infrastructure/repositories/mood_log_repository.dart
 import 'package:isar/isar.dart';
+import 'package:swayam/infrastructure/managers/mood_badge_manager.dart';
 import 'package:swayam/infrastructure/database/isar_collections/mood_log.dart';
+import 'package:swayam/infrastructure/repositories/badge_repository.dart';
 
 class MoodLogRepository {
   final Isar isar;
@@ -16,9 +18,14 @@ class MoodLogRepository {
   }
 
   Future<void> addOrUpdateMoodLog(MoodLog moodLog) async {
-    print("addOrUpdateMoodLog ${moodLog.moodRating}");
     await isar.writeTxn(() async {
       await isar.moodLogs.put(moodLog);
+      // After updating the mood log, check the streak and assign badges.
+      await calculateCurrentStreak();
+      final criteria = await loadStreakBadgeCriteria();
+      final moodBadgeManager =
+          MoodBadgeManager(BadgeRepository(isar), this, criteria);
+      await moodBadgeManager.evaluateAndAwardMoodBadges(inTransaction: true);
     });
   }
 
@@ -64,5 +71,36 @@ class MoodLogRepository {
     } catch (e) {
       rethrow; // To ensure the error is propagated
     }
+  }
+
+  Future<MoodLog?> getMoodLogByDate(DateTime date) async {
+    final DateTime startOfDay = DateTime(date.year, date.month, date.day);
+    final DateTime endOfDay =
+        DateTime(date.year, date.month, date.day, 23, 59, 59);
+
+    final moodLogs = await isar.moodLogs
+        .filter()
+        .timestampBetween(startOfDay, endOfDay)
+        .findAll();
+
+    return moodLogs.isNotEmpty ? moodLogs.first : null;
+  }
+
+  Future<int> calculateCurrentStreak() async {
+    final DateTime now = DateTime.now();
+    final DateTime today = DateTime(now.year, now.month, now.day);
+    int streakCount = 0;
+    DateTime? currentDay = today;
+
+    while (true) {
+      final MoodLog? moodLog = await getMoodLogByDate(currentDay!);
+      if (moodLog != null) {
+        streakCount++;
+        currentDay = currentDay.subtract(const Duration(days: 1));
+      } else {
+        break;
+      }
+    }
+    return streakCount;
   }
 }

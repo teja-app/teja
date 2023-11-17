@@ -64,9 +64,12 @@ dependencies:
   path_provider: ^2.1.1
   uuid: ^4.1.0
   json_annotation: ^4.8.1
+  fl_chart: ^0.64.0
 
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+  integration_test:
     sdk: flutter
 
   # The "flutter_lints" package below contains a set of recommended lints to
@@ -78,6 +81,7 @@ dev_dependencies:
   isar_generator: ^3.1.0+1
   json_serializable: ^6.7.1
   build_runner: ^2.4.6
+  mockito: ^5.4.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -98,6 +102,7 @@ flutter:
     - assets/background/
     - assets/icons/
     - assets/mood/
+    - assets/mood/badge/
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

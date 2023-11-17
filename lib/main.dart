@@ -20,7 +20,6 @@ Future<void> main() async {
   final String? sentryDsnUrl = dotenv.env['SENTRY_DSN_URL'];
   // Initialize Isar
   final Isar isarInstance = await openIsar();
-
   // Initialize the store here
   final store = await createStore(isarInstance);
 

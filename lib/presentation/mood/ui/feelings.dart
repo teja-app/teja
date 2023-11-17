@@ -20,7 +20,7 @@ const emotionTitle = {
 };
 
 // Function to load the emotionList from feelings.json
-Future<List<MasterFeeling>> loadEmotionList() async {
+Future<List<MasterFeelingEntity>> loadEmotionList() async {
   try {
     final jsonString = await rootBundle.loadString('assets/mood/feelings.json');
     final jsonData = json.decode(jsonString);
@@ -30,7 +30,7 @@ Future<List<MasterFeeling>> loadEmotionList() async {
       final slug = data['slug'];
       final name = data['name'];
       final moodId = data['mood'];
-      return MasterFeeling(moodId: moodId, name: name, slug: slug);
+      return MasterFeelingEntity(moodId: moodId, name: name, slug: slug);
     }).toList();
 
     return emotionList;

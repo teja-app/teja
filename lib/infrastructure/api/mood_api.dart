@@ -13,7 +13,7 @@ class MoodApi {
     return _apiHelper.post(url, data: moodLog.toJson(), authToken: authToken);
   }
 
-  Future<List<MasterFeeling>> getMasterFeelings(String? authToken) async {
+  Future<List<MasterFeelingEntity>> getMasterFeelings(String? authToken) async {
     const String url = '/mood/feelings';
     Response response = await _apiHelper.get(url, authToken: authToken);
     List<dynamic> jsonResponse = response.data;
@@ -23,8 +23,8 @@ class MoodApi {
         jsonResponse.map((json) => MasterFeelingDto.fromJson(json)).toList();
 
     // Map DTOs to Entities
-    List<MasterFeeling> feelings = dtos
-        .map((dto) => MasterFeeling(
+    List<MasterFeelingEntity> feelings = dtos
+        .map((dto) => MasterFeelingEntity(
               slug: dto.slug,
               name: dto.name,
               moodId: dto.moodId,

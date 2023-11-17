@@ -5,7 +5,8 @@ import 'package:swayam/domain/entities/master_feeling.dart';
 
 @immutable
 class MasterFeelingState {
-  final List<MasterFeeling> masterFeelings; // List to store master feelings
+  final List<MasterFeelingEntity>
+      masterFeelings; // List to store master feelings
   final bool isLoading; // Indicates if master feelings are being loaded
   final String? errorMessage; // Holds error message, if any
 
@@ -26,7 +27,7 @@ class MasterFeelingState {
 
   // CopyWith method to copy the state with optional new values
   MasterFeelingState copyWith({
-    List<MasterFeeling>? masterFeelings,
+    List<MasterFeelingEntity>? masterFeelings,
     bool? isLoading,
     String? errorMessage,
   }) {

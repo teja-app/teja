@@ -44,7 +44,7 @@ class _AppState extends State<App> {
             ),
             colorScheme: ColorScheme.fromSeed(
               seedColor: Colors.black,
-              primary: Colors.white,
+              primary: Colors.black,
               secondary: Colors.black,
               surface: Colors.white,
             ),

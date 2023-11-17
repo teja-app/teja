@@ -6,6 +6,7 @@ import 'package:swayam/presentation/mood/pages/mood_edit.dart';
 import 'package:swayam/presentation/onboarding/pages/onboarding_page.dart';
 import 'package:swayam/presentation/onboarding/pages/sign_in_page.dart';
 import 'package:swayam/presentation/onboarding/pages/sign_up_page.dart';
+import 'package:swayam/presentation/profile/page/ProfilePage.dart';
 import 'package:swayam/presentation/settings/pages/advanced_settings_page.dart';
 import 'package:swayam/presentation/settings/pages/basic_settings_page.dart';
 import 'package:swayam/presentation/settings/pages/notification_settings_page.dart';
@@ -41,6 +42,7 @@ class RootPath {
   static const signUp = "signUp";
   static const signIn = "signIn";
   static const home = "home";
+  static const profile = "profile";
   static const settings = "settings";
   static const moodEdit = "mood_edit";
   static const moodDetail = "mood_detail";
@@ -78,6 +80,12 @@ final GoRouter router = GoRouter(
       name: RootPath.home,
       path: '/home',
       builder: (context, state) => const HomePage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RootPath.profile,
+      path: '/profile',
+      builder: (context, state) => const ProfilePage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,

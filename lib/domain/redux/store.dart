@@ -8,6 +8,7 @@ import 'package:swayam/domain/redux/home/home_reducer.dart';
 import 'package:swayam/domain/redux/mood/detail/mood_detail_reducer.dart';
 import 'package:swayam/domain/redux/mood/editor/mood_editor_reducer.dart';
 import 'package:swayam/domain/redux/mood/logs/mood_logs_reducer.dart';
+import 'package:swayam/domain/redux/mood/master_feeling/reducer.dart';
 import 'package:swayam/domain/redux/root_saga.dart';
 
 // import 'package:swayam/domain/redux/root_saga.dart';
@@ -45,12 +46,19 @@ AppState _moodEditorReducer(AppState state, action) {
   );
 }
 
+AppState _masterFeelingReducer(AppState state, action) {
+  return state.copyWith(
+    masterFeelingState: masterFeelingReducer(state.masterFeelingState, action),
+  );
+}
+
 Reducer<AppState> appReducer = combineReducers<AppState>([
   ...authReducer,
   ...moodDetailReducer,
   _moodEditorReducer,
   _moodLogsReducer,
-  _homeReducer
+  _homeReducer,
+  _masterFeelingReducer,
 ]);
 
 Future<Store<AppState>> createStore(Isar isarInstance) async {

@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
 import 'package:swayam/domain/redux/onboarding/actions.dart';
 import 'package:swayam/domain/redux/app_state.dart';
+import 'package:swayam/presentation/navigation/buildDesktopDrawer.dart';
+import 'package:swayam/presentation/navigation/buildMobileNavigationBar.dart';
+import 'package:swayam/presentation/navigation/isDesktop.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -40,6 +43,9 @@ class SettingsPage extends StatelessWidget {
     }
 
     return Scaffold(
+        bottomNavigationBar:
+            isDesktop(context) ? null : buildMobileNavigationBar(context),
+        drawer: isDesktop(context) ? buildDesktopDrawer() : null,
         appBar: AppBar(
           title: const Text('Settings'),
         ),
