@@ -1,10 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:swayam/domain/entities/feeling.dart';
+import 'package:swayam/domain/entities/mood_log.dart';
 import 'package:swayam/domain/redux/core_actions.dart';
 
 @immutable
-class SelectMoodAction {
+class TriggerSelectMoodAction {
   final int moodRating;
-  const SelectMoodAction(this.moodRating);
+  final String? moodLogId;
+
+  const TriggerSelectMoodAction(this.moodRating, [this.moodLogId]);
+}
+
+@immutable
+class SelectMoodSuccessAction {
+  final MoodLogEntity moodLog;
+
+  const SelectMoodSuccessAction(this.moodLog);
 }
 
 @immutable
@@ -21,4 +32,20 @@ class MoodUpdatedAction extends SuccessAction {
 @immutable
 class MoodUpdateFailedAction extends FailureAction {
   MoodUpdateFailedAction(String error) : super(error);
+}
+
+@immutable
+class TriggerUpdateFeelingsAction {
+  final String moodLogId;
+  final List<String> feelingSlugs;
+
+  const TriggerUpdateFeelingsAction(this.moodLogId, this.feelingSlugs);
+}
+
+@immutable
+class UpdateFeelingsSuccessAction {
+  final String moodLogId;
+  final List<FeelingEntity> feelings;
+
+  const UpdateFeelingsSuccessAction(this.moodLogId, this.feelings);
 }

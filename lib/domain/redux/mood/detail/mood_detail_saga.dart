@@ -3,7 +3,6 @@ import 'package:redux_saga/redux_saga.dart';
 import 'package:swayam/domain/redux/mood/detail/mood_detail_actions.dart';
 import 'package:swayam/domain/redux/mood/logs/mood_logs_actions.dart';
 import 'package:swayam/infrastructure/repositories/mood_log_repository.dart';
-import 'package:swayam/domain/entities/mood_log.dart' as mood_log_entity;
 import 'package:swayam/infrastructure/database/isar_collections/mood_log.dart'
     as mood_collection;
 
@@ -29,13 +28,8 @@ class MoodDetailSaga {
       );
 
       if (moodLog.value != null) {
-        yield Put(LoadMoodDetailSuccessAction(mood_log_entity.MoodLog(
-          id: moodLog.value!.id,
-          timestamp: moodLog.value!.timestamp,
-          moodRating: moodLog.value!.moodRating,
-          feelings: [],
-          comment: moodLog.value!.comment ?? "",
-        )));
+        yield Put(LoadMoodDetailSuccessAction(
+            moodLogRepository.toEntity(moodLog.value!)));
       } else {
         yield Put(const LoadMoodDetailFailureAction('No mood log found.'));
       }

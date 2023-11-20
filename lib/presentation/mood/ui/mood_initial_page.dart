@@ -52,7 +52,7 @@ class _MoodInitialPageState extends State<MoodInitialPage> {
         builder: (context, store) {
           return GestureDetector(
             onTap: () {
-              store.dispatch(SelectMoodAction(moodIndex));
+              store.dispatch(TriggerSelectMoodAction(moodIndex));
               store.dispatch(const ChangePageAction(
                 1,
               ));

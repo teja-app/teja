@@ -26,11 +26,7 @@ class _MoodDetailPageState extends State<MoodDetailPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Store<AppState> store = StoreProvider.of<AppState>(context);
-
-      if (store.state.moodDetailPage.selectedMoodLog == null &&
-          store.state.moodDetailPage.errorMessage == null) {
-        store.dispatch(LoadMoodDetailAction(widget.moodId));
-      }
+      store.dispatch(LoadMoodDetailAction(widget.moodId));
     });
   }
 
@@ -53,6 +49,14 @@ class _MoodDetailPageState extends State<MoodDetailPage> {
       },
       builder: (_, moodDetailPage) {
         Widget bodyContent = const Center(child: CircularProgressIndicator());
+        // Check if feelings list is not null and not empty
+        List<Widget> feelingsWidgets = [];
+        if (moodDetailPage.selectedMoodLog!.feelings != null &&
+            moodDetailPage.selectedMoodLog!.feelings!.isNotEmpty) {
+          feelingsWidgets = moodDetailPage.selectedMoodLog!.feelings!
+              .map((feeling) => Text(feeling.feeling))
+              .toList();
+        }
         if (moodDetailPage.selectedMoodLog != null) {
           bodyContent = Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -96,6 +100,15 @@ class _MoodDetailPageState extends State<MoodDetailPage> {
                   '${moodDetailPage.selectedMoodLog?.moodRating}/5',
                   style: const TextStyle(color: Colors.black, fontSize: 24),
                 ),
+                if (feelingsWidgets.isNotEmpty) ...[
+                  const SizedBox(height: 24),
+                  const Text(
+                    'Feelings',
+                    style: TextStyle(color: Colors.grey, fontSize: 22),
+                  ),
+                  const SizedBox(height: 8),
+                  ...feelingsWidgets,
+                ],
               ],
             ),
           );

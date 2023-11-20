@@ -3,7 +3,7 @@ import 'package:swayam/domain/entities/mood_log.dart';
 
 @immutable
 class MoodDetailState {
-  final MoodLog? selectedMoodLog;
+  final MoodLogEntity? selectedMoodLog;
   final bool isLoading;
   final String? errorMessage;
 
@@ -14,7 +14,7 @@ class MoodDetailState {
   });
 
   MoodDetailState copyWith({
-    MoodLog? selectedMoodLog,
+    MoodLogEntity? selectedMoodLog,
     bool? isLoading,
     String? errorMessage,
   }) {

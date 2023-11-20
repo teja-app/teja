@@ -21,6 +21,7 @@ class MasterFeelingRepository {
           // Update existing record
           existingFeeling.name = feeling.name;
           existingFeeling.moodId = feeling.moodId;
+          existingFeeling.description = feeling.description;
           await isar.masterFeelings.put(existingFeeling);
         } else {
           // Add new record

@@ -31,6 +31,7 @@ class _MoodEditPageState extends State<MoodEditPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Mood')),
+      backgroundColor: Colors.white,
       // Wrap with SafeArea
       body: SafeArea(
         child: Column(

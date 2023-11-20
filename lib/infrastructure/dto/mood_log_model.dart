@@ -26,8 +26,8 @@ class MoodLogModelDto {
   Map<String, dynamic> toJson() => _$MoodLogModelDtoToJson(this);
 
   // Convert DTO to domain entity
-  MoodLog toDomain() {
-    return MoodLog(
+  MoodLogEntity toDomain() {
+    return MoodLogEntity(
       id: id,
       timestamp: timestamp,
       moodRating: moodRating,

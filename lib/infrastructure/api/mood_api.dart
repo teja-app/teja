@@ -15,6 +15,7 @@ class MoodApi {
 
   Future<List<MasterFeelingEntity>> getMasterFeelings(String? authToken) async {
     const String url = '/mood/feelings';
+    print("authToken ${authToken}");
     Response response = await _apiHelper.get(url, authToken: authToken);
     List<dynamic> jsonResponse = response.data;
 
@@ -28,6 +29,7 @@ class MoodApi {
               slug: dto.slug,
               name: dto.name,
               moodId: dto.moodId,
+              description: dto.description,
             ))
         .toList();
 

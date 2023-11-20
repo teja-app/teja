@@ -60,7 +60,7 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
         // Assume we have a way to get the currently selected date
         String formattedSelectedDate = DateFormat('yyyy-MM-dd')
             .format(combinedModel.homeState.selectedDate!);
-        MoodLog? selectedDateMoodLog =
+        MoodLogEntity? selectedDateMoodLog =
             combinedModel.moodLogsState.moodLogsByDate[formattedSelectedDate];
         if (selectedDateMoodLog != null) {
           // If the mood log for the selected date exists, display the mood log
@@ -73,9 +73,9 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
     );
   }
 
-  Widget _moodLogLayout(MoodLog moodLog) {
+  Widget _moodLogLayout(MoodLogEntity moodLog) {
     final svgPath = 'assets/icons/mood_${moodLog.moodRating}_active.svg';
-    final hasComments = moodLog.comment.isNotEmpty;
+    final hasComments = moodLog.comment != null ? true : false;
     final tags = [];
     final hasTags = tags.isNotEmpty;
 
@@ -146,7 +146,7 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
                 if (hasComments || hasTags) const SizedBox(height: 8),
                 if (hasComments)
                   Text(
-                    moodLog.comment,
+                    moodLog.comment!,
                     style: const TextStyle(color: Colors.black),
                   ),
                 if (hasTags) const SizedBox(height: 16),

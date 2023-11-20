@@ -1,30 +1,30 @@
 // lib/domain/entities/mood_log.dart
 import 'package:swayam/domain/entities/feeling.dart';
 
-class MoodLog {
+class MoodLogEntity {
   final String id;
   final DateTime timestamp;
   final int moodRating;
-  String comment;
-  final List<Feeling> feelings;
+  String? comment;
+  final List<FeelingEntity>? feelings;
 
-  MoodLog({
+  MoodLogEntity({
     required this.id,
     required this.timestamp,
     required this.moodRating,
-    required this.feelings,
-    required this.comment,
+    this.feelings,
+    this.comment,
   });
 
   // CopyWith method for immutability
-  MoodLog copyWith({
+  MoodLogEntity copyWith({
     String? id,
     DateTime? timestamp,
     int? moodRating,
     String? comment,
-    List<Feeling>? feelings,
+    List<FeelingEntity>? feelings,
   }) {
-    return MoodLog(
+    return MoodLogEntity(
       id: id ?? this.id,
       timestamp: timestamp ?? this.timestamp,
       moodRating: moodRating ?? this.moodRating,

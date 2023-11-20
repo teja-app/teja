@@ -3,7 +3,7 @@ import 'package:swayam/domain/entities/mood_log.dart';
 
 @immutable
 class MoodLogsState {
-  final Map<String, MoodLog>
+  final Map<String, MoodLogEntity>
       moodLogsByDate; // String keys as date representations
   final bool isFetching;
   final String? errorMessage;
@@ -17,7 +17,7 @@ class MoodLogsState {
   });
 
   MoodLogsState copyWith({
-    Map<String, MoodLog>? moodLogsByDate,
+    Map<String, MoodLogEntity>? moodLogsByDate,
     bool? isFetching,
     String? errorMessage,
     bool? fetchSuccess,

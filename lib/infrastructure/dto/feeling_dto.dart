@@ -20,8 +20,8 @@ class FeelingDto {
   Map<String, dynamic> toJson() => _$FeelingDtoToJson(this);
 
   // Convert DTO to domain entity
-  Feeling toDomain() {
-    return Feeling(
+  FeelingEntity toDomain() {
+    return FeelingEntity(
       feeling: feeling,
       comment: comment,
       factors: factors,

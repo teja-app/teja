@@ -1,5 +1,7 @@
 // lib/infrastructure/repositories/mood_log_repository.dart
 import 'package:isar/isar.dart';
+import 'package:swayam/domain/entities/feeling.dart';
+import 'package:swayam/domain/entities/mood_log.dart';
 import 'package:swayam/infrastructure/managers/mood_badge_manager.dart';
 import 'package:swayam/infrastructure/database/isar_collections/mood_log.dart';
 import 'package:swayam/infrastructure/repositories/badge_repository.dart';
@@ -40,11 +42,13 @@ class MoodLogRepository {
     String moodLogId,
     List<MoodLogFeeling> updatedFeelings,
   ) async {
+    print("moodLogId ${moodLogId}");
     final MoodLog? moodLog = await getMoodLogById(moodLogId);
     if (moodLog != null) {
       moodLog.feelings = updatedFeelings
           .cast<MoodLogFeeling>(); // Update the embedded feelings
       await addOrUpdateMoodLog(moodLog); // Save the updated mood log
+      print("Updated ${moodLog.feelings}");
     }
   }
 
@@ -102,5 +106,21 @@ class MoodLogRepository {
       }
     }
     return streakCount;
+  }
+
+  MoodLogEntity toEntity(MoodLog moodLog) {
+    return MoodLogEntity(
+      id: moodLog.id,
+      timestamp: moodLog.timestamp,
+      moodRating: moodLog.moodRating,
+      comment: moodLog.comment,
+      feelings: moodLog.feelings
+          ?.map((feeling) => FeelingEntity(
+                feeling: feeling.feeling ?? '',
+                comment: feeling.comment,
+                factors: feeling.factors,
+              ))
+          .toList(),
+    );
   }
 }

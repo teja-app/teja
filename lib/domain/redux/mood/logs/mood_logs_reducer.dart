@@ -20,7 +20,7 @@ MoodLogsState _fetchMoodLogs(MoodLogsState state, FetchMoodLogsAction action) {
 MoodLogsState _fetchMoodLogsSuccess(
     MoodLogsState state, FetchMoodLogsSuccessAction action) {
   // Convert Map<DateTime, MoodLog> to Map<String, MoodLog>
-  Map<String, MoodLog> stringKeyedMap = action.moodLogs.map((key, value) {
+  Map<String, MoodLogEntity> stringKeyedMap = action.moodLogs.map((key, value) {
     return MapEntry(DateFormat('yyyy-MM-dd').format(key), value);
   });
 
@@ -42,7 +42,7 @@ MoodLogsState _fetchMoodLogsError(
 MoodLogsState _updateMoodLog(MoodLogsState state, UpdateMoodLogAction action) {
   String dateKey = DateFormat('yyyy-MM-dd').format(action.date);
   return state.copyWith(
-    moodLogsByDate: Map<String, MoodLog>.from(state.moodLogsByDate)
+    moodLogsByDate: Map<String, MoodLogEntity>.from(state.moodLogsByDate)
       ..[dateKey] = action.moodLog,
   );
 }

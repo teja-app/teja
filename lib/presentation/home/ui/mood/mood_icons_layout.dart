@@ -57,7 +57,8 @@ class _MoodIconsLayoutState extends State<MoodIconsLayout> {
                   onPressed: () {
                     if (_selectedMoodIndex != null) {
                       final store = StoreProvider.of<AppState>(context);
-                      store.dispatch(SelectMoodAction(_selectedMoodIndex!));
+                      store.dispatch(
+                          TriggerSelectMoodAction(_selectedMoodIndex!));
                       store.dispatch(const ChangePageAction(1));
                       GoRouter.of(context).pushNamed(RootPath.moodEdit);
                     }
@@ -70,7 +71,8 @@ class _MoodIconsLayoutState extends State<MoodIconsLayout> {
                   onPressed: () {
                     if (_selectedMoodIndex != null) {
                       final store = StoreProvider.of<AppState>(context);
-                      store.dispatch(SelectMoodAction(_selectedMoodIndex!));
+                      store.dispatch(
+                          TriggerSelectMoodAction(_selectedMoodIndex!));
                       // Dispatch any other action if needed for 'Done' functionality
                     }
                   },

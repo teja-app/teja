@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:icons_flutter/icons_flutter.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:swayam/domain/entities/master_feeling.dart';
+import 'package:swayam/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:swayam/domain/redux/mood/master_feeling/actions.dart';
 import 'package:swayam/presentation/mood/ui/feelings.dart';
 import 'package:swayam/shared/common/button.dart';
 import 'package:swayam/domain/redux/app_state.dart';
+import 'package:swayam/shared/common/description_button.dart';
 
 class FeelingScreen extends StatefulWidget {
   const FeelingScreen({super.key});
@@ -40,7 +43,6 @@ class _FeelingScreenState extends State<FeelingScreen> {
 
   void _initializeFeelings(
       List<MasterFeelingEntity> feelings, int currentMood) {
-    print("_initializeFeelings");
     // Initialize the comprehensive list of emotions mapped to their respective moods
     // setState(() {
     _allFeelings = feelings.cast<MasterFeelingEntity>();
@@ -56,7 +58,6 @@ class _FeelingScreenState extends State<FeelingScreen> {
   }
 
   void settingState(List<MasterFeelingEntity> feelings, int currentMood) {
-    print("settingState ${feelings}");
     setState(() {
       _allFeelings = feelings.cast<MasterFeelingEntity>();
       // Filter the comprehensive _feelings list based on currentMood
@@ -183,23 +184,40 @@ class _FeelingScreenState extends State<FeelingScreen> {
                                         FormFieldState<
                                                 List<MasterFeelingEntity?>>
                                             state) {
-                                  return Button(
-                                    text: item.value!.name,
+                                  return DescriptionButton(
+                                    title: item.value!.name,
+                                    description: item.value!.description,
                                     onPressed: () {
                                       setState(() {
-                                        _selectedFeelings.contains(item.value)
-                                            ? _selectedFeelings
-                                                .remove(item.value)
-                                            : _selectedFeelings
-                                                .add(item.value!);
+                                        bool isAlreadySelected =
+                                            _selectedFeelings
+                                                .contains(item.value);
+                                        if (isAlreadySelected) {
+                                          _selectedFeelings.remove(item.value);
+                                        } else {
+                                          _selectedFeelings.add(item.value!);
+                                        }
                                       });
-                                      state.didChange(_selectedFeelings);
-                                      _multiSelectKey.currentState?.validate();
+
+                                      // Convert selected feelings to slugs, ensuring uniqueness
+                                      List<String> selectedFeelingSlugs =
+                                          _selectedFeelings
+                                              .map((feeling) => feeling.slug)
+                                              .toSet() // Remove duplicates by converting to a Set
+                                              .toList(); // Convert back to List for dispatching
+
+                                      // Dispatch an action to update feelings in the Redux store
+                                      StoreProvider.of<AppState>(context)
+                                          .dispatch(
+                                        TriggerUpdateFeelingsAction(
+                                          vm.moodLogId,
+                                          selectedFeelingSlugs,
+                                        ),
+                                      );
                                     },
-                                    buttonType:
-                                        _selectedFeelings.contains(item.value)
-                                            ? ButtonType.primary
-                                            : ButtonType.defaultButton,
+                                    icon: _selectedFeelings.contains(item.value)
+                                        ? AntDesign.check
+                                        : null,
                                   );
                                 },
                               );
@@ -244,12 +262,14 @@ class _FeelingScreenState extends State<FeelingScreen> {
 }
 
 class _ViewModel {
+  final String moodLogId;
   final bool isLoading;
   final List<MasterFeelingEntity> feelings;
   final Function() fetchFeelings;
   final int moodRating;
 
   _ViewModel({
+    required this.moodLogId,
     required this.isLoading,
     required this.feelings,
     required this.fetchFeelings,
@@ -258,6 +278,7 @@ class _ViewModel {
 
   static _ViewModel fromStore(Store<AppState> store) {
     return _ViewModel(
+      moodLogId: store.state.moodEditorState.currentMoodLog!.id,
       moodRating: store.state.moodEditorState.currentMoodLog?.moodRating ?? 0,
       isLoading: store.state.masterFeelingState.isLoading,
       feelings: store.state.masterFeelingState.masterFeelings ?? [],

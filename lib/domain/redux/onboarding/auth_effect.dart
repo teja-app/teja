@@ -50,6 +50,7 @@ class AuthSaga {
   }
 
   _signOut({required SignOutAction action}) sync* {
+    print("Inside Signout Saga");
     try {
       yield Call(deleteSecureData, args: ['access_token']);
       yield Call(deleteSecureData, args: ['refresh_token']);

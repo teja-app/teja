@@ -17,18 +17,23 @@ const MasterFeelingSchema = CollectionSchema(
   name: r'MasterFeeling',
   id: 7833243150912925411,
   properties: {
-    r'moodId': PropertySchema(
+    r'description': PropertySchema(
       id: 0,
+      name: r'description',
+      type: IsarType.string,
+    ),
+    r'moodId': PropertySchema(
+      id: 1,
       name: r'moodId',
       type: IsarType.long,
     ),
     r'name': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'name',
       type: IsarType.string,
     ),
     r'slug': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'slug',
       type: IsarType.string,
     )
@@ -67,6 +72,7 @@ int _masterFeelingEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.description.length * 3;
   bytesCount += 3 + object.name.length * 3;
   bytesCount += 3 + object.slug.length * 3;
   return bytesCount;
@@ -78,9 +84,10 @@ void _masterFeelingSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeLong(offsets[0], object.moodId);
-  writer.writeString(offsets[1], object.name);
-  writer.writeString(offsets[2], object.slug);
+  writer.writeString(offsets[0], object.description);
+  writer.writeLong(offsets[1], object.moodId);
+  writer.writeString(offsets[2], object.name);
+  writer.writeString(offsets[3], object.slug);
 }
 
 MasterFeeling _masterFeelingDeserialize(
@@ -90,10 +97,11 @@ MasterFeeling _masterFeelingDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = MasterFeeling();
+  object.description = reader.readString(offsets[0]);
   object.isarId = id;
-  object.moodId = reader.readLong(offsets[0]);
-  object.name = reader.readString(offsets[1]);
-  object.slug = reader.readString(offsets[2]);
+  object.moodId = reader.readLong(offsets[1]);
+  object.name = reader.readString(offsets[2]);
+  object.slug = reader.readString(offsets[3]);
   return object;
 }
 
@@ -105,10 +113,12 @@ P _masterFeelingDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readLong(offset)) as P;
-    case 1:
       return (reader.readString(offset)) as P;
+    case 1:
+      return (reader.readLong(offset)) as P;
     case 2:
+      return (reader.readString(offset)) as P;
+    case 3:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -310,6 +320,142 @@ extension MasterFeelingQueryWhere
 
 extension MasterFeelingQueryFilter
     on QueryBuilder<MasterFeeling, MasterFeeling, QFilterCondition> {
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      descriptionEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'description',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      descriptionGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'description',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      descriptionLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'description',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      descriptionBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'description',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      descriptionStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'description',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      descriptionEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'description',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      descriptionContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'description',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      descriptionMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'description',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      descriptionIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'description',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      descriptionIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'description',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
       isarIdEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
@@ -701,6 +847,19 @@ extension MasterFeelingQueryLinks
 
 extension MasterFeelingQuerySortBy
     on QueryBuilder<MasterFeeling, MasterFeeling, QSortBy> {
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy> sortByDescription() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'description', Sort.asc);
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy>
+      sortByDescriptionDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'description', Sort.desc);
+    });
+  }
+
   QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy> sortByMoodId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'moodId', Sort.asc);
@@ -740,6 +899,19 @@ extension MasterFeelingQuerySortBy
 
 extension MasterFeelingQuerySortThenBy
     on QueryBuilder<MasterFeeling, MasterFeeling, QSortThenBy> {
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy> thenByDescription() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'description', Sort.asc);
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy>
+      thenByDescriptionDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'description', Sort.desc);
+    });
+  }
+
   QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy> thenByIsarId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isarId', Sort.asc);
@@ -791,6 +963,13 @@ extension MasterFeelingQuerySortThenBy
 
 extension MasterFeelingQueryWhereDistinct
     on QueryBuilder<MasterFeeling, MasterFeeling, QDistinct> {
+  QueryBuilder<MasterFeeling, MasterFeeling, QDistinct> distinctByDescription(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'description', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<MasterFeeling, MasterFeeling, QDistinct> distinctByMoodId() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'moodId');
@@ -817,6 +996,12 @@ extension MasterFeelingQueryProperty
   QueryBuilder<MasterFeeling, int, QQueryOperations> isarIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isarId');
+    });
+  }
+
+  QueryBuilder<MasterFeeling, String, QQueryOperations> descriptionProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'description');
     });
   }
 

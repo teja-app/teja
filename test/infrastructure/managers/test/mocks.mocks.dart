@@ -57,10 +57,15 @@ class MockBadgeRepository extends _i1.Mock implements _i3.BadgeRepository {
       ) as _i2.Isar);
 
   @override
-  _i4.Future<void> addBadge(_i5.Badge? badge) => (super.noSuchMethod(
+  _i4.Future<void> addBadge(
+    _i5.Badge? badge, {
+    bool? inTransaction = false,
+  }) =>
+      (super.noSuchMethod(
         Invocation.method(
           #addBadge,
           [badge],
+          {#inTransaction: inTransaction},
         ),
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
@@ -85,10 +90,15 @@ class MockBadgeRepository extends _i1.Mock implements _i3.BadgeRepository {
       ) as _i4.Future<List<_i5.Badge>>);
 
   @override
-  _i4.Future<void> updateBadge(_i5.Badge? badge) => (super.noSuchMethod(
+  _i4.Future<void> updateBadge(
+    _i5.Badge? badge, {
+    bool? inTransaction = false,
+  }) =>
+      (super.noSuchMethod(
         Invocation.method(
           #updateBadge,
           [badge],
+          {#inTransaction: inTransaction},
         ),
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),

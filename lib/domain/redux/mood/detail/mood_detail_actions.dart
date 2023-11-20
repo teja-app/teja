@@ -9,7 +9,7 @@ class LoadMoodDetailAction {
 
 @immutable
 class LoadMoodDetailSuccessAction {
-  final MoodLog moodLog;
+  final MoodLogEntity moodLog;
   const LoadMoodDetailSuccessAction(this.moodLog);
 }
 

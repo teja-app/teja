@@ -2,9 +2,8 @@ import 'package:isar/isar.dart';
 import 'package:redux_saga/redux_saga.dart';
 import 'package:swayam/domain/redux/mood/logs/mood_logs_actions.dart';
 import 'package:swayam/infrastructure/repositories/mood_log_repository.dart';
-import 'package:swayam/infrastructure/database/isar_collections/mood_log.dart'
-    as mood_collection;
-import 'package:swayam/domain/entities/mood_log.dart' as mood_log_entity;
+import 'package:swayam/infrastructure/database/isar_collections/mood_log.dart';
+import 'package:swayam/domain/entities/mood_log.dart';
 
 class MoodLogsSaga {
   Iterable<void> saga() sync* {
@@ -20,16 +19,16 @@ class MoodLogsSaga {
       final now = DateTime.now();
       final startOfMonth = DateTime(now.year, now.month);
       final endOfMonth = DateTime(now.year, now.month + 1, 0);
-      var moodLogs = Result<List<mood_collection.MoodLog>>();
+      var moodLogs = Result<List<MoodLog>>();
       yield Call(moodLogRepository.getMoodLogsInDateRange,
           args: [startOfMonth, endOfMonth], result: moodLogs);
       if (moodLogs.value == null || moodLogs.value!.isEmpty) {
         yield Put(FetchMoodLogsErrorAction("No mood logs found."));
         return;
       }
-      final Map<DateTime, mood_log_entity.MoodLog> moodLogsMap = {
+      final Map<DateTime, MoodLogEntity> moodLogsMap = {
         for (var moodLog in moodLogs.value!)
-          moodLog.timestamp: mood_log_entity.MoodLog(
+          moodLog.timestamp: MoodLogEntity(
             id: moodLog.id,
             timestamp: moodLog.timestamp,
             moodRating: moodLog.moodRating,

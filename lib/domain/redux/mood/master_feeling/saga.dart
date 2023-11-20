@@ -32,6 +32,7 @@ class MasterFeelingSaga {
             slug: entity.slug,
             name: entity.name,
             moodId: entity.moodId,
+            description: entity.description,
           ));
         }
         yield Put(MasterFeelingsFetchedAction(entityModelFeeling));
@@ -53,7 +54,8 @@ class MasterFeelingSaga {
           return MasterFeeling()
             ..slug = entity.slug
             ..name = entity.name
-            ..moodId = entity.moodId;
+            ..moodId = entity.moodId
+            ..description = entity.description;
         }).toList();
         yield Call(MasterFeelingRepository(isar).addOrUpdateFeelings,
             args: [domainFeelings]);

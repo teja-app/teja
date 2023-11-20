@@ -3,7 +3,7 @@ import 'package:swayam/domain/entities/mood_log.dart';
 
 @immutable
 class MoodEditorState {
-  final MoodLog? currentMoodLog;
+  final MoodLogEntity? currentMoodLog;
   final int currentPageIndex;
   final bool isSubmitting;
   final String? errorMessage;
@@ -19,7 +19,7 @@ class MoodEditorState {
 
   // Extend copyWith to include the new variable
   MoodEditorState copyWith({
-    MoodLog? currentMoodLog,
+    MoodLogEntity? currentMoodLog,
     int? currentPageIndex,
     bool? isFetchingFeelings, // Add the new parameter
     bool? isSubmitting,

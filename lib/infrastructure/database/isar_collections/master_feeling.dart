@@ -10,5 +10,6 @@ class MasterFeeling {
   late String slug;
 
   late String name;
+  late String description;
   late int moodId;
 }

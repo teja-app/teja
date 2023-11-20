@@ -1,23 +1,23 @@
 // lib/domain/entities/feeling.dart
 
-class Feeling {
+class FeelingEntity {
   final String feeling;
-  final String comment;
-  final List<String> factors;
+  final String? comment;
+  final List<String>? factors;
 
-  Feeling({
+  FeelingEntity({
     required this.feeling,
-    required this.comment,
-    required this.factors,
+    this.comment,
+    this.factors,
   });
 
   // CopyWith method for immutability
-  Feeling copyWith({
+  FeelingEntity copyWith({
     String? feeling,
     String? comment,
     List<String>? factors,
   }) {
-    return Feeling(
+    return FeelingEntity(
       feeling: feeling ?? this.feeling,
       comment: comment ?? this.comment,
       factors: factors ?? this.factors,

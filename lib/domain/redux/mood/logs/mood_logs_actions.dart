@@ -8,7 +8,7 @@ class FetchMoodLogsAction {
 
 @immutable
 class FetchMoodLogsSuccessAction {
-  final Map<DateTime, MoodLog> moodLogs;
+  final Map<DateTime, MoodLogEntity> moodLogs;
 
   FetchMoodLogsSuccessAction(this.moodLogs);
 }
@@ -23,7 +23,7 @@ class FetchMoodLogsErrorAction {
 @immutable
 class UpdateMoodLogAction {
   final DateTime date;
-  final MoodLog moodLog;
+  final MoodLogEntity moodLog;
 
   UpdateMoodLogAction(this.date, this.moodLog);
 }
