@@ -4,11 +4,13 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 import 'package:swayam/domain/redux/home/home_actions.dart';
+import 'package:swayam/domain/redux/home/home_state.dart';
 import 'package:swayam/presentation/home/ui/mood/mood_tracker.dart';
 import 'package:swayam/presentation/navigation/buildDesktopDrawer.dart';
 import 'package:swayam/presentation/navigation/buildMobileNavigationBar.dart';
 import 'package:swayam/presentation/navigation/isDesktop.dart';
 import 'package:swayam/router.dart';
+import 'package:swayam/shared/common/bento_box.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:swayam/calendar_timeline/calendar_timeline.dart';
 
@@ -65,27 +67,22 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     DateTime today = DateTime.now();
-    DateTime yesterday = today.subtract(const Duration(days: 1));
-    DateTime twoDaysAgo = today.subtract(const Duration(days: 2));
-    DateTime threeDaysAgo = today.subtract(const Duration(days: 3));
-
-    List<DateTime> dateList = [threeDaysAgo, twoDaysAgo, yesterday, today];
-
+    DateTime tomorrow = today.add(const Duration(days: 1));
     DateTime now = DateTime.now();
-    Duration oneWeek = const Duration(days: 7);
-    Duration oneDay = const Duration(days: 1);
-    DateTime onDayFromNow = now.add(oneDay);
-    Duration threeWeeks = oneWeek * 3; // Calculate the duration for 3 weeks
-    DateTime threeWeeksAgo =
-        now.subtract(threeWeeks); // Subtract the duration to get the past date
+    Duration oneMonth = const Duration(days: 31);
+    DateTime oneMonthFromNow = now.add(oneMonth);
+    Duration tenMonths = oneMonth * 10; // Calculate the duration for 3 weeks
+    DateTime tenMonthsAgo =
+        now.subtract(tenMonths); // Subtract the duration to get the past date
 
     return Scaffold(
       bottomNavigationBar:
           isDesktop(context) ? null : buildMobileNavigationBar(context),
       drawer: isDesktop(context) ? buildDesktopDrawer() : null,
+      backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
         foregroundColor: Colors.black,
+        backgroundColor: Colors.grey.shade100,
         elevation: 0.0,
         actions: [
           Container(
@@ -98,77 +95,46 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Text(
-              getGreetingMessage(),
-              style: const TextStyle(fontSize: 24),
-            ),
-            const SizedBox(height: 20),
-            if (showCalendar)
-              Container(
-                constraints: const BoxConstraints(maxWidth: 400),
-                margin: const EdgeInsets.symmetric(horizontal: 50),
-                height: 400, // specify height
-                width: MediaQuery.of(context).size.width, // specify width
-                child: TableCalendar(
-                  calendarBuilders: CalendarBuilders(
-                    dowBuilder: (context, day) {
-                      if (day.weekday == DateTime.sunday) {
-                        final text = DateFormat.E().format(day);
-                        return Center(
-                          child: Text(
-                            text,
-                            style: const TextStyle(color: Colors.red),
-                          ),
-                        );
-                      }
-                      return null;
-                    },
-                  ),
-                  calendarStyle: const CalendarStyle(
-                    isTodayHighlighted: true,
-                    todayTextStyle: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    todayDecoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  headerStyle: const HeaderStyle(
-                    formatButtonVisible: false,
-                  ),
-                  calendarFormat: CalendarFormat.week,
-                  firstDay: threeWeeksAgo,
-                  lastDay: onDayFromNow,
-                  focusedDay: DateTime.now(),
-                  // Add more TableCalendar configurations if needed
+      body: StoreConnector<AppState, HomeState>(
+        converter: (store) => store.state.homeState,
+        builder: (context, store) {
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                Text(
+                  getGreetingMessage(),
+                  style: const TextStyle(fontSize: 24),
                 ),
-              ),
-            const SizedBox(height: 20),
-            CalendarTimeline(
-              initialDate: now,
-              firstDate: threeWeeksAgo,
-              lastDate: onDayFromNow,
-              activeBackgroundDayColor: Colors.white,
-              activeDayColor: Colors.black,
-              onDateSelected: (date) {
-                // Dispatch the action here
-                print("Date Clicked: ${date}");
-                StoreProvider.of<AppState>(context)
-                    .dispatch(UpdateSelectedDateAction(date));
-              },
-              leftMargin: 20,
-              selectableDayPredicate: (date) => date.day != 23,
-              locale: 'en_ISO',
+                const SizedBox(height: 20),
+                CalendarTimeline(
+                  initialDate: now,
+                  firstDate: tenMonthsAgo,
+                  lastDate: oneMonthFromNow,
+                  selectedDate: store.selectedDate,
+                  activeBackgroundDayColor: Colors.white,
+                  activeDayColor: Colors.black,
+                  onDateSelected: (date) {
+                    StoreProvider.of<AppState>(context)
+                        .dispatch(UpdateSelectedDateAction(date));
+                  },
+                  leftMargin: 20,
+                  selectableDayPredicate: (date) => date.isBefore(tomorrow),
+                  locale: 'en_ISO',
+                ),
+                const SizedBox(height: 10),
+                const BentoBox(
+                  gridWidth: 4,
+                  gridHeight: 2.5,
+                  tabletGridWidth: 5,
+                  tabletGridHeight: 3,
+                  desktopGridWidth: 6,
+                  desktopGridHeight: 3.5,
+                  child: MoodTrackerWidget(),
+                ),
+              ],
             ),
-            const SizedBox(height: 10),
-            const MoodTrackerWidget()
-          ],
-        ),
+          );
+        },
       ),
     );
   }

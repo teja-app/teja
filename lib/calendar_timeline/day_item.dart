@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 /// Creates a Widget representing the day.
 class DayItem extends StatelessWidget {
@@ -15,6 +16,7 @@ class DayItem extends StatelessWidget {
     this.dotsColor,
     this.dayNameColor,
     this.shrink = false,
+    this.isToday = false,
   }) : super(key: key);
   final int dayNumber;
   final String shortName;
@@ -26,14 +28,21 @@ class DayItem extends StatelessWidget {
   final bool available;
   final Color? dotsColor;
   final Color? dayNameColor;
+  final bool isToday; // Add this line
   final bool shrink;
 
   GestureDetector _buildDay(BuildContext context) {
+    // Determine the base color based on availability
+    Color baseColor = available
+        ? dayColor ?? Theme.of(context).colorScheme.secondary
+        : dayColor?.withOpacity(0.5) ??
+            Theme.of(context).colorScheme.secondary.withOpacity(0.5);
+
+    // Override base color if it's today
+    Color finalColor = isToday ? Colors.blue : baseColor;
+
     final textStyle = TextStyle(
-      color: available
-          ? dayColor ?? Theme.of(context).colorScheme.secondary
-          : dayColor?.withOpacity(0.5) ??
-              Theme.of(context).colorScheme.secondary.withOpacity(0.5),
+      color: finalColor,
       fontSize: shrink ? 14 : 32,
       fontWeight: FontWeight.normal,
     );
@@ -76,22 +85,6 @@ class DayItem extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildDots() {
-    final dot = Container(
-      height: 5,
-      width: 5,
-      decoration: BoxDecoration(
-        color: dotsColor ?? activeDayColor ?? Colors.white,
-        shape: BoxShape.circle,
-      ),
-    );
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [dot, dot],
     );
   }
 

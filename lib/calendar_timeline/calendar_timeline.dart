@@ -20,6 +20,7 @@ class CalendarTimeline extends StatefulWidget {
     required this.firstDate,
     required this.lastDate,
     required this.onDateSelected,
+    this.selectedDate,
     this.selectableDayPredicate,
     this.leftMargin = 0,
     this.dayColor,
@@ -56,6 +57,7 @@ class CalendarTimeline extends StatefulWidget {
   final DateTime initialDate;
   final DateTime firstDate;
   final DateTime lastDate;
+  final DateTime? selectedDate;
   final SelectableDayPredicate? selectableDayPredicate;
   final OnDateSelected onDateSelected;
   final double leftMargin;
@@ -113,7 +115,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
   void _initCalendar() {
     _locale = widget.locale ?? Localizations.localeOf(context).languageCode;
     initializeDateFormatting(_locale);
-    _selectedDate = widget.initialDate;
+    _selectedDate = widget.selectedDate ?? widget.initialDate;
     if (widget.showYears) {
       _generateYears();
       _selectedYearIndex();
@@ -212,7 +214,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
   void _moveToYearIndex(int index) {
     if (_controllerYear.isAttached) {
       _controllerYear.scrollTo(
-        index: index,
+        index: (index - 3) < 1 ? index : (index - 3),
         alignment: _scrollAlignment,
         duration: const Duration(milliseconds: 500),
         curve: Curves.easeIn,
@@ -224,7 +226,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
   void _moveToMonthIndex(int index) {
     if (_controllerMonth.isAttached) {
       _controllerMonth.scrollTo(
-        index: index,
+        index: (index - 3) < 1 ? index : (index - 3),
         alignment: _scrollAlignment,
         duration: const Duration(milliseconds: 500),
         curve: Curves.easeIn,
@@ -236,7 +238,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
   void _moveToDayIndex(int index) {
     if (_controllerDay.isAttached) {
       _controllerDay.scrollTo(
-        index: index,
+        index: (index - 3) < 1 ? index : (index - 3),
         alignment: _scrollAlignment,
         duration: const Duration(milliseconds: 500),
         curve: Curves.easeIn,
@@ -292,6 +294,12 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
   bool _isSelectedDay(int index) =>
       _monthSelectedIndex != null &&
       (index == _daySelectedIndex || index == _indexOfDay(_selectedDate));
+
+  bool isSameDay(DateTime date1, DateTime date2) {
+    return date1.year == date2.year &&
+        date1.month == date2.month &&
+        date1.day == date2.day;
+  }
 
   int _indexOfDay(DateTime date) {
     try {
@@ -464,6 +472,7 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                 dotsColor: widget.dotsColor,
                 dayNameColor: widget.dayNameColor,
                 shrink: widget.shrink,
+                isToday: isSameDay(currentDay, DateTime.now()),
               ),
               if (index == _days.length - 1)
                 // Last element to take space to do scroll to left side
