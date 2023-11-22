@@ -1,4 +1,5 @@
 import 'package:isar/isar.dart';
+import 'package:swayam/domain/entities/master_factor.dart';
 import 'package:swayam/infrastructure/database/isar_collections/master_factor.dart';
 
 class MasterFactorRepository {
@@ -33,5 +34,15 @@ class MasterFactorRepository {
 
   Future<List<MasterFactor>> getAllFactors() async {
     return isar.masterFactors.where().findAll();
+  }
+
+  Future<List<MasterFactorEntity>> getAllFactorEntities() async {
+    List<MasterFactor> factors = await getAllFactors();
+    return factors.map(toEntity).toList();
+  }
+
+  MasterFactorEntity toEntity(MasterFactor feeling) {
+    return MasterFactorEntity(
+        slug: feeling.slug, name: feeling.name, categoryId: feeling.categoryId);
   }
 }

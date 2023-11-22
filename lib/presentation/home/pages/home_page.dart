@@ -5,14 +5,13 @@ import 'package:intl/intl.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 import 'package:swayam/domain/redux/home/home_actions.dart';
 import 'package:swayam/domain/redux/home/home_state.dart';
-import 'package:swayam/presentation/home/ui/master_fetch/fetch_feelings_view.dart';
+import 'package:swayam/presentation/home/ui/master_fetch/fetch_master_view.dart';
 import 'package:swayam/presentation/home/ui/mood/mood_tracker.dart';
 import 'package:swayam/presentation/navigation/buildDesktopDrawer.dart';
 import 'package:swayam/presentation/navigation/buildMobileNavigationBar.dart';
 import 'package:swayam/presentation/navigation/isDesktop.dart';
 import 'package:swayam/router.dart';
 import 'package:swayam/shared/common/bento_box.dart';
-import 'package:table_calendar/table_calendar.dart';
 import 'package:swayam/calendar_timeline/calendar_timeline.dart';
 
 class HomePage extends StatefulWidget {
@@ -125,7 +124,7 @@ class _HomePageState extends State<HomePage> {
                 const BentoBox(
                   gridWidth: 4,
                   gridHeight: 1,
-                  child: FetchFeelingsView(),
+                  child: FetchMasterView(),
                 ),
                 const SizedBox(height: 10),
                 const BentoBox(

@@ -36,7 +36,7 @@ class _FeelingScreenState extends State<FeelingScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         StoreProvider.of<AppState>(context)
-            .dispatch(FetchMasterFeelingsAction());
+            .dispatch(FetchMasterFeelingsActionFromCache());
       }
     });
   }
@@ -282,7 +282,7 @@ class _ViewModel {
       moodRating: store.state.moodEditorState.currentMoodLog?.moodRating ?? 0,
       isLoading: store.state.masterFeelingState.isLoading,
       feelings: store.state.masterFeelingState.masterFeelings ?? [],
-      fetchFeelings: () => store.dispatch(FetchMasterFeelingsAction()),
+      fetchFeelings: () => store.dispatch(FetchMasterFeelingsActionFromCache()),
     );
   }
 }

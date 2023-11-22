@@ -8,6 +8,7 @@ import 'package:swayam/domain/redux/home/home_reducer.dart';
 import 'package:swayam/domain/redux/mood/detail/mood_detail_reducer.dart';
 import 'package:swayam/domain/redux/mood/editor/mood_editor_reducer.dart';
 import 'package:swayam/domain/redux/mood/logs/mood_logs_reducer.dart';
+import 'package:swayam/domain/redux/mood/master_factor/reducer.dart';
 import 'package:swayam/domain/redux/mood/master_feeling/reducer.dart';
 import 'package:swayam/domain/redux/root_saga.dart';
 
@@ -52,6 +53,12 @@ AppState _masterFeelingReducer(AppState state, action) {
   );
 }
 
+AppState _masterFactorReducer(AppState state, action) {
+  return state.copyWith(
+    masterFactorState: masterFactorReducer(state.masterFactorState, action),
+  );
+}
+
 Reducer<AppState> appReducer = combineReducers<AppState>([
   ...authReducer,
   ...moodDetailReducer,
@@ -59,6 +66,7 @@ Reducer<AppState> appReducer = combineReducers<AppState>([
   _moodLogsReducer,
   _homeReducer,
   _masterFeelingReducer,
+  _masterFactorReducer,
 ]);
 
 Future<Store<AppState>> createStore(Isar isarInstance) async {

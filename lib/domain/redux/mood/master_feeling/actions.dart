@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:swayam/domain/entities/master_feeling.dart';
 
 @immutable
-class FetchMasterFeelingsAction {}
+class FetchMasterFeelingsActionFromApi {}
+
+@immutable
+class FetchMasterFeelingsActionFromCache {}
 
 // Action to indicate that the fetch process is in progress
 @immutable
