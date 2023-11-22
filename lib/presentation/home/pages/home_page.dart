@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 import 'package:swayam/domain/redux/home/home_actions.dart';
 import 'package:swayam/domain/redux/home/home_state.dart';
+import 'package:swayam/presentation/home/ui/master_fetch/fetch_feelings_view.dart';
 import 'package:swayam/presentation/home/ui/mood/mood_tracker.dart';
 import 'package:swayam/presentation/navigation/buildDesktopDrawer.dart';
 import 'package:swayam/presentation/navigation/buildMobileNavigationBar.dart';
@@ -120,6 +121,11 @@ class _HomePageState extends State<HomePage> {
                   leftMargin: 20,
                   selectableDayPredicate: (date) => date.isBefore(tomorrow),
                   locale: 'en_ISO',
+                ),
+                const BentoBox(
+                  gridWidth: 4,
+                  gridHeight: 1,
+                  child: FetchFeelingsView(),
                 ),
                 const SizedBox(height: 10),
                 const BentoBox(

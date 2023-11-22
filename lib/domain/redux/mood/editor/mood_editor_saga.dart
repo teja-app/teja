@@ -1,7 +1,6 @@
 import 'package:isar/isar.dart';
 import 'package:redux_saga/redux_saga.dart';
 import 'package:swayam/domain/entities/feeling.dart';
-import 'package:swayam/domain/entities/mood_log.dart';
 import 'package:swayam/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:swayam/domain/redux/mood/logs/mood_logs_actions.dart';
 import 'package:swayam/infrastructure/repositories/mood_log_repository.dart';

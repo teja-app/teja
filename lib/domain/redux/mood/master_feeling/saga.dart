@@ -4,13 +4,16 @@ import 'package:redux_saga/redux_saga.dart';
 import 'package:swayam/domain/entities/master_feeling.dart';
 import 'package:swayam/domain/redux/mood/master_feeling/actions.dart';
 import 'package:swayam/infrastructure/api/mood_api.dart';
+import 'package:swayam/infrastructure/database/isar_collections/master_factor.dart';
 import 'package:swayam/infrastructure/database/isar_collections/master_feeling.dart';
+import 'package:swayam/infrastructure/repositories/feeling_factor_repository.dart';
+import 'package:swayam/infrastructure/repositories/master_factor.dart';
 import 'package:swayam/infrastructure/repositories/master_feeling.dart';
 import 'package:swayam/shared/storage/secure_storage.dart';
 
 class MasterFeelingSaga {
   Iterable<void> saga() sync* {
-    yield TakeEvery(_fetchMasterFeelings, pattern: FetchMasterFeelingsAction);
+    yield TakeLatest(_fetchMasterFeelings, pattern: FetchMasterFeelingsAction);
   }
 
   _fetchMasterFeelings({dynamic action}) sync* {
@@ -20,51 +23,117 @@ class MasterFeelingSaga {
       var isarResult = Result<Isar>();
       yield GetContext('isar', result: isarResult);
       Isar isar = isarResult.value!;
+
       // Check cache first
-      var cachedFeelings = Result<List<MasterFeeling>>();
-      yield Call(MasterFeelingRepository(isar).getAllFeelings,
-          result: cachedFeelings);
+      var cachedFeelingEntities = Result<List<MasterFeelingEntity>>();
+      yield Call(
+        MasterFeelingRepository(isar).getAllFeelingEntities,
+        result: cachedFeelingEntities,
+      );
 
-      if (cachedFeelings.value != null && cachedFeelings.value!.isNotEmpty) {
-        List<MasterFeelingEntity> entityModelFeeling = [];
-        for (var entity in cachedFeelings.value!) {
-          entityModelFeeling.add(MasterFeelingEntity(
-            slug: entity.slug,
-            name: entity.name,
-            moodId: entity.moodId,
-            description: entity.description,
-          ));
-        }
-        yield Put(MasterFeelingsFetchedAction(entityModelFeeling));
+      if (cachedFeelingEntities.value != null &&
+          cachedFeelingEntities.value!.isNotEmpty) {
+        yield Put(
+          MasterFeelingsFetchedFromCacheAction(
+            cachedFeelingEntities.value!,
+          ),
+        );
       }
-      // Fetch the access token
-      final accessToken = Result<String?>();
-      yield Call(readSecureData, args: ['access_token'], result: accessToken);
-
-      MoodApi moodApi = MoodApi();
-      var feelings = Result<List<MasterFeelingEntity>>();
-      yield Call(moodApi.getMasterFeelings,
-          args: [accessToken.value], result: feelings);
-
-      if (feelings.value != null) {
-        yield Put(MasterFeelingsFetchedAction(feelings.value!));
-
-        // Map the fetched entities to domain models and add or update them
-        List<MasterFeeling> domainFeelings = feelings.value!.map((entity) {
-          return MasterFeeling()
-            ..slug = entity.slug
-            ..name = entity.name
-            ..moodId = entity.moodId
-            ..description = entity.description;
-        }).toList();
-        yield Call(MasterFeelingRepository(isar).addOrUpdateFeelings,
-            args: [domainFeelings]);
-      } else {
-        // Handle the null case, perhaps by dispatching an error action
-        yield Put(MasterFeelingsFetchFailedAction('No feelings data received'));
-      }
+      yield* _fetchAndProcessFeelingsFromAPI(isar);
     } catch (e) {
       yield Put(MasterFeelingsFetchFailedAction(e.toString()));
+    }
+  }
+
+  List<MasterFactor> _extractAllFactors(List<MasterFeelingEntity> feelings) {
+    var allFactors = <MasterFactor>{};
+    for (var feeling in feelings) {
+      var factors = feeling.factors;
+      for (var factor in factors!) {
+        allFactors.add(MasterFactor()
+          ..slug = factor.slug
+          ..name = factor.name
+          ..categoryId = factor.categoryId);
+      }
+    }
+    return allFactors.toList();
+  }
+
+  Iterable<void> _fetchAndProcessFeelingsFromAPI(Isar isar) sync* {
+    // Fetch the access token
+    final accessToken = Result<String?>();
+    yield Call(readSecureData, args: ['access_token'], result: accessToken);
+
+    MoodApi moodApi = MoodApi();
+    var feelingsResult = Result<List<MasterFeelingEntity>>();
+    yield Call(
+      moodApi.getMasterFeelings,
+      args: [accessToken.value],
+      result: feelingsResult,
+    );
+
+    var feelings = feelingsResult.value;
+    if (feelings != null && feelings.isNotEmpty) {
+      // Extract and add factors first
+      var allFactors = _extractAllFactors(feelings);
+      var factorRepo = MasterFactorRepository(isar);
+      var factorIdsResult = Result<Map<String, int>>();
+      yield Call(
+        factorRepo.addOrUpdateFactors,
+        args: [allFactors],
+        result: factorIdsResult,
+      );
+      var factorIdsMap = factorIdsResult.value;
+      List<MasterFeeling> domainFeelings = feelings.map((entity) {
+        return MasterFeeling()
+          ..slug = entity.slug
+          ..name = entity.name
+          ..moodId = entity.moodId
+          ..description = entity.description;
+      }).toList();
+      // Add feelings
+      var feelingRepo = MasterFeelingRepository(isar);
+      var feelingIdsResult = Result<Map<String, int>>();
+      yield Call(
+        feelingRepo.addOrUpdateFeelings,
+        args: [domainFeelings],
+        result: feelingIdsResult,
+      );
+      var feelingIdsMap = feelingIdsResult.value;
+
+      // Link feelings and factors
+      var feelingFactorRepo = FeelingFactorRepository(isar);
+      for (var feeling in feelings) {
+        var feelingId = feelingIdsMap?[feeling.slug];
+        // Ensure factorIds are non-nullable integers
+        var factorIds = feeling.factors
+            ?.map((f) => factorIdsMap?[f.slug])
+            .where((id) => id != null) // Filter out nulls
+            .cast<int>() // Cast to non-nullable int
+            .toList();
+        if (feelingId != null && factorIds != null) {
+          yield Call(
+            feelingFactorRepo.linkFeelingAndFactors,
+            args: [feelingId, factorIds],
+          );
+        }
+      }
+      var savedFeelingEntities = Result<List<MasterFeelingEntity>>();
+      yield Call(
+        MasterFeelingRepository(isar).getAllFeelingEntities,
+        result: savedFeelingEntities,
+      );
+      yield Put(
+        MasterFeelingsFetchedSuccessAction(
+          savedFeelingEntities.value!,
+          DateTime.now(),
+        ),
+      );
+    } else {
+      // Handle the null case, perhaps by dispatching an error action
+      yield Put(
+        const MasterFeelingsFetchFailedAction('No feelings data received'),
+      );
     }
   }
 }

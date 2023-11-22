@@ -17,7 +17,7 @@ class ApiHelper {
       final response = await requestFunction();
       logger.log(
         Level.info,
-        'Request succeeded: ${response.data}',
+        'Request succeeded',
       );
       return response;
     } catch (e) {

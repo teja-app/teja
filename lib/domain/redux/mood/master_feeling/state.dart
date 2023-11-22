@@ -9,11 +9,15 @@ class MasterFeelingState {
       masterFeelings; // List to store master feelings
   final bool isLoading; // Indicates if master feelings are being loaded
   final String? errorMessage; // Holds error message, if any
+  final DateTime? lastUpdatedAt;
+  final bool isFetchSuccessful;
 
   const MasterFeelingState({
     required this.masterFeelings,
     this.isLoading = false,
+    this.isFetchSuccessful = false,
     this.errorMessage,
+    this.lastUpdatedAt,
   });
 
   // Factory constructor for initial state
@@ -30,11 +34,15 @@ class MasterFeelingState {
     List<MasterFeelingEntity>? masterFeelings,
     bool? isLoading,
     String? errorMessage,
+    bool? isFetchSuccessful,
+    DateTime? lastUpdatedAt,
   }) {
     return MasterFeelingState(
       masterFeelings: masterFeelings ?? this.masterFeelings,
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage ?? this.errorMessage,
+      isFetchSuccessful: isFetchSuccessful ?? this.isFetchSuccessful,
+      lastUpdatedAt: lastUpdatedAt ?? this.lastUpdatedAt,
     );
   }
 

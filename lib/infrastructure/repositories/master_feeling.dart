@@ -1,4 +1,5 @@
 import 'package:isar/isar.dart';
+import 'package:swayam/domain/entities/master_feeling.dart';
 import 'package:swayam/infrastructure/database/isar_collections/master_feeling.dart';
 
 class MasterFeelingRepository {
@@ -10,9 +11,17 @@ class MasterFeelingRepository {
     return isar.masterFeelings.where().findAll();
   }
 
-  Future<void> addOrUpdateFeelings(List<MasterFeeling> feelings) async {
+  Future<List<MasterFeelingEntity>> getAllFeelingEntities() async {
+    List<MasterFeeling> feelings = await getAllFeelings();
+    return feelings.map(toEntity).toList();
+  }
+
+  Future<Map<String, int>> addOrUpdateFeelings(
+      List<MasterFeeling> feelings) async {
+    Map<String, int> feelingIds = {};
     await isar.writeTxn(() async {
       for (var feeling in feelings) {
+        int id;
         var existingFeeling = await isar.masterFeelings
             .where()
             .slugEqualTo(feeling.slug)
@@ -22,12 +31,23 @@ class MasterFeelingRepository {
           existingFeeling.name = feeling.name;
           existingFeeling.moodId = feeling.moodId;
           existingFeeling.description = feeling.description;
-          await isar.masterFeelings.put(existingFeeling);
+          id = await isar.masterFeelings.put(existingFeeling);
         } else {
           // Add new record
-          await isar.masterFeelings.put(feeling);
+          id = await isar.masterFeelings.put(feeling);
         }
+        feelingIds[feeling.slug] = id;
       }
     });
+    return feelingIds;
+  }
+
+  MasterFeelingEntity toEntity(MasterFeeling feeling) {
+    return MasterFeelingEntity(
+      slug: feeling.slug,
+      name: feeling.name,
+      moodId: feeling.moodId,
+      description: feeling.description,
+    );
   }
 }
