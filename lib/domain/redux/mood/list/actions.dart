@@ -12,6 +12,9 @@ class LoadMoodLogsListAction extends MoodListAction {
 }
 
 @immutable
+class ResetMoodLogsListAction extends MoodListAction {}
+
+@immutable
 class FetchMoodLogsInProgressAction extends MoodListAction {}
 
 @immutable

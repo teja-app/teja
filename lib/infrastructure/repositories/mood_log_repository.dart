@@ -26,6 +26,7 @@ class MoodLogRepository {
     // Fetch the mood logs with pagination
     final moodLogs = await isar.moodLogs
         .where()
+        .sortByTimestampDesc()
         .offset(startIndex) // Skip the first 'startIndex' logs
         .limit(pageSize) // Take only 'pageSize' number of logs
         .findAll();

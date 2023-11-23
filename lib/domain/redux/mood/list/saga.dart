@@ -21,6 +21,8 @@ class MoodLogListSaga {
           args: [action.pageKey, action.pageSize], result: moodLogsResult);
 
       if (moodLogsResult.value != null) {
+        print(
+            " moodLogsResult.value![0].timestamp ${moodLogsResult.value![0].timestamp}");
         bool isLastPage = moodLogsResult.value!.length < action.pageSize;
         yield Put(MoodLogsListFetchedSuccessAction(
             moodLogsResult.value!, isLastPage));
@@ -29,6 +31,9 @@ class MoodLogListSaga {
             'No mood logs found for the requested page.'));
       }
     } catch (e) {
+      print(
+          "action.pageKey, action.pageSize ${action.pageKey}, ${action.pageSize}");
+      print("e.toString() ${e.toString()}");
       yield Put(MoodLogsListFetchFailedAction(e.toString()));
     }
   }

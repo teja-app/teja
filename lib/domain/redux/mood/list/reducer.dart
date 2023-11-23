@@ -10,11 +10,23 @@ Reducer<MoodLogListState> moodLogListReducer =
       _moodLogsFetchedSuccess),
   TypedReducer<MoodLogListState, MoodLogsListFetchFailedAction>(
       _moodLogsFetchFailed),
+  TypedReducer<MoodLogListState, ResetMoodLogsListAction>(
+      _resetMoodLogsListAction),
 ]);
 
 MoodLogListState _fetchMoodLogsInProgress(
     MoodLogListState state, FetchMoodLogsInProgressAction action) {
   return state.copyWith(isLoading: true);
+}
+
+MoodLogListState _resetMoodLogsListAction(
+    MoodLogListState state, ResetMoodLogsListAction action) {
+  return state.copyWith(
+    isLoading: false,
+    moodLogs: [],
+    errorMessage: null,
+    isLastPage: false,
+  );
 }
 
 MoodLogListState _moodLogsFetchedSuccess(

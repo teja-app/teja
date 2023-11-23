@@ -1,8 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:intl/intl.dart';
 import 'package:redux/redux.dart';
 import 'package:swayam/domain/entities/mood_log.dart';
@@ -14,14 +16,18 @@ import 'package:swayam/presentation/navigation/isDesktop.dart';
 import 'package:swayam/router.dart';
 
 class MoodListPage extends StatefulWidget {
+  const MoodListPage({super.key});
+
   @override
   _MoodListPageState createState() => _MoodListPageState();
 }
 
 class _MoodListPageState extends State<MoodListPage> {
-  static const int pageSize = 20; // Define your page size here
-  final PagingController<int, MoodLogEntity> _pagingController =
-      PagingController(firstPageKey: 0);
+  static const int pageSize = 10; // Define your page size here
+
+  final ItemScrollController itemScrollController = ItemScrollController();
+  final ItemPositionsListener itemPositionsListener =
+      ItemPositionsListener.create();
 
   Widget _moodLogLayout(MoodLogEntity moodLog) {
     final svgPath = 'assets/icons/mood_${moodLog.moodRating}_active.svg';
@@ -31,17 +37,6 @@ class _MoodListPageState extends State<MoodListPage> {
     final textTheme = Theme.of(context).textTheme;
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Padding(
-        padding: EdgeInsets.only(top: 10),
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: Text(
-            'Mood and Emotions',
-            style: textTheme.titleLarge,
-          ),
-        ),
-      ),
-      const SizedBox(height: 8),
       GestureDetector(
         onTap: () {
           // Assuming moodLog.id contains the unique identifier for the mood entry
@@ -80,7 +75,7 @@ class _MoodListPageState extends State<MoodListPage> {
                     ),
                     const Spacer(), // Pushes the timestamp to the right
                     Text(
-                      DateFormat('hh:mm a').format(moodLog
+                      DateFormat('MMM d hh:mm a').format(moodLog
                           .timestamp), // Formats the timestamp to show time only
                       style: const TextStyle(color: Colors.grey),
                     ),
@@ -111,84 +106,96 @@ class _MoodListPageState extends State<MoodListPage> {
     ]);
   }
 
+  void _loadMoreDataIfNeeded() {
+    final store = StoreProvider.of<AppState>(context, listen: false);
+    final moodLogsState = store.state.moodLogListState;
+
+    if (moodLogsState.isLoading || moodLogsState.isLastPage) {
+      // Either currently loading or no more data to load
+      return;
+    }
+
+    final positions = itemPositionsListener.itemPositions.value;
+    if (positions.isNotEmpty) {
+      final lastVisibleItemIndex = positions.last.index;
+      if (lastVisibleItemIndex >= moodLogsState.moodLogs.length - 1) {
+        // Dispatch action to load more data
+        final int nextPageNumber =
+            (moodLogsState.moodLogs.length / pageSize).ceil();
+        store.dispatch(LoadMoodLogsListAction(nextPageNumber, pageSize));
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    print("initState");
-    _pagingController.addStatusListener((status) {
-      if (status == PagingStatus.ongoing) {
-        // Print statement to debug
-        print("Paging Status: ongoing");
+
+    itemPositionsListener.itemPositions.addListener(() {
+      final positions = itemPositionsListener.itemPositions.value;
+
+      // Trigger only if the user has scrolled near the end of the list
+      if (positions.isNotEmpty) {
+        final lastVisibleItemIndex = positions.last.index;
+        // Fetch the store from the context
+        final store = StoreProvider.of<AppState>(context, listen: false);
+        final thresholdIndex = max(
+            0,
+            store.state.moodLogListState.moodLogs.length -
+                (pageSize / 2).round());
+        if (lastVisibleItemIndex >= thresholdIndex) {
+          _loadMoreDataIfNeeded();
+        }
       }
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final store = StoreProvider.of<AppState>(context);
+      store.dispatch(ResetMoodLogsListAction());
+    });
+  }
+
+  void _loadInitialData() {
+    final Store<AppState> store = StoreProvider.of<AppState>(context);
+    // Assuming that the moodLogs list is empty after reset, load the first page
+    if (store.state.moodLogListState.moodLogs.isEmpty) {
+      store.dispatch(LoadMoodLogsListAction(0, pageSize));
+    }
   }
 
   @override
   void didChangeDependencies() {
-    print("didChangeDependencies");
     super.didChangeDependencies();
-    _pagingController.addPageRequestListener((pageKey) {
-      print("Page request listener triggered");
-      StoreProvider.of<AppState>(context)
-          .dispatch(LoadMoodLogsListAction(pageKey, pageSize));
-    });
+    _loadInitialData();
   }
 
   @override
   Widget build(BuildContext context) {
-    Future.microtask(() => _pagingController.addPageRequestListener((pageKey) {
-          print("Page request listener triggered");
-          StoreProvider.of<AppState>(context)
-              .dispatch(LoadMoodLogsListAction(pageKey, pageSize));
-        }));
-
     return Scaffold(
       bottomNavigationBar:
           isDesktop(context) ? null : buildMobileNavigationBar(context),
       drawer: isDesktop(context) ? buildDesktopDrawer() : null,
       appBar: AppBar(
-        title: Text('Mood Logs'),
+        title: const Text('Mood Logs'),
+        forceMaterialTransparency: true,
       ),
       body: StoreConnector<AppState, MoodListViewModel>(
         converter: (store) => MoodListViewModel.fromStore(store),
         builder: (context, viewModel) {
-          // Handle loading state
-          if (viewModel.isLoading && _pagingController.itemList == null) {
+          if (viewModel.isLoading && viewModel.moodLogs.isEmpty) {
             return Center(child: CircularProgressIndicator());
           }
-
-          // Handle error state
-          if (viewModel.errorMessage != null) {
-            _pagingController.error = viewModel.errorMessage;
-            // Optionally, show an error message on the screen
-            return Center(child: Text("Error: ${viewModel.errorMessage}"));
-          }
-
-          // Set PagingController value
-          _pagingController.value = PagingState(
-            itemList: viewModel.moodLogs,
-            nextPageKey:
-                viewModel.isLastPage ? null : viewModel.moodLogs.length,
-            error: null,
-          );
-
-          // Return PagedListView widget inside the Scaffold
-          return PagedListView<int, MoodLogEntity>(
-            pagingController: _pagingController,
-            builderDelegate: PagedChildBuilderDelegate<MoodLogEntity>(
-              itemBuilder: (context, item, index) => _moodLogLayout(item),
-            ),
+          return ScrollablePositionedList.builder(
+            itemCount: viewModel.moodLogs.length,
+            itemBuilder: (context, index) =>
+                _moodLogLayout(viewModel.moodLogs[index]),
+            itemScrollController: itemScrollController,
+            itemPositionsListener: itemPositionsListener,
           );
         },
       ),
       // Add other Scaffold properties like floatingActionButton if needed
     );
-  }
-
-  @override
-  void dispose() {
-    _pagingController.dispose();
-    super.dispose();
   }
 
   // Your _moodLogLayout method
