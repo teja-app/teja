@@ -80,7 +80,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       bottomNavigationBar:
           isDesktop(context) ? null : buildMobileNavigationBar(context),
-      drawer: isDesktop(context) ? buildDesktopDrawer() : null,
+      drawer: isDesktop(context) ? buildDesktopDrawer(context) : null,
       appBar: AppBar(
         elevation: 0.0,
         actions: [

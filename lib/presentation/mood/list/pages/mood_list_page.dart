@@ -2,20 +2,20 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:icons_flutter/icons_flutter.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:intl/intl.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:redux/redux.dart';
 import 'package:swayam/domain/entities/mood_log.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 import 'package:swayam/domain/redux/mood/list/actions.dart';
 import 'package:swayam/presentation/mood/list/ui/filter_bottom_sheet.dart';
+import 'package:swayam/presentation/mood/list/ui/mood_widget.dart';
 import 'package:swayam/presentation/navigation/buildDesktopDrawer.dart';
 import 'package:swayam/presentation/navigation/buildMobileNavigationBar.dart';
 import 'package:swayam/presentation/navigation/isDesktop.dart';
-import 'package:swayam/router.dart';
+import 'package:swayam/shared/common/bento_box.dart';
+import 'package:swayam/shared/common/flexible_height_box.dart';
 
 class MoodListPage extends StatefulWidget {
   const MoodListPage({super.key});
@@ -30,83 +30,6 @@ class _MoodListPageState extends State<MoodListPage> {
   final ItemScrollController itemScrollController = ItemScrollController();
   final ItemPositionsListener itemPositionsListener =
       ItemPositionsListener.create();
-
-  Widget _moodLogLayout(MoodLogEntity moodLog) {
-    final svgPath = 'assets/icons/mood_${moodLog.moodRating}_active.svg';
-    final hasComments = moodLog.comment != null ? true : false;
-    final tags = [];
-    final hasTags = tags.isNotEmpty;
-    final textTheme = Theme.of(context).textTheme;
-
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      GestureDetector(
-        onTap: () {
-          // Assuming moodLog.id contains the unique identifier for the mood entry
-          final moodId = moodLog.id.toString();
-          // Use GoRouter to navigate to the MoodDetailPage
-          GoRouter.of(context).pushNamed(
-            RootPath.moodDetail,
-            queryParameters: {
-              "id": moodId,
-            },
-          );
-        },
-        child: Card(
-          margin: const EdgeInsets.symmetric(
-            horizontal: 8,
-            vertical: 8,
-          ),
-          elevation: 0.5, // Adjusts the elevation for shadow effect
-          child: Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 24.0, horizontal: 10.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    SvgPicture.asset(
-                      svgPath,
-                      width: 24,
-                      height: 24,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Mood Entry',
-                      style: textTheme.titleMedium,
-                    ),
-                    const Spacer(), // Pushes the timestamp to the right
-                    Text(
-                      DateFormat('MMM d hh:mm a').format(moodLog
-                          .timestamp), // Formats the timestamp to show time only
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                  ],
-                ),
-                if (hasComments || hasTags) const SizedBox(height: 8),
-                if (hasComments)
-                  Text(
-                    moodLog.comment!,
-                    style: const TextStyle(color: Colors.black),
-                  ),
-                if (hasTags) const SizedBox(height: 16),
-                if (hasTags)
-                  Wrap(
-                    spacing: 8,
-                    children: tags
-                        .map((tag) => Chip(
-                              label: Text(tag),
-                              backgroundColor: Colors.grey[200],
-                            ))
-                        .toList(),
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    ]);
-  }
 
   void _loadMoreDataIfNeeded() {
     final store = StoreProvider.of<AppState>(context, listen: false);
@@ -180,14 +103,29 @@ class _MoodListPageState extends State<MoodListPage> {
     );
   }
 
+  // Group mood logs by their date
+  Map<DateTime, List<MoodLogEntity>> groupMoodLogsByDate(
+      List<MoodLogEntity> moodLogs) {
+    Map<DateTime, List<MoodLogEntity>> groupedLogs = {};
+    for (var log in moodLogs) {
+      DateTime date =
+          DateTime(log.timestamp.year, log.timestamp.month, log.timestamp.day);
+      if (!groupedLogs.containsKey(date)) {
+        groupedLogs[date] = [];
+      }
+      groupedLogs[date]!.add(log);
+    }
+    return groupedLogs;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar:
           isDesktop(context) ? null : buildMobileNavigationBar(context),
-      drawer: isDesktop(context) ? buildDesktopDrawer() : null,
+      drawer: isDesktop(context) ? buildDesktopDrawer(context) : null,
       appBar: AppBar(
-        title: const Text('Mood Logs'),
+        title: const Text('Inner Compass'),
         forceMaterialTransparency: true,
         actions: [
           IconButton(
@@ -204,12 +142,40 @@ class _MoodListPageState extends State<MoodListPage> {
           if (viewModel.isLoading && viewModel.moodLogs.isEmpty) {
             return Center(child: CircularProgressIndicator());
           }
-          return ScrollablePositionedList.builder(
-            itemCount: viewModel.moodLogs.length,
-            itemBuilder: (context, index) =>
-                _moodLogLayout(viewModel.moodLogs[index]),
-            itemScrollController: itemScrollController,
-            itemPositionsListener: itemPositionsListener,
+
+          // Group mood logs by date
+          var groupedLogs = groupMoodLogsByDate(viewModel.moodLogs);
+
+          // List of widgets to render (headers and mood logs)
+          List<Widget> listItems = [];
+
+          // Build the list with date headers
+          groupedLogs.forEach((date, logs) {
+            // Add date header
+            listItems.add(DateHeaderWidget(date: date));
+
+            // Wrap each day's logs in a FlexibleHeightBox
+            listItems.add(FlexibleHeightBox(
+              gridWidth: 4, // Adjust as needed
+              child: Column(
+                children:
+                    logs.map((log) => moodLogLayout(log, context)).toList(),
+              ),
+              // Add other parameters as needed
+            ));
+          });
+
+          return Center(
+            child: FlexibleHeightBox(
+              gridWidth: 4,
+              color: Theme.of(context).scaffoldBackgroundColor,
+              child: ScrollablePositionedList.builder(
+                itemCount: listItems.length,
+                itemBuilder: (context, index) => listItems[index],
+                itemScrollController: itemScrollController,
+                itemPositionsListener: itemPositionsListener,
+              ),
+            ),
           );
         },
       ),
@@ -218,6 +184,24 @@ class _MoodListPageState extends State<MoodListPage> {
   }
 
   // Your _moodLogLayout method
+}
+
+// Widget to display the date header
+class DateHeaderWidget extends StatelessWidget {
+  final DateTime date;
+
+  const DateHeaderWidget({Key? key, required this.date}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Text(
+        DateFormat('MMM d, yyyy').format(date),
+        style: Theme.of(context).textTheme.titleMedium,
+      ),
+    );
+  }
 }
 
 class MoodListViewModel {

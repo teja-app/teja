@@ -13,7 +13,7 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       bottomNavigationBar:
           isDesktop(context) ? null : buildMobileNavigationBar(context),
-      drawer: isDesktop(context) ? buildDesktopDrawer() : null,
+      drawer: isDesktop(context) ? buildDesktopDrawer(context) : null,
       appBar: AppBar(
         title: const Text('Profile'),
         backgroundColor: Colors.transparent,
