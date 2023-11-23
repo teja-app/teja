@@ -1,8 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swayam/presentation/home/pages/home_page.dart';
-import 'package:swayam/presentation/mood/pages/mood_detail.dart';
-import 'package:swayam/presentation/mood/pages/mood_edit.dart';
+import 'package:swayam/presentation/mood/detail/page/mood_detail.dart';
+import 'package:swayam/presentation/mood/editor/pages/mood_edit.dart';
+import 'package:swayam/presentation/mood/list/pages/mood_list_page.dart';
 import 'package:swayam/presentation/onboarding/pages/onboarding_page.dart';
 import 'package:swayam/presentation/onboarding/pages/sign_in_page.dart';
 import 'package:swayam/presentation/onboarding/pages/sign_up_page.dart';
@@ -45,6 +46,7 @@ class RootPath {
   static const profile = "profile";
   static const settings = "settings";
   static const moodEdit = "mood_edit";
+  static const moodList = "mood_list";
   static const moodDetail = "mood_detail";
 }
 
@@ -92,6 +94,12 @@ final GoRouter router = GoRouter(
       name: RootPath.moodEdit,
       path: '/mood_edit',
       builder: (context, state) => const MoodEditPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RootPath.moodList,
+      path: '/mood_list',
+      builder: (context, state) => MoodListPage(),
     ),
     GoRoute(
       // Add this block for mood detail page

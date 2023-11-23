@@ -19,6 +19,10 @@ Widget buildMobileNavigationBar(BuildContext context) {
         label: 'Settings',
       ),
       BottomNavigationBarItem(
+        icon: Icon(AntDesign.book),
+        label: 'Mood',
+      ),
+      BottomNavigationBarItem(
         icon: Icon(AntDesign.user),
         label: 'Profile',
       ),
@@ -34,6 +38,9 @@ Widget buildMobileNavigationBar(BuildContext context) {
           goRouter.goNamed(RootPath.settings);
           break;
         case 2:
+          goRouter.goNamed(RootPath.moodList);
+          break;
+        case 3:
           goRouter.goNamed(RootPath.profile);
           break;
         // Handle other indices as needed
@@ -48,8 +55,10 @@ int _getSelectedIndex(String currentLocation) {
       return 0;
     case '/settings':
       return 1;
-    case '/profile':
+    case '/mood_list':
       return 2;
+    case '/profile':
+      return 3;
     default:
       return 0; // Default index if no match found
   }

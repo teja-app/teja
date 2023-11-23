@@ -7,7 +7,7 @@ import 'package:redux/redux.dart';
 import 'package:swayam/domain/entities/master_feeling.dart';
 import 'package:swayam/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:swayam/domain/redux/mood/master_feeling/actions.dart';
-import 'package:swayam/presentation/mood/ui/feelings.dart';
+import 'package:swayam/presentation/mood/editor/ui/feelings.dart';
 import 'package:swayam/shared/common/button.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 import 'package:swayam/shared/common/description_button.dart';
@@ -111,6 +111,7 @@ class _FeelingScreenState extends State<FeelingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return StoreConnector<AppState, _ViewModel>(
         converter: (store) => _ViewModel.fromStore(store),
         onInit: (store) => _initializeFeelings(
@@ -235,10 +236,7 @@ class _FeelingScreenState extends State<FeelingScreen> {
                           onPressed: _showAllFeelings,
                           child: Text(
                             "View more feelings options",
-                            style: TextStyle(
-                              color: Colors.blueAccent
-                                  .shade700, // Setting the text color to black
-                            ),
+                            style: textTheme.labelLarge,
                           ),
                         ),
                       ),
@@ -247,7 +245,8 @@ class _FeelingScreenState extends State<FeelingScreen> {
                         text: "Next",
                         width: 200,
                         onPressed: () {
-                          // TODO: Handle next action
+                          final store = StoreProvider.of<AppState>(context);
+                          store.dispatch(const ChangePageAction(2));
                         },
                         buttonType: ButtonType.primary,
                       ),

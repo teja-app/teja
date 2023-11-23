@@ -57,7 +57,11 @@ class DescriptionButton extends StatelessWidget {
               if (icon != null)
                 Row(
                   children: [
-                    Icon(icon, size: 16.0), // Display the icon
+                    Icon(
+                      icon,
+                      size: 16.0,
+                      color: Colors.black,
+                    ), // Display the icon
                     const SizedBox(
                         width: 8.0), // Spacing between the icon and the title
                     Expanded(

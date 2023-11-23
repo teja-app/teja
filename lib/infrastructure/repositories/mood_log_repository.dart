@@ -19,6 +19,21 @@ class MoodLogRepository {
     return isar.moodLogs.where().findAll();
   }
 
+  Future<List<MoodLogEntity>> getMoodLogsPage(int pageKey, int pageSize) async {
+    // Calculate the start index based on the page key and page size
+    final startIndex = pageKey * pageSize;
+
+    // Fetch the mood logs with pagination
+    final moodLogs = await isar.moodLogs
+        .where()
+        .offset(startIndex) // Skip the first 'startIndex' logs
+        .limit(pageSize) // Take only 'pageSize' number of logs
+        .findAll();
+
+    // Convert MoodLog to MoodLogEntity
+    return moodLogs.map(toEntity).toList();
+  }
+
   Future<void> addOrUpdateMoodLog(MoodLog moodLog) async {
     await isar.writeTxn(() async {
       await isar.moodLogs.put(moodLog);

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:icons_flutter/icons_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:redux/redux.dart';
-import 'package:swayam/domain/entities/feeling.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 import 'package:swayam/domain/redux/mood/detail/mood_detail_actions.dart';
 import 'package:swayam/domain/redux/mood/detail/mood_detail_state.dart';
+import 'package:swayam/presentation/mood/detail/ui/feeling_list.dart';
+import 'package:swayam/presentation/mood/detail/ui/mood_rating_widget.dart';
+import 'package:swayam/presentation/mood/detail/ui/setting_pop_up_menu.dart';
 import 'package:swayam/shared/common/bento_box.dart';
 
 class MoodEntryWidget extends StatelessWidget {
@@ -21,132 +21,10 @@ class MoodEntryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return Text(
       DateFormat('dd-MMM-yyyy, h:mm a').format(timestamp),
-      style: const TextStyle(
-        color: Colors.black54,
-        fontSize: 14, // Slightly smaller font for the timestamp
-      ),
-    );
-  }
-}
-
-class MoodRatingWidget extends StatelessWidget {
-  final int moodRating;
-
-  const MoodRatingWidget({
-    Key? key,
-    required this.moodRating,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    // Determine the icon based on the mood rating
-    String moodIconPath =
-        'assets/icons/mood_${moodRating}_inactive.svg'; // Adjust the path as necessary
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Mood',
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              '$moodRating/5',
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        // Replace with SvgPicture.asset if using SVG icons
-        SvgPicture.asset(
-          moodIconPath,
-          width: 40,
-          height: 40,
-        ), // Ensure you have the correct path and file for the asset
-      ],
-    );
-  }
-}
-
-class FeelingsListWidget extends StatelessWidget {
-  final List<FeelingEntity> feelings;
-
-  const FeelingsListWidget({
-    Key? key,
-    required this.feelings,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Feelings',
-          style: TextStyle(color: Colors.grey, fontSize: 22),
-        ),
-        const SizedBox(height: 8),
-        ...feelings.map(
-          (feeling) => BentoBox(
-            gridWidth: 4,
-            gridHeight: 1,
-            child: Text(feeling.feeling),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class SettingsPopupMenu extends StatelessWidget {
-  final String moodId;
-  final Function onDelete;
-
-  const SettingsPopupMenu({
-    Key? key,
-    required this.moodId,
-    required this.onDelete,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return PopupMenuButton<int>(
-      key: const Key("mood_settings"),
-      icon: const Icon(
-        AntDesign.ellipsis1,
-        color: Colors.black,
-        size: 16,
-      ),
-      onSelected: (int result) {
-        if (result == 0) {
-          // Handle edit action
-        } else if (result == 1) {
-          onDelete();
-        }
-      },
-      itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-        const PopupMenuItem<int>(
-          value: 0,
-          child: Text('Edit'),
-        ),
-        const PopupMenuItem<int>(
-          value: 1,
-          child: Text('Delete'),
-        ),
-      ],
+      style: textTheme.labelMedium,
     );
   }
 }

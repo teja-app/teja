@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:swayam/domain/redux/home/home_state.dart';
 import 'package:swayam/domain/redux/mood/detail/mood_detail_state.dart';
 import 'package:swayam/domain/redux/mood/editor/mood_editor_state.dart';
+import 'package:swayam/domain/redux/mood/list/state.dart';
 import 'package:swayam/domain/redux/mood/logs/mood_logs_state.dart';
 import 'package:swayam/domain/redux/mood/master_factor/state.dart';
 import 'package:swayam/domain/redux/mood/master_feeling/state.dart';
@@ -13,6 +14,7 @@ class AppState {
   final MoodEditorState moodEditorState;
   final MoodDetailState moodDetailPage;
   final MoodLogsState moodLogsState;
+  final MoodLogListState moodLogListState;
   final HomeState homeState;
   final MasterFeelingState masterFeelingState;
   final MasterFactorState masterFactorState;
@@ -23,6 +25,7 @@ class AppState {
     required this.moodEditorState,
     required this.moodDetailPage,
     required this.moodLogsState,
+    required this.moodLogListState,
     required this.masterFeelingState,
     required this.masterFactorState,
   });
@@ -35,6 +38,7 @@ class AppState {
     MoodLogsState? moodLogsState,
     MasterFeelingState? masterFeelingState,
     MasterFactorState? masterFactorState,
+    MoodLogListState? moodLogListState,
   }) {
     return AppState(
       authState: authState ?? this.authState,
@@ -44,6 +48,7 @@ class AppState {
       moodLogsState: moodLogsState ?? this.moodLogsState,
       masterFeelingState: masterFeelingState ?? this.masterFeelingState,
       masterFactorState: masterFactorState ?? this.masterFactorState,
+      moodLogListState: moodLogListState ?? this.moodLogListState,
     );
   }
 
@@ -56,6 +61,7 @@ class AppState {
       moodLogsState: MoodLogsState.initialState(),
       masterFeelingState: MasterFeelingState.initial(),
       masterFactorState: MasterFactorState.initial(),
+      moodLogListState: MoodLogListState.initial(),
     );
   }
 }

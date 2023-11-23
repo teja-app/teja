@@ -51,8 +51,6 @@ class SignUpPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final NavigatorState navigator = Navigator.of(context);
-    final isLargeScreen = MediaQuery.of(context).size.width > 600;
-
     final Brightness themeBrightness = Theme.of(context).brightness;
     return Scaffold(
       appBar: AppBar(
