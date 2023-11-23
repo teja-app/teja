@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:swayam/domain/entities/mood_log.dart';
+import 'package:swayam/domain/redux/mood/list/state.dart';
 
 abstract class MoodListAction {}
 
@@ -9,6 +10,13 @@ class LoadMoodLogsListAction extends MoodListAction {
   final int pageSize;
 
   LoadMoodLogsListAction(this.pageKey, this.pageSize);
+}
+
+@immutable
+class ApplyMoodLogsFilterAction extends MoodListAction {
+  final MoodLogFilter filter;
+
+  ApplyMoodLogsFilterAction(this.filter);
 }
 
 @immutable

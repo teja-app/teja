@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:icons_flutter/icons_flutter.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:intl/intl.dart';
 import 'package:redux/redux.dart';
 import 'package:swayam/domain/entities/mood_log.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 import 'package:swayam/domain/redux/mood/list/actions.dart';
+import 'package:swayam/presentation/mood/list/ui/filter_bottom_sheet.dart';
 import 'package:swayam/presentation/navigation/buildDesktopDrawer.dart';
 import 'package:swayam/presentation/navigation/buildMobileNavigationBar.dart';
 import 'package:swayam/presentation/navigation/isDesktop.dart';
@@ -169,6 +171,15 @@ class _MoodListPageState extends State<MoodListPage> {
     _loadInitialData();
   }
 
+  void _showFilterDialog() async {
+    await showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return const FilterBottomSheet(); // Replace with your actual dialog/widget
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -178,6 +189,14 @@ class _MoodListPageState extends State<MoodListPage> {
       appBar: AppBar(
         title: const Text('Mood Logs'),
         forceMaterialTransparency: true,
+        actions: [
+          IconButton(
+            icon: const Icon(AntDesign.filter),
+            onPressed: () {
+              _showFilterDialog();
+            },
+          ),
+        ],
       ),
       body: StoreConnector<AppState, MoodListViewModel>(
         converter: (store) => MoodListViewModel.fromStore(store),

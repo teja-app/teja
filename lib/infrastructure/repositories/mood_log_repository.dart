@@ -2,6 +2,7 @@
 import 'package:isar/isar.dart';
 import 'package:swayam/domain/entities/feeling.dart';
 import 'package:swayam/domain/entities/mood_log.dart';
+import 'package:swayam/domain/redux/mood/list/state.dart';
 import 'package:swayam/infrastructure/managers/mood_badge_manager.dart';
 import 'package:swayam/infrastructure/database/isar_collections/mood_log.dart';
 import 'package:swayam/infrastructure/repositories/badge_repository.dart';
@@ -19,20 +20,35 @@ class MoodLogRepository {
     return isar.moodLogs.where().findAll();
   }
 
-  Future<List<MoodLogEntity>> getMoodLogsPage(int pageKey, int pageSize) async {
-    // Calculate the start index based on the page key and page size
+  Future<List> getMoodLogsPage(int pageKey, int pageSize,
+      [MoodLogFilter? filter]) async {
     final startIndex = pageKey * pageSize;
 
-    // Fetch the mood logs with pagination
-    final moodLogs = await isar.moodLogs
-        .where()
-        .sortByTimestampDesc()
-        .offset(startIndex) // Skip the first 'startIndex' logs
-        .limit(pageSize) // Take only 'pageSize' number of logs
-        .findAll();
+    var filterConditions = <FilterCondition>[];
 
-    // Convert MoodLog to MoodLogEntity
-    return moodLogs.map(toEntity).toList();
+    // Add filter conditions based on selected mood ratings
+    print("filter.selectedMoodRatings:Before ${filter!.selectedMoodRatings}");
+    if (filter != null && filter.selectedMoodRatings.isNotEmpty) {
+      print("filter.selectedMoodRatings ${filter.selectedMoodRatings}");
+      for (var rating in filter.selectedMoodRatings) {
+        filterConditions.add(FilterCondition.equalTo(
+          property: 'moodRating',
+          value: rating,
+        ));
+      }
+    }
+
+    final query = isar.moodLogs.buildQuery(
+      filter: FilterGroup.or(filterConditions),
+      sortBy: [const SortProperty(property: 'timestamp', sort: Sort.desc)],
+      offset: startIndex,
+      limit: pageSize,
+    );
+
+    final moodLogs = await query.findAll();
+    print("moodLogs ${moodLogs.length}");
+
+    return moodLogs.map((moodLog) => toEntity(moodLog)).toList();
   }
 
   Future<void> addOrUpdateMoodLog(MoodLog moodLog) async {

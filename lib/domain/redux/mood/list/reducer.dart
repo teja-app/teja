@@ -12,7 +12,19 @@ Reducer<MoodLogListState> moodLogListReducer =
       _moodLogsFetchFailed),
   TypedReducer<MoodLogListState, ResetMoodLogsListAction>(
       _resetMoodLogsListAction),
+  TypedReducer<MoodLogListState, ApplyMoodLogsFilterAction>(
+      _applyMoodLogsFilter),
 ]);
+
+MoodLogListState _applyMoodLogsFilter(
+    MoodLogListState state, ApplyMoodLogsFilterAction action) {
+  return state.copyWith(
+    filter: action.filter,
+    moodLogs: [], // Reset the mood logs
+    isLastPage: false, // Reset pagination
+    errorMessage: null, // Clear any existing error message
+  );
+}
 
 MoodLogListState _fetchMoodLogsInProgress(
     MoodLogListState state, FetchMoodLogsInProgressAction action) {
