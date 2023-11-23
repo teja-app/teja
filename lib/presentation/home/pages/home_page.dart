@@ -133,7 +133,6 @@ class _HomePageState extends State<HomePage> {
                   tabletGridHeight: 3,
                   desktopGridWidth: 6,
                   desktopGridHeight: 3.5,
-                  color: Colors.white,
                   child: MoodTrackerWidget(),
                 ),
               ],

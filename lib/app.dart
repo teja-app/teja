@@ -54,7 +54,8 @@ class _AppState extends State<App> {
             ),
             scaffoldBackgroundColor: Colors.grey.shade900,
             appBarTheme: AppBarTheme(
-              backgroundColor: Colors.grey.shade900,
+              // backgroundColor: Colors.grey.shade900,
+              color: Colors.grey.shade900,
             ),
             useMaterial3: true,
           ),
@@ -79,7 +80,8 @@ class _AppState extends State<App> {
             ),
             scaffoldBackgroundColor: Colors.grey.shade100,
             appBarTheme: AppBarTheme(
-              backgroundColor: Colors.grey.shade100,
+              // backgroundColor: Colors.grey.shade100,
+              color: Colors.grey.shade100,
             ),
             useMaterial3: true,
           ),

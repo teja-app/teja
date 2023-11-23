@@ -2,10 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:passwordfield/passwordfield.dart'; // Import the passwordfield package
 import 'package:redux/redux.dart';
 import 'package:swayam/domain/redux/onboarding/actions.dart';
+import 'package:swayam/shared/common/bento_box.dart';
 import 'package:swayam/shared/common/button.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 
@@ -50,28 +52,29 @@ class SignUpPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final NavigatorState navigator = Navigator.of(context);
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
+
+    final Brightness themeBrightness = Theme.of(context).brightness;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sign Up'),
+        forceMaterialTransparency: true,
       ),
       body: Center(
         child: SingleChildScrollView(
-          child: Container(
-            width: 400,
-            padding: const EdgeInsets.all(20.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              border: Border.all(color: Colors.black),
-              color: Colors.white,
-            ),
+          child: BentoBox(
+            gridWidth: 4,
+            gridHeight: 6,
             child: Column(
               children: [
                 // Logo or Header
-                Image.asset(
-                  'assets/logo/AppIcon.png',
-                  fit: BoxFit.cover,
+                SvgPicture.asset(
+                  themeBrightness == Brightness.dark
+                      ? "assets/logo/White.svg"
+                      : "assets/logo/Color.svg",
+                  width: 60,
                   height: 60,
                 ),
+                const SizedBox(height: 30),
                 const Padding(
                   padding: EdgeInsets.only(bottom: 20.0),
                   child: Column(

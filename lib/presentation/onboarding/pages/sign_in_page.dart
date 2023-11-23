@@ -2,10 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:passwordfield/passwordfield.dart'; // Import the passwordfield package
 import 'package:redux/redux.dart';
 import 'package:swayam/domain/redux/onboarding/actions.dart';
+import 'package:swayam/shared/common/bento_box.dart';
 import 'package:swayam/shared/common/button.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -38,32 +40,31 @@ class _SignInPageState extends State<SignInPage> {
   Widget build(BuildContext context) {
     final NavigatorState navigator = Navigator.of(context);
 
+    final Brightness themeBrightness = Theme.of(context).brightness;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sign In'),
       ),
       body: Center(
         child: SingleChildScrollView(
-          child: Container(
-            width: 400,
-            padding: const EdgeInsets.all(20.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              border: Border.all(color: Colors.black),
-              color: Colors.white,
-            ),
+          child: BentoBox(
+            gridHeight: 4,
+            gridWidth: 4,
             child: Column(
               children: [
                 // Logo or Header
-                Image.asset(
-                  'assets/logo/AppIcon.png',
-                  fit: BoxFit.cover,
+                SvgPicture.asset(
+                  themeBrightness == Brightness.dark
+                      ? "assets/logo/White.svg"
+                      : "assets/logo/Color.svg",
+                  width: 60,
                   height: 60,
                 ),
+                const SizedBox(height: 40),
                 // Form fields and Sign In button
                 _buildFormColumn(context, navigator),
                 // Additional links and information
-                const SizedBox(height: 10),
+                const SizedBox(height: 30),
                 GestureDetector(
                   onTap: () => GoRouter.of(context).push('/sign_up'),
                   child: const Text(
@@ -95,7 +96,7 @@ class _SignInPageState extends State<SignInPage> {
                 PasswordField(
                   controller: passwordController,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 60),
                 Button(
                   key: const Key("signIn"),
                   text: 'Sign In',
