@@ -75,14 +75,13 @@ class _HomePageState extends State<HomePage> {
     DateTime tenMonthsAgo =
         now.subtract(tenMonths); // Subtract the duration to get the past date
 
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       bottomNavigationBar:
           isDesktop(context) ? null : buildMobileNavigationBar(context),
       drawer: isDesktop(context) ? buildDesktopDrawer() : null,
-      backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
-        foregroundColor: Colors.black,
-        backgroundColor: Colors.grey.shade100,
         elevation: 0.0,
         actions: [
           Container(
@@ -103,7 +102,7 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Text(
                   getGreetingMessage(),
-                  style: const TextStyle(fontSize: 24),
+                  style: textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 20),
                 CalendarTimeline(
@@ -111,8 +110,8 @@ class _HomePageState extends State<HomePage> {
                   firstDate: tenMonthsAgo,
                   lastDate: oneMonthFromNow,
                   selectedDate: store.selectedDate,
-                  activeBackgroundDayColor: Colors.white,
-                  activeDayColor: Colors.black,
+                  activeBackgroundDayColor: colorScheme.surface,
+                  activeDayColor: colorScheme.inverseSurface,
                   onDateSelected: (date) {
                     StoreProvider.of<AppState>(context)
                         .dispatch(UpdateSelectedDateAction(date));
@@ -123,7 +122,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const BentoBox(
                   gridWidth: 4,
-                  gridHeight: 1,
+                  gridHeight: 1.5,
                   child: FetchMasterView(),
                 ),
                 const SizedBox(height: 10),

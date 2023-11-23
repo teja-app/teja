@@ -32,6 +32,7 @@ class BentoBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cardTheme = Theme.of(context).cardTheme;
     final screenWidth = MediaQuery.of(context).size.width;
     // final screenHeight = MediaQuery.of(context).size.height;
     final bool isTablet = screenWidth > 600 && screenWidth <= 1200;
@@ -73,10 +74,10 @@ class BentoBox extends StatelessWidget {
       padding: EdgeInsets.all(padding),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: Colors.white,
+        color: cardTheme.color,
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: cardTheme.color!.withOpacity(0.1),
             spreadRadius: 1,
             blurRadius: 5,
             offset: Offset(0, 2),

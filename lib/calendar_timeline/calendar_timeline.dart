@@ -359,7 +359,6 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                   onTap: () => _onSelectYear(index),
                   color: widget.monthColor,
                   small: false,
-                  shrink: widget.shrink,
                 ),
                 if (index == _years.length - 1)
                   // Last element to take space to do scroll to left side
@@ -408,7 +407,6 @@ class _CalendarTimelineState extends State<CalendarTimeline> {
                       name: DateFormat.y(_locale).format(currentDate),
                       color: widget.monthColor,
                       onTap: () {},
-                      shrink: widget.shrink,
                     ),
                   ),
                 MonthItem(

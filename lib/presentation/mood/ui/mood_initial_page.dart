@@ -21,17 +21,14 @@ class MoodInitialPage extends StatefulWidget {
 class _MoodInitialPageState extends State<MoodInitialPage> {
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
+          Text(
             'How are you feeling?',
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
+            style: textTheme.titleLarge,
           ),
           const SizedBox(height: 20),
           Row(

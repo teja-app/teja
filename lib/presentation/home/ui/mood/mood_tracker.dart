@@ -78,19 +78,16 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
     final hasComments = moodLog.comment != null ? true : false;
     final tags = [];
     final hasTags = tags.isNotEmpty;
+    final textTheme = Theme.of(context).textTheme;
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const Padding(
+      Padding(
         padding: EdgeInsets.only(top: 10),
         child: Align(
           alignment: Alignment.topCenter,
           child: Text(
             'Mood and Emotions',
-            style: TextStyle(
-              color: Colors.grey,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: textTheme.titleLarge,
           ),
         ),
       ),
@@ -199,6 +196,7 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
   }
 
   Widget _initialLayout() {
+    final textTheme = Theme.of(context).textTheme;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -210,9 +208,7 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text('Mood and Emotions',
-                    style: TextStyle(
-                        color: Colors.black, fontWeight: FontWeight.bold)),
+                Text('Mood and Emotions', style: textTheme.titleSmall),
                 const SizedBox(height: 6),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -231,14 +227,9 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Text('Track Mood',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18)),
+              Text('Track Mood', style: textTheme.titleMedium),
               const SizedBox(height: 12),
-              const Text('How do you feel today?',
-                  style: TextStyle(color: Colors.black)),
+              Text('How do you feel today?', style: textTheme.titleSmall),
               const SizedBox(height: 12),
               Button(
                 text: "Let's Begin",

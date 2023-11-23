@@ -20,15 +20,29 @@ class MonthItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    Color baseColor;
+
+    if (isSelected) {
+      if (activeColor != null) {
+        baseColor = activeColor!;
+      } else {
+        baseColor = colorScheme.primary;
+      }
+    } else {
+      if (color != null) {
+        baseColor = color!;
+      } else {
+        baseColor = colorScheme.onBackground;
+      }
+    }
+
     return GestureDetector(
       onTap: onTap as void Function()?,
       child: Text(
         name.toUpperCase(),
         style: TextStyle(
-          fontSize: shrink ? 10 : 14,
-          color: isSelected
-              ? activeColor ?? const Color(0xFF002265)
-              : color ?? Colors.black87,
+          color: baseColor,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),
       ),

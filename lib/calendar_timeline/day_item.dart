@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 /// Creates a Widget representing the day.
 class DayItem extends StatelessWidget {
@@ -33,13 +32,30 @@ class DayItem extends StatelessWidget {
 
   GestureDetector _buildDay(BuildContext context) {
     // Determine the base color based on availability
-    Color baseColor = available
-        ? dayColor ?? Theme.of(context).colorScheme.secondary
-        : dayColor?.withOpacity(0.5) ??
-            Theme.of(context).colorScheme.secondary.withOpacity(0.5);
+    final colorScheme = Theme.of(context).colorScheme;
+    Color baseColor;
+
+    if (available) {
+      if (dayColor != null) {
+        baseColor = dayColor!;
+      } else {
+        baseColor = colorScheme.secondary;
+      }
+    } else {
+      if (dayColor != null) {
+        baseColor = dayColor!.withOpacity(0.3);
+      } else {
+        baseColor = colorScheme.secondary.withOpacity(0.3);
+      }
+    }
+
+    // Color baseColor = available
+    //     ? dayColor ?? colorScheme.secondary
+    //     : dayColor?.withOpacity(0.5) ??
+    //         Theme.of(context).colorScheme.secondary.withOpacity(0.5);
 
     // Override base color if it's today
-    Color finalColor = isToday ? Colors.blue : baseColor;
+    Color finalColor = isToday ? colorScheme.primary : baseColor;
 
     final textStyle = TextStyle(
       color: finalColor,
@@ -47,7 +63,7 @@ class DayItem extends StatelessWidget {
       fontWeight: FontWeight.normal,
     );
     final selectedStyle = TextStyle(
-      color: activeDayColor ?? Colors.white,
+      color: activeDayColor ?? colorScheme.secondary,
       fontSize: shrink ? 14 : 32,
       fontWeight: FontWeight.bold,
     );
@@ -57,11 +73,10 @@ class DayItem extends StatelessWidget {
       child: Container(
         decoration: isSelected
             ? BoxDecoration(
-                color: activeDayBackgroundColor ??
-                    Theme.of(context).colorScheme.secondary,
-                border: const Border(
+                color: activeDayBackgroundColor ?? colorScheme.secondary,
+                border: Border(
                   bottom: BorderSide(
-                    color: Colors.black, // Change this color as needed
+                    color: colorScheme.secondary, // Change this color as needed
                     width: 2.0, // You can adjust the width as required
                   ),
                 ),
