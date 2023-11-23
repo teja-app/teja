@@ -105,7 +105,6 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
           );
         },
         child: Card(
-          color: Colors.white, // Sets the background color of the card to white
           margin: const EdgeInsets.symmetric(
             horizontal: 8,
             vertical: 8,
@@ -125,12 +124,9 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
                       height: 24,
                     ),
                     const SizedBox(width: 8),
-                    const Text(
+                    Text(
                       'Mood Entry',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
+                      style: textTheme.titleMedium,
                     ),
                     const Spacer(), // Pushes the timestamp to the right
                     Text(

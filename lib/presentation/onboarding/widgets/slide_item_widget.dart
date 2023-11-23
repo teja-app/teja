@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
 class Slide {
@@ -19,42 +20,41 @@ class SlideItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Image.asset(
-          slide.image,
-          fit: BoxFit.cover,
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Container(
-            color: Colors.grey[200],
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-            child: DefaultTextStyle(
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-              child: AnimatedTextKit(
-                animatedTexts: [
-                  TyperAnimatedText(
-                    slide.title,
-                    textAlign: TextAlign.center,
-                    speed: const Duration(milliseconds: 50),
-                  ),
-                ],
-                totalRepeatCount: 1,
-                pause: const Duration(milliseconds: 1000),
-                displayFullTextOnTap: true,
-                stopPauseOnTap: true,
-              ),
+    final textTheme = Theme.of(context).textTheme;
+    final brightness = Theme.of(context).colorScheme.brightness;
+    return Container(
+      padding: const EdgeInsets.all(10),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            slide.image,
+            colorFilter: ColorFilter.mode(
+                brightness == Brightness.light ? Colors.black : Colors.white,
+                BlendMode.srcIn),
+            width: 200,
+            height: 200,
+          ),
+          SizedBox(height: 20), // Space between image and text
+          DefaultTextStyle(
+            style: textTheme.titleLarge!,
+            child: AnimatedTextKit(
+              animatedTexts: [
+                TyperAnimatedText(
+                  slide.title,
+                  textAlign: TextAlign.center,
+                  speed: const Duration(milliseconds: 70),
+                ),
+              ],
+              totalRepeatCount: 1,
+              pause: const Duration(milliseconds: 1000),
+              displayFullTextOnTap: true,
+              stopPauseOnTap: true,
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

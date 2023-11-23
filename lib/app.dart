@@ -53,9 +53,12 @@ class _AppState extends State<App> {
               background: Colors.grey.shade900,
             ),
             scaffoldBackgroundColor: Colors.grey.shade900,
+            appBarTheme: AppBarTheme(
+              backgroundColor: Colors.grey.shade900,
+            ),
             useMaterial3: true,
           ),
-          themeMode: ThemeMode.light,
+          themeMode: ThemeMode.dark,
           theme: ThemeData(
             textTheme: GoogleFonts.ubuntuTextTheme(textTheme).copyWith(
               bodyMedium: GoogleFonts.wixMadeforText(
@@ -75,6 +78,9 @@ class _AppState extends State<App> {
               background: Colors.grey.shade100,
             ),
             scaffoldBackgroundColor: Colors.grey.shade100,
+            appBarTheme: AppBarTheme(
+              backgroundColor: Colors.grey.shade100,
+            ),
             useMaterial3: true,
           ),
           routerConfig: router,

@@ -248,9 +248,7 @@ class _MoodDetailPageState extends State<MoodDetailPage> {
         }
         return Scaffold(
           appBar: AppBar(
-            backgroundColor: Colors.grey.shade100,
             elevation: 0,
-            iconTheme: const IconThemeData(color: Colors.black),
             title: const Text("mood entry"),
             actions: [
               SettingsPopupMenu(
@@ -289,7 +287,6 @@ class _MoodDetailPageState extends State<MoodDetailPage> {
               ),
             ],
           ),
-          backgroundColor: Colors.grey.shade100,
           body: bodyContent,
         );
       },

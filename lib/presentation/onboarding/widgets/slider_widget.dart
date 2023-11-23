@@ -13,20 +13,20 @@ class SliderWidget extends StatefulWidget {
 class _SliderWidgetState extends State<SliderWidget> {
   List<Slide> slides = [
     Slide(
-      title: "Embark on a journey to clarity.",
-      image: "assets/welcome/DiscoverClarity.jpeg",
+      title: "Embark yourself and understand innerself",
+      image: "assets/welcome/InnerPeace.svg", // Updated to SVG
     ),
     Slide(
       title: "Unveil the power of expression.",
-      image: "assets/welcome/EmbraceExpression.jpeg",
+      image: "assets/welcome/Journal.svg", // Updated to SVG
     ),
     Slide(
       title: "Unwind in a haven of calm.",
-      image: "assets/welcome/CultivateCalm.jpeg",
+      image: "assets/welcome/MoodTracking.svg", // Updated to SVG
     ),
     Slide(
       title: "Nurture meaningful connections.",
-      image: "assets/welcome/CultivateConnections.jpeg",
+      image: "assets/welcome/Relationship.svg", // Updated to SVG
     ),
   ];
 

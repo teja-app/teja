@@ -10,6 +10,7 @@ class BentoBox extends StatelessWidget {
   final double margin;
   final double padding;
   final Widget child;
+  final Color? color;
   final int desktopColumns;
   final int tabletColumns;
   final int mobileColumns;
@@ -23,6 +24,7 @@ class BentoBox extends StatelessWidget {
       this.desktopGridWidth,
       this.tabletGridHeight,
       this.desktopGridHeight,
+      this.color,
       this.margin = 8.0,
       this.padding = 16.0,
       this.desktopColumns = 12,
@@ -74,10 +76,10 @@ class BentoBox extends StatelessWidget {
       padding: EdgeInsets.all(padding),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: cardTheme.color,
+        color: color ?? cardTheme.color,
         boxShadow: [
           BoxShadow(
-            color: cardTheme.color!.withOpacity(0.1),
+            color: (color ?? cardTheme.color)!.withOpacity(0.2),
             spreadRadius: 1,
             blurRadius: 5,
             offset: Offset(0, 2),
