@@ -14,7 +14,6 @@ import 'package:swayam/presentation/mood/list/ui/mood_widget.dart';
 import 'package:swayam/presentation/navigation/buildDesktopDrawer.dart';
 import 'package:swayam/presentation/navigation/buildMobileNavigationBar.dart';
 import 'package:swayam/presentation/navigation/isDesktop.dart';
-import 'package:swayam/shared/common/bento_box.dart';
 import 'package:swayam/shared/common/flexible_height_box.dart';
 
 class MoodListPage extends StatefulWidget {
@@ -25,29 +24,31 @@ class MoodListPage extends StatefulWidget {
 }
 
 class _MoodListPageState extends State<MoodListPage> {
-  static const int pageSize = 10; // Define your page size here
-
+  static const int pageSize = 300;
   final ItemScrollController itemScrollController = ItemScrollController();
   final ItemPositionsListener itemPositionsListener =
       ItemPositionsListener.create();
+  int lastLoadedPage = 0; // Track the last loaded page
 
   void _loadMoreDataIfNeeded() {
     final store = StoreProvider.of<AppState>(context, listen: false);
     final moodLogsState = store.state.moodLogListState;
 
     if (moodLogsState.isLoading || moodLogsState.isLastPage) {
-      // Either currently loading or no more data to load
+      // Either already loading or all data loaded
       return;
     }
 
     final positions = itemPositionsListener.itemPositions.value;
     if (positions.isNotEmpty) {
       final lastVisibleItemIndex = positions.last.index;
-      if (lastVisibleItemIndex >= moodLogsState.moodLogs.length - 1) {
-        // Dispatch action to load more data
-        final int nextPageNumber =
-            (moodLogsState.moodLogs.length / pageSize).ceil();
-        store.dispatch(LoadMoodLogsListAction(nextPageNumber, pageSize));
+      final totalLogs = moodLogsState.moodLogs.length;
+      final currentPage = totalLogs ~/ pageSize;
+
+      if (lastVisibleItemIndex >= totalLogs - 1 &&
+          lastLoadedPage != currentPage) {
+        lastLoadedPage = currentPage; // Update last loaded page
+        store.dispatch(LoadMoodLogsListAction(currentPage + 1, pageSize));
       }
     }
   }
@@ -55,25 +56,7 @@ class _MoodListPageState extends State<MoodListPage> {
   @override
   void initState() {
     super.initState();
-
-    itemPositionsListener.itemPositions.addListener(() {
-      final positions = itemPositionsListener.itemPositions.value;
-
-      // Trigger only if the user has scrolled near the end of the list
-      if (positions.isNotEmpty) {
-        final lastVisibleItemIndex = positions.last.index;
-        // Fetch the store from the context
-        final store = StoreProvider.of<AppState>(context, listen: false);
-        final thresholdIndex = max(
-            0,
-            store.state.moodLogListState.moodLogs.length -
-                (pageSize / 2).round());
-        if (lastVisibleItemIndex >= thresholdIndex) {
-          _loadMoreDataIfNeeded();
-        }
-      }
-    });
-
+    itemPositionsListener.itemPositions.addListener(_loadMoreDataIfNeeded);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final store = StoreProvider.of<AppState>(context);
       store.dispatch(ResetMoodLogsListAction());

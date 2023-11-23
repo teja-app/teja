@@ -14,20 +14,16 @@ class AuthSaga {
   }
 
   _emailSignIn({required SignInAction action}) sync* {
-    print("Inside _emailSignIn");
     var emailAuthApi = EmailAuthApi();
     var response =
         Result<Response>(); // Adjusted to capture the Response object
 
-    try {
-      print("Sign In");
+    yield Try(() sync* {
       yield Call(emailAuthApi.signIn,
           args: [action.username, action.password, action.device],
           result: response);
-      print("response.value ${response.value}");
       // Handling success
       final responseData = response.value!.data; // Accessing the data property
-      print("responseData ${responseData}");
       final String accessToken = responseData['access_token'];
       final String refreshToken = responseData['refresh_token'];
 
@@ -38,7 +34,7 @@ class AuthSaga {
       int expiration = decodedToken['exp'] as int? ?? 0;
 
       yield Put(SignInSuccessAction('Successfully signed in', expiration));
-    } catch (error) {
+    }, Catch: (error, s) sync* {
       // Handling failure
       String errorMessage = 'An error occurred. Please try again later.';
       if (error is DioError && error.response != null) {
@@ -46,17 +42,16 @@ class AuthSaga {
             'An error occurred. Please try again later.';
       }
       yield Put(SignInFailureAction(errorMessage));
-    }
+    });
   }
 
   _signOut({required SignOutAction action}) sync* {
-    print("Inside Signout Saga");
-    try {
+    yield Try(() sync* {
       yield Call(deleteSecureData, args: ['access_token']);
       yield Call(deleteSecureData, args: ['refresh_token']);
 
       yield Put(SignOutSuccessAction('Successfully signed out'));
-    } catch (error) {
+    }, Catch: (error, s) sync* {
       // Handling errors
       String errorMessage = error.toString();
       if (error is DioError) {
@@ -64,19 +59,19 @@ class AuthSaga {
             'An error occurred while signing out. Please try again later.';
       }
       yield Put(SignOutFailureAction(errorMessage));
-    }
+    });
   }
 
   _emailRegister({required RegisterAction action}) sync* {
     var emailAuthApi = EmailAuthApi();
-    try {
+    yield Try(() sync* {
       yield Call(emailAuthApi.register,
           args: [action.username, action.password, action.name, action.email]);
 
       // Dispatch success action
       yield Put(const RegisterSuccessAction(
           'User successfully registered, a verification email has been sent.'));
-    } catch (error) {
+    }, Catch: (error, s) sync* {
       // Handling errors
       String? errorMessage = 'An error occurred. Please try again later.';
       if (error is DioError && error.response != null) {
@@ -93,6 +88,6 @@ class AuthSaga {
 
       // Dispatch failure action
       yield Put(RegisterFailureAction(errorMessage!));
-    }
+    });
   }
 }

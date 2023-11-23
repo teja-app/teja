@@ -27,9 +27,7 @@ class MoodLogRepository {
     var filterConditions = <FilterCondition>[];
 
     // Add filter conditions based on selected mood ratings
-    print("filter.selectedMoodRatings:Before ${filter!.selectedMoodRatings}");
     if (filter != null && filter.selectedMoodRatings.isNotEmpty) {
-      print("filter.selectedMoodRatings ${filter.selectedMoodRatings}");
       for (var rating in filter.selectedMoodRatings) {
         filterConditions.add(FilterCondition.equalTo(
           property: 'moodRating',
@@ -46,7 +44,6 @@ class MoodLogRepository {
     );
 
     final moodLogs = await query.findAll();
-    print("moodLogs ${moodLogs.length}");
 
     return moodLogs.map((moodLog) => toEntity(moodLog)).toList();
   }

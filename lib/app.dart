@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:swayam/domain/redux/onboarding/auth_state.dart';
 import 'package:swayam/router.dart';
 import 'package:swayam/shared/helpers/logger.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:swayam/shared/storage/secure_storage.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -21,13 +23,16 @@ class _AppState extends State<App> {
 
     return StoreConnector<AppState, AuthState>(
       converter: (store) => store.state.authState,
-      onInitialBuild: (authState) {
+      onInitialBuild: (authState) async {
         int currentTime = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+        final accessToken = await readSecureData('access_token');
+        Map<String, dynamic> decodedToken = JwtDecoder.decode(accessToken!);
+        int expiration = decodedToken['exp'];
         // Redirect if the access token has expired.
-        if (authState.accessTokenExpiry != null &&
-            currentTime >= authState.accessTokenExpiry!) {
-          logger.i('Access token has expired, redirecting to sign-in page.');
+        if (currentTime < expiration) {
           router.goNamed(RootPath.home);
+        } else {
+          logger.i('Access token has expired, redirecting to sign-in page.');
         }
       },
       builder: (context, authState) {
