@@ -4,7 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:swayam/presentation/navigation/buildDesktopDrawer.dart';
 import 'package:swayam/presentation/navigation/buildMobileNavigationBar.dart';
 import 'package:swayam/presentation/navigation/isDesktop.dart';
-import 'package:swayam/presentation/profile/ui/weekly_mood_chart.dart';
+import 'package:swayam/presentation/profile/ui/profile_weekly_mood_chart.dart';
 import 'package:swayam/shared/common/bento_box.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -12,59 +12,25 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<FlSpot> currentWeekSpots = [
-      const FlSpot(0, 3), // Mood rating for Monday of the current week
-      const FlSpot(1, 4), // Tuesday
-      const FlSpot(2, 2), // Wednesday
-      const FlSpot(3, 5), // Thursday
-      const FlSpot(4, 3), // Friday
-      const FlSpot(5, 4), // Saturday
-      const FlSpot(6, 3), // Sunday
-    ];
-
-    List<FlSpot> previousWeekSpots = [
-      const FlSpot(0, 2), // Mood rating for Monday of the previous week
-      const FlSpot(1, 3), // Tuesday
-      const FlSpot(2, 3), // Wednesday
-      const FlSpot(3, 2), // Thursday
-      const FlSpot(4, 4), // Friday
-      const FlSpot(5, 5), // Saturday
-      const FlSpot(6, 4), // Sunday
-    ];
-
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Scaffold(
       bottomNavigationBar:
           isDesktop(context) ? null : buildMobileNavigationBar(context),
       drawer: isDesktop(context) ? buildDesktopDrawer(context) : null,
       appBar: AppBar(
         title: const Text('Profile'),
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
-        elevation: 0.0,
+        forceMaterialTransparency: true,
       ),
       body: SingleChildScrollView(
         key: Key("profileContainer"),
         padding: EdgeInsets.all(8.0),
         child: Column(
           children: <Widget>[
-            _buildBadgeHeader(),
+            const ProfileWeeklyMoodChart(),
+            // _buildBadgeHeader(),
             BentoBox(
               gridWidth: 4,
               gridHeight: 4,
               child: _buildRadarChart(context),
-            ),
-            BentoBox(
-              gridWidth: 4,
-              gridHeight: 4,
-              child: WeeklyMoodChart(
-                key: Key("WeeklyMoodChart"),
-                currentWeekSpots: currentWeekSpots,
-                previousWeekSpots: previousWeekSpots,
-                currentWeekColor: colorScheme.primary,
-                previousWeekColor: colorScheme.secondary.withOpacity(0.2),
-              ),
             ),
           ],
         ),

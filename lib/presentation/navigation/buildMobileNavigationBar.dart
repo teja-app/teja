@@ -19,8 +19,8 @@ Widget buildMobileNavigationBar(BuildContext context) {
         label: 'Settings',
       ),
       BottomNavigationBarItem(
-        icon: Icon(AntDesign.book),
-        label: 'Mood',
+        icon: Icon(Feather.compass),
+        label: 'Compass',
       ),
       BottomNavigationBarItem(
         icon: Icon(AntDesign.user),

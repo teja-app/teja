@@ -7,6 +7,7 @@ import 'package:swayam/domain/redux/mood/logs/mood_logs_state.dart';
 import 'package:swayam/domain/redux/mood/master_factor/state.dart';
 import 'package:swayam/domain/redux/mood/master_feeling/state.dart';
 import 'package:swayam/domain/redux/onboarding/auth_state.dart';
+import 'package:swayam/domain/redux/weekly_mood_report/weekly_mood_report_state.dart';
 
 @immutable
 class AppState {
@@ -18,6 +19,7 @@ class AppState {
   final HomeState homeState;
   final MasterFeelingState masterFeelingState;
   final MasterFactorState masterFactorState;
+  final WeeklyMoodReportState weeklyMoodReportState;
 
   const AppState({
     required this.authState,
@@ -28,6 +30,7 @@ class AppState {
     required this.moodLogListState,
     required this.masterFeelingState,
     required this.masterFactorState,
+    required this.weeklyMoodReportState,
   });
 
   AppState copyWith({
@@ -39,6 +42,7 @@ class AppState {
     MasterFeelingState? masterFeelingState,
     MasterFactorState? masterFactorState,
     MoodLogListState? moodLogListState,
+    WeeklyMoodReportState? weeklyMoodReportState,
   }) {
     return AppState(
       authState: authState ?? this.authState,
@@ -49,6 +53,8 @@ class AppState {
       masterFeelingState: masterFeelingState ?? this.masterFeelingState,
       masterFactorState: masterFactorState ?? this.masterFactorState,
       moodLogListState: moodLogListState ?? this.moodLogListState,
+      weeklyMoodReportState:
+          weeklyMoodReportState ?? this.weeklyMoodReportState,
     );
   }
 
@@ -62,6 +68,7 @@ class AppState {
       masterFeelingState: MasterFeelingState.initial(),
       masterFactorState: MasterFactorState.initial(),
       moodLogListState: MoodLogListState.initial(),
+      weeklyMoodReportState: WeeklyMoodReportState.initial(),
     );
   }
 }

@@ -48,6 +48,40 @@ class MoodLogRepository {
     return moodLogs.map((moodLog) => toEntity(moodLog)).toList();
   }
 
+  Future<List<MoodLogEntity>> getMoodLogsForWeek(
+      DateTime startDate, DateTime endDate) async {
+    // Fetch mood logs between startDate and endDate
+    final moodLogs = await isar.moodLogs
+        .filter()
+        .timestampBetween(startDate, endDate)
+        .findAll();
+
+    // Convert MoodLog to MoodLogEntity
+    return moodLogs.map(toEntity).toList();
+  }
+
+  Future<Map<DateTime, double>> getAverageMoodLogsForWeek(
+      DateTime startDate, DateTime endDate) async {
+    final moodLogs = await isar.moodLogs
+        .filter()
+        .timestampBetween(startDate, endDate)
+        .findAll();
+
+    Map<DateTime, List<int>> dailyRatings = {};
+    for (var log in moodLogs) {
+      DateTime day =
+          DateTime(log.timestamp.year, log.timestamp.month, log.timestamp.day);
+      dailyRatings.putIfAbsent(day, () => []).add(log.moodRating);
+    }
+
+    Map<DateTime, double> averageRatings = {};
+    dailyRatings.forEach((date, ratings) {
+      averageRatings[date] = ratings.reduce((a, b) => a + b) / ratings.length;
+    });
+
+    return averageRatings;
+  }
+
   Future<void> addOrUpdateMoodLog(MoodLog moodLog) async {
     await isar.writeTxn(() async {
       await isar.moodLogs.put(moodLog);

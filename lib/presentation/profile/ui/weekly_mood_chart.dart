@@ -1,5 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:swayam/shared/helpers/color.dart';
 
 class WeeklyMoodChart extends StatefulWidget {
   final List<FlSpot> currentWeekSpots;
@@ -29,33 +31,41 @@ class _WeeklyMoodChartState extends State<WeeklyMoodChart> {
           lineTouchData: const LineTouchData(enabled: false),
           lineBarsData: [
             LineChartBarData(
-              // colors: [currentWeekColor],
-              color: widget.currentWeekColor,
+              gradient: LinearGradient(
+                colors: [
+                  widget.currentWeekColor,
+                  darken(widget.currentWeekColor, 0.25),
+                ],
+              ),
               spots: widget.currentWeekSpots,
               isCurved: true,
-              barWidth: 5,
+              barWidth: 10,
               isStrokeCapRound: true,
-              dotData: const FlDotData(show: true),
+              dotData: const FlDotData(show: false),
             ),
             LineChartBarData(
-              // colors: [previousWeekColor],
               color: widget.previousWeekColor,
               spots: widget.previousWeekSpots,
               isCurved: true,
               barWidth: 5,
               isStrokeCapRound: true,
-              dotData: const FlDotData(show: true),
+              dotData: const FlDotData(show: false),
             ),
           ],
           minY: 1,
           maxY: 5,
+          minX: 0,
+          maxX: 7,
           titlesData: FlTitlesData(
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
                 reservedSize: 30,
                 interval: 1,
-                getTitlesWidget: (value, meta) => Text('${value.toInt()}'),
+                getTitlesWidget: (value, meta) => _buildMoodIcon(
+                  value.toInt(),
+                  meta,
+                ),
               ),
             ),
             bottomTitles: AxisTitles(
@@ -98,33 +108,45 @@ class _WeeklyMoodChartState extends State<WeeklyMoodChart> {
     Widget text;
     switch (value.toInt()) {
       case 0:
-        text = const Text('Mon', style: style);
+        text = const Text('M', style: style);
         break;
       case 1:
-        text = const Text('Tue', style: style);
+        text = const Text('T', style: style);
         break;
       case 2:
-        text = const Text('Wed', style: style);
+        text = const Text('W', style: style);
         break;
       case 3:
-        text = const Text('Thu', style: style);
+        text = const Text('T', style: style);
         break;
       case 4:
-        text = const Text('Fri', style: style);
+        text = const Text('F', style: style);
         break;
       case 5:
-        text = const Text('Sat', style: style);
+        text = const Text('S', style: style);
         break;
       case 6:
-        text = const Text('Sun', style: style);
+        text = const Text('S', style: style);
         break;
       default:
         return Container();
     }
     return SideTitleWidget(
       axisSide: meta.axisSide,
-      child: text,
-      space: 8, // To control the spacing from the axis
+      space: 8,
+      child: text, // To control the spacing from the axis
     );
   }
+}
+
+Widget _buildMoodIcon(int moodRating, TitleMeta meta) {
+  String moodIconPath = 'assets/icons/mood_${moodRating}_inactive.svg';
+  return SideTitleWidget(
+    axisSide: meta.axisSide,
+    child: SvgPicture.asset(
+      moodIconPath,
+      width: 16,
+      height: 20,
+    ),
+  );
 }

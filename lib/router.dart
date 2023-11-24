@@ -7,7 +7,7 @@ import 'package:swayam/presentation/mood/list/pages/mood_list_page.dart';
 import 'package:swayam/presentation/onboarding/pages/onboarding_page.dart';
 import 'package:swayam/presentation/onboarding/pages/sign_in_page.dart';
 import 'package:swayam/presentation/onboarding/pages/sign_up_page.dart';
-import 'package:swayam/presentation/profile/page/ProfilePage.dart';
+import 'package:swayam/presentation/profile/page/profile_page.dart';
 import 'package:swayam/presentation/settings/pages/advanced_settings_page.dart';
 import 'package:swayam/presentation/settings/pages/basic_settings_page.dart';
 import 'package:swayam/presentation/settings/pages/notification_settings_page.dart';
