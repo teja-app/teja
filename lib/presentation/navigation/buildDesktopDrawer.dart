@@ -3,59 +3,52 @@ import 'package:go_router/go_router.dart';
 import 'package:icons_flutter/icons_flutter.dart';
 import 'package:swayam/router.dart';
 
-Widget buildDesktopDrawer(BuildContext context) {
+Widget buildDesktopNavigationBar(BuildContext context) {
   final GoRouter goRouter = GoRouter.of(context);
   final String location = GoRouterState.of(context).uri.toString();
-  int _selectedIndex =
-      _getSelectedIndex(location); // Utilize the same logic as in mobile
+  int _selectedIndex = _getSelectedIndex(location);
 
-  return Drawer(
-    child: ListView(
-      padding: EdgeInsets.zero,
-      children: <Widget>[
-        _buildDrawerItem(
-          icon: AntDesign.home,
-          title: 'Home',
-          onTap: () => goRouter.goNamed(RootPath.home),
-          selected: _selectedIndex == 0,
-        ),
-        _buildDrawerItem(
-          icon: AntDesign.setting,
-          title: 'Settings',
-          onTap: () => goRouter.goNamed(RootPath.settings),
-          selected: _selectedIndex == 1,
-        ),
-        _buildDrawerItem(
-          icon: Feather.compass,
-          title: 'Mood',
-          onTap: () => goRouter.goNamed(RootPath.moodList),
-          selected: _selectedIndex == 2,
-        ),
-        _buildDrawerItem(
-          icon: AntDesign.user,
-          title: 'Profile',
-          onTap: () => goRouter.goNamed(RootPath.profile),
-          selected: _selectedIndex == 3,
-        ),
-        // Add other items as needed
-      ],
-    ),
-  );
-}
-
-Widget _buildDrawerItem(
-    {required IconData icon,
-    required String title,
-    required Function() onTap,
-    required bool selected}) {
-  return ListTile(
-    leading: Icon(
-      icon,
-      weight: 100,
-    ),
-    title: Text(title),
-    onTap: onTap,
-    selected: selected,
+  final scaffoldBackgroundColor = Theme.of(context).scaffoldBackgroundColor;
+  return NavigationRail(
+    backgroundColor: scaffoldBackgroundColor,
+    selectedIndex: _selectedIndex,
+    onDestinationSelected: (int index) {
+      switch (index) {
+        case 0:
+          goRouter.goNamed(RootPath.home);
+          break;
+        case 1:
+          goRouter.goNamed(RootPath.settings);
+          break;
+        case 2:
+          goRouter.goNamed(RootPath.moodList);
+          break;
+        case 3:
+          goRouter.goNamed(RootPath.profile);
+          break;
+        // Handle other indices as needed
+      }
+    },
+    labelType: NavigationRailLabelType.all,
+    destinations: const [
+      NavigationRailDestination(
+        icon: Icon(AntDesign.home),
+        label: Text('Home'),
+      ),
+      NavigationRailDestination(
+        icon: Icon(AntDesign.setting, weight: 100),
+        label: Text('Settings'),
+      ),
+      NavigationRailDestination(
+        icon: Icon(AntDesign.book, weight: 100),
+        label: Text('Journal'),
+      ),
+      NavigationRailDestination(
+        icon: Icon(AntDesign.user),
+        label: Text('Profile'),
+      ),
+      // Add other destinations as needed
+    ],
   );
 }
 

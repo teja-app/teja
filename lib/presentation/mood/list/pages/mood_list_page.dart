@@ -106,9 +106,8 @@ class _MoodListPageState extends State<MoodListPage> {
     return Scaffold(
       bottomNavigationBar:
           isDesktop(context) ? null : buildMobileNavigationBar(context),
-      drawer: isDesktop(context) ? buildDesktopDrawer(context) : null,
       appBar: AppBar(
-        title: const Text('Inner Compass'),
+        title: const Text('Journal'),
         forceMaterialTransparency: true,
         actions: [
           IconButton(

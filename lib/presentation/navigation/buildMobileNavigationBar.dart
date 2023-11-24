@@ -15,18 +15,25 @@ Widget buildMobileNavigationBar(BuildContext context) {
         label: 'Home',
       ),
       BottomNavigationBarItem(
-        icon: Icon(AntDesign.setting),
-        label: 'Settings',
+        icon: Icon(
+          AntDesign.appstore_o,
+          weight: 100,
+        ),
+        label: 'Explore',
       ),
       BottomNavigationBarItem(
-        icon: Icon(Feather.compass),
-        label: 'Compass',
+        icon: Icon(
+          AntDesign.book,
+          weight: 100,
+        ),
+        label: 'Journal',
       ),
       BottomNavigationBarItem(
-        icon: Icon(AntDesign.user),
+        icon: Icon(
+          AntDesign.user,
+        ),
         label: 'Profile',
       ),
-      // Add other items as needed
     ],
     currentIndex: _selectedIndex,
     onTap: (index) {
