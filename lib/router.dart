@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swayam/presentation/explore/list/pages/explote_page.dart';
+import 'package:swayam/presentation/habits/goal_settings/pages/goal_settings.dart';
 import 'package:swayam/presentation/habits/habit_list/pages/habits_page.dart';
 import 'package:swayam/presentation/home/pages/home_page.dart';
 import 'package:swayam/presentation/mood/detail/page/mood_detail.dart';
@@ -55,6 +56,7 @@ class RootPath {
   static const moodEdit = "mood_edit";
   static const moodList = "mood_list";
   static const moodDetail = "mood_detail";
+  static const goalSettings = "goal_settings";
 }
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -118,7 +120,13 @@ final GoRouter router = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       name: RootPath.moodList,
       path: '/mood_list',
-      builder: (context, state) => MoodListPage(),
+      builder: (context, state) => const MoodListPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RootPath.goalSettings,
+      path: '/goal_settings',
+      builder: (context, state) => const GoalSettings(),
     ),
     GoRoute(
       // Add this block for mood detail page

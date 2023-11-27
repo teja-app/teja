@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_flutter/icons_flutter.dart';
 import 'package:swayam/router.dart';
@@ -40,15 +41,19 @@ Widget buildMobileNavigationBar(BuildContext context) {
       switch (index) {
         case 0:
           goRouter.goNamed(RootPath.home);
+          HapticFeedback.selectionClick();
           break;
         case 1:
           goRouter.goNamed(RootPath.explore);
+          HapticFeedback.selectionClick();
           break;
         case 2:
           goRouter.goNamed(RootPath.moodList);
+          HapticFeedback.selectionClick();
           break;
         case 3:
           goRouter.goNamed(RootPath.profile);
+          HapticFeedback.selectionClick();
           break;
         // Handle other indices as needed
       }

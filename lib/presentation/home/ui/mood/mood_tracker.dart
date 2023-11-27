@@ -1,5 +1,6 @@
 // lib/presentation/home/ui/mood/mood_tracker.dart
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -96,6 +97,7 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
         onTap: () {
           // Assuming moodLog.id contains the unique identifier for the mood entry
           final moodId = moodLog.id.toString();
+          HapticFeedback.selectionClick();
           // Use GoRouter to navigate to the MoodDetailPage
           GoRouter.of(context).pushNamed(
             RootPath.moodDetail,

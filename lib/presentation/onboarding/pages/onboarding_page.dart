@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -77,8 +78,10 @@ class OnboardingPage extends StatelessWidget {
                           key: const Key("login"),
                           text: 'Log in',
                           width: 200,
-                          onPressed: () =>
-                              GoRouter.of(context).pushNamed(RootPath.signIn))
+                          onPressed: () {
+                            GoRouter.of(context).pushNamed(RootPath.signIn);
+                            HapticFeedback.selectionClick();
+                          }),
                     ],
                   ),
                 ),

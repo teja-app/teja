@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -24,6 +25,8 @@ Widget moodLogLayout(MoodLogEntity moodLog, BuildContext context) {
           // Assuming moodLog.id contains the unique identifier for the mood entry
           final moodId = moodLog.id.toString();
           // Use GoRouter to navigate to the MoodDetailPage
+
+          HapticFeedback.selectionClick();
           GoRouter.of(context).pushNamed(
             RootPath.moodDetail,
             queryParameters: {

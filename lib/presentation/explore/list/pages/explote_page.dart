@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swayam/presentation/navigation/buildDesktopDrawer.dart';
 import 'package:swayam/presentation/navigation/buildMobileNavigationBar.dart';
@@ -76,9 +77,10 @@ class ExplorePage extends StatelessWidget {
     print("routeName ${routeName}");
     final brightness = Theme.of(context).colorScheme.brightness;
     return GestureDetector(
-      onTap: () => goRouter.pushNamed(
-        routeName,
-      ),
+      onTap: () {
+        goRouter.pushNamed(routeName);
+        HapticFeedback.selectionClick();
+      },
       child: BentoBox(
         gridWidth: 1,
         gridHeight: 1,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -137,10 +138,11 @@ class _HomePageState extends State<HomePage> {
           Container(
             margin: const EdgeInsets.only(right: 20),
             child: IconButton(
-              icon: const Icon(Icons.person),
-              onPressed: () =>
-                  GoRouter.of(context).pushNamed(RootPath.settings),
-            ),
+                icon: const Icon(Icons.person),
+                onPressed: () {
+                  GoRouter.of(context).pushNamed(RootPath.settings);
+                  HapticFeedback.selectionClick();
+                }),
           ),
         ],
       ),

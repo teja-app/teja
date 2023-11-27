@@ -64,7 +64,7 @@ class _AppState extends State<App> {
             ),
             useMaterial3: true,
           ),
-          themeMode: ThemeMode.dark,
+          themeMode: ThemeMode.system,
           theme: ThemeData(
             textTheme: GoogleFonts.ubuntuTextTheme(textTheme).copyWith(
               bodyMedium: GoogleFonts.wixMadeforText(
@@ -80,7 +80,7 @@ class _AppState extends State<App> {
               seedColor: Colors.black,
               primary: Colors.lightBlueAccent,
               secondary: Colors.black,
-              surface: Colors.white,
+              surface: Colors.black,
               background: Colors.grey.shade100,
             ),
             scaffoldBackgroundColor: Colors.grey.shade100,
