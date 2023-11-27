@@ -43,8 +43,6 @@ class SettingsPage extends StatelessWidget {
     }
 
     return Scaffold(
-        bottomNavigationBar:
-            isDesktop(context) ? null : buildMobileNavigationBar(context),
         appBar: AppBar(
           title: const Text('Settings'),
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:redux/redux.dart';
 import 'package:swayam/domain/entities/feeling.dart';
 import 'package:swayam/domain/entities/master_factor.dart';
@@ -14,6 +15,40 @@ class FactorsScreen extends StatefulWidget {
 }
 
 class _FactorsScreenState extends State<FactorsScreen> {
+  late List<MasterFactorEntity> _allFactors;
+  late List<MasterFactorEntity> _filteredFactors;
+  List<MultiSelectItem<MasterFactorEntity>> _multiSelectItems = [];
+  @override
+  void initState() {
+    super.initState();
+    _allFactors = [];
+    _filteredFactors = [];
+    _multiSelectItems = []; // Empty list initialization
+    // Dispatching the action to load feelings when the widget initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        StoreProvider.of<AppState>(context)
+            .dispatch(FetchMasterFactorsActionFromCache());
+      }
+    });
+  }
+
+  void _initializeFeelings(List<MasterFactorEntity> factors, int currentMood) {
+    // Initialize the comprehensive list of emotions mapped to their respective moods
+    // setState(() {
+    _allFactors = factors.cast<MasterFactorEntity>();
+    print("_allFactors ${_allFactors}");
+    // // Filter the comprehensive _feelings list based on currentMood
+    // _filteredFactors =
+    //     _allFactors.where((emotion) => emotion.moodId == currentMood).toList();
+
+    // // Initialize _multiSelectItems
+    // _multiSelectItems = _filteredFeelings
+    //     .map((e) => MultiSelectItem<MasterFactorEntity>(e, e.name))
+    //     .toList();
+    // // });
+  }
+
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, FactorsViewModel>(

@@ -18,7 +18,7 @@ Widget buildDesktopNavigationBar(BuildContext context) {
           goRouter.goNamed(RootPath.home);
           break;
         case 1:
-          goRouter.goNamed(RootPath.settings);
+          goRouter.goNamed(RootPath.explore);
           break;
         case 2:
           goRouter.goNamed(RootPath.moodList);
@@ -36,8 +36,8 @@ Widget buildDesktopNavigationBar(BuildContext context) {
         label: Text('Home'),
       ),
       NavigationRailDestination(
-        icon: Icon(AntDesign.setting, weight: 100),
-        label: Text('Settings'),
+        icon: Icon(AntDesign.appstore_o, weight: 100),
+        label: Text('Explore'),
       ),
       NavigationRailDestination(
         icon: Icon(AntDesign.book, weight: 100),
@@ -56,7 +56,7 @@ int _getSelectedIndex(String currentLocation) {
   switch (currentLocation) {
     case '/home':
       return 0;
-    case '/settings':
+    case '/explore':
       return 1;
     case '/mood_list':
       return 2;

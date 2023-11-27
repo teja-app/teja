@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:swayam/presentation/explore/list/pages/explote_page.dart';
+import 'package:swayam/presentation/habits/habit_list/pages/habits_page.dart';
 import 'package:swayam/presentation/home/pages/home_page.dart';
 import 'package:swayam/presentation/mood/detail/page/mood_detail.dart';
 import 'package:swayam/presentation/mood/editor/pages/mood_edit.dart';
@@ -44,6 +46,11 @@ class RootPath {
   static const signIn = "signIn";
   static const home = "home";
   static const profile = "profile";
+  static const explore = "explore";
+  static const guide = "guide";
+  static const journal = "journal";
+  static const habit = "habit";
+  static const inspiration = "inspiration";
   static const settings = "settings";
   static const moodEdit = "mood_edit";
   static const moodList = "mood_list";
@@ -88,6 +95,18 @@ final GoRouter router = GoRouter(
       name: RootPath.profile,
       path: '/profile',
       builder: (context, state) => const ProfilePage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RootPath.explore,
+      path: '/explore',
+      builder: (context, state) => const ExplorePage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RootPath.habit,
+      path: '/habit',
+      builder: (context, state) => const HabitsPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,

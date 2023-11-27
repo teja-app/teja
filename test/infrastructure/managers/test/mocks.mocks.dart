@@ -8,6 +8,7 @@ import 'dart:async' as _i5;
 import 'package:isar/isar.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:swayam/domain/entities/mood_log.dart' as _i3;
+import 'package:swayam/domain/redux/mood/list/state.dart' as _i9;
 import 'package:swayam/infrastructure/database/isar_collections/badge.dart'
     as _i6;
 import 'package:swayam/infrastructure/database/isar_collections/mood_log.dart'
@@ -170,6 +171,58 @@ class MockMoodLogRepository extends _i1.Mock implements _i7.MoodLogRepository {
         ),
         returnValue: _i5.Future<List<_i8.MoodLog>>.value(<_i8.MoodLog>[]),
       ) as _i5.Future<List<_i8.MoodLog>>);
+
+  @override
+  _i5.Future<List<dynamic>> getMoodLogsPage(
+    int? pageKey,
+    int? pageSize, [
+    _i9.MoodLogFilter? filter,
+  ]) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getMoodLogsPage,
+          [
+            pageKey,
+            pageSize,
+            filter,
+          ],
+        ),
+        returnValue: _i5.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i5.Future<List<dynamic>>);
+
+  @override
+  _i5.Future<List<_i3.MoodLogEntity>> getMoodLogsForWeek(
+    DateTime? startDate,
+    DateTime? endDate,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getMoodLogsForWeek,
+          [
+            startDate,
+            endDate,
+          ],
+        ),
+        returnValue:
+            _i5.Future<List<_i3.MoodLogEntity>>.value(<_i3.MoodLogEntity>[]),
+      ) as _i5.Future<List<_i3.MoodLogEntity>>);
+
+  @override
+  _i5.Future<Map<DateTime, double>> getAverageMoodLogsForWeek(
+    DateTime? startDate,
+    DateTime? endDate,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getAverageMoodLogsForWeek,
+          [
+            startDate,
+            endDate,
+          ],
+        ),
+        returnValue:
+            _i5.Future<Map<DateTime, double>>.value(<DateTime, double>{}),
+      ) as _i5.Future<Map<DateTime, double>>);
 
   @override
   _i5.Future<void> addOrUpdateMoodLog(_i8.MoodLog? moodLog) =>

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:swayam/domain/redux/habit/habit/habit_state.dart';
 import 'package:swayam/domain/redux/home/home_state.dart';
 import 'package:swayam/domain/redux/mood/detail/mood_detail_state.dart';
 import 'package:swayam/domain/redux/mood/editor/mood_editor_state.dart';
@@ -20,6 +21,7 @@ class AppState {
   final MasterFeelingState masterFeelingState;
   final MasterFactorState masterFactorState;
   final WeeklyMoodReportState weeklyMoodReportState;
+  final HabitState habitState;
 
   const AppState({
     required this.authState,
@@ -31,6 +33,7 @@ class AppState {
     required this.masterFeelingState,
     required this.masterFactorState,
     required this.weeklyMoodReportState,
+    required this.habitState,
   });
 
   AppState copyWith({
@@ -43,6 +46,7 @@ class AppState {
     MasterFactorState? masterFactorState,
     MoodLogListState? moodLogListState,
     WeeklyMoodReportState? weeklyMoodReportState,
+    HabitState? habitState,
   }) {
     return AppState(
       authState: authState ?? this.authState,
@@ -55,6 +59,7 @@ class AppState {
       moodLogListState: moodLogListState ?? this.moodLogListState,
       weeklyMoodReportState:
           weeklyMoodReportState ?? this.weeklyMoodReportState,
+      habitState: habitState ?? this.habitState,
     );
   }
 
@@ -69,6 +74,7 @@ class AppState {
       masterFactorState: MasterFactorState.initial(),
       moodLogListState: MoodLogListState.initial(),
       weeklyMoodReportState: WeeklyMoodReportState.initial(),
+      habitState: HabitState.initial(),
     );
   }
 }

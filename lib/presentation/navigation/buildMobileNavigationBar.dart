@@ -42,7 +42,7 @@ Widget buildMobileNavigationBar(BuildContext context) {
           goRouter.goNamed(RootPath.home);
           break;
         case 1:
-          goRouter.goNamed(RootPath.settings);
+          goRouter.goNamed(RootPath.explore);
           break;
         case 2:
           goRouter.goNamed(RootPath.moodList);
@@ -60,7 +60,7 @@ int _getSelectedIndex(String currentLocation) {
   switch (currentLocation) {
     case '/home':
       return 0;
-    case '/settings':
+    case '/explore':
       return 1;
     case '/mood_list':
       return 2;

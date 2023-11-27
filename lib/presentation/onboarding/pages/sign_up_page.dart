@@ -10,6 +10,7 @@ import 'package:swayam/domain/redux/onboarding/actions.dart';
 import 'package:swayam/shared/common/bento_box.dart';
 import 'package:swayam/shared/common/button.dart';
 import 'package:swayam/domain/redux/app_state.dart';
+import 'package:swayam/shared/common/flexible_height_box.dart';
 
 class SignUpPage extends StatelessWidget {
   final TextEditingController nameController = TextEditingController();
@@ -59,9 +60,8 @@ class SignUpPage extends StatelessWidget {
       ),
       body: Center(
         child: SingleChildScrollView(
-          child: BentoBox(
+          child: FlexibleHeightBox(
             gridWidth: 4,
-            gridHeight: 6,
             child: Column(
               children: [
                 // Logo or Header

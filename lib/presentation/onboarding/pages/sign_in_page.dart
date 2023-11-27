@@ -11,6 +11,7 @@ import 'package:swayam/shared/common/bento_box.dart';
 import 'package:swayam/shared/common/button.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:swayam/shared/common/flexible_height_box.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -47,8 +48,7 @@ class _SignInPageState extends State<SignInPage> {
       ),
       body: Center(
         child: SingleChildScrollView(
-          child: BentoBox(
-            gridHeight: 4,
+          child: FlexibleHeightBox(
             gridWidth: 4,
             child: Column(
               children: [

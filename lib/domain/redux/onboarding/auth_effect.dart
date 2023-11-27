@@ -26,7 +26,8 @@ class AuthSaga {
       final responseData = response.value!.data; // Accessing the data property
       final String accessToken = responseData['access_token'];
       final String refreshToken = responseData['refresh_token'];
-
+      yield Call(deleteSecureData, args: ['access_token']);
+      yield Call(deleteSecureData, args: ['refresh_token']);
       yield Call(writeSecureData, args: ['access_token', accessToken]);
       yield Call(writeSecureData, args: ['refresh_token', refreshToken]);
 
