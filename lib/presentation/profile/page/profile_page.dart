@@ -86,9 +86,31 @@ class ProfilePage extends StatelessWidget {
                 ),
               ]),
             ),
-            const FlexibleHeightBox(
+            const SizedBox(
+              height: 50,
+            ),
+            Text(
+              "Health",
+              style: textTheme.titleLarge,
+            ),
+            BentoBox(
               gridWidth: 4,
-              child: SleepAnalysisWidget(),
+              gridHeight: 5,
+              child: Column(children: [
+                Text(
+                  "Sleep",
+                  style: textTheme.titleSmall,
+                ),
+                BentoBox(
+                  key: const Key("SleepBox"),
+                  gridWidth: 4,
+                  gridHeight: 3,
+                  margin: 0,
+                  padding: 0,
+                  color: colorSchema.background,
+                  child: const SleepAnalysisWidget(),
+                ),
+              ]),
             ),
             const ProfileWeeklyMoodChart(),
           ],

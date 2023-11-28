@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+final textTheme = ThemeData.light().textTheme;
 final ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
   cardColor: Colors.black,
-  textTheme: GoogleFonts.ubuntuTextTheme().copyWith(
+  textTheme: GoogleFonts.ubuntuTextTheme(textTheme).copyWith(
     bodyMedium: GoogleFonts.wixMadeforText(
-      textStyle: const TextTheme().bodyMedium,
+      textStyle: textTheme.bodyMedium,
     ),
   ),
   cardTheme: CardTheme(color: Colors.grey.shade800),
