@@ -7,21 +7,9 @@ import 'package:redux_saga/redux_saga.dart';
 import 'package:swayam/domain/redux/app_reducer.dart';
 import 'package:swayam/domain/redux/root_saga.dart';
 
-// import 'package:swayam/domain/redux/root_saga.dart';
-import 'package:swayam/router.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 import 'package:swayam/domain/redux/onboarding/actions.dart';
 import 'package:swayam/domain/redux/logging_middleware.dart';
-
-void authMiddleware(
-    Store<AppState> store, dynamic action, NextDispatcher next) async {
-  if (action is SignInSuccessAction) {
-    router.goNamed(RootPath.home);
-  } else if (action is SignOutSuccessAction) {
-    router.goNamed(RootPath.root);
-  }
-  next(action);
-}
 
 Future<Store<AppState>> createStore(Isar isarInstance) async {
   const filePath = '.env.dev';
@@ -38,7 +26,6 @@ Future<Store<AppState>> createStore(Isar isarInstance) async {
     middleware: [
       applyMiddleware(sagaMiddleware),
       LoggingMiddleware(),
-      authMiddleware
     ],
   );
 

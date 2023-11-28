@@ -4,6 +4,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:redux_saga/redux_saga.dart';
 import 'package:swayam/domain/redux/onboarding/actions.dart';
 import 'package:swayam/infrastructure/api/email_auth.dart';
+import 'package:swayam/router.dart';
 import 'package:swayam/shared/storage/secure_storage.dart';
 
 class AuthSaga {
@@ -31,10 +32,19 @@ class AuthSaga {
       yield Call(writeSecureData, args: ['access_token', accessToken]);
       yield Call(writeSecureData, args: ['refresh_token', refreshToken]);
 
-      Map<String, dynamic> decodedToken = JwtDecoder.decode(accessToken);
-      int expiration = decodedToken['exp'] as int? ?? 0;
+      int currentTime = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
-      yield Put(SignInSuccessAction('Successfully signed in', expiration));
+      Map<String, dynamic> decodedToken = JwtDecoder.decode(accessToken);
+      int expiration = decodedToken['exp'];
+      // Redirect if the access token has expired.
+      if (currentTime < expiration) {
+        yield Call(router.goNamed, args: [RootPath.home]);
+        yield Put(SignInSuccessAction('Successfully signed in', expiration));
+      } else {
+        yield Call(router.goNamed, args: [RootPath.signIn]);
+        yield Put(SignInFailureAction("Cannot sign in"));
+        // Add navigation to sign-in page here if needed
+      }
     }, Catch: (error, s) sync* {
       // Handling failure
       String errorMessage = 'An error occurred. Please try again later.';
@@ -50,8 +60,8 @@ class AuthSaga {
     yield Try(() sync* {
       yield Call(deleteSecureData, args: ['access_token']);
       yield Call(deleteSecureData, args: ['refresh_token']);
-
       yield Put(SignOutSuccessAction('Successfully signed out'));
+      yield Call(router.goNamed, args: [RootPath.root]);
     }, Catch: (error, s) sync* {
       // Handling errors
       String errorMessage = error.toString();

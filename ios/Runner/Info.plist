@@ -32,6 +32,10 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>We need access to your sleep data to provide sleep analysis</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>We need access to your sleep data to provide sleep analysis</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

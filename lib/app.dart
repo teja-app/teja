@@ -5,8 +5,9 @@ import 'package:swayam/domain/redux/onboarding/auth_state.dart';
 import 'package:swayam/router.dart';
 import 'package:swayam/shared/helpers/logger.dart';
 import 'package:swayam/domain/redux/app_state.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:swayam/shared/storage/secure_storage.dart';
+import 'package:swayam/theme/dark_theme.dart';
+import 'package:swayam/theme/light_theme.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -17,79 +18,44 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   @override
-  Widget build(BuildContext context) {
-    // Log when the App widget is built
-    logger.i('App widget is being built.');
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      int currentTime = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      final accessToken = await readSecureData('access_token');
+      if (accessToken != null && accessToken.isNotEmpty) {
+        try {
+          Map<String, dynamic> decodedToken = JwtDecoder.decode(accessToken);
+          int expiration = decodedToken['exp'];
+          // Redirect if the access token has expired.
+          if (currentTime < expiration) {
+            router.goNamed(RootPath.home);
+          } else {
+            logger.i('Access token has expired, redirecting to sign-in page.');
+            // Add navigation to sign-in page here if needed
+          }
+        } catch (e) {
+          logger.e('Error decoding token: $e');
+          // Handle decoding error or invalid token here
+        }
+      } else {
+        logger.i('No access token found, redirecting to sign-in page.');
+        // Add navigation to sign-in page here if needed
+      }
+    });
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return StoreConnector<AppState, AuthState>(
       converter: (store) => store.state.authState,
-      onInitialBuild: (authState) async {
-        int currentTime = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-        final accessToken = await readSecureData('access_token');
-        Map<String, dynamic> decodedToken = JwtDecoder.decode(accessToken!);
-        int expiration = decodedToken['exp'];
-        // Redirect if the access token has expired.
-        if (currentTime < expiration) {
-          router.goNamed(RootPath.home);
-        } else {
-          logger.i('Access token has expired, redirecting to sign-in page.');
-        }
-      },
       builder: (context, authState) {
-        final textTheme = Theme.of(context).textTheme;
-
         return MaterialApp.router(
           title: 'Swayam',
           debugShowCheckedModeBanner: false,
-          darkTheme: ThemeData(
-            brightness: Brightness.dark,
-            cardColor: Colors.black,
-            cardTheme: CardTheme(color: Colors.grey.shade800),
-            popupMenuTheme: PopupMenuThemeData(
-              color: Colors.grey.shade800, // Dark theme popup menu color
-            ),
-            colorScheme: ColorScheme.fromSeed(
-              brightness: Brightness.dark,
-              // seedColor: Colors.white,
-              seedColor: Colors.white, // Adjust seed color for dark theme
-              primary: Colors.lightBlueAccent,
-              secondary: Colors.grey,
-              surface: Colors.grey.shade700,
-              background: Colors.grey.shade900,
-            ),
-            scaffoldBackgroundColor: Colors.grey.shade900,
-            appBarTheme: AppBarTheme(
-              // backgroundColor: Colors.grey.shade900,
-              color: Colors.grey.shade900,
-            ),
-            useMaterial3: true,
-          ),
-          themeMode: ThemeMode.system,
-          theme: ThemeData(
-            textTheme: GoogleFonts.ubuntuTextTheme(textTheme).copyWith(
-              bodyMedium: GoogleFonts.wixMadeforText(
-                textStyle: textTheme.bodyMedium,
-              ),
-            ),
-            cardColor: Colors.white,
-            cardTheme: const CardTheme(color: Colors.white),
-            popupMenuTheme: const PopupMenuThemeData(
-              color: Colors.white, // Set your desired color here
-            ),
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: Colors.black,
-              primary: Colors.lightBlueAccent,
-              secondary: Colors.black,
-              surface: Colors.black,
-              background: Colors.grey.shade100,
-            ),
-            scaffoldBackgroundColor: Colors.grey.shade100,
-            appBarTheme: AppBarTheme(
-              // backgroundColor: Colors.grey.shade100,
-              color: Colors.grey.shade100,
-            ),
-            useMaterial3: true,
-          ),
+          darkTheme: darkTheme,
+          themeMode: ThemeMode.dark,
+          theme: lightTheme,
           routerConfig: router,
         );
       },

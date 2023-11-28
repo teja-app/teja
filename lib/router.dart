@@ -60,7 +60,6 @@ class RootPath {
 }
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
-final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
 final GoRouter router = GoRouter(
   // initialLocation: initialLocation, // Use the initialLocation parameter here
