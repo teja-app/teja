@@ -4,6 +4,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:redux/redux.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 import 'package:swayam/domain/redux/home/home_actions.dart';
 import 'package:swayam/domain/redux/home/home_state.dart';
@@ -81,8 +82,8 @@ class _HomePageState extends State<HomePage> {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
 
-    final Widget mainBody = StoreConnector<AppState, HomeState>(
-      converter: (store) => store.state.homeState,
+    final Widget mainBody = StoreConnector<AppState, _ViewModel>(
+      converter: _ViewModel.fromStore,
       builder: (context, store) {
         return SingleChildScrollView(
           child: Column(
@@ -98,7 +99,7 @@ class _HomePageState extends State<HomePage> {
                 lastDate: oneMonthFromNow,
                 selectedDate: store.selectedDate,
                 activeBackgroundDayColor: colorScheme.surface,
-                activeDayColor: colorScheme.inverseSurface,
+                activeDayColor: colorScheme.background,
                 onDateSelected: (date) {
                   StoreProvider.of<AppState>(context)
                       .dispatch(UpdateSelectedDateAction(date));
@@ -107,11 +108,12 @@ class _HomePageState extends State<HomePage> {
                 selectableDayPredicate: (date) => date.isBefore(tomorrow),
                 locale: 'en_ISO',
               ),
-              const BentoBox(
-                gridWidth: 4,
-                gridHeight: 1.5,
-                child: FetchMasterView(),
-              ),
+              if (!store.isFetchSuccessful)
+                const BentoBox(
+                  gridWidth: 4,
+                  gridHeight: 1.5,
+                  child: FetchMasterView(),
+                ),
               const SizedBox(height: 10),
               const BentoBox(
                 gridWidth: 4,
@@ -154,6 +156,23 @@ class _HomePageState extends State<HomePage> {
               ],
             )
           : mainBody, // If not desktop, just show the main body
+    );
+  }
+}
+
+class _ViewModel {
+  final DateTime? selectedDate;
+  final bool isFetchSuccessful;
+
+  _ViewModel({
+    this.selectedDate,
+    required this.isFetchSuccessful,
+  });
+
+  static _ViewModel fromStore(Store<AppState> store) {
+    return _ViewModel(
+      selectedDate: store.state.homeState.selectedDate,
+      isFetchSuccessful: store.state.masterFeelingState.isFetchSuccessful,
     );
   }
 }

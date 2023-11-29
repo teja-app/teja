@@ -7,7 +7,6 @@ import 'package:redux/redux.dart';
 import 'package:swayam/domain/entities/master_feeling.dart';
 import 'package:swayam/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:swayam/domain/redux/mood/master_feeling/actions.dart';
-import 'package:swayam/presentation/mood/editor/ui/feelings.dart';
 import 'package:swayam/shared/common/button.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 import 'package:swayam/shared/common/description_button.dart';
@@ -145,15 +144,6 @@ class _FeelingScreenState extends State<FeelingScreen> {
                               height: 32,
                             ),
                           const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              emotionTitle[vm.moodRating] ?? 'Default Title',
-                              style: const TextStyle(
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
                         ],
                       ),
                       const SizedBox(height: 20),

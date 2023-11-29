@@ -94,6 +94,7 @@ class DayItem extends StatelessWidget {
               shortName,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
+                color: isSelected ? activeDayColor : finalColor,
                 fontSize: shrink ? 9 : 14,
               ),
             ),

@@ -5,10 +5,8 @@ final textTheme = ThemeData.light().textTheme;
 final ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
   cardColor: Colors.black,
-  textTheme: GoogleFonts.ubuntuTextTheme(textTheme).copyWith(
-    bodyMedium: GoogleFonts.wixMadeforText(
-      textStyle: textTheme.bodyMedium,
-    ),
+  textTheme: GoogleFonts.ubuntuTextTheme(
+    ThemeData(brightness: Brightness.dark).textTheme,
   ),
   cardTheme: CardTheme(color: Colors.grey.shade800),
   popupMenuTheme: PopupMenuThemeData(
@@ -20,7 +18,7 @@ final ThemeData darkTheme = ThemeData(
     seedColor: Colors.white, // Adjust seed color for dark theme
     primary: Colors.lightBlueAccent,
     secondary: Colors.grey,
-    surface: Colors.grey.shade700,
+    surface: Colors.white,
     background: Colors.grey.shade900,
   ),
   scaffoldBackgroundColor: Colors.grey.shade900,

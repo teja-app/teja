@@ -33,19 +33,22 @@ class _FetchMasterViewState extends State<FetchMasterView> {
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            if (vm.isLoading)
-              const CircularProgressIndicator()
-            else if (vm.isFetchSuccessful)
+            if (vm.isLoading) ...[
+              const CircularProgressIndicator(),
+              const Text("Fetching configuration data offline mode"),
+            ] else if (vm.isFetchSuccessful)
               const Text('Fetch successful!')
-            else
-              const Text('Press this button to make it work in offline mode'),
-            Button(
-              onPressed: () {
-                vm.fetchFeelings();
-                vm.fetchFactors(); // Fetch factors for offline mode
-              },
-              text: 'Fetch Offline Mode Data',
-            ),
+            else ...[
+              const Text(
+                  'Press this button to make it everything work in offline mode'),
+              Button(
+                onPressed: () {
+                  vm.fetchFeelings();
+                  vm.fetchFactors(); // Fetch factors for offline mode
+                },
+                text: 'Retry',
+              ),
+            ]
           ],
         );
       },
