@@ -4,6 +4,7 @@ import 'package:redux/redux.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 import 'package:swayam/domain/redux/mood/master_factor/actions.dart';
 import 'package:swayam/domain/redux/mood/master_feeling/actions.dart';
+import 'package:swayam/shared/common/button.dart';
 
 class FetchMasterView extends StatefulWidget {
   const FetchMasterView({super.key});
@@ -38,12 +39,12 @@ class _FetchMasterViewState extends State<FetchMasterView> {
               const Text('Fetch successful!')
             else
               const Text('Press this button to make it work in offline mode'),
-            ElevatedButton(
+            Button(
               onPressed: () {
                 vm.fetchFeelings();
                 vm.fetchFactors(); // Fetch factors for offline mode
               },
-              child: const Text('Fetch Offline Mode Data'),
+              text: 'Fetch Offline Mode Data',
             ),
           ],
         );

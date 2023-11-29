@@ -41,8 +41,12 @@ class MasterFactorRepository {
     return factors.map(toEntity).toList();
   }
 
-  MasterFactorEntity toEntity(MasterFactor feeling) {
+  MasterFactorEntity toEntity(MasterFactor factor) {
     return MasterFactorEntity(
-        slug: feeling.slug, name: feeling.name, categoryId: feeling.categoryId);
+      id: factor.isarId,
+      slug: factor.slug,
+      name: factor.name,
+      categoryId: factor.categoryId,
+    );
   }
 }

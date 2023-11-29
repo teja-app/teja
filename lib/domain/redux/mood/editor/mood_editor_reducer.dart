@@ -18,7 +18,10 @@ MoodEditorState _updateFeelingsSuccess(
   if (state.currentMoodLog?.id == action.moodLogId) {
     MoodLogEntity updatedMoodLog =
         state.currentMoodLog!.copyWith(feelings: action.feelings);
-    return state.copyWith(currentMoodLog: updatedMoodLog);
+    return state.copyWith(
+      currentMoodLog: updatedMoodLog,
+      feelingFactorLink: action.feelingFactorLink,
+    );
   }
   return state;
 }

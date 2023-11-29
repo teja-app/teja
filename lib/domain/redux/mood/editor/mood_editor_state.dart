@@ -8,13 +8,15 @@ class MoodEditorState {
   final bool isSubmitting;
   final String? errorMessage;
   final bool submissionSuccess;
+  final Map<int, List<int>>? feelingFactorLink;
 
   const MoodEditorState({
     this.currentMoodLog,
     this.currentPageIndex = 0,
     this.isSubmitting = false,
-    this.errorMessage,
     this.submissionSuccess = false,
+    this.errorMessage,
+    this.feelingFactorLink,
   });
 
   // Extend copyWith to include the new variable
@@ -25,6 +27,7 @@ class MoodEditorState {
     bool? isSubmitting,
     String? errorMessage,
     bool? submissionSuccess,
+    Map<int, List<int>>? feelingFactorLink,
   }) {
     return MoodEditorState(
       currentMoodLog: currentMoodLog ?? this.currentMoodLog,
@@ -32,6 +35,7 @@ class MoodEditorState {
       isSubmitting: isSubmitting ?? this.isSubmitting,
       errorMessage: errorMessage ?? this.errorMessage,
       submissionSuccess: submissionSuccess ?? this.submissionSuccess,
+      feelingFactorLink: feelingFactorLink ?? this.feelingFactorLink,
     );
   }
 

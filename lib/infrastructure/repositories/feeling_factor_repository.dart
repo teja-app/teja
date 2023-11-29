@@ -33,4 +33,19 @@ class FeelingFactorRepository {
       }
     });
   }
+
+  Future<Map<int, List<int>>> getFactorsLinkedToFeelings(
+      List<int> feelingIds) async {
+    Map<int, List<int>> factorsForFeelings = {};
+    for (var feelingId in feelingIds) {
+      var factors = await isar.feelingFactors
+          .where()
+          .filter()
+          .feelingIdEqualTo(feelingId)
+          .findAll()
+          .then((list) => list.map((ff) => ff.factorId).toList());
+      factorsForFeelings[feelingId] = factors;
+    }
+    return factorsForFeelings;
+  }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:swayam/domain/entities/feeling.dart';
+import 'package:swayam/domain/entities/master_factor.dart';
 import 'package:swayam/domain/entities/mood_log.dart';
 import 'package:swayam/domain/redux/core_actions.dart';
 
@@ -46,6 +47,11 @@ class TriggerUpdateFeelingsAction {
 class UpdateFeelingsSuccessAction {
   final String moodLogId;
   final List<FeelingEntity> feelings;
+  final Map<int, List<int>>? feelingFactorLink;
 
-  const UpdateFeelingsSuccessAction(this.moodLogId, this.feelings);
+  const UpdateFeelingsSuccessAction(
+    this.moodLogId,
+    this.feelings,
+    this.feelingFactorLink,
+  );
 }

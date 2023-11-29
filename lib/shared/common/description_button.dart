@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class DescriptionButton extends StatelessWidget {
   final String title;
-  final String description;
+  final String? description;
   final IconData? icon; // Optional icon data
   final double maxWidth; // Maximum width for the card
   final VoidCallback onPressed; // Callback for when the button is pressed
@@ -10,7 +10,7 @@ class DescriptionButton extends StatelessWidget {
   const DescriptionButton({
     Key? key,
     required this.title,
-    required this.description,
+    this.description,
     required this.onPressed,
     this.icon, // Optional icon parameter
     this.maxWidth = 300.0, // Default max width to 300.0 pixels
@@ -86,14 +86,17 @@ class DescriptionButton extends StatelessWidget {
                     color: Colors.black,
                   ),
                 ),
-              const SizedBox(height: 10.0),
-              Text(
-                description,
-                style: const TextStyle(
-                  fontSize: 10.0,
-                  color: Colors.black,
+
+              if (description != null) ...[
+                const SizedBox(height: 10.0),
+                Text(
+                  description!,
+                  style: const TextStyle(
+                    fontSize: 10.0,
+                    color: Colors.black,
+                  ),
                 ),
-              ),
+              ]
             ],
           ),
         ),
