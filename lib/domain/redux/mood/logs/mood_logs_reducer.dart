@@ -34,6 +34,7 @@ MoodLogsState _fetchMoodLogsSuccess(
 MoodLogsState _fetchMoodLogsError(
     MoodLogsState state, FetchMoodLogsErrorAction action) {
   return state.copyWith(
+    moodLogsByDate: const {},
     isFetching: false,
     errorMessage: action.errorMessage,
   );

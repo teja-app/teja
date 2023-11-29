@@ -54,7 +54,7 @@ class _AppState extends State<App> {
           title: 'Swayam',
           debugShowCheckedModeBanner: false,
           darkTheme: darkTheme,
-          themeMode: ThemeMode.dark,
+          themeMode: ThemeMode.system,
           theme: lightTheme,
           routerConfig: router,
         );

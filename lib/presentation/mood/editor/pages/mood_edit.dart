@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 import 'package:swayam/domain/redux/mood/editor/mood_editor_actions.dart';
@@ -22,6 +23,13 @@ class _MoodEditPageState extends State<MoodEditPage> {
   void initState() {
     super.initState();
     _controller = PageController();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final Store<AppState> store = StoreProvider.of<AppState>(context);
+      final pageIndex = store.state.moodEditorState.currentPageIndex;
+      if (_controller.hasClients && pageIndex != _controller.page?.round()) {
+        _controller.jumpToPage(pageIndex);
+      }
+    });
   }
 
   @override
@@ -57,10 +65,6 @@ class _MoodEditPageState extends State<MoodEditPage> {
               converter: (store) =>
                   store.state.moodEditorState.currentPageIndex ?? 0,
               builder: (context, pageIndex) {
-                if (pageIndex != _controller.page?.round()) {
-                  // Jump to the page only if the page index from Redux is different from the current page
-                  Future.microtask(() => _controller.jumpToPage(pageIndex));
-                }
                 return PageView(
                   controller: _controller,
                   scrollDirection: Axis.horizontal,
