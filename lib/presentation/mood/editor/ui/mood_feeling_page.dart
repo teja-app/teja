@@ -241,18 +241,18 @@ class _FeelingScreenState extends State<FeelingScreen> {
                         ),
                       ),
                       // Next Button
-                      Button(
-                        text: "Next",
-                        width: 200,
-                        onPressed: () {
-                          final store = StoreProvider.of<AppState>(context);
-                          store.dispatch(const ChangePageAction(2));
-                        },
-                        buttonType: ButtonType.primary,
-                      ),
                     ],
                   ),
                 ),
+              ),
+              Button(
+                text: "Next",
+                width: 200,
+                onPressed: () {
+                  final store = StoreProvider.of<AppState>(context);
+                  store.dispatch(const ChangePageAction(2));
+                },
+                buttonType: ButtonType.primary,
               ),
             ]),
           );

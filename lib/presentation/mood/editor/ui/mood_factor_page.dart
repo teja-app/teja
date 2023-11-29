@@ -10,6 +10,8 @@ import 'package:swayam/domain/redux/app_state.dart';
 import 'package:swayam/domain/redux/mood/master_factor/actions.dart';
 import 'package:swayam/shared/common/bento_box.dart';
 import 'package:swayam/shared/common/button.dart';
+import 'package:swayam/shared/common/flexible_height_box.dart';
+import 'package:swayam/theme/dark_theme.dart';
 
 class FactorsScreen extends StatefulWidget {
   const FactorsScreen({super.key});
@@ -80,6 +82,7 @@ class _FactorsScreenState extends State<FactorsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return StoreConnector<AppState, FactorsViewModel>(
       converter: (store) => FactorsViewModel.fromStore(store),
       builder: (context, viewModel) {
@@ -92,16 +95,20 @@ class _FactorsScreenState extends State<FactorsScreen> {
             var feeling = viewModel.selectedFeelings![index];
             var items = _multiSelectItemsForFeelings[feeling.id] ?? [];
             var selectedFactors = _selectedFactorsForFeelings[feeling.id] ?? [];
-            return BentoBox(
+            return FlexibleHeightBox(
               gridWidth: 4,
-              gridHeight: 3,
+              margin: 32,
               child: Column(
                 children: [
-                  Text('Why are you ${feeling.feeling}?'),
+                  Text(
+                    'Why are you ${feeling.feeling}?',
+                    style: textTheme.titleMedium,
+                  ),
                   Builder(
                     builder: (BuildContext buildContext) {
                       if (items.isNotEmpty) {
                         return MultiSelectChipField<MasterFactorEntity>(
+                          scroll: false,
                           items: items,
                           initialValue: selectedFactors,
                           showHeader: false,
@@ -109,7 +116,7 @@ class _FactorsScreenState extends State<FactorsScreen> {
                           chipWidth: 50,
                           decoration: const BoxDecoration(
                             border: Border(
-                              top: BorderSide(color: Colors.black12),
+                              top: BorderSide(color: Colors.transparent),
                             ),
                           ),
                           itemBuilder: (MultiSelectItem<MasterFactorEntity?>
