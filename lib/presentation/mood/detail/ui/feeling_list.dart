@@ -15,6 +15,7 @@ class FeelingsListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return StoreConnector<AppState, List<MasterFeelingEntity>>(
       converter: (store) => store.state.masterFeelingState.masterFeelings ?? [],
       builder: (context, masterFeelings) {
@@ -39,10 +40,17 @@ class FeelingsListWidget extends StatelessWidget {
                   ),
                 );
                 return BentoBox(
-                  gridWidth: 4,
-                  gridHeight: 1,
-                  child: Text(masterFeeling.name),
-                );
+                    gridWidth: 4,
+                    gridHeight: 1,
+                    child: Column(
+                      children: [
+                        Text(
+                          masterFeeling.name,
+                          style: textTheme.titleLarge,
+                        ),
+                        if (feeling.factors!.isNotEmpty) ...feeling.factors!.map((factor) => Text(factor)),
+                      ],
+                    ));
               },
             ),
           ],
