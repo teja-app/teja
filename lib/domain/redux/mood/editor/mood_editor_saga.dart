@@ -109,28 +109,32 @@ class MoodEditorSaga {
       Isar isar = isarResult.value!;
 
       var moodLogRepository = MoodLogRepository(isar);
-      var masterFactorRepository = MasterFactorRepository(isar);
       var masterFeelingRepository = MasterFeelingRepository(isar);
 
-      // Convert factor IDs to slugs
-      var factorSlugsResult = Result<List<String>>();
-      yield Call(masterFactorRepository.convertIdsToSlugs, args: [action.factorIds], result: factorSlugsResult);
-
       // Get the slug for the feeling
-      print("action.feelingId ${action.feelingId}");
       var feelingSlugResult = Result<String>();
       yield Call(masterFeelingRepository.convertIdToSlug, args: [action.feelingId], result: feelingSlugResult);
-      print("feelingSlugResult ${feelingSlugResult.value}");
-
-      // Update the factors for the specified feeling in the specific mood log
-      yield Call(moodLogRepository.updateFactorsForFeeling, args: [
-        action.moodLogId,
-        feelingSlugResult.value,
-        factorSlugsResult.value,
-      ]);
+      if (action.factors.isNotEmpty) {
+        List<String> factorSlugsValue = action.factors.map((factor) => factor!.slug).toList();
+        yield Call(moodLogRepository.updateFactorsForFeeling, args: [
+          action.moodLogId,
+          feelingSlugResult.value,
+          factorSlugsValue,
+        ]);
+      } else {
+        yield Call(moodLogRepository.updateFactorsForFeeling, args: [
+          action.moodLogId,
+          feelingSlugResult.value,
+          null,
+        ]);
+      }
 
       // Dispatch success action
-      yield Put(const UpdateFactorsSuccessAction("Factors updated successfully."));
+      yield Put(UpdateFactorsSuccessAction(
+        moodLogId: action.moodLogId,
+        feelingId: action.feelingId,
+        factors: action.factors,
+      ));
     }, Catch: (e, s) sync* {
       yield Put(MoodUpdateFailedAction(e.toString()));
     });

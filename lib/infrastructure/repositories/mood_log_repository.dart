@@ -75,11 +75,10 @@ class MoodLogRepository {
   Future<void> addOrUpdateMoodLog(MoodLog moodLog) async {
     await isar.writeTxn(() async {
       await isar.moodLogs.put(moodLog);
-      // After updating the mood log, check the streak and assign badges.
-      await calculateCurrentStreak();
-      final criteria = await loadStreakBadgeCriteria();
-      final moodBadgeManager = MoodBadgeManager(BadgeRepository(isar), this, criteria);
-      await moodBadgeManager.evaluateAndAwardMoodBadges(inTransaction: true);
+      // await calculateCurrentStreak();
+      // final criteria = await loadStreakBadgeCriteria();
+      // final moodBadgeManager = MoodBadgeManager(BadgeRepository(isar), this, criteria);
+      // await moodBadgeManager.evaluateAndAwardMoodBadges(inTransaction: true);
     });
   }
 
@@ -101,16 +100,33 @@ class MoodLogRepository {
     }
   }
 
-  Future<void> updateFactorsForFeeling(String moodLogId, String feelingSlug, List<String> factorSlugs) async {
+  Future<void> updateFactorsForFeeling(String moodLogId, String feelingSlug, List<String>? factorSlugs) async {
+    print("Updating factors for feeling: $feelingSlug in mood log: $moodLogId");
+    print("New factors: $factorSlugs");
+
     final MoodLog? moodLog = await getMoodLogById(moodLogId);
-    if (moodLog != null) {
-      for (var feeling in moodLog.feelings!) {
+    if (moodLog != null && moodLog.feelings != null) {
+      // Create a new list for updated feelings
+      List<MoodLogFeeling> updatedFeelings = moodLog.feelings!.map((feeling) {
         if (feeling.feeling == feelingSlug) {
-          // Update the factors for the specific feeling
-          feeling.factors = factorSlugs;
+          // For the matching feeling, create a new instance with updated factors
+          return MoodLogFeeling()
+            ..feeling = feeling.feeling
+            ..comment = feeling.comment
+            ..factors = factorSlugs;
+        } else {
+          // For non-matching feelings, create a new instance with existing data
+          return MoodLogFeeling()
+            ..feeling = feeling.feeling
+            ..comment = feeling.comment
+            ..factors = feeling.factors;
         }
-      }
-      await addOrUpdateMoodLog(moodLog); // Save the updated mood log
+      }).toList(growable: true);
+
+      moodLog.feelings = updatedFeelings;
+      await addOrUpdateMoodLog(moodLog);
+    } else {
+      print("Mood log with ID $moodLogId not found.");
     }
   }
 

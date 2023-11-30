@@ -40,8 +40,6 @@ class _FactorsScreenState extends State<FactorsScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
-    print("didChangeDependencies");
     if (!_isInitialized) {
       final store = StoreProvider.of<AppState>(context);
       final factors = store.state.masterFactorState.masterFactors;
@@ -71,16 +69,15 @@ class _FactorsScreenState extends State<FactorsScreen> {
     });
   }
 
-  void _updateFactorsInDatabase(String moodLogId) {
+  void _updateFactorsAction(String moodLogId, int feelingId, List<MasterFactorEntity> selectedFactors) {
     Store<AppState> store = StoreProvider.of<AppState>(context);
-    _selectedFactorsForFeelings.forEach((feelingId, factors) {
-      List<int?> factorIds = factors.map((factor) => factor.id).toList() ?? [];
-      if (factorIds.isNotEmpty) {
-        store.dispatch(
-          UpdateFactorsAction(moodLogId: moodLogId, feelingId: feelingId, factorIds: factorIds),
-        );
-      }
-    });
+    store.dispatch(
+      UpdateFactorsAction(
+        moodLogId: moodLogId,
+        feelingId: feelingId,
+        factors: selectedFactors,
+      ),
+    );
   }
 
   @override
@@ -135,7 +132,7 @@ class _FactorsScreenState extends State<FactorsScreen> {
                                     selectedFactors.add(item.value!);
                                   }
                                 });
-                                _updateFactorsInDatabase(viewModel.moodLogId);
+                                _updateFactorsAction(viewModel.moodLogId, feeling.id!, selectedFactors);
                               },
                               icon: selectedFactors.contains(item.value) ? AntDesign.check : null,
                             );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:swayam/domain/entities/master_factor.dart';
 import 'package:swayam/domain/entities/master_feeling.dart';
 import 'package:swayam/domain/entities/mood_log.dart';
 
@@ -11,27 +12,28 @@ class MoodEditorState {
   final String? errorMessage;
   final bool submissionSuccess;
   final Map<int, List<int>>? feelingFactorLink;
+  final Map<int, List<MasterFactorEntity?>>? selectedFactorsForFeelings;
 
   const MoodEditorState({
     this.currentMoodLog,
     this.currentPageIndex = 0,
     this.isSubmitting = false,
     this.submissionSuccess = false,
+    this.selectedFactorsForFeelings,
     this.errorMessage,
     this.feelingFactorLink,
     this.selectedFeelings,
   });
 
-  // Extend copyWith to include the new variable
   MoodEditorState copyWith({
     MoodLogEntity? currentMoodLog,
     int? currentPageIndex,
-    bool? isFetchingFeelings, // Add the new parameter
     bool? isSubmitting,
     String? errorMessage,
     bool? submissionSuccess,
     Map<int, List<int>>? feelingFactorLink,
     List<MasterFeelingEntity>? selectedFeelings,
+    Map<int, List<MasterFactorEntity?>>? selectedFactorsForFeelings,
   }) {
     return MoodEditorState(
       currentMoodLog: currentMoodLog ?? this.currentMoodLog,
@@ -41,6 +43,7 @@ class MoodEditorState {
       submissionSuccess: submissionSuccess ?? this.submissionSuccess,
       feelingFactorLink: feelingFactorLink ?? this.feelingFactorLink,
       selectedFeelings: selectedFeelings ?? this.selectedFeelings,
+      selectedFactorsForFeelings: selectedFactorsForFeelings ?? this.selectedFactorsForFeelings,
     );
   }
 

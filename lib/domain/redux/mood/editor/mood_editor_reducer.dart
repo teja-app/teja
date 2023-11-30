@@ -1,4 +1,5 @@
 import 'package:redux/redux.dart';
+import 'package:swayam/domain/entities/master_factor.dart';
 import 'package:swayam/domain/entities/mood_log.dart';
 import 'package:swayam/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:swayam/domain/redux/mood/editor/mood_editor_state.dart';
@@ -30,10 +31,25 @@ MoodEditorState _updateLinkedFactorsSuccess(MoodEditorState state, UpdateLinkedF
 }
 
 MoodEditorState _clearMoodEditorForm(MoodEditorState state, ClearMoodEditorFormAction action) {
-  print("_clearMoodEditorForm");
   return MoodEditorState.initialState().copyWith(
     selectedFeelings: [],
   );
+}
+
+MoodEditorState _updateFactorsSuccess(MoodEditorState state, UpdateFactorsSuccessAction action) {
+  print("action ${action.factors?.length}");
+  if (state.currentMoodLog?.id == action.moodLogId) {
+    // Ensure that selectedFactorsForFeelings is not null
+    var updatedFactorsForFeelings = Map<int, List<MasterFactorEntity?>>.from(state.selectedFactorsForFeelings ?? {});
+
+    // Update the factors for the specific feeling
+    updatedFactorsForFeelings[action.feelingId] = action.factors ?? [];
+
+    return state.copyWith(
+      selectedFactorsForFeelings: updatedFactorsForFeelings,
+    );
+  }
+  return state;
 }
 
 // Include the new reducer methods in the combined reducer
@@ -43,4 +59,5 @@ final moodEditorReducer = combineReducers<MoodEditorState>([
   TypedReducer<MoodEditorState, UpdateFeelingsSuccessAction>(_updateFeelingsSuccess),
   TypedReducer<MoodEditorState, ClearMoodEditorFormAction>(_clearMoodEditorForm),
   TypedReducer<MoodEditorState, UpdateLinkedFactorsSuccessAction>(_updateLinkedFactorsSuccess),
+  TypedReducer<MoodEditorState, UpdateFactorsSuccessAction>(_updateFactorsSuccess),
 ]);
