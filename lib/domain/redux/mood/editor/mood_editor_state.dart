@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:swayam/domain/entities/master_feeling.dart';
 import 'package:swayam/domain/entities/mood_log.dart';
 
 @immutable
 class MoodEditorState {
   final MoodLogEntity? currentMoodLog;
+  final List<MasterFeelingEntity>? selectedFeelings;
   final int currentPageIndex;
   final bool isSubmitting;
   final String? errorMessage;
@@ -17,6 +19,7 @@ class MoodEditorState {
     this.submissionSuccess = false,
     this.errorMessage,
     this.feelingFactorLink,
+    this.selectedFeelings,
   });
 
   // Extend copyWith to include the new variable
@@ -28,6 +31,7 @@ class MoodEditorState {
     String? errorMessage,
     bool? submissionSuccess,
     Map<int, List<int>>? feelingFactorLink,
+    List<MasterFeelingEntity>? selectedFeelings,
   }) {
     return MoodEditorState(
       currentMoodLog: currentMoodLog ?? this.currentMoodLog,
@@ -36,6 +40,7 @@ class MoodEditorState {
       errorMessage: errorMessage ?? this.errorMessage,
       submissionSuccess: submissionSuccess ?? this.submissionSuccess,
       feelingFactorLink: feelingFactorLink ?? this.feelingFactorLink,
+      selectedFeelings: selectedFeelings ?? this.selectedFeelings,
     );
   }
 

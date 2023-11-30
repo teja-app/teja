@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 import 'package:swayam/domain/redux/mood/editor/mood_editor_actions.dart';
@@ -17,15 +18,18 @@ class MoodEditPage extends StatefulWidget {
 class _MoodEditPageState extends State<MoodEditPage> {
   late final PageController _controller;
   int lastPage = 0; // Track the last page to avoid unnecessary state updates
+  late final Store<AppState> _store; // Add this line to store the reference
 
   @override
   void initState() {
     super.initState();
     _controller = PageController();
+    _store = StoreProvider.of<AppState>(context, listen: false); // Obtain the store reference
   }
 
   @override
   void dispose() {
+    _store.dispatch(const ClearMoodEditorFormAction()); // Use the stored reference
     _controller.dispose();
     super.dispose();
   }
@@ -41,12 +45,10 @@ class _MoodEditPageState extends State<MoodEditPage> {
         child: Column(
           children: <Widget>[
             StoreConnector<AppState, int>(
-              converter: (store) =>
-                  store.state.moodEditorState.currentPageIndex ?? 0,
+              converter: (store) => store.state.moodEditorState.currentPageIndex ?? 0,
               builder: (context, pageIndex) {
                 // Listen to Redux state changes and jump to the page without animation
-                if (_controller.hasClients &&
-                    pageIndex != _controller.page?.round()) {
+                if (_controller.hasClients && pageIndex != _controller.page?.round()) {
                   _controller.jumpToPage(pageIndex);
                 }
 

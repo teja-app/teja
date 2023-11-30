@@ -1,6 +1,7 @@
 import 'package:isar/isar.dart';
 import 'package:redux_saga/redux_saga.dart';
 import 'package:swayam/domain/entities/feeling.dart';
+import 'package:swayam/domain/entities/master_feeling.dart';
 import 'package:swayam/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:swayam/domain/redux/mood/logs/mood_logs_actions.dart';
 import 'package:swayam/infrastructure/repositories/feeling_factor_repository.dart';
@@ -42,8 +43,7 @@ class MoodEditorSaga {
     });
   }
 
-  _handleUpdateFeelingsAction(
-      {required TriggerUpdateFeelingsAction action}) sync* {
+  _handleUpdateFeelingsAction({required TriggerUpdateFeelingsAction action}) sync* {
     var isarResult = Result<Isar>();
     yield GetContext('isar', result: isarResult);
     Isar isar = isarResult.value!;
@@ -51,14 +51,14 @@ class MoodEditorSaga {
     var moodLogRepository = MoodLogRepository(isar);
     var masterFeelingRepository = MasterFeelingRepository(isar);
     var feelingFactorRepository = FeelingFactorRepository(isar);
+    List<MasterFeelingEntity> selectedFeelings = action.selectedFeelings;
 
     yield Try(() sync* {
       List<MoodLogFeeling> updatedFeelings = action.feelingSlugs.map((slug) {
         return MoodLogFeeling()..feeling = slug;
       }).toList();
 
-      yield Call(moodLogRepository.updateFeelingsForMoodLog,
-          args: [action.moodLogId, updatedFeelings]);
+      yield Call(moodLogRepository.updateFeelingsForMoodLog, args: [action.moodLogId, updatedFeelings]);
 
       // Dispatch success action to update Redux state
       List<FeelingEntity> feelingsEntities = updatedFeelings
@@ -68,28 +68,28 @@ class MoodEditorSaga {
           .toList();
 
       // Extract feeling IDs from updatedFeelings
-      List<String> feelingSlugs =
-          feelingsEntities.map((feeling) => feeling.feeling).toList();
+      List<String> feelingSlugs = feelingsEntities.map((feeling) => feeling.feeling).toList();
 
       // Convert feeling slugs to IDs
       var feelingIdsResult = Result<List<int>>();
-      yield Call(masterFeelingRepository.convertSlugsToIds,
-          args: [feelingSlugs], result: feelingIdsResult);
+      yield Call(masterFeelingRepository.convertSlugsToIds, args: [feelingSlugs], result: feelingIdsResult);
       List<int> feelingIds = feelingIdsResult.value!;
 
       // Assuming that feelingsEntities is already declared and populated with slugs
       for (int i = 0; i < feelingsEntities.length; i++) {
-        feelingsEntities[i].id =
-            feelingIds[i]; // Update with the corresponding ID
+        feelingsEntities[i].id = feelingIds[i]; // Update with the corresponding ID
       }
 
       // Get factors linked to feelings
       var factorResults = Result<Map<int, List<int>>>();
-      yield Call(feelingFactorRepository.getFactorsLinkedToFeelings,
-          args: [feelingIds], result: factorResults);
+      yield Call(feelingFactorRepository.getFactorsLinkedToFeelings, args: [feelingIds], result: factorResults);
 
       yield Put(UpdateFeelingsSuccessAction(
-          action.moodLogId, feelingsEntities, factorResults.value));
+        action.moodLogId,
+        feelingsEntities,
+        factorResults.value,
+        selectedFeelings,
+      ));
       // yield Put(UpdateFeelingsSuccessAction(
       //     action.moodLogId, feelingsEntities, null));
     }, Catch: (e, s) sync* {

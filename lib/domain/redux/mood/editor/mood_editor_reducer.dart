@@ -3,8 +3,7 @@ import 'package:swayam/domain/entities/mood_log.dart';
 import 'package:swayam/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:swayam/domain/redux/mood/editor/mood_editor_state.dart';
 
-MoodEditorState _selectMood(
-    MoodEditorState state, SelectMoodSuccessAction action) {
+MoodEditorState _selectMood(MoodEditorState state, SelectMoodSuccessAction action) {
   return state.copyWith(currentMoodLog: action.moodLog);
 }
 
@@ -13,23 +12,29 @@ MoodEditorState _changePage(MoodEditorState state, ChangePageAction action) {
   return state.copyWith(currentPageIndex: action.pageIndex);
 }
 
-MoodEditorState _updateFeelingsSuccess(
-    MoodEditorState state, UpdateFeelingsSuccessAction action) {
+MoodEditorState _updateFeelingsSuccess(MoodEditorState state, UpdateFeelingsSuccessAction action) {
   if (state.currentMoodLog?.id == action.moodLogId) {
-    MoodLogEntity updatedMoodLog =
-        state.currentMoodLog!.copyWith(feelings: action.feelings);
+    MoodLogEntity updatedMoodLog = state.currentMoodLog!.copyWith(feelings: action.feelings);
     return state.copyWith(
       currentMoodLog: updatedMoodLog,
       feelingFactorLink: action.feelingFactorLink,
+      selectedFeelings: action.selectedFeelings, // Update the state with the new selectedFeelings
     );
   }
   return state;
+}
+
+MoodEditorState _clearMoodEditorForm(MoodEditorState state, ClearMoodEditorFormAction action) {
+  print("_clearMoodEditorForm");
+  return MoodEditorState.initialState().copyWith(
+    selectedFeelings: [],
+  );
 }
 
 // Include the new reducer methods in the combined reducer
 final moodEditorReducer = combineReducers<MoodEditorState>([
   TypedReducer<MoodEditorState, SelectMoodSuccessAction>(_selectMood),
   TypedReducer<MoodEditorState, ChangePageAction>(_changePage),
-  TypedReducer<MoodEditorState, UpdateFeelingsSuccessAction>(
-      _updateFeelingsSuccess),
+  TypedReducer<MoodEditorState, UpdateFeelingsSuccessAction>(_updateFeelingsSuccess),
+  TypedReducer<MoodEditorState, ClearMoodEditorFormAction>(_clearMoodEditorForm),
 ]);

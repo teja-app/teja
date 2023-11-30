@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:swayam/domain/entities/feeling.dart';
+import 'package:swayam/domain/entities/master_feeling.dart';
 import 'package:swayam/domain/entities/mood_log.dart';
 import 'package:swayam/domain/redux/core_actions.dart';
 
@@ -38,8 +39,13 @@ class MoodUpdateFailedAction extends FailureAction {
 class TriggerUpdateFeelingsAction {
   final String moodLogId;
   final List<String> feelingSlugs;
+  final List<MasterFeelingEntity> selectedFeelings;
 
-  const TriggerUpdateFeelingsAction(this.moodLogId, this.feelingSlugs);
+  const TriggerUpdateFeelingsAction(
+    this.moodLogId,
+    this.feelingSlugs,
+    this.selectedFeelings,
+  );
 }
 
 @immutable
@@ -47,11 +53,13 @@ class UpdateFeelingsSuccessAction {
   final String moodLogId;
   final List<FeelingEntity> feelings;
   final Map<int, List<int>>? feelingFactorLink;
+  final List<MasterFeelingEntity> selectedFeelings;
 
   const UpdateFeelingsSuccessAction(
     this.moodLogId,
     this.feelings,
     this.feelingFactorLink,
+    this.selectedFeelings,
   );
 }
 
@@ -73,4 +81,9 @@ class UpdateFactorsSuccessAction {
 class UpdateFactorsFailureAction {
   final String error;
   const UpdateFactorsFailureAction(this.error);
+}
+
+@immutable
+class ClearMoodEditorFormAction {
+  const ClearMoodEditorFormAction();
 }

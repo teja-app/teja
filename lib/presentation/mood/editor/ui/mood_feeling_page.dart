@@ -23,7 +23,6 @@ class _FeelingScreenState extends State<FeelingScreen> {
   late List<MasterFeelingEntity> _filteredFeelings;
   final _multiSelectKey = GlobalKey<FormFieldState>();
   List<MultiSelectItem<MasterFeelingEntity>> _multiSelectItems = [];
-  List<MasterFeelingEntity> _selectedFeelings = [];
 
   @override
   void initState() {
@@ -34,79 +33,80 @@ class _FeelingScreenState extends State<FeelingScreen> {
     // Dispatching the action to load feelings when the widget initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        StoreProvider.of<AppState>(context)
-            .dispatch(FetchMasterFeelingsActionFromCache());
+        StoreProvider.of<AppState>(context).dispatch(FetchMasterFeelingsActionFromCache());
       }
     });
   }
 
-  void _initializeFeelings(
-      List<MasterFeelingEntity> feelings, int currentMood) {
+  void _initializeFeelings(List<MasterFeelingEntity> feelings, int currentMood) {
     // Initialize the comprehensive list of emotions mapped to their respective moods
     // setState(() {
     _allFeelings = feelings.cast<MasterFeelingEntity>();
     // Filter the comprehensive _feelings list based on currentMood
-    _filteredFeelings =
-        _allFeelings.where((emotion) => emotion.moodId == currentMood).toList();
+    _filteredFeelings = _allFeelings.where((emotion) => emotion.moodId == currentMood).toList();
 
     // Initialize _multiSelectItems
-    _multiSelectItems = _filteredFeelings
-        .map((e) => MultiSelectItem<MasterFeelingEntity>(e, e.name))
-        .toList();
+    _multiSelectItems = _filteredFeelings.map((e) => MultiSelectItem<MasterFeelingEntity>(e, e.name)).toList();
     // });
   }
 
-  void settingState(List<MasterFeelingEntity> feelings, int currentMood) {
+  void settingState(List<MasterFeelingEntity> masterFeelings, int currentMood) {
     setState(() {
-      _allFeelings = feelings.cast<MasterFeelingEntity>();
+      _allFeelings = masterFeelings.cast<MasterFeelingEntity>();
       // Filter the comprehensive _feelings list based on currentMood
-      _filteredFeelings = _allFeelings
-          .where((emotion) => emotion.moodId == currentMood)
-          .toList();
+      _filteredFeelings = _allFeelings.where((emotion) => emotion.moodId == currentMood).toList();
 
       // Initialize _multiSelectItems
-      _multiSelectItems = _filteredFeelings
-          .map((e) => MultiSelectItem<MasterFeelingEntity>(e, e.name))
-          .toList();
+      _multiSelectItems = _filteredFeelings.map((e) => MultiSelectItem<MasterFeelingEntity>(e, e.name)).toList();
     });
   }
 
-  void _showAllFeelings() {
-    showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      builder: (BuildContext context) {
-        return MultiSelectBottomSheet(
-          searchable: true,
-          items: _allFeelings
-              .map((e) => MultiSelectItem<MasterFeelingEntity>(e, e.name))
-              .toList(),
-          maxChildSize: 0.7,
-          minChildSize: 0.3,
-          initialChildSize: 0.5,
-          onConfirm: (values) {
-            setState(() {
-              _selectedFeelings = values;
+  // void _showAllFeelings() {
+  //   showModalBottomSheet(
+  //     isScrollControlled: true,
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return MultiSelectBottomSheet(
+  //         searchable: true,
+  //         items: _allFeelings
+  //             .map((e) => MultiSelectItem<MasterFeelingEntity>(e, e.name))
+  //             .toList(),
+  //         maxChildSize: 0.7,
+  //         minChildSize: 0.3,
+  //         initialChildSize: 0.5,
+  //         onConfirm: (values) {
+  //           setState(() {
+  //             _selectedFeelings = values;
 
-              for (var emotion in _selectedFeelings) {
-                if (!_filteredFeelings.contains(emotion)) {
-                  _filteredFeelings.add(emotion);
-                  _multiSelectItems.add(MultiSelectItem<MasterFeelingEntity>(
-                      emotion, emotion.name));
-                }
-              }
-            });
-          },
-          initialValue: _selectedFeelings,
-        );
-      },
-    );
-  }
+  //             for (var emotion in _selectedFeelings) {
+  //               if (!_filteredFeelings.contains(emotion)) {
+  //                 _filteredFeelings.add(emotion);
+  //                 _multiSelectItems.add(MultiSelectItem<MasterFeelingEntity>(
+  //                     emotion, emotion.name));
+  //               }
+  //             }
+  //           });
+  //         },
+  //         initialValue: _selectedFeelings,
+  //       );
+  //     },
+  //   );
+  // }
 
   // Return 'active' if the mood is selected, otherwise 'inactive'
   String getMoodIconPath(int moodIndex) {
     return 'assets/icons/mood_${moodIndex}_active.svg';
   }
+
+  // void _onFeelingSelectionChanged(List<MasterFeelingEntity> newSelections) {
+  //   final store = StoreProvider.of<AppState>(context);
+  //   List<String> selectedFeelingSlugs = newSelections.map((feeling) => feeling.slug).toSet().toList();
+  //   store.dispatch(TriggerUpdateFeelingsAction(
+  //     store.state.moodEditorState.currentMoodLog!.id, // or some other way to get the moodLogId
+  //     selectedFeelingSlugs,
+  //     newSelections,
+  //   ));
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -114,12 +114,11 @@ class _FeelingScreenState extends State<FeelingScreen> {
     final colorScheme = Theme.of(context).colorScheme;
     return StoreConnector<AppState, _ViewModel>(
         converter: (store) => _ViewModel.fromStore(store),
-        onInit: (store) => _initializeFeelings(
-            store.state.masterFeelingState.masterFeelings ?? [],
+        onInit: (store) => _initializeFeelings(store.state.masterFeelingState.masterFeelings ?? [],
             store.state.moodEditorState.currentMoodLog?.moodRating ?? 0),
         onDidChange: (previousViewModel, viewModel) => {
               settingState(
-                viewModel.feelings,
+                viewModel.masterFeelings,
                 viewModel.moodRating,
               )
             },
@@ -155,6 +154,8 @@ class _FeelingScreenState extends State<FeelingScreen> {
                       if (!vm.isLoading && _allFeelings.isNotEmpty)
                         Builder(
                           builder: (BuildContext buildContext) {
+                            List<MasterFeelingEntity> selectedFeelings = vm.selectedFeelings ?? [];
+                            print("selectedFeelings ${selectedFeelings}");
                             if (_multiSelectItems.isNotEmpty) {
                               return MultiSelectChipField<MasterFeelingEntity>(
                                 scroll: false,
@@ -171,45 +172,39 @@ class _FeelingScreenState extends State<FeelingScreen> {
                                   return null; // Explicitly returning null as a dynamic type.
                                 },
                                 chipWidth: 50,
-                                itemBuilder:
-                                    (MultiSelectItem<MasterFeelingEntity?> item,
-                                        FormFieldState<
-                                                List<MasterFeelingEntity?>>
-                                            state) {
+                                itemBuilder: (MultiSelectItem<MasterFeelingEntity?> item,
+                                    FormFieldState<List<MasterFeelingEntity?>> state) {
+                                  bool isSelected =
+                                      selectedFeelings.any((selectedFeeling) => selectedFeeling.id == item.value?.id);
                                   return DescriptionButton(
                                     title: item.value!.name,
                                     description: item.value!.description,
                                     onPressed: () {
-                                      setState(() {
-                                        bool isAlreadySelected =
-                                            _selectedFeelings
-                                                .contains(item.value);
-                                        if (isAlreadySelected) {
-                                          _selectedFeelings.remove(item.value);
-                                        } else {
-                                          _selectedFeelings.add(item.value!);
-                                        }
-                                      });
+                                      final store = StoreProvider.of<AppState>(context);
+                                      bool isAlreadySelected = selectedFeelings
+                                          .any((selectedFeeling) => selectedFeeling.id == item.value?.id);
+                                      List<MasterFeelingEntity> updatedSelectedFeelings = List.from(selectedFeelings);
 
-                                      // Convert selected feelings to slugs, ensuring uniqueness
+                                      if (isAlreadySelected) {
+                                        updatedSelectedFeelings.removeWhere((feeling) => feeling.id == item.value!.id);
+                                      } else {
+                                        var feelingToAdd =
+                                            _allFeelings.firstWhere((feeling) => feeling.id == item.value!.id);
+                                        updatedSelectedFeelings.add(feelingToAdd);
+                                      }
+
                                       List<String> selectedFeelingSlugs =
-                                          _selectedFeelings
-                                              .map((feeling) => feeling.slug)
-                                              .toSet() // Remove duplicates by converting to a Set
-                                              .toList(); // Convert back to List for dispatching
+                                          updatedSelectedFeelings.map((feeling) => feeling.slug).toSet().toList();
 
-                                      // Dispatch an action to update feelings in the Redux store
-                                      StoreProvider.of<AppState>(context)
-                                          .dispatch(
+                                      store.dispatch(
                                         TriggerUpdateFeelingsAction(
                                           vm.moodLogId,
                                           selectedFeelingSlugs,
+                                          updatedSelectedFeelings,
                                         ),
                                       );
                                     },
-                                    icon: _selectedFeelings.contains(item.value)
-                                        ? AntDesign.check
-                                        : null,
+                                    icon: isSelected ? AntDesign.check : null,
                                   );
                                 },
                               );
@@ -221,16 +216,16 @@ class _FeelingScreenState extends State<FeelingScreen> {
                             }
                           },
                         ),
-                      Container(
-                        margin: const EdgeInsets.all(8.0),
-                        child: TextButton(
-                          onPressed: _showAllFeelings,
-                          child: Text(
-                            "View more feelings options",
-                            style: textTheme.labelLarge,
-                          ),
-                        ),
-                      ),
+                      // Container(
+                      //   margin: const EdgeInsets.all(8.0),
+                      //   child: TextButton(
+                      //     onPressed: _showAllFeelings,
+                      //     child: Text(
+                      //       "View more feelings options",
+                      //       style: textTheme.labelLarge,
+                      //     ),
+                      //   ),
+                      // ),
                       // Next Button
                     ],
                   ),
@@ -262,14 +257,16 @@ class _FeelingScreenState extends State<FeelingScreen> {
 class _ViewModel {
   final String moodLogId;
   final bool isLoading;
-  final List<MasterFeelingEntity> feelings;
+  final List<MasterFeelingEntity> masterFeelings;
+  final List<MasterFeelingEntity>? selectedFeelings; // Add this line
   final Function() fetchFeelings;
   final int moodRating;
 
   _ViewModel({
     required this.moodLogId,
     required this.isLoading,
-    required this.feelings,
+    required this.masterFeelings,
+    this.selectedFeelings, // Initialize this in constructor
     required this.fetchFeelings,
     required this.moodRating,
   });
@@ -279,7 +276,8 @@ class _ViewModel {
       moodLogId: store.state.moodEditorState.currentMoodLog!.id,
       moodRating: store.state.moodEditorState.currentMoodLog?.moodRating ?? 0,
       isLoading: store.state.masterFeelingState.isLoading,
-      feelings: store.state.masterFeelingState.masterFeelings ?? [],
+      masterFeelings: store.state.masterFeelingState.masterFeelings ?? [],
+      selectedFeelings: store.state.moodEditorState.selectedFeelings ?? [],
       fetchFeelings: () => store.dispatch(FetchMasterFeelingsActionFromCache()),
     );
   }

@@ -16,16 +16,12 @@ class MasterFeelingRepository {
     return feelings.map(toEntity).toList();
   }
 
-  Future<Map<String, int>> addOrUpdateFeelings(
-      List<MasterFeeling> feelings) async {
+  Future<Map<String, int>> addOrUpdateFeelings(List<MasterFeeling> feelings) async {
     Map<String, int> feelingIds = {};
     await isar.writeTxn(() async {
       for (var feeling in feelings) {
         int id;
-        var existingFeeling = await isar.masterFeelings
-            .where()
-            .slugEqualTo(feeling.slug)
-            .findFirst();
+        var existingFeeling = await isar.masterFeelings.where().slugEqualTo(feeling.slug).findFirst();
         if (existingFeeling != null) {
           // Update existing record
           existingFeeling.name = feeling.name;
@@ -48,14 +44,14 @@ class MasterFeelingRepository {
       name: feeling.name,
       moodId: feeling.moodId,
       description: feeling.description,
+      id: feeling.isarId,
     );
   }
 
   Future<List<int>> convertSlugsToIds(List<String> slugs) async {
     List<int> ids = [];
     for (var slug in slugs) {
-      var feeling =
-          await isar.masterFeelings.where().slugEqualTo(slug).findFirst();
+      var feeling = await isar.masterFeelings.where().slugEqualTo(slug).findFirst();
       if (feeling != null) {
         ids.add(feeling.isarId);
       }
