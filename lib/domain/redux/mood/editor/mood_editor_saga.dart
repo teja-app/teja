@@ -18,6 +18,10 @@ class MoodEditorSaga {
       _handleUpdateFeelingsAction,
       pattern: TriggerUpdateFeelingsAction,
     );
+    yield TakeEvery(
+      _handleUpdateFactorsAction,
+      pattern: UpdateFactorsAction,
+    );
   }
 
   _handleSelectMoodAction({required TriggerSelectMoodAction action}) sync* {
@@ -27,15 +31,15 @@ class MoodEditorSaga {
 
     var moodLogRepository = MoodLogRepository(isar);
     var moodLog = MoodLog()..moodRating = action.moodRating;
-    try {
+    yield Try(() sync* {
       yield Call(moodLogRepository.addOrUpdateMoodLog, args: [moodLog]);
       // Dispatch an action to update the Redux state
       yield Put(SelectMoodSuccessAction(moodLogRepository.toEntity(moodLog)));
       yield Put(MoodUpdatedAction("Successful"));
       yield Put(FetchMoodLogsAction());
-    } catch (error) {
-      yield Put(MoodUpdateFailedAction(error.toString()));
-    }
+    }, Catch: (e, s) sync* {
+      yield Put(MoodUpdateFailedAction(e.toString()));
+    });
   }
 
   _handleUpdateFeelingsAction(
@@ -88,6 +92,23 @@ class MoodEditorSaga {
           action.moodLogId, feelingsEntities, factorResults.value));
       // yield Put(UpdateFeelingsSuccessAction(
       //     action.moodLogId, feelingsEntities, null));
+    }, Catch: (e, s) sync* {
+      yield Put(MoodUpdateFailedAction(e.toString()));
+    });
+  }
+
+  _handleUpdateFactorsAction({required UpdateFactorsAction action}) sync* {
+    yield Try(() sync* {
+      var isarResult = Result<Isar>();
+      yield GetContext('isar', result: isarResult);
+      print("action, ${action.factorIds} ${action.feelingId}");
+      // Isar isar = isarResult.value!;
+      // var moodLogRepository = MoodLogRepository(isar);
+      // var feelingFactorRepository = FeelingFactorRepository(isar);
+
+      // await moodLogRepository.updateFactors(action.feelingId, action.factorIds);
+
+      yield Put(const UpdateFactorsSuccessAction("Successful"));
     }, Catch: (e, s) sync* {
       yield Put(MoodUpdateFailedAction(e.toString()));
     });

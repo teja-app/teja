@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:swayam/domain/entities/feeling.dart';
-import 'package:swayam/domain/entities/master_factor.dart';
 import 'package:swayam/domain/entities/mood_log.dart';
 import 'package:swayam/domain/redux/core_actions.dart';
 
@@ -54,4 +53,24 @@ class UpdateFeelingsSuccessAction {
     this.feelings,
     this.feelingFactorLink,
   );
+}
+
+@immutable
+class UpdateFactorsAction {
+  final int feelingId;
+  final List<int?> factorIds;
+
+  const UpdateFactorsAction({required this.feelingId, required this.factorIds});
+}
+
+@immutable
+class UpdateFactorsSuccessAction {
+  final String message;
+  const UpdateFactorsSuccessAction(this.message);
+}
+
+@immutable
+class UpdateFactorsFailureAction {
+  final String error;
+  const UpdateFactorsFailureAction(this.error);
 }

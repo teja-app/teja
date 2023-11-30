@@ -10,6 +10,7 @@ import 'package:swayam/domain/redux/root_saga.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 import 'package:swayam/domain/redux/onboarding/actions.dart';
 import 'package:swayam/domain/redux/logging_middleware.dart';
+import 'package:swayam/shared/helpers/logger.dart';
 
 Future<Store<AppState>> createStore(Isar isarInstance) async {
   const filePath = '.env.dev';
@@ -18,7 +19,14 @@ Future<Store<AppState>> createStore(Isar isarInstance) async {
   await dotenv.load(fileName: filePath);
   final googleClientIdIos = dotenv.env['GOOGLE_CLIENT_ID_IOS'];
   final googleServerClientId = dotenv.env['GOOGLE_SERVER_CLIENT_ID'];
-  var sagaMiddleware = createSagaMiddleware();
+  var options = Options(
+    //add an option to handle uncaught errors
+    onError: (dynamic e, String s) {
+      //print uncaught errors to the console
+      logger.e("Saga Error", error: e);
+    },
+  );
+  var sagaMiddleware = createSagaMiddleware(options);
 
   final store = Store<AppState>(
     appReducer,

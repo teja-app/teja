@@ -111,6 +111,7 @@ class _FeelingScreenState extends State<FeelingScreen> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
     return StoreConnector<AppState, _ViewModel>(
         converter: (store) => _ViewModel.fromStore(store),
         onInit: (store) => _initializeFeelings(
@@ -235,14 +236,22 @@ class _FeelingScreenState extends State<FeelingScreen> {
                   ),
                 ),
               ),
-              Button(
-                text: "Next",
-                width: 200,
-                onPressed: () {
-                  final store = StoreProvider.of<AppState>(context);
-                  store.dispatch(const ChangePageAction(2));
-                },
-                buttonType: ButtonType.primary,
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  color: colorScheme.background,
+                  padding: EdgeInsets.all(10.0),
+                  child: Button(
+                    text: "Next",
+                    onPressed: () {
+                      final store = StoreProvider.of<AppState>(context);
+                      store.dispatch(const ChangePageAction(2));
+                    },
+                    buttonType: ButtonType.primary,
+                  ),
+                ),
               ),
             ]),
           );

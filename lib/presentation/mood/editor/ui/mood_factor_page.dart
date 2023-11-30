@@ -7,11 +7,10 @@ import 'package:redux/redux.dart';
 import 'package:swayam/domain/entities/feeling.dart';
 import 'package:swayam/domain/entities/master_factor.dart';
 import 'package:swayam/domain/redux/app_state.dart';
+import 'package:swayam/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:swayam/domain/redux/mood/master_factor/actions.dart';
-import 'package:swayam/shared/common/bento_box.dart';
 import 'package:swayam/shared/common/button.dart';
 import 'package:swayam/shared/common/flexible_height_box.dart';
-import 'package:swayam/theme/dark_theme.dart';
 
 class FactorsScreen extends StatefulWidget {
   const FactorsScreen({super.key});
@@ -80,6 +79,18 @@ class _FactorsScreenState extends State<FactorsScreen> {
     });
   }
 
+  void _updateFactorsInDatabase() {
+    Store<AppState> store = StoreProvider.of<AppState>(context);
+    _selectedFactorsForFeelings.forEach((feelingId, factors) {
+      List<int?> factorIds = factors.map((factor) => factor.id).toList();
+      if (factorIds.isNotEmpty) {
+        store.dispatch(
+          UpdateFactorsAction(feelingId: feelingId, factorIds: factorIds),
+        );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -134,6 +145,7 @@ class _FactorsScreenState extends State<FactorsScreen> {
                                     selectedFactors.add(item.value!);
                                   }
                                 });
+                                _updateFactorsInDatabase();
                               },
                               icon: selectedFactors.contains(item.value)
                                   ? AntDesign.check

@@ -59,9 +59,7 @@ class _SleepAnalysisWidgetState extends State<SleepAnalysisWidget> {
     for (var point in data) {
       String day = DateFormat('yyyy-MM-dd').format(point.dateFrom);
       double durationInMinutes = double.tryParse(point.value.toString()) ?? 0;
-      double durationInHours =
-          durationInMinutes / 60; // Convert minutes to hours
-      print("durationInHours ${durationInHours}");
+      double durationInHours = durationInMinutes / 60;
       _sleepDurationPerDay.update(
         day,
         (existingValue) => existingValue + durationInHours,

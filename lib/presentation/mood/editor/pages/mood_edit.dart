@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:redux/redux.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:swayam/domain/redux/app_state.dart';
 import 'package:swayam/domain/redux/mood/editor/mood_editor_actions.dart';
@@ -23,13 +22,6 @@ class _MoodEditPageState extends State<MoodEditPage> {
   void initState() {
     super.initState();
     _controller = PageController();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final Store<AppState> store = StoreProvider.of<AppState>(context);
-      final pageIndex = store.state.moodEditorState.currentPageIndex;
-      if (_controller.hasClients && pageIndex != _controller.page?.round()) {
-        _controller.jumpToPage(pageIndex);
-      }
-    });
   }
 
   @override
@@ -45,45 +37,49 @@ class _MoodEditPageState extends State<MoodEditPage> {
         title: const Text('Mood'),
         forceMaterialTransparency: true,
       ),
-      // Wrap with SafeArea
       body: SafeArea(
         child: Column(
           children: <Widget>[
-            SmoothPageIndicator(
-              controller:
-                  _controller, // Connect the indicator to the controller
-              count: 3, // Specify the number of indicators
-              effect:
-                  const ExpandingDotsEffect(), // Specify the indicator effect
-              onDotClicked: (index) {
-                final store = StoreProvider.of<AppState>(context);
-                store.dispatch(ChangePageAction(index));
-              },
-            ),
-            Expanded(
-                child: StoreConnector<AppState, int>(
+            StoreConnector<AppState, int>(
               converter: (store) =>
                   store.state.moodEditorState.currentPageIndex ?? 0,
               builder: (context, pageIndex) {
-                return PageView(
+                // Listen to Redux state changes and jump to the page without animation
+                if (_controller.hasClients &&
+                    pageIndex != _controller.page?.round()) {
+                  _controller.jumpToPage(pageIndex);
+                }
+
+                return SmoothPageIndicator(
                   controller: _controller,
-                  scrollDirection: Axis.horizontal,
-                  onPageChanged: (int value) {
-                    if (value != lastPage) {
-                      // Dispatch only if page change is new
-                      final store = StoreProvider.of<AppState>(context);
-                      store.dispatch(ChangePageAction(value));
-                      lastPage = value;
-                    }
+                  count: 3,
+                  effect: const ExpandingDotsEffect(),
+                  onDotClicked: (index) {
+                    _controller.animateToPage(
+                      index,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
                   },
-                  children: <Widget>[
-                    MoodInitialPage(controller: _controller),
-                    const FeelingScreen(),
-                    const FactorsScreen(),
-                  ],
                 );
               },
-            )),
+            ),
+            Expanded(
+              child: PageView(
+                controller: _controller,
+                scrollDirection: Axis.horizontal,
+                onPageChanged: (int value) {
+                  // Dispatch Redux action when the page changes via swipe
+                  final store = StoreProvider.of<AppState>(context);
+                  store.dispatch(ChangePageAction(value));
+                },
+                children: <Widget>[
+                  MoodInitialPage(controller: _controller),
+                  const FeelingScreen(),
+                  const FactorsScreen(),
+                ],
+              ),
+            ),
           ],
         ),
       ),
