@@ -20,8 +20,7 @@ class MoodLogRepository {
     return isar.moodLogs.where().findAll();
   }
 
-  Future<List> getMoodLogsPage(int pageKey, int pageSize,
-      [MoodLogFilter? filter]) async {
+  Future<List> getMoodLogsPage(int pageKey, int pageSize, [MoodLogFilter? filter]) async {
     final startIndex = pageKey * pageSize;
 
     var filterConditions = <FilterCondition>[];
@@ -48,29 +47,20 @@ class MoodLogRepository {
     return moodLogs.map((moodLog) => toEntity(moodLog)).toList();
   }
 
-  Future<List<MoodLogEntity>> getMoodLogsForWeek(
-      DateTime startDate, DateTime endDate) async {
+  Future<List<MoodLogEntity>> getMoodLogsForWeek(DateTime startDate, DateTime endDate) async {
     // Fetch mood logs between startDate and endDate
-    final moodLogs = await isar.moodLogs
-        .filter()
-        .timestampBetween(startDate, endDate)
-        .findAll();
+    final moodLogs = await isar.moodLogs.filter().timestampBetween(startDate, endDate).findAll();
 
     // Convert MoodLog to MoodLogEntity
     return moodLogs.map(toEntity).toList();
   }
 
-  Future<Map<DateTime, double>> getAverageMoodLogsForWeek(
-      DateTime startDate, DateTime endDate) async {
-    final moodLogs = await isar.moodLogs
-        .filter()
-        .timestampBetween(startDate, endDate)
-        .findAll();
+  Future<Map<DateTime, double>> getAverageMoodLogsForWeek(DateTime startDate, DateTime endDate) async {
+    final moodLogs = await isar.moodLogs.filter().timestampBetween(startDate, endDate).findAll();
 
     Map<DateTime, List<int>> dailyRatings = {};
     for (var log in moodLogs) {
-      DateTime day =
-          DateTime(log.timestamp.year, log.timestamp.month, log.timestamp.day);
+      DateTime day = DateTime(log.timestamp.year, log.timestamp.month, log.timestamp.day);
       dailyRatings.putIfAbsent(day, () => []).add(log.moodRating);
     }
 
@@ -88,8 +78,7 @@ class MoodLogRepository {
       // After updating the mood log, check the streak and assign badges.
       await calculateCurrentStreak();
       final criteria = await loadStreakBadgeCriteria();
-      final moodBadgeManager =
-          MoodBadgeManager(BadgeRepository(isar), this, criteria);
+      final moodBadgeManager = MoodBadgeManager(BadgeRepository(isar), this, criteria);
       await moodBadgeManager.evaluateAndAwardMoodBadges(inTransaction: true);
     });
   }
@@ -105,35 +94,39 @@ class MoodLogRepository {
     String moodLogId,
     List<MoodLogFeeling> updatedFeelings,
   ) async {
-    print("moodLogId ${moodLogId}");
     final MoodLog? moodLog = await getMoodLogById(moodLogId);
     if (moodLog != null) {
-      moodLog.feelings = updatedFeelings
-          .cast<MoodLogFeeling>(); // Update the embedded feelings
+      moodLog.feelings = updatedFeelings.cast<MoodLogFeeling>(); // Update the embedded feelings
+      await addOrUpdateMoodLog(moodLog);
+    }
+  }
+
+  Future<void> updateFactorsForFeeling(String moodLogId, String feelingSlug, List<String> factorSlugs) async {
+    final MoodLog? moodLog = await getMoodLogById(moodLogId);
+    if (moodLog != null) {
+      for (var feeling in moodLog.feelings!) {
+        if (feeling.feeling == feelingSlug) {
+          // Update the factors for the specific feeling
+          feeling.factors = factorSlugs;
+        }
+      }
       await addOrUpdateMoodLog(moodLog); // Save the updated mood log
-      print("Updated ${moodLog.feelings}");
     }
   }
 
   Future<MoodLog?> getTodaysMoodLog() async {
     final DateTime now = DateTime.now();
     final DateTime startOfDay = DateTime(now.year, now.month, now.day);
-    final DateTime endOfDay =
-        DateTime(now.year, now.month, now.day, 23, 59, 59);
+    final DateTime endOfDay = DateTime(now.year, now.month, now.day, 23, 59, 59);
 
-    final moodLogs = await isar.moodLogs
-        .filter()
-        .timestampBetween(startOfDay, endOfDay)
-        .findAll();
+    final moodLogs = await isar.moodLogs.filter().timestampBetween(startOfDay, endOfDay).findAll();
 
     return moodLogs.isNotEmpty ? moodLogs.first : null;
   }
 
-  Future<List<MoodLog>> getMoodLogsInDateRange(
-      DateTime start, DateTime end) async {
+  Future<List<MoodLog>> getMoodLogsInDateRange(DateTime start, DateTime end) async {
     try {
-      final List<MoodLog> logs =
-          await isar.moodLogs.filter().timestampBetween(start, end).findAll();
+      final List<MoodLog> logs = await isar.moodLogs.filter().timestampBetween(start, end).findAll();
       return logs;
     } catch (e) {
       rethrow; // To ensure the error is propagated
@@ -142,13 +135,9 @@ class MoodLogRepository {
 
   Future<MoodLog?> getMoodLogByDate(DateTime date) async {
     final DateTime startOfDay = DateTime(date.year, date.month, date.day);
-    final DateTime endOfDay =
-        DateTime(date.year, date.month, date.day, 23, 59, 59);
+    final DateTime endOfDay = DateTime(date.year, date.month, date.day, 23, 59, 59);
 
-    final moodLogs = await isar.moodLogs
-        .filter()
-        .timestampBetween(startOfDay, endOfDay)
-        .findAll();
+    final moodLogs = await isar.moodLogs.filter().timestampBetween(startOfDay, endOfDay).findAll();
 
     return moodLogs.isNotEmpty ? moodLogs.first : null;
   }

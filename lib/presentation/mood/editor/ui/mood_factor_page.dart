@@ -22,8 +22,7 @@ class FactorsScreen extends StatefulWidget {
 class _FactorsScreenState extends State<FactorsScreen> {
   late Map<int, List<MasterFactorEntity>> _factorsForFeelings = {};
   late Map<int, List<MasterFactorEntity>> _selectedFactorsForFeelings = {};
-  late Map<int, List<MultiSelectItem<MasterFactorEntity>>>
-      _multiSelectItemsForFeelings = {};
+  late Map<int, List<MultiSelectItem<MasterFactorEntity>>> _multiSelectItemsForFeelings = {};
 
   @override
   void initState() {
@@ -31,8 +30,7 @@ class _FactorsScreenState extends State<FactorsScreen> {
     _factorsForFeelings = {};
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        StoreProvider.of<AppState>(context)
-            .dispatch(FetchMasterFactorsActionFromCache());
+        StoreProvider.of<AppState>(context).dispatch(FetchMasterFactorsActionFromCache());
       }
     });
   }
@@ -57,35 +55,29 @@ class _FactorsScreenState extends State<FactorsScreen> {
     }
   }
 
-  void _initializeFactors(List<MasterFactorEntity> factors,
-      Map<int, List<int>>? feelingFactorLink) {
+  void _initializeFactors(List<MasterFactorEntity> factors, Map<int, List<int>>? feelingFactorLink) {
     setState(() {
       final feelingKeys = feelingFactorLink?.keys.toList();
       for (var feeling in feelingKeys ?? []) {
-        var relevantFactorIds = feelingFactorLink?[feeling] ??
-            []; // Handle null by providing an empty list
-        var relevantFactors = factors
-            .where((factor) => relevantFactorIds.contains(factor.id))
-            .toList();
+        var relevantFactorIds = feelingFactorLink?[feeling] ?? []; // Handle null by providing an empty list
+        var relevantFactors = factors.where((factor) => relevantFactorIds.contains(factor.id)).toList();
 
         // print("feeling ${feeling.id}");
         _factorsForFeelings[feeling] = relevantFactors;
-        _multiSelectItemsForFeelings[feeling] = relevantFactors
-            .map((factor) =>
-                MultiSelectItem<MasterFactorEntity>(factor, factor.name))
-            .toList();
+        _multiSelectItemsForFeelings[feeling] =
+            relevantFactors.map((factor) => MultiSelectItem<MasterFactorEntity>(factor, factor.name)).toList();
         _selectedFactorsForFeelings[feeling] = []; // Initialize with empty list
       }
     });
   }
 
-  void _updateFactorsInDatabase() {
+  void _updateFactorsInDatabase(String moodLogId) {
     Store<AppState> store = StoreProvider.of<AppState>(context);
     _selectedFactorsForFeelings.forEach((feelingId, factors) {
-      List<int?> factorIds = factors.map((factor) => factor.id).toList();
+      List<int?> factorIds = factors.map((factor) => factor.id).toList() ?? [];
       if (factorIds.isNotEmpty) {
         store.dispatch(
-          UpdateFactorsAction(feelingId: feelingId, factorIds: factorIds),
+          UpdateFactorsAction(moodLogId: moodLogId, feelingId: feelingId, factorIds: factorIds),
         );
       }
     });
@@ -130,26 +122,22 @@ class _FactorsScreenState extends State<FactorsScreen> {
                               top: BorderSide(color: Colors.transparent),
                             ),
                           ),
-                          itemBuilder: (MultiSelectItem<MasterFactorEntity?>
-                                  item,
+                          itemBuilder: (MultiSelectItem<MasterFactorEntity?> item,
                               FormFieldState<List<MasterFactorEntity?>> state) {
                             return Button(
                               text: item.value!.name,
                               onPressed: () {
                                 setState(() {
-                                  bool isAlreadySelected =
-                                      selectedFactors.contains(item.value);
+                                  bool isAlreadySelected = selectedFactors.contains(item.value);
                                   if (isAlreadySelected) {
                                     selectedFactors.remove(item.value);
                                   } else {
                                     selectedFactors.add(item.value!);
                                   }
                                 });
-                                _updateFactorsInDatabase();
+                                _updateFactorsInDatabase(viewModel.moodLogId);
                               },
-                              icon: selectedFactors.contains(item.value)
-                                  ? AntDesign.check
-                                  : null,
+                              icon: selectedFactors.contains(item.value) ? AntDesign.check : null,
                             );
                           },
                         );
@@ -200,8 +188,7 @@ class FactorsViewModel {
       isLoading: store.state.masterFactorState.isLoading,
       factors: store.state.masterFactorState.masterFactors ?? [],
       fetchFactors: () => store.dispatch(FetchMasterFactorsActionFromCache()),
-      selectedFeelings:
-          store.state.moodEditorState.currentMoodLog?.feelings ?? [],
+      selectedFeelings: store.state.moodEditorState.currentMoodLog?.feelings ?? [],
     );
   }
 }

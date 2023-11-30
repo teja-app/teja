@@ -48,6 +48,11 @@ class MasterFeelingRepository {
     );
   }
 
+  Future<String> convertIdToSlug(int id) async {
+    var feeling = await isar.masterFeelings.where().isarIdEqualTo(id).findFirst();
+    return feeling?.slug ?? '';
+  }
+
   Future<List<int>> convertSlugsToIds(List<String> slugs) async {
     List<int> ids = [];
     for (var slug in slugs) {

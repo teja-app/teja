@@ -71,6 +71,7 @@ class _MoodDetailPageState extends State<MoodDetailPage> {
       builder: (_, moodDetailPage) {
         Widget bodyContent = const Center(child: CircularProgressIndicator());
         if (moodDetailPage.selectedMoodLog != null) {
+          print("selectedMoodLog!.feelings ${moodDetailPage.selectedMoodLog!.feelings!.first}");
           bodyContent = Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Column(
@@ -81,17 +82,13 @@ class _MoodDetailPageState extends State<MoodDetailPage> {
                   gridWidth: 4,
                   gridHeight: 2,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 8.0), // Add some vertical padding
+                    padding: const EdgeInsets.symmetric(vertical: 8.0), // Add some vertical padding
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment
-                          .center, // Center the content vertically
-                      crossAxisAlignment: CrossAxisAlignment
-                          .start, // Align content to start horizontally
+                      mainAxisAlignment: MainAxisAlignment.center, // Center the content vertically
+                      crossAxisAlignment: CrossAxisAlignment.start, // Align content to start horizontally
                       children: [
                         MoodRatingWidget(
-                          moodRating:
-                              moodDetailPage.selectedMoodLog?.moodRating ?? 0,
+                          moodRating: moodDetailPage.selectedMoodLog?.moodRating ?? 0,
                         ),
                         const SizedBox(height: 8),
                         MoodEntryWidget(
@@ -105,8 +102,7 @@ class _MoodDetailPageState extends State<MoodDetailPage> {
                     moodDetailPage.selectedMoodLog!.feelings!.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(top: 24.0),
-                    child: FeelingsListWidget(
-                        feelings: moodDetailPage.selectedMoodLog!.feelings!),
+                    child: FeelingsListWidget(feelings: moodDetailPage.selectedMoodLog!.feelings!),
                   ),
               ],
             ),
@@ -142,9 +138,7 @@ class _MoodDetailPageState extends State<MoodDetailPage> {
                           TextButton(
                             child: const Text('Delete'),
                             onPressed: () {
-                              StoreProvider.of<AppState>(dialogContext)
-                                  .dispatch(
-                                      DeleteMoodDetailAction(widget.moodId));
+                              StoreProvider.of<AppState>(dialogContext).dispatch(DeleteMoodDetailAction(widget.moodId));
                               Navigator.of(dialogContext).pop();
                               GoRouter.of(pageContext).pop();
                             },

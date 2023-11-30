@@ -52,23 +52,29 @@ class TriggerUpdateFeelingsAction {
 class UpdateFeelingsSuccessAction {
   final String moodLogId;
   final List<FeelingEntity> feelings;
-  final Map<int, List<int>>? feelingFactorLink;
   final List<MasterFeelingEntity> selectedFeelings;
 
   const UpdateFeelingsSuccessAction(
     this.moodLogId,
     this.feelings,
-    this.feelingFactorLink,
     this.selectedFeelings,
   );
 }
 
 @immutable
+class UpdateLinkedFactorsSuccessAction {
+  final Map<int, List<int>>? feelingFactorLink;
+
+  const UpdateLinkedFactorsSuccessAction(this.feelingFactorLink);
+}
+
+@immutable
 class UpdateFactorsAction {
+  final String? moodLogId;
   final int feelingId;
   final List<int?> factorIds;
 
-  const UpdateFactorsAction({required this.feelingId, required this.factorIds});
+  const UpdateFactorsAction({required this.moodLogId, required this.feelingId, required this.factorIds});
 }
 
 @immutable
@@ -86,4 +92,11 @@ class UpdateFactorsFailureAction {
 @immutable
 class ClearMoodEditorFormAction {
   const ClearMoodEditorFormAction();
+}
+
+@immutable
+class FetchLinkedFactorsAction {
+  final List<String> feelingSlugs;
+
+  const FetchLinkedFactorsAction(this.feelingSlugs);
 }

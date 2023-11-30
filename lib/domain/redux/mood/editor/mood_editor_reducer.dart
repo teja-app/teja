@@ -17,11 +17,16 @@ MoodEditorState _updateFeelingsSuccess(MoodEditorState state, UpdateFeelingsSucc
     MoodLogEntity updatedMoodLog = state.currentMoodLog!.copyWith(feelings: action.feelings);
     return state.copyWith(
       currentMoodLog: updatedMoodLog,
-      feelingFactorLink: action.feelingFactorLink,
       selectedFeelings: action.selectedFeelings, // Update the state with the new selectedFeelings
     );
   }
   return state;
+}
+
+MoodEditorState _updateLinkedFactorsSuccess(MoodEditorState state, UpdateLinkedFactorsSuccessAction action) {
+  return state.copyWith(
+    feelingFactorLink: action.feelingFactorLink, // Update the state with the new feeling-factor links
+  );
 }
 
 MoodEditorState _clearMoodEditorForm(MoodEditorState state, ClearMoodEditorFormAction action) {
@@ -37,4 +42,5 @@ final moodEditorReducer = combineReducers<MoodEditorState>([
   TypedReducer<MoodEditorState, ChangePageAction>(_changePage),
   TypedReducer<MoodEditorState, UpdateFeelingsSuccessAction>(_updateFeelingsSuccess),
   TypedReducer<MoodEditorState, ClearMoodEditorFormAction>(_clearMoodEditorForm),
+  TypedReducer<MoodEditorState, UpdateLinkedFactorsSuccessAction>(_updateLinkedFactorsSuccess),
 ]);
