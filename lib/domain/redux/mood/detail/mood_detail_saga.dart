@@ -18,8 +18,7 @@ class MoodDetailSaga {
     Isar isar = isarResult.value!;
 
     var moodLogRepository = MoodLogRepository(isar);
-
-    try {
+    yield Try(() sync* {
       var moodLog = Result<mood_collection.MoodLog?>();
       yield Call(
         moodLogRepository.getMoodLogById,
@@ -33,9 +32,9 @@ class MoodDetailSaga {
       } else {
         yield Put(const LoadMoodDetailFailureAction('No mood log found.'));
       }
-    } catch (e) {
+    }, Catch: (e, s) sync* {
       yield Put(LoadMoodDetailFailureAction(e.toString()));
-    }
+    });
   }
 
   _deleteMoodDetail({required DeleteMoodDetailAction action}) sync* {
@@ -45,13 +44,13 @@ class MoodDetailSaga {
 
     var moodLogRepository = MoodLogRepository(isar);
 
-    try {
+    yield Try(() sync* {
       yield Call(moodLogRepository.deleteMoodLogById, args: [action.moodId]);
       yield Put(const DeleteMoodDetailSuccessAction());
       yield Put(FetchMoodLogsAction());
-    } catch (e) {
+    }, Catch: (e, s) sync* {
       yield Put(DeleteMoodDetailFailureAction(e.toString()));
       yield Put(FetchMoodLogsAction());
-    }
+    });
   }
 }

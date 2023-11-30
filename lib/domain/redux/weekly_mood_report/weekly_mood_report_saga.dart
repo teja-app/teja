@@ -12,7 +12,7 @@ class WeeklyMoodReportSaga {
   }
 
   _fetchWeeklyMoodReport({required FetchWeeklyMoodReportAction action}) sync* {
-    try {
+    yield Try(() sync* {
       var isarResult = Result<Isar>();
       yield GetContext('isar', result: isarResult);
       Isar isar = isarResult.value!;
@@ -43,10 +43,10 @@ class WeeklyMoodReportSaga {
       yield Put(WeeklyMoodReportFetchedSuccessAction(
           currentWeekAverageMoodRatingsResult.value!,
           previousWeekAverageMoodRatingsResult.value!));
-    } catch (e) {
+    }, Catch: (e, s) sync* {
       // Dispatch error action
       yield Put(WeeklyMoodReportFetchFailedAction(e.toString()));
-    }
+    });
   }
 
   DateTime _startOfWeek(DateTime date) {

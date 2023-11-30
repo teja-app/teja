@@ -15,7 +15,7 @@ class MoodLogsSaga {
     yield GetContext('isar', result: isarResult);
     Isar isar = isarResult.value!;
     MoodLogRepository moodLogRepository = MoodLogRepository(isar);
-    try {
+    yield Try(() sync* {
       final now = DateTime.now();
       final startOfMonth = DateTime(now.year, now.month);
       final endOfMonth = DateTime(now.year, now.month + 1, 0);
@@ -38,8 +38,8 @@ class MoodLogsSaga {
       };
 
       yield Put(FetchMoodLogsSuccessAction(moodLogsMap));
-    } catch (e) {
+    }, Catch: (e, s) sync* {
       yield Put(FetchMoodLogsErrorAction(e.toString()));
-    }
+    });
   }
 }

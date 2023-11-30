@@ -17,7 +17,7 @@ class MasterFactorSaga {
   }
 
   _fetchMasterFactorsFromCache({dynamic action}) sync* {
-    try {
+    yield Try(() sync* {
       yield Put(FetchMasterFactorsInProgressAction());
 
       var isarResult = Result<Isar>();
@@ -37,13 +37,13 @@ class MasterFactorSaga {
       } else {
         yield Put(FetchMasterFactorsActionFromApi());
       }
-    } catch (e) {
+    }, Catch: (e, s) sync* {
       yield Put(MasterFactorsFetchFailedAction(e.toString()));
-    }
+    });
   }
 
   _fetchAndProcessFactorsFromAPI({dynamic action}) sync* {
-    try {
+    yield Try(() sync* {
       yield Put(FetchMasterFactorsInProgressAction());
 
       var isarResult = Result<Isar>();
@@ -91,8 +91,8 @@ class MasterFactorSaga {
         yield Put(
             const MasterFactorsFetchFailedAction('No factors data received'));
       }
-    } catch (e) {
+    }, Catch: (e, s) sync* {
       yield Put(MasterFactorsFetchFailedAction(e.toString()));
-    }
+    });
   }
 }
