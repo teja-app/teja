@@ -18,7 +18,7 @@ class MoodLogsSaga {
     yield Try(() sync* {
       final now = DateTime.now();
       final startOfMonth = DateTime(now.year, now.month - 5);
-      final endOfMonth = DateTime(now.year, now.month + 2, 0);
+      final endOfMonth = DateTime(now.year, now.month + 1, 1);
       var moodLogs = Result<List<MoodLog>>();
       yield Call(moodLogRepository.getMoodLogsInDateRange,
           args: [startOfMonth, endOfMonth], result: moodLogs);
