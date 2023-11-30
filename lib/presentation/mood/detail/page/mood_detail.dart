@@ -70,14 +70,6 @@ class _MoodDetailPageState extends State<MoodDetailPage> {
       },
       builder: (_, moodDetailPage) {
         Widget bodyContent = const Center(child: CircularProgressIndicator());
-        // Check if feelings list is not null and not empty
-        List<Widget> feelingsWidgets = [];
-        if (moodDetailPage.selectedMoodLog!.feelings != null &&
-            moodDetailPage.selectedMoodLog!.feelings!.isNotEmpty) {
-          feelingsWidgets = moodDetailPage.selectedMoodLog!.feelings!
-              .map((feeling) => Text(feeling.feeling))
-              .toList();
-        }
         if (moodDetailPage.selectedMoodLog != null) {
           bodyContent = Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
