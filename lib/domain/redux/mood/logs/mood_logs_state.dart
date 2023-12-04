@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:swayam/domain/entities/mood_log.dart';
+import 'package:teja/domain/entities/mood_log.dart';
 
 @immutable
 class MoodLogsState {
-  final Map<String, MoodLogEntity>
-      moodLogsByDate; // String keys as date representations
+  final Map<String, MoodLogEntity> moodLogsByDate; // String keys as date representations
   final bool isFetching;
   final String? errorMessage;
   final bool fetchSuccess;

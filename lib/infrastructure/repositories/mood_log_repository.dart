@@ -1,11 +1,11 @@
 // lib/infrastructure/repositories/mood_log_repository.dart
 import 'package:isar/isar.dart';
-import 'package:swayam/domain/entities/feeling.dart';
-import 'package:swayam/domain/entities/mood_log.dart';
-import 'package:swayam/domain/redux/mood/list/state.dart';
-import 'package:swayam/infrastructure/managers/mood_badge_manager.dart';
-import 'package:swayam/infrastructure/database/isar_collections/mood_log.dart';
-import 'package:swayam/infrastructure/repositories/badge_repository.dart';
+import 'package:teja/domain/entities/feeling.dart';
+import 'package:teja/domain/entities/mood_log.dart';
+import 'package:teja/domain/redux/mood/list/state.dart';
+import 'package:teja/infrastructure/managers/mood_badge_manager.dart';
+import 'package:teja/infrastructure/database/isar_collections/mood_log.dart';
+import 'package:teja/infrastructure/repositories/badge_repository.dart';
 
 class MoodLogRepository {
   final Isar isar;

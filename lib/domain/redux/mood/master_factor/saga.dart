@@ -1,19 +1,17 @@
 // MasterFactorSaga
 import 'package:isar/isar.dart';
 import 'package:redux_saga/redux_saga.dart';
-import 'package:swayam/domain/entities/master_factor.dart';
-import 'package:swayam/domain/redux/mood/master_factor/actions.dart';
-import 'package:swayam/infrastructure/api/mood_api.dart';
-import 'package:swayam/infrastructure/database/isar_collections/master_factor.dart';
-import 'package:swayam/infrastructure/repositories/master_factor.dart';
-import 'package:swayam/shared/storage/secure_storage.dart';
+import 'package:teja/domain/entities/master_factor.dart';
+import 'package:teja/domain/redux/mood/master_factor/actions.dart';
+import 'package:teja/infrastructure/api/mood_api.dart';
+import 'package:teja/infrastructure/database/isar_collections/master_factor.dart';
+import 'package:teja/infrastructure/repositories/master_factor.dart';
+import 'package:teja/shared/storage/secure_storage.dart';
 
 class MasterFactorSaga {
   Iterable<void> saga() sync* {
-    yield TakeLatest(_fetchMasterFactorsFromCache,
-        pattern: FetchMasterFactorsActionFromCache);
-    yield TakeEvery(_fetchAndProcessFactorsFromAPI,
-        pattern: FetchMasterFactorsActionFromApi);
+    yield TakeLatest(_fetchMasterFactorsFromCache, pattern: FetchMasterFactorsActionFromCache);
+    yield TakeEvery(_fetchAndProcessFactorsFromAPI, pattern: FetchMasterFactorsActionFromApi);
   }
 
   _fetchMasterFactorsFromCache({dynamic action}) sync* {
@@ -88,8 +86,7 @@ class MasterFactorSaga {
           ),
         );
       } else {
-        yield Put(
-            const MasterFactorsFetchFailedAction('No factors data received'));
+        yield Put(const MasterFactorsFetchFailedAction('No factors data received'));
       }
     }, Catch: (e, s) sync* {
       yield Put(MasterFactorsFetchFailedAction(e.toString()));

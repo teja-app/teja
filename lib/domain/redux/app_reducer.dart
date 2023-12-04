@@ -1,14 +1,14 @@
 import 'package:redux/redux.dart';
-import 'package:swayam/domain/redux/app_state.dart';
-import 'package:swayam/domain/redux/home/home_reducer.dart';
-import 'package:swayam/domain/redux/mood/detail/mood_detail_reducer.dart';
-import 'package:swayam/domain/redux/mood/editor/mood_editor_reducer.dart';
-import 'package:swayam/domain/redux/mood/list/reducer.dart';
-import 'package:swayam/domain/redux/mood/logs/mood_logs_reducer.dart';
-import 'package:swayam/domain/redux/mood/master_factor/reducer.dart';
-import 'package:swayam/domain/redux/mood/master_feeling/reducer.dart';
-import 'package:swayam/domain/redux/onboarding/reducers.dart';
-import 'package:swayam/domain/redux/weekly_mood_report/weekly_mood_report_reducer.dart';
+import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/home/home_reducer.dart';
+import 'package:teja/domain/redux/mood/detail/mood_detail_reducer.dart';
+import 'package:teja/domain/redux/mood/editor/mood_editor_reducer.dart';
+import 'package:teja/domain/redux/mood/list/reducer.dart';
+import 'package:teja/domain/redux/mood/logs/mood_logs_reducer.dart';
+import 'package:teja/domain/redux/mood/master_factor/reducer.dart';
+import 'package:teja/domain/redux/mood/master_feeling/reducer.dart';
+import 'package:teja/domain/redux/onboarding/reducers.dart';
+import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_reducer.dart';
 
 AppState _moodLogsReducer(AppState state, action) {
   return state.copyWith(
@@ -48,8 +48,7 @@ AppState _masterFactorReducer(AppState state, action) {
 
 AppState _weeklyMoodReportReducer(AppState state, action) {
   return state.copyWith(
-    weeklyMoodReportState:
-        weeklyMoodReportReducer(state.weeklyMoodReportState, action),
+    weeklyMoodReportState: weeklyMoodReportReducer(state.weeklyMoodReportState, action),
   );
 }
 

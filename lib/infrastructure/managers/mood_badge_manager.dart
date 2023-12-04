@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:swayam/infrastructure/database/isar_collections/badge.dart';
-import 'package:swayam/infrastructure/repositories/badge_repository.dart';
-import 'package:swayam/infrastructure/repositories/mood_log_repository.dart';
+import 'package:teja/infrastructure/database/isar_collections/badge.dart';
+import 'package:teja/infrastructure/repositories/badge_repository.dart';
+import 'package:teja/infrastructure/repositories/mood_log_repository.dart';
 
 class StreakBadgeCriterion {
   final int streakDays;
@@ -28,8 +28,7 @@ String generateSlug(String str) {
 }
 
 Future<List<StreakBadgeCriterion>> loadStreakBadgeCriteria() async {
-  final jsonString =
-      await rootBundle.loadString('assets/mood/badge/master.json');
+  final jsonString = await rootBundle.loadString('assets/mood/badge/master.json');
   final jsonResponse = json.decode(jsonString);
   return (jsonResponse['badges'] as List)
       .map((badge) => StreakBadgeCriterion(
@@ -52,8 +51,7 @@ class MoodBadgeManager {
   }) async {
     // Check for streak badges
     final int currentStreak = await moodLogRepo.calculateCurrentStreak();
-    await checkAndAwardStreakBadges(currentStreak,
-        inTransaction: inTransaction);
+    await checkAndAwardStreakBadges(currentStreak, inTransaction: inTransaction);
   }
 
   Future<void> checkAndAwardStreakBadges(

@@ -1,5 +1,5 @@
 import 'package:isar/isar.dart';
-import 'package:swayam/infrastructure/database/isar_collections/master_feeling_factor.dart';
+import 'package:teja/infrastructure/database/isar_collections/master_feeling_factor.dart';
 
 class FeelingFactorRepository {
   final Isar isar;
@@ -34,8 +34,7 @@ class FeelingFactorRepository {
     });
   }
 
-  Future<Map<int, List<int>>> getFactorsLinkedToFeelings(
-      List<int> feelingIds) async {
+  Future<Map<int, List<int>>> getFactorsLinkedToFeelings(List<int> feelingIds) async {
     Map<int, List<int>> factorsForFeelings = {};
     for (var feelingId in feelingIds) {
       var factors = await isar.feelingFactors

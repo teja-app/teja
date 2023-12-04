@@ -1,23 +1,23 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:swayam/presentation/explore/list/pages/explote_page.dart';
-import 'package:swayam/presentation/habits/goal_settings/pages/goal_settings.dart';
-import 'package:swayam/presentation/habits/habit_list/pages/habits_page.dart';
-import 'package:swayam/presentation/home/pages/home_page.dart';
-import 'package:swayam/presentation/mood/detail/page/mood_detail.dart';
-import 'package:swayam/presentation/mood/editor/pages/mood_edit.dart';
-import 'package:swayam/presentation/mood/list/pages/mood_list_page.dart';
-import 'package:swayam/presentation/onboarding/pages/onboarding_page.dart';
-import 'package:swayam/presentation/onboarding/pages/sign_in_page.dart';
-import 'package:swayam/presentation/onboarding/pages/sign_up_page.dart';
-import 'package:swayam/presentation/profile/page/profile_page.dart';
-import 'package:swayam/presentation/settings/pages/advanced_settings_page.dart';
-import 'package:swayam/presentation/settings/pages/basic_settings_page.dart';
-import 'package:swayam/presentation/settings/pages/notification_settings_page.dart';
-import 'package:swayam/presentation/settings/pages/perference_settings_page.dart';
-import 'package:swayam/presentation/settings/pages/security_settings_page.dart';
-import 'package:swayam/presentation/settings/pages/settings_page.dart';
-import 'package:swayam/shared/helpers/logger.dart';
+import 'package:teja/presentation/explore/list/pages/explote_page.dart';
+import 'package:teja/presentation/habits/goal_settings/pages/goal_settings.dart';
+import 'package:teja/presentation/habits/habit_list/pages/habits_page.dart';
+import 'package:teja/presentation/home/pages/home_page.dart';
+import 'package:teja/presentation/mood/detail/page/mood_detail.dart';
+import 'package:teja/presentation/mood/editor/pages/mood_edit.dart';
+import 'package:teja/presentation/mood/list/pages/mood_list_page.dart';
+import 'package:teja/presentation/onboarding/pages/onboarding_page.dart';
+import 'package:teja/presentation/onboarding/pages/sign_in_page.dart';
+import 'package:teja/presentation/onboarding/pages/sign_up_page.dart';
+import 'package:teja/presentation/profile/page/profile_page.dart';
+import 'package:teja/presentation/settings/pages/advanced_settings_page.dart';
+import 'package:teja/presentation/settings/pages/basic_settings_page.dart';
+import 'package:teja/presentation/settings/pages/notification_settings_page.dart';
+import 'package:teja/presentation/settings/pages/perference_settings_page.dart';
+import 'package:teja/presentation/settings/pages/security_settings_page.dart';
+import 'package:teja/presentation/settings/pages/settings_page.dart';
+import 'package:teja/shared/helpers/logger.dart';
 
 class RouteLoggingObserver extends NavigatorObserver {
   @override

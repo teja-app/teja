@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:swayam/domain/redux/app_state.dart';
-import 'package:swayam/domain/redux/mood/list/actions.dart';
-import 'package:swayam/domain/redux/mood/list/state.dart';
+import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/mood/list/actions.dart';
+import 'package:teja/domain/redux/mood/list/state.dart';
 
 class FilterBottomSheet extends StatefulWidget {
   const FilterBottomSheet({super.key});
@@ -20,8 +20,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
     // Access the current filter state
     final currentFilter = store.state.moodLogListState.filter;
     // Initialize the selectedMoodRatings with the current filter state
-    print(
-        "_initializeFilter:selectedMoodRatings: ${currentFilter.selectedMoodRatings}");
+    print("_initializeFilter:selectedMoodRatings: ${currentFilter.selectedMoodRatings}");
     setState(() {
       selectedMoodRatings = List.from(currentFilter.selectedMoodRatings);
     });
@@ -50,8 +49,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          const Text('Select Mood Rating:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          const Text('Select Mood Rating:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(height: 10),
           // Mood rating selection options
           Wrap(

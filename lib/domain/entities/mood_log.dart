@@ -1,5 +1,5 @@
 // lib/domain/entities/mood_log.dart
-import 'package:swayam/domain/entities/feeling.dart';
+import 'package:teja/domain/entities/feeling.dart';
 
 class MoodLogEntity {
   final String id;

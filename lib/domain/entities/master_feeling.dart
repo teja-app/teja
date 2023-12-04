@@ -1,6 +1,6 @@
 // lib/domain/entities/feeling.dart
 
-import 'package:swayam/domain/entities/master_factor.dart';
+import 'package:teja/domain/entities/master_factor.dart';
 
 class MasterFeelingEntity {
   final int? id;

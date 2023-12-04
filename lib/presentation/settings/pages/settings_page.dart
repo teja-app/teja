@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
-import 'package:swayam/domain/redux/onboarding/actions.dart';
-import 'package:swayam/domain/redux/app_state.dart';
-import 'package:swayam/presentation/navigation/buildDesktopDrawer.dart';
-import 'package:swayam/presentation/navigation/buildMobileNavigationBar.dart';
-import 'package:swayam/presentation/navigation/isDesktop.dart';
+import 'package:teja/domain/redux/onboarding/actions.dart';
+import 'package:teja/domain/redux/app_state.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -24,9 +21,7 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double contentWidth = (screenWidth > 500)
-        ? 500
-        : screenWidth; // Assuming 500 is the max width for content
+    final double contentWidth = (screenWidth > 500) ? 500 : screenWidth; // Assuming 500 is the max width for content
 
     Widget _logout(BuildContext context) {
       return StoreConnector<AppState, Store<AppState>>(
@@ -67,28 +62,22 @@ class SettingsPage extends StatelessWidget {
                 // Personalize Section
                 const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Text('Personalize',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  child: Text('Personalize', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 ),
                 ListTile(
                   title: const Text('Preferences'),
-                  onTap: () =>
-                      GoRouter.of(context).push('/settings/perferences'),
+                  onTap: () => GoRouter.of(context).push('/settings/perferences'),
                 ),
                 ListTile(
                   title: const Text('Notification Settings'),
-                  onTap: () =>
-                      GoRouter.of(context).push('/settings/notification'),
+                  onTap: () => GoRouter.of(context).push('/settings/notification'),
                 ),
                 const Divider(),
 
                 // Account Section
                 const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Text('Account',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  child: Text('Account', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 ),
                 ListTile(
                   title: const Text('Basic'),
@@ -107,14 +96,12 @@ class SettingsPage extends StatelessWidget {
                 // Community Section
                 const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Text('Community',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  child: Text('Community', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 ),
                 ListTile(
-                  title: const Text('Share Swayam'),
+                  title: const Text('Share Teja'),
                   onTap: () {
-                    _launchURL('https://swayam.app');
+                    _launchURL('https://teja.app');
                   },
                 ),
                 ListTile(
@@ -123,19 +110,11 @@ class SettingsPage extends StatelessWidget {
                     _launchURL('https://discord.gg/XtekVBqP');
                   },
                 ),
-                ListTile(
-                  title: const Text('Suggest features on Reddit'),
-                  onTap: () {
-                    _launchURL('https://www.reddit.com/r/swayam_app/');
-                  },
-                ),
                 const Divider(),
                 // Help and Support Section
                 const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Text('Help and Support',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  child: Text('Help and Support', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 ),
                 ListTile(
                   title: const Text('Report a Bug'),
@@ -148,9 +127,7 @@ class SettingsPage extends StatelessWidget {
                 // Application Section
                 const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Text('Application',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  child: Text('Application', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 ),
                 ListTile(
                   title: const Text('Terms of Service'),

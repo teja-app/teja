@@ -6,14 +6,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:redux/redux.dart';
-import 'package:swayam/domain/entities/mood_log.dart';
-import 'package:swayam/domain/redux/app_state.dart';
-import 'package:swayam/domain/redux/home/home_state.dart';
-import 'package:swayam/domain/redux/mood/logs/mood_logs_actions.dart';
-import 'package:swayam/domain/redux/mood/logs/mood_logs_state.dart';
-import 'package:swayam/presentation/home/ui/mood/mood_icons_layout.dart';
-import 'package:swayam/router.dart';
-import 'package:swayam/shared/common/button.dart';
+import 'package:teja/domain/entities/mood_log.dart';
+import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/home/home_state.dart';
+import 'package:teja/domain/redux/mood/logs/mood_logs_actions.dart';
+import 'package:teja/domain/redux/mood/logs/mood_logs_state.dart';
+import 'package:teja/presentation/home/ui/mood/mood_icons_layout.dart';
+import 'package:teja/router.dart';
+import 'package:teja/shared/common/button.dart';
 
 class CombinedModel {
   final MoodLogsState moodLogsState;
@@ -59,10 +59,8 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
       ),
       builder: (_, combinedModel) {
         // Assume we have a way to get the currently selected date
-        String formattedSelectedDate = DateFormat('yyyy-MM-dd')
-            .format(combinedModel.homeState.selectedDate!);
-        MoodLogEntity? selectedDateMoodLog =
-            combinedModel.moodLogsState.moodLogsByDate[formattedSelectedDate];
+        String formattedSelectedDate = DateFormat('yyyy-MM-dd').format(combinedModel.homeState.selectedDate!);
+        MoodLogEntity? selectedDateMoodLog = combinedModel.moodLogsState.moodLogsByDate[formattedSelectedDate];
         if (selectedDateMoodLog != null) {
           // If the mood log for the selected date exists, display the mood log
           return _moodLogLayout(selectedDateMoodLog);
@@ -113,8 +111,7 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
           ),
           elevation: 0.5, // Adjusts the elevation for shadow effect
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 24.0, horizontal: 10.0),
+            padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 10.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -132,8 +129,7 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
                     ),
                     const Spacer(), // Pushes the timestamp to the right
                     Text(
-                      DateFormat('hh:mm a').format(moodLog
-                          .timestamp), // Formats the timestamp to show time only
+                      DateFormat('hh:mm a').format(moodLog.timestamp), // Formats the timestamp to show time only
                       style: const TextStyle(color: Colors.grey),
                     ),
                   ],
@@ -212,8 +208,7 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(
                     5,
-                    (index) =>
-                        const Icon(Icons.check, color: Colors.black, size: 20),
+                    (index) => const Icon(Icons.check, color: Colors.black, size: 20),
                   ),
                 ),
               ],

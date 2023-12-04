@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:swayam/domain/entities/feeling.dart';
+import 'package:teja/domain/entities/feeling.dart';
 
 part 'feeling_dto.g.dart';
 
@@ -15,8 +15,7 @@ class FeelingDto {
     required this.factors,
   });
 
-  factory FeelingDto.fromJson(Map<String, dynamic> json) =>
-      _$FeelingDtoFromJson(json);
+  factory FeelingDto.fromJson(Map<String, dynamic> json) => _$FeelingDtoFromJson(json);
   Map<String, dynamic> toJson() => _$FeelingDtoToJson(this);
 
   // Convert DTO to domain entity

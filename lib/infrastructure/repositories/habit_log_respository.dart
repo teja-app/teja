@@ -1,5 +1,5 @@
 import 'package:isar/isar.dart';
-import 'package:swayam/infrastructure/database/isar_collections/habit_log.dart';
+import 'package:teja/infrastructure/database/isar_collections/habit_log.dart';
 
 class HabitLogRepository {
   final Isar isar;

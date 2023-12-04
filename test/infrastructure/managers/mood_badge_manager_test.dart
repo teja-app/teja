@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:swayam/infrastructure/managers/mood_badge_manager.dart';
+import 'package:teja/infrastructure/managers/mood_badge_manager.dart';
 import 'test/mocks.mocks.dart'; // Import the generated file
 
 void main() {
@@ -16,14 +16,12 @@ void main() {
     moodBadgeManager = MoodBadgeManager(mockBadgeRepo, mockMoodLogRepo);
 
     // Mock response for calculateCurrentStreak
-    when(mockMoodLogRepo.calculateCurrentStreak())
-        .thenAnswer((_) async => 5); // Example streak length
+    when(mockMoodLogRepo.calculateCurrentStreak()).thenAnswer((_) async => 5); // Example streak length
 
     // Mock response for getBadgeBySlug
     // If you expect getBadgeBySlug to be called with specific arguments,
     // specify them in the `any` function.
-    when(mockBadgeRepo.getBadgeBySlug(any)).thenAnswer(
-        (_) async => null); // Return null or a specific Badge object
+    when(mockBadgeRepo.getBadgeBySlug(any)).thenAnswer((_) async => null); // Return null or a specific Badge object
   });
 
   group('MoodBadgeManager Tests', () {

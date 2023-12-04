@@ -1,5 +1,5 @@
 import 'package:redux/redux.dart';
-import 'package:swayam/domain/redux/habit/habit/habit_state.dart';
+import 'package:teja/domain/redux/habit/habit/habit_state.dart';
 
 final Reducer<HabitState> habitReducer = combineReducers<HabitState>([
   TypedReducer<HabitState, FetchHabitsAction>(_fetchHabits),
@@ -12,8 +12,7 @@ HabitState _fetchHabits(HabitState state, FetchHabitsAction action) {
   return state.copyWith(isLoading: true);
 }
 
-HabitState _fetchHabitsSuccess(
-    HabitState state, FetchHabitsSuccessAction action) {
+HabitState _fetchHabitsSuccess(HabitState state, FetchHabitsSuccessAction action) {
   return state.copyWith(
     habits: action.habits,
     isLoading: false,

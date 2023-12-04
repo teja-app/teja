@@ -5,17 +5,17 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:swayam/infrastructure/database/isar_collections/master_factor.dart';
-import 'package:swayam/infrastructure/database/isar_collections/master_feeling.dart';
-import 'package:swayam/infrastructure/database/isar_collections/master_feeling_factor.dart';
-import 'package:swayam/infrastructure/database/isar_collections/mood_log.dart';
+import 'package:teja/infrastructure/database/isar_collections/master_factor.dart';
+import 'package:teja/infrastructure/database/isar_collections/master_feeling.dart';
+import 'package:teja/infrastructure/database/isar_collections/master_feeling_factor.dart';
+import 'package:teja/infrastructure/database/isar_collections/mood_log.dart';
 
 import 'shared/helpers/logger.dart';
 
-import 'package:swayam/domain/redux/app_state.dart';
-import 'package:swayam/domain/redux/store.dart'; // Make sure to import this
+import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/store.dart'; // Make sure to import this
 
-import 'package:swayam/app.dart';
+import 'package:teja/app.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: '.env.dev');
@@ -44,12 +44,7 @@ Future<Isar> openIsar() async {
   final path = directory.path;
   // Set up Isar and return the instance
   final isar = await Isar.open(
-    [
-      MoodLogSchema,
-      MasterFeelingSchema,
-      MasterFactorSchema,
-      FeelingFactorSchema
-    ],
+    [MoodLogSchema, MasterFeelingSchema, MasterFactorSchema, FeelingFactorSchema],
     directory: path,
   );
   return isar;

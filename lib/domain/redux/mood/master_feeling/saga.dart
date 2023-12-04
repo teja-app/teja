@@ -1,15 +1,15 @@
 // lib/domain/redux/mood/master_feeling/saga.dart
 import 'package:isar/isar.dart';
 import 'package:redux_saga/redux_saga.dart';
-import 'package:swayam/domain/entities/master_feeling.dart';
-import 'package:swayam/domain/redux/mood/master_feeling/actions.dart';
-import 'package:swayam/infrastructure/api/mood_api.dart';
-import 'package:swayam/infrastructure/database/isar_collections/master_factor.dart';
-import 'package:swayam/infrastructure/database/isar_collections/master_feeling.dart';
-import 'package:swayam/infrastructure/repositories/feeling_factor_repository.dart';
-import 'package:swayam/infrastructure/repositories/master_factor.dart';
-import 'package:swayam/infrastructure/repositories/master_feeling.dart';
-import 'package:swayam/shared/storage/secure_storage.dart';
+import 'package:teja/domain/entities/master_feeling.dart';
+import 'package:teja/domain/redux/mood/master_feeling/actions.dart';
+import 'package:teja/infrastructure/api/mood_api.dart';
+import 'package:teja/infrastructure/database/isar_collections/master_factor.dart';
+import 'package:teja/infrastructure/database/isar_collections/master_feeling.dart';
+import 'package:teja/infrastructure/repositories/feeling_factor_repository.dart';
+import 'package:teja/infrastructure/repositories/master_factor.dart';
+import 'package:teja/infrastructure/repositories/master_feeling.dart';
+import 'package:teja/shared/storage/secure_storage.dart';
 
 class MasterFeelingSaga {
   Iterable<void> saga() sync* {
@@ -38,8 +38,7 @@ class MasterFeelingSaga {
         result: cachedFeelingEntities,
       );
 
-      if (cachedFeelingEntities.value != null &&
-          cachedFeelingEntities.value!.isNotEmpty) {
+      if (cachedFeelingEntities.value != null && cachedFeelingEntities.value!.isNotEmpty) {
         yield Put(
           MasterFeelingsFetchedFromCacheAction(
             cachedFeelingEntities.value!,

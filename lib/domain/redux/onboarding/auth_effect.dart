@@ -2,10 +2,10 @@
 import 'package:dio/dio.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:redux_saga/redux_saga.dart';
-import 'package:swayam/domain/redux/onboarding/actions.dart';
-import 'package:swayam/infrastructure/api/email_auth.dart';
-import 'package:swayam/router.dart';
-import 'package:swayam/shared/storage/secure_storage.dart';
+import 'package:teja/domain/redux/onboarding/actions.dart';
+import 'package:teja/infrastructure/api/email_auth.dart';
+import 'package:teja/router.dart';
+import 'package:teja/shared/storage/secure_storage.dart';
 
 class AuthSaga {
   Iterable<void> saga() sync* {
@@ -16,13 +16,10 @@ class AuthSaga {
 
   _emailSignIn({required SignInAction action}) sync* {
     var emailAuthApi = EmailAuthApi();
-    var response =
-        Result<Response>(); // Adjusted to capture the Response object
+    var response = Result<Response>(); // Adjusted to capture the Response object
 
     yield Try(() sync* {
-      yield Call(emailAuthApi.signIn,
-          args: [action.username, action.password, action.device],
-          result: response);
+      yield Call(emailAuthApi.signIn, args: [action.username, action.password, action.device], result: response);
       // Handling success
       final responseData = response.value!.data; // Accessing the data property
       final String accessToken = responseData['access_token'];
@@ -49,8 +46,7 @@ class AuthSaga {
       // Handling failure
       String errorMessage = 'An error occurred. Please try again later.';
       if (error is DioError && error.response != null) {
-        errorMessage = error.response!.data['message'] ??
-            'An error occurred. Please try again later.';
+        errorMessage = error.response!.data['message'] ?? 'An error occurred. Please try again later.';
       }
       yield Put(SignInFailureAction(errorMessage));
     });
@@ -66,8 +62,7 @@ class AuthSaga {
       // Handling errors
       String errorMessage = error.toString();
       if (error is DioError) {
-        errorMessage =
-            'An error occurred while signing out. Please try again later.';
+        errorMessage = 'An error occurred while signing out. Please try again later.';
       }
       yield Put(SignOutFailureAction(errorMessage));
     });
@@ -76,19 +71,16 @@ class AuthSaga {
   _emailRegister({required RegisterAction action}) sync* {
     var emailAuthApi = EmailAuthApi();
     yield Try(() sync* {
-      yield Call(emailAuthApi.register,
-          args: [action.username, action.password, action.name, action.email]);
+      yield Call(emailAuthApi.register, args: [action.username, action.password, action.name, action.email]);
 
       // Dispatch success action
-      yield Put(const RegisterSuccessAction(
-          'User successfully registered, a verification email has been sent.'));
+      yield Put(const RegisterSuccessAction('User successfully registered, a verification email has been sent.'));
     }, Catch: (error, s) sync* {
       // Handling errors
       String? errorMessage = 'An error occurred. Please try again later.';
       if (error is DioError && error.response != null) {
         if (error.response!.statusCode == 400) {
-          errorMessage = (error.response!.data['message'] as List<dynamic>?)
-                  ?.join(' ') ??
+          errorMessage = (error.response!.data['message'] as List<dynamic>?)?.join(' ') ??
               'Bad request. Please check the information provided and try again.';
         } else if (error.response!.statusCode == 500) {
           errorMessage = 'Server error. Please try again later.';

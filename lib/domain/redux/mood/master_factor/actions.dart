@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:swayam/domain/entities/master_factor.dart';
+import 'package:teja/domain/entities/master_factor.dart';
 
 @immutable
 class FetchMasterFactorsActionFromApi {}

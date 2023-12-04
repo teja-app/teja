@@ -2,7 +2,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:swayam/domain/entities/habit_entity.dart';
+import 'package:teja/domain/entities/habit_entity.dart';
 
 Future<List<HabitEntity>> loadHabitsFromJson() async {
   String jsonString = await rootBundle.loadString(
@@ -87,9 +87,7 @@ class _HabitsPageState extends State<HabitsPage> {
     if (_selectedCategory == null) {
       return [];
     }
-    return _allHabits
-        .where((habit) => habit.category == _selectedCategory)
-        .toList();
+    return _allHabits.where((habit) => habit.category == _selectedCategory).toList();
   }
 
   @override

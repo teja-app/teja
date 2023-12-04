@@ -1,12 +1,12 @@
 import 'package:redux_saga/redux_saga.dart';
-import 'package:swayam/domain/redux/mood/detail/mood_detail_saga.dart';
-import 'package:swayam/domain/redux/mood/editor/mood_editor_saga.dart';
-import 'package:swayam/domain/redux/mood/list/saga.dart';
-import 'package:swayam/domain/redux/mood/logs/mood_logs_saga.dart';
-import 'package:swayam/domain/redux/mood/master_feeling/saga.dart';
-import 'package:swayam/domain/redux/mood/master_factor/saga.dart';
-import 'package:swayam/domain/redux/onboarding/auth_effect.dart';
-import 'package:swayam/domain/redux/weekly_mood_report/weekly_mood_report_saga.dart';
+import 'package:teja/domain/redux/mood/detail/mood_detail_saga.dart';
+import 'package:teja/domain/redux/mood/editor/mood_editor_saga.dart';
+import 'package:teja/domain/redux/mood/list/saga.dart';
+import 'package:teja/domain/redux/mood/logs/mood_logs_saga.dart';
+import 'package:teja/domain/redux/mood/master_feeling/saga.dart';
+import 'package:teja/domain/redux/mood/master_factor/saga.dart';
+import 'package:teja/domain/redux/onboarding/auth_effect.dart';
+import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_saga.dart';
 
 Iterable<void> rootSaga() sync* {
   yield Fork(AuthSaga().saga);

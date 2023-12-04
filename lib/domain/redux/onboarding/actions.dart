@@ -1,5 +1,5 @@
 import 'package:meta/meta.dart';
-import 'package:swayam/domain/redux/core_actions.dart';
+import 'package:teja/domain/redux/core_actions.dart';
 
 class GoogleSignInAction {}
 
@@ -16,8 +16,7 @@ class SetGoogleClientIdsAction {
   final String googleClientIdIos;
   final String googleServerClientId;
 
-  const SetGoogleClientIdsAction(
-      this.googleClientIdIos, this.googleServerClientId);
+  const SetGoogleClientIdsAction(this.googleClientIdIos, this.googleServerClientId);
 }
 
 @immutable

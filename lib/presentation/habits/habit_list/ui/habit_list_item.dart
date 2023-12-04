@@ -1,7 +1,7 @@
 // lib/widgets/habit_list_item.dart
 
 import 'package:flutter/material.dart';
-import 'package:swayam/domain/entities/habit_entity.dart';
+import 'package:teja/domain/entities/habit_entity.dart';
 
 class HabitListItem extends StatelessWidget {
   final HabitEntity habit;

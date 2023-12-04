@@ -1,5 +1,5 @@
 import 'package:isar/isar.dart';
-import 'package:swayam/infrastructure/database/isar_collections/badge.dart';
+import 'package:teja/infrastructure/database/isar_collections/badge.dart';
 
 class BadgeRepository {
   final Isar isar;

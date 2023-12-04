@@ -1,6 +1,6 @@
 import 'package:isar/isar.dart';
-import 'package:swayam/domain/entities/master_feeling.dart';
-import 'package:swayam/infrastructure/database/isar_collections/master_feeling.dart';
+import 'package:teja/domain/entities/master_feeling.dart';
+import 'package:teja/infrastructure/database/isar_collections/master_feeling.dart';
 
 class MasterFeelingRepository {
   final Isar isar;

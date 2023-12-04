@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:swayam/domain/entities/mood_log.dart';
-import 'package:swayam/infrastructure/dto/feeling_dto.dart';
+import 'package:teja/domain/entities/mood_log.dart';
+import 'package:teja/infrastructure/dto/feeling_dto.dart';
 
 part 'mood_log_model.g.dart';
 
@@ -20,8 +20,7 @@ class MoodLogModelDto {
     required this.feelings,
   });
 
-  factory MoodLogModelDto.fromJson(Map<String, dynamic> json) =>
-      _$MoodLogModelDtoFromJson(json);
+  factory MoodLogModelDto.fromJson(Map<String, dynamic> json) => _$MoodLogModelDtoFromJson(json);
 
   Map<String, dynamic> toJson() => _$MoodLogModelDtoToJson(this);
 
@@ -32,8 +31,7 @@ class MoodLogModelDto {
       timestamp: timestamp,
       moodRating: moodRating,
       comment: comment,
-      feelings:
-          feelings.map((dto) => dto.toDomain()).toList(), // Map DTO to domain
+      feelings: feelings.map((dto) => dto.toDomain()).toList(), // Map DTO to domain
     );
   }
 }

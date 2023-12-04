@@ -4,13 +4,13 @@ import 'package:isar/isar.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:redux_saga/redux_saga.dart';
-import 'package:swayam/domain/redux/app_reducer.dart';
-import 'package:swayam/domain/redux/root_saga.dart';
+import 'package:teja/domain/redux/app_reducer.dart';
+import 'package:teja/domain/redux/root_saga.dart';
 
-import 'package:swayam/domain/redux/app_state.dart';
-import 'package:swayam/domain/redux/onboarding/actions.dart';
-import 'package:swayam/domain/redux/logging_middleware.dart';
-import 'package:swayam/shared/helpers/logger.dart';
+import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/onboarding/actions.dart';
+import 'package:teja/domain/redux/logging_middleware.dart';
+import 'package:teja/shared/helpers/logger.dart';
 
 Future<Store<AppState>> createStore(Isar isarInstance) async {
   const filePath = '.env.dev';

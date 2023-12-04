@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:swayam/domain/entities/mood_log.dart';
-import 'package:swayam/domain/redux/mood/list/state.dart';
+import 'package:teja/domain/entities/mood_log.dart';
+import 'package:teja/domain/redux/mood/list/state.dart';
 
 abstract class MoodListAction {}
 

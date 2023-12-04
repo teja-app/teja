@@ -6,11 +6,11 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:passwordfield/passwordfield.dart'; // Import the passwordfield package
 import 'package:redux/redux.dart';
-import 'package:swayam/domain/redux/onboarding/actions.dart';
-import 'package:swayam/shared/common/bento_box.dart';
-import 'package:swayam/shared/common/button.dart';
-import 'package:swayam/domain/redux/app_state.dart';
-import 'package:swayam/shared/common/flexible_height_box.dart';
+import 'package:teja/domain/redux/onboarding/actions.dart';
+import 'package:teja/shared/common/bento_box.dart';
+import 'package:teja/shared/common/button.dart';
+import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/shared/common/flexible_height_box.dart';
 
 class SignUpPage extends StatelessWidget {
   final TextEditingController nameController = TextEditingController();
@@ -37,8 +37,7 @@ class SignUpPage extends StatelessWidget {
             TextButton(
               child: const Text('OK'),
               onPressed: () {
-                store.dispatch(
-                    ClearRegisterMessageAction()); // Clear the registerMessage
+                store.dispatch(ClearRegisterMessageAction()); // Clear the registerMessage
                 Navigator.of(context).pop(); // Close the dialog
                 onSuccessClick();
               },
@@ -66,9 +65,7 @@ class SignUpPage extends StatelessWidget {
               children: [
                 // Logo or Header
                 SvgPicture.asset(
-                  themeBrightness == Brightness.dark
-                      ? "assets/logo/White.svg"
-                      : "assets/logo/Color.svg",
+                  themeBrightness == Brightness.dark ? "assets/logo/White.svg" : "assets/logo/Color.svg",
                   width: 60,
                   height: 60,
                 ),
@@ -78,7 +75,7 @@ class SignUpPage extends StatelessWidget {
                   child: Column(
                     children: [
                       Text(
-                        'Welcome to Swayam',
+                        'Welcome to Teja',
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -86,7 +83,7 @@ class SignUpPage extends StatelessWidget {
                       ),
                       SizedBox(height: 10),
                       Text(
-                        'Swayam is a platform aimed at fostering emotional resilience and meaningful relationships. \n \n Our features include Emotional Tracking, Journals, and Guided Meditation.',
+                        'Teja is a platform aimed at fostering emotional resilience and meaningful relationships. \n \n Our features include Emotional Tracking, Journals, and Guided Meditation.',
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 14),
                       ),
@@ -156,8 +153,7 @@ class SignUpPage extends StatelessWidget {
                     final String username = usernameController.text;
                     final String email = emailController.text;
                     final String password = passwordController.text;
-                    store.dispatch(
-                        RegisterAction(username, password, name, email));
+                    store.dispatch(RegisterAction(username, password, name, email));
                   },
                   buttonType: ButtonType.primary,
                 ),
@@ -181,8 +177,7 @@ class SignUpPage extends StatelessWidget {
     );
   }
 
-  Widget _buildMessageWidget(
-      Store<AppState> store, BuildContext context, NavigatorState navigator) {
+  Widget _buildMessageWidget(Store<AppState> store, BuildContext context, NavigatorState navigator) {
     final message = store.state.authState.registerMessage;
     if (message.isNotEmpty) {
       if (message.contains('successfully')) {

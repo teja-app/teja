@@ -1,12 +1,11 @@
 // lib/domain/redux/mood/master_feeling/state.dart
 
 import 'package:flutter/foundation.dart';
-import 'package:swayam/domain/entities/master_feeling.dart';
+import 'package:teja/domain/entities/master_feeling.dart';
 
 @immutable
 class MasterFeelingState {
-  final List<MasterFeelingEntity>
-      masterFeelings; // List to store master feelings
+  final List<MasterFeelingEntity> masterFeelings; // List to store master feelings
   final bool isLoading; // Indicates if master feelings are being loaded
   final String? errorMessage; // Holds error message, if any
   final DateTime? lastUpdatedAt;

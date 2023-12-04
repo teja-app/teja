@@ -1,6 +1,6 @@
 // lib/infrastructure/database/isar_collections/mood_log.dart
 import 'package:isar/isar.dart';
-import 'package:swayam/infrastructure/utils/helpers.dart';
+import 'package:teja/infrastructure/utils/helpers.dart';
 
 part 'mood_log.g.dart';
 

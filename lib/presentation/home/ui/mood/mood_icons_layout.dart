@@ -2,10 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:swayam/domain/redux/app_state.dart';
-import 'package:swayam/domain/redux/mood/editor/mood_editor_actions.dart';
-import 'package:swayam/router.dart';
-import 'package:swayam/shared/common/button.dart';
+import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
+import 'package:teja/router.dart';
+import 'package:teja/shared/common/button.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_flutter/icons_flutter.dart';
 
@@ -37,9 +37,7 @@ class _MoodIconsLayoutState extends State<MoodIconsLayout> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              for (int i = 1; i <= 5; i++)
-                _buildMoodIcon(
-                    'assets/icons/mood_${i}_${_getMoodStatus(i)}.svg', i),
+              for (int i = 1; i <= 5; i++) _buildMoodIcon('assets/icons/mood_${i}_${_getMoodStatus(i)}.svg', i),
             ],
           ),
           if (_selectedMoodIndex != null) ...[
@@ -54,8 +52,7 @@ class _MoodIconsLayoutState extends State<MoodIconsLayout> {
                   onPressed: () {
                     if (_selectedMoodIndex != null) {
                       final store = StoreProvider.of<AppState>(context);
-                      store.dispatch(
-                          TriggerSelectMoodAction(_selectedMoodIndex!));
+                      store.dispatch(TriggerSelectMoodAction(_selectedMoodIndex!));
                       store.dispatch(const ChangePageAction(1));
                       GoRouter.of(context).pushNamed(RootPath.moodEdit);
                     }
@@ -68,8 +65,7 @@ class _MoodIconsLayoutState extends State<MoodIconsLayout> {
                   onPressed: () {
                     if (_selectedMoodIndex != null) {
                       final store = StoreProvider.of<AppState>(context);
-                      store.dispatch(
-                          TriggerSelectMoodAction(_selectedMoodIndex!));
+                      store.dispatch(TriggerSelectMoodAction(_selectedMoodIndex!));
                       // Dispatch any other action if needed for 'Done' functionality
                     }
                   },
@@ -95,9 +91,7 @@ class _MoodIconsLayoutState extends State<MoodIconsLayout> {
         });
       },
       child: Opacity(
-        opacity: (_selectedMoodIndex == null || _selectedMoodIndex == moodIndex)
-            ? 1.0
-            : 0.5, // Set transparency
+        opacity: (_selectedMoodIndex == null || _selectedMoodIndex == moodIndex) ? 1.0 : 0.5, // Set transparency
         child: SvgPicture.asset(
           svgPath,
           width: 40,

@@ -1,7 +1,7 @@
 import 'package:redux/redux.dart';
-import 'package:swayam/domain/redux/app_state.dart';
-import 'package:swayam/domain/redux/mood/detail/mood_detail_actions.dart';
-import 'package:swayam/domain/redux/mood/detail/mood_detail_state.dart';
+import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/mood/detail/mood_detail_actions.dart';
+import 'package:teja/domain/redux/mood/detail/mood_detail_state.dart';
 
 AppState _loadMoodDetail(AppState state, LoadMoodDetailAction action) {
   // Begin loading the mood detail
@@ -39,16 +39,14 @@ AppState _deleteMoodDetail(AppState state, DeleteMoodDetailAction action) {
   return state;
 }
 
-AppState _deleteMoodDetailSuccess(
-    AppState state, DeleteMoodDetailSuccessAction action) {
+AppState _deleteMoodDetailSuccess(AppState state, DeleteMoodDetailSuccessAction action) {
   // Successfully deleted, so you may want to reset the mood detail state or perform other state changes
   return state.copyWith(
     moodDetailPage: MoodDetailState.initialState(),
   );
 }
 
-AppState _deleteMoodDetailError(
-    AppState state, DeleteMoodDetailFailureAction action) {
+AppState _deleteMoodDetailError(AppState state, DeleteMoodDetailFailureAction action) {
   // Handle the error state
   return state.copyWith(
     moodDetailPage: state.moodDetailPage.copyWith(
@@ -62,7 +60,6 @@ final moodDetailReducer = <AppState Function(AppState, dynamic)>[
   TypedReducer<AppState, LoadMoodDetailSuccessAction>(_setMoodDetail),
   TypedReducer<AppState, LoadMoodDetailFailureAction>(_moodDetailError),
   TypedReducer<AppState, DeleteMoodDetailAction>(_deleteMoodDetail),
-  TypedReducer<AppState, DeleteMoodDetailSuccessAction>(
-      _deleteMoodDetailSuccess),
+  TypedReducer<AppState, DeleteMoodDetailSuccessAction>(_deleteMoodDetailSuccess),
   TypedReducer<AppState, DeleteMoodDetailFailureAction>(_deleteMoodDetailError),
 ];

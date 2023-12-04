@@ -1,4 +1,4 @@
-import 'package:swayam/domain/entities/habit_entity.dart';
+import 'package:teja/domain/entities/habit_entity.dart';
 
 class LoadHabitsAction {}
 

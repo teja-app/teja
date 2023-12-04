@@ -1,7 +1,7 @@
 import 'package:isar/isar.dart';
 import 'package:redux_saga/redux_saga.dart';
-import 'package:swayam/domain/redux/weekly_mood_report/weekly_mood_report_actions.dart';
-import 'package:swayam/infrastructure/repositories/mood_log_repository.dart';
+import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_actions.dart';
+import 'package:teja/infrastructure/repositories/mood_log_repository.dart';
 
 class WeeklyMoodReportSaga {
   Iterable<void> saga() sync* {
@@ -22,27 +22,21 @@ class WeeklyMoodReportSaga {
       // Calculate the start and end dates for the current and previous weeks
       final currentWeekStart = _startOfWeek(action.referenceDate);
       final currentWeekEnd = _endOfWeek(action.referenceDate);
-      final previousWeekStart =
-          _startOfWeek(action.referenceDate.subtract(const Duration(days: 7)));
-      final previousWeekEnd =
-          _endOfWeek(action.referenceDate.subtract(const Duration(days: 7)));
+      final previousWeekStart = _startOfWeek(action.referenceDate.subtract(const Duration(days: 7)));
+      final previousWeekEnd = _endOfWeek(action.referenceDate.subtract(const Duration(days: 7)));
 
       // Fetch average mood ratings for each week
       var currentWeekAverageMoodRatingsResult = Result<Map<DateTime, double>>();
       yield Call(moodLogRepository.getAverageMoodLogsForWeek,
-          args: [currentWeekStart, currentWeekEnd],
-          result: currentWeekAverageMoodRatingsResult);
+          args: [currentWeekStart, currentWeekEnd], result: currentWeekAverageMoodRatingsResult);
 
-      var previousWeekAverageMoodRatingsResult =
-          Result<Map<DateTime, double>>();
+      var previousWeekAverageMoodRatingsResult = Result<Map<DateTime, double>>();
       yield Call(moodLogRepository.getAverageMoodLogsForWeek,
-          args: [previousWeekStart, previousWeekEnd],
-          result: previousWeekAverageMoodRatingsResult);
+          args: [previousWeekStart, previousWeekEnd], result: previousWeekAverageMoodRatingsResult);
 
       // Dispatch success action with the average mood ratings
       yield Put(WeeklyMoodReportFetchedSuccessAction(
-          currentWeekAverageMoodRatingsResult.value!,
-          previousWeekAverageMoodRatingsResult.value!));
+          currentWeekAverageMoodRatingsResult.value!, previousWeekAverageMoodRatingsResult.value!));
     }, Catch: (e, s) sync* {
       // Dispatch error action
       yield Put(WeeklyMoodReportFetchFailedAction(e.toString()));

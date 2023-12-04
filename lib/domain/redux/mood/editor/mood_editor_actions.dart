@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:swayam/domain/entities/feeling.dart';
-import 'package:swayam/domain/entities/master_factor.dart';
-import 'package:swayam/domain/entities/master_feeling.dart';
-import 'package:swayam/domain/entities/mood_log.dart';
-import 'package:swayam/domain/redux/core_actions.dart';
+import 'package:teja/domain/entities/feeling.dart';
+import 'package:teja/domain/entities/master_factor.dart';
+import 'package:teja/domain/entities/master_feeling.dart';
+import 'package:teja/domain/entities/mood_log.dart';
+import 'package:teja/domain/redux/core_actions.dart';
 
 @immutable
 class TriggerSelectMoodAction {

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:swayam/domain/redux/onboarding/auth_state.dart';
-import 'package:swayam/router.dart';
-import 'package:swayam/shared/helpers/logger.dart';
-import 'package:swayam/domain/redux/app_state.dart';
-import 'package:swayam/shared/storage/secure_storage.dart';
-import 'package:swayam/theme/dark_theme.dart';
-import 'package:swayam/theme/light_theme.dart';
+import 'package:teja/domain/redux/onboarding/auth_state.dart';
+import 'package:teja/router.dart';
+import 'package:teja/shared/helpers/logger.dart';
+import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/shared/storage/secure_storage.dart';
+import 'package:teja/theme/dark_theme.dart';
+import 'package:teja/theme/light_theme.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -51,7 +51,7 @@ class _AppState extends State<App> {
       converter: (store) => store.state.authState,
       builder: (context, authState) {
         return MaterialApp.router(
-          title: 'Swayam',
+          title: 'Teja',
           debugShowCheckedModeBanner: false,
           darkTheme: darkTheme,
           themeMode: ThemeMode.system,

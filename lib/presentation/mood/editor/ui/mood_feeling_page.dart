@@ -4,12 +4,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:icons_flutter/icons_flutter.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:redux/redux.dart';
-import 'package:swayam/domain/entities/master_feeling.dart';
-import 'package:swayam/domain/redux/mood/editor/mood_editor_actions.dart';
-import 'package:swayam/domain/redux/mood/master_feeling/actions.dart';
-import 'package:swayam/shared/common/button.dart';
-import 'package:swayam/domain/redux/app_state.dart';
-import 'package:swayam/shared/common/description_button.dart';
+import 'package:teja/domain/entities/master_feeling.dart';
+import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
+import 'package:teja/domain/redux/mood/master_feeling/actions.dart';
+import 'package:teja/shared/common/button.dart';
+import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/shared/common/description_button.dart';
 
 class FeelingScreen extends StatefulWidget {
   const FeelingScreen({super.key});

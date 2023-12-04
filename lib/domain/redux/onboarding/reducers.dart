@@ -1,6 +1,6 @@
 import 'package:redux/redux.dart';
-import 'package:swayam/domain/redux/onboarding/actions.dart';
-import 'package:swayam/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/onboarding/actions.dart';
+import 'package:teja/domain/redux/app_state.dart';
 
 AppState registerSuccessReducer(AppState state, RegisterSuccessAction action) {
   return state.copyWith(
@@ -46,8 +46,7 @@ AppState signInFailureReducer(AppState state, SignInFailureAction action) {
   );
 }
 
-AppState clearSignInMessageReducer(
-    AppState state, ClearSignInMessageAction action) {
+AppState clearSignInMessageReducer(AppState state, ClearSignInMessageAction action) {
   return state.copyWith(
     authState: state.authState.copyWith(
       signInMessage: "",

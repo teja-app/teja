@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:swayam/shared/helpers/color.dart';
+import 'package:teja/shared/helpers/color.dart';
 
 class WeeklyMoodChart extends StatefulWidget {
   final List<FlSpot> currentWeekSpots;

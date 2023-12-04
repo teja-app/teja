@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:swayam/domain/redux/app_state.dart';
-import 'package:swayam/domain/redux/mood/editor/mood_editor_actions.dart';
-import 'package:swayam/presentation/mood/editor/ui/mood_factor_page.dart';
-import 'package:swayam/presentation/mood/editor/ui/mood_initial_page.dart';
-import 'package:swayam/presentation/mood/editor/ui/mood_feeling_page.dart';
+import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
+import 'package:teja/presentation/mood/editor/ui/mood_factor_page.dart';
+import 'package:teja/presentation/mood/editor/ui/mood_initial_page.dart';
+import 'package:teja/presentation/mood/editor/ui/mood_feeling_page.dart';
 
 class MoodEditPage extends StatefulWidget {
   const MoodEditPage({Key? key}) : super(key: key);

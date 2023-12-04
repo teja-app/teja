@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
-import 'package:swayam/domain/redux/app_state.dart';
-import 'package:swayam/domain/redux/weekly_mood_report/weekly_mood_report_actions.dart';
-import 'package:swayam/presentation/profile/ui/weekly_mood_chart.dart';
+import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_actions.dart';
+import 'package:teja/presentation/profile/ui/weekly_mood_chart.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:swayam/shared/common/bento_box.dart';
+import 'package:teja/shared/common/bento_box.dart';
 
 class ProfileWeeklyMoodChart extends StatefulWidget {
   const ProfileWeeklyMoodChart({Key? key}) : super(key: key);
@@ -21,8 +21,7 @@ class _ProfileWeeklyMoodChartState extends State<ProfileWeeklyMoodChart> {
     // Dispatch action to fetch weekly mood report
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final DateTime today = DateTime.now();
-      StoreProvider.of<AppState>(context)
-          .dispatch(FetchWeeklyMoodReportAction(today));
+      StoreProvider.of<AppState>(context).dispatch(FetchWeeklyMoodReportAction(today));
     });
   }
 
@@ -35,14 +34,11 @@ class _ProfileWeeklyMoodChartState extends State<ProfileWeeklyMoodChart> {
           return Center(child: CircularProgressIndicator());
         }
 
-        final currentWeekSpots =
-            _convertMoodRatingsToSpots(viewModel.currentWeekAverageMoodRatings);
-        final previousWeekSpots = _convertMoodRatingsToSpots(
-            viewModel.previousWeekAverageMoodRatings);
+        final currentWeekSpots = _convertMoodRatingsToSpots(viewModel.currentWeekAverageMoodRatings);
+        final previousWeekSpots = _convertMoodRatingsToSpots(viewModel.previousWeekAverageMoodRatings);
         final colorScheme = Theme.of(context).colorScheme;
 
-        double averageMood =
-            _calculateAverageMood(viewModel.currentWeekAverageMoodRatings);
+        double averageMood = _calculateAverageMood(viewModel.currentWeekAverageMoodRatings);
         String moodTitle = _determineMoodTitle(averageMood);
         final colorSchema = Theme.of(context).colorScheme;
         return BentoBox(
@@ -80,8 +76,7 @@ class _ProfileWeeklyMoodChartState extends State<ProfileWeeklyMoodChart> {
   }
 
   double _calculateAverageMood(Map<DateTime, double> moodRatings) {
-    final totalRating =
-        moodRatings.values.fold(0.0, (sum, rating) => sum + rating);
+    final totalRating = moodRatings.values.fold(0.0, (sum, rating) => sum + rating);
     return moodRatings.isNotEmpty ? totalRating / moodRatings.length : 0.0;
   }
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:swayam/domain/entities/mood_log.dart';
+import 'package:teja/domain/entities/mood_log.dart';
 
 @immutable
 class FetchMoodLogsAction {

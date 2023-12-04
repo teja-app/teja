@@ -6,14 +6,14 @@ import 'package:icons_flutter/icons_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:redux/redux.dart';
-import 'package:swayam/domain/entities/mood_log.dart';
-import 'package:swayam/domain/redux/app_state.dart';
-import 'package:swayam/domain/redux/mood/list/actions.dart';
-import 'package:swayam/presentation/mood/list/ui/filter_bottom_sheet.dart';
-import 'package:swayam/presentation/mood/list/ui/mood_widget.dart';
-import 'package:swayam/presentation/navigation/buildMobileNavigationBar.dart';
-import 'package:swayam/presentation/navigation/isDesktop.dart';
-import 'package:swayam/shared/common/flexible_height_box.dart';
+import 'package:teja/domain/entities/mood_log.dart';
+import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/mood/list/actions.dart';
+import 'package:teja/presentation/mood/list/ui/filter_bottom_sheet.dart';
+import 'package:teja/presentation/mood/list/ui/mood_widget.dart';
+import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
+import 'package:teja/presentation/navigation/isDesktop.dart';
+import 'package:teja/shared/common/flexible_height_box.dart';
 
 class MoodListPage extends StatefulWidget {
   const MoodListPage({super.key});
@@ -25,8 +25,7 @@ class MoodListPage extends StatefulWidget {
 class _MoodListPageState extends State<MoodListPage> {
   static const int pageSize = 300;
   final ItemScrollController itemScrollController = ItemScrollController();
-  final ItemPositionsListener itemPositionsListener =
-      ItemPositionsListener.create();
+  final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
   int lastLoadedPage = 0; // Track the last loaded page
 
   void _loadMoreDataIfNeeded() {
@@ -44,8 +43,7 @@ class _MoodListPageState extends State<MoodListPage> {
       final totalLogs = moodLogsState.moodLogs.length;
       final currentPage = totalLogs ~/ pageSize;
 
-      if (lastVisibleItemIndex >= totalLogs - 1 &&
-          lastLoadedPage != currentPage) {
+      if (lastVisibleItemIndex >= totalLogs - 1 && lastLoadedPage != currentPage) {
         lastLoadedPage = currentPage; // Update last loaded page
         store.dispatch(LoadMoodLogsListAction(currentPage + 1, pageSize));
       }
@@ -86,12 +84,10 @@ class _MoodListPageState extends State<MoodListPage> {
   }
 
   // Group mood logs by their date
-  Map<DateTime, List<MoodLogEntity>> groupMoodLogsByDate(
-      List<MoodLogEntity> moodLogs) {
+  Map<DateTime, List<MoodLogEntity>> groupMoodLogsByDate(List<MoodLogEntity> moodLogs) {
     Map<DateTime, List<MoodLogEntity>> groupedLogs = {};
     for (var log in moodLogs) {
-      DateTime date =
-          DateTime(log.timestamp.year, log.timestamp.month, log.timestamp.day);
+      DateTime date = DateTime(log.timestamp.year, log.timestamp.month, log.timestamp.day);
       if (!groupedLogs.containsKey(date)) {
         groupedLogs[date] = [];
       }
@@ -103,8 +99,7 @@ class _MoodListPageState extends State<MoodListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar:
-          isDesktop(context) ? null : buildMobileNavigationBar(context),
+      bottomNavigationBar: isDesktop(context) ? null : buildMobileNavigationBar(context),
       appBar: AppBar(
         title: const Text('Journal'),
         forceMaterialTransparency: true,
@@ -139,8 +134,7 @@ class _MoodListPageState extends State<MoodListPage> {
             listItems.add(FlexibleHeightBox(
               gridWidth: 4, // Adjust as needed
               child: Column(
-                children:
-                    logs.map((log) => moodLogLayout(log, context)).toList(),
+                children: logs.map((log) => moodLogLayout(log, context)).toList(),
               ),
               // Add other parameters as needed
             ));

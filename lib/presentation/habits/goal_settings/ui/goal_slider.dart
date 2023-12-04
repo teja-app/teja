@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:swayam/presentation/habits/goal_settings/slider.dart';
+import 'package:teja/presentation/habits/goal_settings/slider.dart';
 import 'package:decimal/decimal.dart';
-import 'package:swayam/shared/helpers/color.dart';
+import 'package:teja/shared/helpers/color.dart';
 
 class GoalSlider extends StatefulWidget {
   final String goalName;

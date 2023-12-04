@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:swayam/presentation/onboarding/widgets/slide_item_widget.dart';
+import 'package:teja/presentation/onboarding/widgets/slide_item_widget.dart';
 
 class SliderWidget extends StatefulWidget {
   const SliderWidget({super.key});
@@ -56,14 +56,12 @@ class _SliderWidgetState extends State<SliderWidget> {
     super.initState();
     _startTimer();
     _pageController.addListener(() {
-      if (_pageController.position.userScrollDirection ==
-          ScrollDirection.idle) {
+      if (_pageController.position.userScrollDirection == ScrollDirection.idle) {
         if (!_timer.isActive) {
           // Wait for 10 seconds before restarting the auto-slide
           Future.delayed(const Duration(seconds: 10), () {
             // Only restart the timer if the user hasn't started scrolling again
-            if (_pageController.position.userScrollDirection ==
-                ScrollDirection.idle) {
+            if (_pageController.position.userScrollDirection == ScrollDirection.idle) {
               _startTimer();
             }
           });

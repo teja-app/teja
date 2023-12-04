@@ -1,8 +1,8 @@
 import 'package:redux/redux.dart';
-import 'package:swayam/domain/entities/master_factor.dart';
-import 'package:swayam/domain/entities/mood_log.dart';
-import 'package:swayam/domain/redux/mood/editor/mood_editor_actions.dart';
-import 'package:swayam/domain/redux/mood/editor/mood_editor_state.dart';
+import 'package:teja/domain/entities/master_factor.dart';
+import 'package:teja/domain/entities/mood_log.dart';
+import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
+import 'package:teja/domain/redux/mood/editor/mood_editor_state.dart';
 
 MoodEditorState _selectMood(MoodEditorState state, SelectMoodSuccessAction action) {
   return state.copyWith(currentMoodLog: action.moodLog);

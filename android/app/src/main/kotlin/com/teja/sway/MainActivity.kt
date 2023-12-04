@@ -1,4 +1,4 @@
-package com.example.swayam
+package com.teja.app
 
 import io.flutter.embedding.android.FlutterActivity
 

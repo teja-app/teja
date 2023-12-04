@@ -1,20 +1,15 @@
 // lib/domain/redux/mood/master_feeling/reducer.dart
 
 import 'package:redux/redux.dart';
-import 'package:swayam/domain/redux/mood/master_feeling/state.dart';
-import 'package:swayam/domain/redux/mood/master_feeling/actions.dart';
+import 'package:teja/domain/redux/mood/master_feeling/state.dart';
+import 'package:teja/domain/redux/mood/master_feeling/actions.dart';
 
 // Main reducer for master feelings
-Reducer<MasterFeelingState> masterFeelingReducer =
-    combineReducers<MasterFeelingState>([
-  TypedReducer<MasterFeelingState, FetchMasterFeelingsInProgressAction>(
-      _fetchMasterFeelingsInProgress),
-  TypedReducer<MasterFeelingState, MasterFeelingsFetchedSuccessAction>(
-      _masterFeelingsFetchedSuccess),
-  TypedReducer<MasterFeelingState, MasterFeelingsFetchFailedAction>(
-      _masterFeelingsFetchFailed),
-  TypedReducer<MasterFeelingState, MasterFeelingsFetchedFromCacheAction>(
-      _masterFeelingsFetchedFromCache),
+Reducer<MasterFeelingState> masterFeelingReducer = combineReducers<MasterFeelingState>([
+  TypedReducer<MasterFeelingState, FetchMasterFeelingsInProgressAction>(_fetchMasterFeelingsInProgress),
+  TypedReducer<MasterFeelingState, MasterFeelingsFetchedSuccessAction>(_masterFeelingsFetchedSuccess),
+  TypedReducer<MasterFeelingState, MasterFeelingsFetchFailedAction>(_masterFeelingsFetchFailed),
+  TypedReducer<MasterFeelingState, MasterFeelingsFetchedFromCacheAction>(_masterFeelingsFetchedFromCache),
 ]);
 
 // Handle fetch in progress action
@@ -23,8 +18,7 @@ MasterFeelingState _fetchMasterFeelingsInProgress(
   return state.copyWith(isLoading: true);
 }
 
-MasterFeelingState _masterFeelingsFetchedSuccess(
-    MasterFeelingState state, MasterFeelingsFetchedSuccessAction action) {
+MasterFeelingState _masterFeelingsFetchedSuccess(MasterFeelingState state, MasterFeelingsFetchedSuccessAction action) {
   return state.copyWith(
     masterFeelings: action.feelings,
     isLoading: false,
@@ -45,8 +39,7 @@ MasterFeelingState _masterFeelingsFetchedFromCache(
 }
 
 // Handle fetch failed action
-MasterFeelingState _masterFeelingsFetchFailed(
-    MasterFeelingState state, MasterFeelingsFetchFailedAction action) {
+MasterFeelingState _masterFeelingsFetchFailed(MasterFeelingState state, MasterFeelingsFetchFailedAction action) {
   return state.copyWith(
     isLoading: false,
     errorMessage: action.error,

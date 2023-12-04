@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:swayam/presentation/navigation/buildDesktopDrawer.dart';
-import 'package:swayam/presentation/navigation/buildMobileNavigationBar.dart';
-import 'package:swayam/presentation/navigation/isDesktop.dart';
-import 'package:swayam/presentation/navigation/leadingContainer.dart';
-import 'package:swayam/router.dart';
-import 'package:swayam/shared/common/bento_box.dart';
+import 'package:teja/presentation/navigation/buildDesktopDrawer.dart';
+import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
+import 'package:teja/presentation/navigation/isDesktop.dart';
+import 'package:teja/presentation/navigation/leadingContainer.dart';
+import 'package:teja/router.dart';
+import 'package:teja/shared/common/bento_box.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class ExplorePage extends StatelessWidget {
@@ -48,8 +48,7 @@ class ExplorePage extends StatelessWidget {
       ],
     );
     return Scaffold(
-      bottomNavigationBar:
-          isDesktop(context) ? null : buildMobileNavigationBar(context),
+      bottomNavigationBar: isDesktop(context) ? null : buildMobileNavigationBar(context),
       appBar: AppBar(
         title: const Text('Explore'),
         forceMaterialTransparency: true,
@@ -71,8 +70,7 @@ class ExplorePage extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryBox(
-      String title, String svgPath, BuildContext context, String routeName) {
+  Widget _buildCategoryBox(String title, String svgPath, BuildContext context, String routeName) {
     final GoRouter goRouter = GoRouter.of(context);
     print("routeName ${routeName}");
     final brightness = Theme.of(context).colorScheme.brightness;

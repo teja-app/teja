@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:redux/redux.dart';
-import 'package:swayam/domain/redux/core_actions.dart';
+import 'package:teja/domain/redux/core_actions.dart';
 
 Future<void> handleApiRequest<T>({
   required Future<Response> Function() apiCall,

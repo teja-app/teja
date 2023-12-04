@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:swayam/domain/entities/habit_log_entity.dart';
+import 'package:teja/domain/entities/habit_log_entity.dart';
 
 @immutable
 class HabitLogState {

@@ -6,12 +6,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:passwordfield/passwordfield.dart'; // Import the passwordfield package
 import 'package:redux/redux.dart';
-import 'package:swayam/domain/redux/onboarding/actions.dart';
-import 'package:swayam/shared/common/bento_box.dart';
-import 'package:swayam/shared/common/button.dart';
-import 'package:swayam/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/onboarding/actions.dart';
+import 'package:teja/shared/common/bento_box.dart';
+import 'package:teja/shared/common/button.dart';
+import 'package:teja/domain/redux/app_state.dart';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:swayam/shared/common/flexible_height_box.dart';
+import 'package:teja/shared/common/flexible_height_box.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -54,9 +54,7 @@ class _SignInPageState extends State<SignInPage> {
               children: [
                 // Logo or Header
                 SvgPicture.asset(
-                  themeBrightness == Brightness.dark
-                      ? "assets/logo/White.svg"
-                      : "assets/logo/Color.svg",
+                  themeBrightness == Brightness.dark ? "assets/logo/White.svg" : "assets/logo/Color.svg",
                   width: 60,
                   height: 60,
                 ),
@@ -139,8 +137,7 @@ class _SignInPageState extends State<SignInPage> {
                   content: Text(message), // Show error message in a snackbar
                 ),
               );
-              store.dispatch(
-                  ClearSignInMessageAction()); // Assuming you have a ClearSignInMessageAction
+              store.dispatch(ClearSignInMessageAction()); // Assuming you have a ClearSignInMessageAction
             });
           }
         }

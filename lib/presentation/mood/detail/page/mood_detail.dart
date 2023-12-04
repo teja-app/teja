@@ -3,13 +3,13 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:redux/redux.dart';
-import 'package:swayam/domain/redux/app_state.dart';
-import 'package:swayam/domain/redux/mood/detail/mood_detail_actions.dart';
-import 'package:swayam/domain/redux/mood/detail/mood_detail_state.dart';
-import 'package:swayam/presentation/mood/detail/ui/feeling_list.dart';
-import 'package:swayam/presentation/mood/detail/ui/mood_rating_widget.dart';
-import 'package:swayam/presentation/mood/detail/ui/setting_pop_up_menu.dart';
-import 'package:swayam/shared/common/bento_box.dart';
+import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/mood/detail/mood_detail_actions.dart';
+import 'package:teja/domain/redux/mood/detail/mood_detail_state.dart';
+import 'package:teja/presentation/mood/detail/ui/feeling_list.dart';
+import 'package:teja/presentation/mood/detail/ui/mood_rating_widget.dart';
+import 'package:teja/presentation/mood/detail/ui/setting_pop_up_menu.dart';
+import 'package:teja/shared/common/bento_box.dart';
 
 class MoodEntryWidget extends StatelessWidget {
   final DateTime timestamp;

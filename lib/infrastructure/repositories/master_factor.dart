@@ -1,6 +1,6 @@
 import 'package:isar/isar.dart';
-import 'package:swayam/domain/entities/master_factor.dart';
-import 'package:swayam/infrastructure/database/isar_collections/master_factor.dart';
+import 'package:teja/domain/entities/master_factor.dart';
+import 'package:teja/infrastructure/database/isar_collections/master_factor.dart';
 
 class MasterFactorRepository {
   final Isar isar;

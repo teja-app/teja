@@ -1,5 +1,5 @@
 import 'package:isar/isar.dart';
-import 'package:swayam/infrastructure/utils/helpers.dart';
+import 'package:teja/infrastructure/utils/helpers.dart';
 
 part 'habit.g.dart';
 

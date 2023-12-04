@@ -2,10 +2,10 @@ import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:isar/isar.dart';
-import 'package:swayam/infrastructure/database/isar_collections/badge.dart';
-import 'package:swayam/infrastructure/database/isar_collections/mood_log.dart';
-import 'package:swayam/infrastructure/repositories/badge_repository.dart';
-import 'package:swayam/infrastructure/repositories/mood_log_repository.dart';
+import 'package:teja/infrastructure/database/isar_collections/badge.dart';
+import 'package:teja/infrastructure/database/isar_collections/mood_log.dart';
+import 'package:teja/infrastructure/repositories/badge_repository.dart';
+import 'package:teja/infrastructure/repositories/mood_log_repository.dart';
 import '../isar_utils.dart';
 
 void main() {
@@ -46,8 +46,7 @@ void main() {
     for (int i = 0; i < 3; i++) {
       var moodLog = MoodLog()
         ..moodRating = Random().nextInt(5) + 1
-        ..timestamp = today
-            .subtract(Duration(days: i * 2)); // Introduce a gap in the streak
+        ..timestamp = today.subtract(Duration(days: i * 2)); // Introduce a gap in the streak
       await moodLogRepo.addOrUpdateMoodLog(moodLog);
     }
 
@@ -83,10 +82,8 @@ void main() {
 
     // Retrieve the list of badges
     final List<Badge> badges = await badgeRepository.getAllBadges();
-    bool isSpecificBadgeAwarded =
-        badges.any((badge) => badge.slug == 'triad-bloom');
-    expect(
-        isSpecificBadgeAwarded, isFalse); // 'Triad Bloom' should not be awarded
+    bool isSpecificBadgeAwarded = badges.any((badge) => badge.slug == 'triad-bloom');
+    expect(isSpecificBadgeAwarded, isFalse); // 'Triad Bloom' should not be awarded
   });
 
   test('Award badges based on mood logs', () async {
@@ -105,8 +102,7 @@ void main() {
     expect(badges, isNotEmpty);
 
     // Check if a specific badge is awarded
-    bool isSpecificBadgeAwarded =
-        badges.any((badge) => badge.slug == 'triad-bloom');
+    bool isSpecificBadgeAwarded = badges.any((badge) => badge.slug == 'triad-bloom');
     expect(isSpecificBadgeAwarded, isTrue);
   });
 }

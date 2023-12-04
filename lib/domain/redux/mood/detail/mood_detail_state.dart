@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:swayam/domain/entities/mood_log.dart';
+import 'package:teja/domain/entities/mood_log.dart';
 
 @immutable
 class MoodDetailState {
@@ -43,6 +43,5 @@ class MoodDetailState {
   }
 
   @override
-  int get hashCode =>
-      selectedMoodLog.hashCode ^ isLoading.hashCode ^ errorMessage.hashCode;
+  int get hashCode => selectedMoodLog.hashCode ^ isLoading.hashCode ^ errorMessage.hashCode;
 }

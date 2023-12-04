@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
-import 'package:swayam/constants.dart';
-import 'package:swayam/shared/helpers/logger.dart';
+import 'package:teja/constants.dart';
+import 'package:teja/shared/helpers/logger.dart';
 
 class ApiHelper {
   final Dio _dio = Dio();

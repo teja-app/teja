@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_flutter/icons_flutter.dart';
-import 'package:swayam/router.dart';
+import 'package:teja/router.dart';
 
 Widget buildMobileNavigationBar(BuildContext context) {
   final GoRouter goRouter = GoRouter.of(context);

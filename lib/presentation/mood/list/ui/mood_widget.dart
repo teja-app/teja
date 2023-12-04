@@ -4,10 +4,10 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:swayam/domain/entities/mood_log.dart';
-import 'package:swayam/domain/redux/app_state.dart';
-import 'package:swayam/domain/redux/mood/detail/mood_detail_actions.dart';
-import 'package:swayam/router.dart';
+import 'package:teja/domain/entities/mood_log.dart';
+import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/mood/detail/mood_detail_actions.dart';
+import 'package:teja/router.dart';
 
 Widget moodLogLayout(MoodLogEntity moodLog, BuildContext context) {
   final svgPath = 'assets/icons/mood_${moodLog.moodRating}_active.svg';
@@ -40,8 +40,7 @@ Widget moodLogLayout(MoodLogEntity moodLog, BuildContext context) {
             builder: (BuildContext dialogContext) {
               return AlertDialog(
                 title: const Text('Confirm Delete'),
-                content:
-                    const Text('Are you sure you want to delete this entry?'),
+                content: const Text('Are you sure you want to delete this entry?'),
                 actions: <Widget>[
                   TextButton(
                     child: const Text('Cancel'),
@@ -53,8 +52,7 @@ Widget moodLogLayout(MoodLogEntity moodLog, BuildContext context) {
                     child: const Text('Delete'),
                     onPressed: () {
                       // Dispatch the Redux action to delete the mood log entry
-                      StoreProvider.of<AppState>(context).dispatch(
-                          DeleteMoodDetailAction(moodLog.id.toString()));
+                      StoreProvider.of<AppState>(context).dispatch(DeleteMoodDetailAction(moodLog.id.toString()));
                       Navigator.of(dialogContext).pop();
                     },
                   ),
@@ -70,8 +68,7 @@ Widget moodLogLayout(MoodLogEntity moodLog, BuildContext context) {
           ),
           elevation: 0.5, // Adjusts the elevation for shadow effect
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 24.0, horizontal: 10.0),
+            padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 10.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -90,8 +87,7 @@ Widget moodLogLayout(MoodLogEntity moodLog, BuildContext context) {
                     ),
                     const Spacer(), // Pushes the timestamp to the right
                     Text(
-                      DateFormat('MMM d hh:mm a').format(moodLog
-                          .timestamp), // Formats the timestamp to show time only
+                      DateFormat('MMM d hh:mm a').format(moodLog.timestamp), // Formats the timestamp to show time only
                       style: const TextStyle(color: Colors.grey),
                     ),
                   ],

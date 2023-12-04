@@ -5,18 +5,19 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:redux/redux.dart';
-import 'package:swayam/domain/redux/app_state.dart';
-import 'package:swayam/domain/redux/home/home_actions.dart';
-import 'package:swayam/domain/redux/home/home_state.dart';
-import 'package:swayam/presentation/home/ui/master_fetch/fetch_master_view.dart';
-import 'package:swayam/presentation/home/ui/mood/mood_tracker.dart';
-import 'package:swayam/presentation/navigation/buildDesktopDrawer.dart';
-import 'package:swayam/presentation/navigation/buildMobileNavigationBar.dart';
-import 'package:swayam/presentation/navigation/isDesktop.dart';
-import 'package:swayam/presentation/navigation/leadingContainer.dart';
-import 'package:swayam/router.dart';
-import 'package:swayam/shared/common/bento_box.dart';
-import 'package:swayam/calendar_timeline/calendar_timeline.dart';
+import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/home/home_actions.dart';
+import 'package:teja/domain/redux/home/home_state.dart';
+import 'package:teja/presentation/home/ui/engagement/gratitude.dart';
+import 'package:teja/presentation/home/ui/master_fetch/fetch_master_view.dart';
+import 'package:teja/presentation/home/ui/mood/mood_tracker.dart';
+import 'package:teja/presentation/navigation/buildDesktopDrawer.dart';
+import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
+import 'package:teja/presentation/navigation/isDesktop.dart';
+import 'package:teja/presentation/navigation/leadingContainer.dart';
+import 'package:teja/router.dart';
+import 'package:teja/shared/common/bento_box.dart';
+import 'package:teja/calendar_timeline/calendar_timeline.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -76,8 +77,7 @@ class _HomePageState extends State<HomePage> {
     Duration oneMonth = const Duration(days: 31);
     DateTime oneMonthFromNow = now.add(oneMonth);
     Duration tenMonths = oneMonth * 10; // Calculate the duration for 3 weeks
-    DateTime tenMonthsAgo =
-        now.subtract(tenMonths); // Subtract the duration to get the past date
+    DateTime tenMonthsAgo = now.subtract(tenMonths); // Subtract the duration to get the past date
 
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
@@ -101,8 +101,7 @@ class _HomePageState extends State<HomePage> {
                 activeBackgroundDayColor: colorScheme.surface,
                 activeDayColor: colorScheme.background,
                 onDateSelected: (date) {
-                  StoreProvider.of<AppState>(context)
-                      .dispatch(UpdateSelectedDateAction(date));
+                  StoreProvider.of<AppState>(context).dispatch(UpdateSelectedDateAction(date));
                 },
                 leftMargin: 20,
                 selectableDayPredicate: (date) => date.isBefore(tomorrow),
@@ -124,14 +123,25 @@ class _HomePageState extends State<HomePage> {
                 desktopGridHeight: 3.5,
                 child: MoodTrackerWidget(),
               ),
+              const SizedBox(height: 12),
+              Text(
+                "Gratitude",
+                style: textTheme.titleSmall,
+              ),
+              const GratitudeCard(),
+              const SizedBox(height: 12),
+              Text(
+                "Affirmation",
+                style: textTheme.titleSmall,
+              ),
+              const GratitudeCard(),
             ],
           ),
         );
       },
     );
     return Scaffold(
-      bottomNavigationBar:
-          isDesktop(context) ? null : buildMobileNavigationBar(context),
+      bottomNavigationBar: isDesktop(context) ? null : buildMobileNavigationBar(context),
       appBar: AppBar(
         elevation: 0.0,
         leading: leadingNavBar(context),

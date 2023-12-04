@@ -1,28 +1,20 @@
 // Reducer for MasterFactors
 import 'package:redux/redux.dart';
-import 'package:swayam/domain/redux/mood/master_factor/actions.dart';
-import 'package:swayam/domain/redux/mood/master_factor/state.dart';
+import 'package:teja/domain/redux/mood/master_factor/actions.dart';
+import 'package:teja/domain/redux/mood/master_factor/state.dart';
 
-Reducer<MasterFactorState> masterFactorReducer =
-    combineReducers<MasterFactorState>([
-  TypedReducer<MasterFactorState, FetchMasterFactorsInProgressAction>(
-      _fetchMasterFactorsInProgress),
-  TypedReducer<MasterFactorState, MasterFactorsFetchedSuccessAction>(
-      _masterFactorsFetchedSuccess),
-  TypedReducer<MasterFactorState, MasterFactorsFetchFailedAction>(
-      _masterFactorsFetchFailed),
-  TypedReducer<MasterFactorState, MasterFactorsFetchedFromCacheAction>(
-      _masterFactorsFetchedFromCache),
+Reducer<MasterFactorState> masterFactorReducer = combineReducers<MasterFactorState>([
+  TypedReducer<MasterFactorState, FetchMasterFactorsInProgressAction>(_fetchMasterFactorsInProgress),
+  TypedReducer<MasterFactorState, MasterFactorsFetchedSuccessAction>(_masterFactorsFetchedSuccess),
+  TypedReducer<MasterFactorState, MasterFactorsFetchFailedAction>(_masterFactorsFetchFailed),
+  TypedReducer<MasterFactorState, MasterFactorsFetchedFromCacheAction>(_masterFactorsFetchedFromCache),
 ]);
 
-MasterFactorState _fetchMasterFactorsInProgress(
-    MasterFactorState state, FetchMasterFactorsInProgressAction action) {
-  return state.copyWith(
-      isLoading: true, isFetchSuccessful: false, errorMessage: null);
+MasterFactorState _fetchMasterFactorsInProgress(MasterFactorState state, FetchMasterFactorsInProgressAction action) {
+  return state.copyWith(isLoading: true, isFetchSuccessful: false, errorMessage: null);
 }
 
-MasterFactorState _masterFactorsFetchedSuccess(
-    MasterFactorState state, MasterFactorsFetchedSuccessAction action) {
+MasterFactorState _masterFactorsFetchedSuccess(MasterFactorState state, MasterFactorsFetchedSuccessAction action) {
   return state.copyWith(
     masterFactors: action.factors,
     isLoading: false,
@@ -32,8 +24,7 @@ MasterFactorState _masterFactorsFetchedSuccess(
   );
 }
 
-MasterFactorState _masterFactorsFetchFailed(
-    MasterFactorState state, MasterFactorsFetchFailedAction action) {
+MasterFactorState _masterFactorsFetchFailed(MasterFactorState state, MasterFactorsFetchFailedAction action) {
   return state.copyWith(
     isLoading: false,
     isFetchSuccessful: false,
@@ -41,8 +32,7 @@ MasterFactorState _masterFactorsFetchFailed(
   );
 }
 
-MasterFactorState _masterFactorsFetchedFromCache(
-    MasterFactorState state, MasterFactorsFetchedFromCacheAction action) {
+MasterFactorState _masterFactorsFetchedFromCache(MasterFactorState state, MasterFactorsFetchedFromCacheAction action) {
   return state.copyWith(
     masterFactors: action.factors,
     isLoading: false,

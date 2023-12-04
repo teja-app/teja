@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:swayam/domain/entities/feeling.dart';
-import 'package:swayam/shared/common/bento_box.dart';
+import 'package:teja/domain/entities/feeling.dart';
+import 'package:teja/shared/common/bento_box.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:swayam/domain/entities/master_feeling.dart';
-import 'package:swayam/domain/redux/app_state.dart';
+import 'package:teja/domain/entities/master_feeling.dart';
+import 'package:teja/domain/redux/app_state.dart';
 
 class FeelingsListWidget extends StatelessWidget {
   final List<FeelingEntity> feelings;

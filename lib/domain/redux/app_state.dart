@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:swayam/domain/redux/habit/habit/habit_state.dart';
-import 'package:swayam/domain/redux/home/home_state.dart';
-import 'package:swayam/domain/redux/mood/detail/mood_detail_state.dart';
-import 'package:swayam/domain/redux/mood/editor/mood_editor_state.dart';
-import 'package:swayam/domain/redux/mood/list/state.dart';
-import 'package:swayam/domain/redux/mood/logs/mood_logs_state.dart';
-import 'package:swayam/domain/redux/mood/master_factor/state.dart';
-import 'package:swayam/domain/redux/mood/master_feeling/state.dart';
-import 'package:swayam/domain/redux/onboarding/auth_state.dart';
-import 'package:swayam/domain/redux/weekly_mood_report/weekly_mood_report_state.dart';
+import 'package:teja/domain/redux/habit/habit/habit_state.dart';
+import 'package:teja/domain/redux/home/home_state.dart';
+import 'package:teja/domain/redux/mood/detail/mood_detail_state.dart';
+import 'package:teja/domain/redux/mood/editor/mood_editor_state.dart';
+import 'package:teja/domain/redux/mood/list/state.dart';
+import 'package:teja/domain/redux/mood/logs/mood_logs_state.dart';
+import 'package:teja/domain/redux/mood/master_factor/state.dart';
+import 'package:teja/domain/redux/mood/master_feeling/state.dart';
+import 'package:teja/domain/redux/onboarding/auth_state.dart';
+import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_state.dart';
 
 @immutable
 class AppState {
@@ -57,8 +57,7 @@ class AppState {
       masterFeelingState: masterFeelingState ?? this.masterFeelingState,
       masterFactorState: masterFactorState ?? this.masterFactorState,
       moodLogListState: moodLogListState ?? this.moodLogListState,
-      weeklyMoodReportState:
-          weeklyMoodReportState ?? this.weeklyMoodReportState,
+      weeklyMoodReportState: weeklyMoodReportState ?? this.weeklyMoodReportState,
       habitState: habitState ?? this.habitState,
     );
   }

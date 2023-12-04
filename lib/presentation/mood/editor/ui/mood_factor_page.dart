@@ -4,13 +4,13 @@ import 'package:icons_flutter/icons_flutter.dart';
 import 'package:multi_select_flutter/chip_field/multi_select_chip_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:redux/redux.dart';
-import 'package:swayam/domain/entities/feeling.dart';
-import 'package:swayam/domain/entities/master_factor.dart';
-import 'package:swayam/domain/redux/app_state.dart';
-import 'package:swayam/domain/redux/mood/editor/mood_editor_actions.dart';
-import 'package:swayam/domain/redux/mood/master_factor/actions.dart';
-import 'package:swayam/shared/common/button.dart';
-import 'package:swayam/shared/common/flexible_height_box.dart';
+import 'package:teja/domain/entities/feeling.dart';
+import 'package:teja/domain/entities/master_factor.dart';
+import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
+import 'package:teja/domain/redux/mood/master_factor/actions.dart';
+import 'package:teja/shared/common/button.dart';
+import 'package:teja/shared/common/flexible_height_box.dart';
 
 class FactorsScreen extends StatefulWidget {
   const FactorsScreen({super.key});
