@@ -9,10 +9,13 @@ import 'package:isar/isar.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:teja/domain/entities/mood_log.dart' as _i3;
 import 'package:teja/domain/redux/mood/list/state.dart' as _i9;
-import 'package:teja/infrastructure/database/isar_collections/badge.dart' as _i6;
-import 'package:teja/infrastructure/database/isar_collections/mood_log.dart' as _i8;
+import 'package:teja/infrastructure/database/isar_collections/badge.dart'
+    as _i6;
+import 'package:teja/infrastructure/database/isar_collections/mood_log.dart'
+    as _i8;
 import 'package:teja/infrastructure/repositories/badge_repository.dart' as _i4;
-import 'package:teja/infrastructure/repositories/mood_log_repository.dart' as _i7;
+import 'package:teja/infrastructure/repositories/mood_log_repository.dart'
+    as _i7;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -123,7 +126,8 @@ class MockBadgeRepository extends _i1.Mock implements _i4.BadgeRepository {
       ) as _i5.Future<void>);
 
   @override
-  _i5.Future<List<_i6.Badge>> getBadgesByType(_i6.BadgeType? type) => (super.noSuchMethod(
+  _i5.Future<List<_i6.Badge>> getBadgesByType(_i6.BadgeType? type) =>
+      (super.noSuchMethod(
         Invocation.method(
           #getBadgesByType,
           [type],
@@ -198,7 +202,8 @@ class MockMoodLogRepository extends _i1.Mock implements _i7.MoodLogRepository {
             endDate,
           ],
         ),
-        returnValue: _i5.Future<List<_i3.MoodLogEntity>>.value(<_i3.MoodLogEntity>[]),
+        returnValue:
+            _i5.Future<List<_i3.MoodLogEntity>>.value(<_i3.MoodLogEntity>[]),
       ) as _i5.Future<List<_i3.MoodLogEntity>>);
 
   @override
@@ -214,11 +219,13 @@ class MockMoodLogRepository extends _i1.Mock implements _i7.MoodLogRepository {
             endDate,
           ],
         ),
-        returnValue: _i5.Future<Map<DateTime, double>>.value(<DateTime, double>{}),
+        returnValue:
+            _i5.Future<Map<DateTime, double>>.value(<DateTime, double>{}),
       ) as _i5.Future<Map<DateTime, double>>);
 
   @override
-  _i5.Future<void> addOrUpdateMoodLog(_i8.MoodLog? moodLog) => (super.noSuchMethod(
+  _i5.Future<void> addOrUpdateMoodLog(_i8.MoodLog? moodLog) =>
+      (super.noSuchMethod(
         Invocation.method(
           #addOrUpdateMoodLog,
           [moodLog],
@@ -255,6 +262,25 @@ class MockMoodLogRepository extends _i1.Mock implements _i7.MoodLogRepository {
       ) as _i5.Future<void>);
 
   @override
+  _i5.Future<void> updateFactorsForFeeling(
+    String? moodLogId,
+    String? feelingSlug,
+    List<String>? factorSlugs,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateFactorsForFeeling,
+          [
+            moodLogId,
+            feelingSlug,
+            factorSlugs,
+          ],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
   _i5.Future<_i8.MoodLog?> getTodaysMoodLog() => (super.noSuchMethod(
         Invocation.method(
           #getTodaysMoodLog,
@@ -280,7 +306,8 @@ class MockMoodLogRepository extends _i1.Mock implements _i7.MoodLogRepository {
       ) as _i5.Future<List<_i8.MoodLog>>);
 
   @override
-  _i5.Future<_i8.MoodLog?> getMoodLogByDate(DateTime? date) => (super.noSuchMethod(
+  _i5.Future<_i8.MoodLog?> getMoodLogByDate(DateTime? date) =>
+      (super.noSuchMethod(
         Invocation.method(
           #getMoodLogByDate,
           [date],

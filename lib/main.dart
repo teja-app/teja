@@ -9,6 +9,7 @@ import 'package:teja/infrastructure/database/isar_collections/master_factor.dart
 import 'package:teja/infrastructure/database/isar_collections/master_feeling.dart';
 import 'package:teja/infrastructure/database/isar_collections/master_feeling_factor.dart';
 import 'package:teja/infrastructure/database/isar_collections/mood_log.dart';
+import 'package:teja/infrastructure/database/isar_collections/quote.dart';
 
 import 'shared/helpers/logger.dart';
 
@@ -44,7 +45,13 @@ Future<Isar> openIsar() async {
   final path = directory.path;
   // Set up Isar and return the instance
   final isar = await Isar.open(
-    [MoodLogSchema, MasterFeelingSchema, MasterFactorSchema, FeelingFactorSchema],
+    [
+      MoodLogSchema,
+      MasterFeelingSchema,
+      MasterFactorSchema,
+      FeelingFactorSchema,
+      QuoteSchema,
+    ],
     directory: path,
   );
   return isar;

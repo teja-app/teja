@@ -8,6 +8,7 @@ import 'package:teja/domain/redux/mood/logs/mood_logs_state.dart';
 import 'package:teja/domain/redux/mood/master_factor/state.dart';
 import 'package:teja/domain/redux/mood/master_feeling/state.dart';
 import 'package:teja/domain/redux/onboarding/auth_state.dart';
+import 'package:teja/domain/redux/quotes/quote_state.dart';
 import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_state.dart';
 
 @immutable
@@ -22,6 +23,7 @@ class AppState {
   final MasterFactorState masterFactorState;
   final WeeklyMoodReportState weeklyMoodReportState;
   final HabitState habitState;
+  final QuoteState quoteState;
 
   const AppState({
     required this.authState,
@@ -34,6 +36,7 @@ class AppState {
     required this.masterFactorState,
     required this.weeklyMoodReportState,
     required this.habitState,
+    required this.quoteState,
   });
 
   AppState copyWith({
@@ -47,6 +50,7 @@ class AppState {
     MoodLogListState? moodLogListState,
     WeeklyMoodReportState? weeklyMoodReportState,
     HabitState? habitState,
+    QuoteState? quoteState,
   }) {
     return AppState(
       authState: authState ?? this.authState,
@@ -59,6 +63,7 @@ class AppState {
       moodLogListState: moodLogListState ?? this.moodLogListState,
       weeklyMoodReportState: weeklyMoodReportState ?? this.weeklyMoodReportState,
       habitState: habitState ?? this.habitState,
+      quoteState: quoteState ?? this.quoteState,
     );
   }
 
@@ -74,6 +79,7 @@ class AppState {
       moodLogListState: MoodLogListState.initial(),
       weeklyMoodReportState: WeeklyMoodReportState.initial(),
       habitState: HabitState.initial(),
+      quoteState: QuoteState.initial(),
     );
   }
 }

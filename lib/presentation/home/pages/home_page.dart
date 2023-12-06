@@ -182,7 +182,9 @@ class _ViewModel {
   static _ViewModel fromStore(Store<AppState> store) {
     return _ViewModel(
       selectedDate: store.state.homeState.selectedDate,
-      isFetchSuccessful: store.state.masterFeelingState.isFetchSuccessful,
+      isFetchSuccessful: store.state.masterFeelingState.isFetchSuccessful &&
+          store.state.masterFactorState.isFetchSuccessful &&
+          store.state.quoteState.isFetchSuccessful,
     );
   }
 }

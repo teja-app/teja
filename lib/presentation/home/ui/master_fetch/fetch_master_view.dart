@@ -4,6 +4,7 @@ import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/mood/master_factor/actions.dart';
 import 'package:teja/domain/redux/mood/master_feeling/actions.dart';
+import 'package:teja/domain/redux/quotes/quote_action.dart';
 import 'package:teja/shared/common/button.dart';
 
 class FetchMasterView extends StatefulWidget {
@@ -20,7 +21,8 @@ class _FetchMasterViewState extends State<FetchMasterView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final store = StoreProvider.of<AppState>(context);
       store.dispatch(FetchMasterFeelingsActionFromApi());
-      store.dispatch(FetchMasterFactorsActionFromApi()); // Dispatch action to fetch factors
+      store.dispatch(FetchMasterFactorsActionFromApi());
+      store.dispatch(FetchQuotesActionFromApi());
     });
   }
 
@@ -42,7 +44,8 @@ class _FetchMasterViewState extends State<FetchMasterView> {
               Button(
                 onPressed: () {
                   vm.fetchFeelings();
-                  vm.fetchFactors(); // Fetch factors for offline mode
+                  vm.fetchFactors();
+                  vm.fetchQuotes();
                 },
                 text: 'Retry',
               ),
@@ -58,20 +61,26 @@ class _ViewModel {
   final bool isLoading;
   final bool isFetchSuccessful;
   final Function fetchFeelings;
-  final Function fetchFactors; // Function to fetch factors
+  final Function fetchFactors;
+  final Function fetchQuotes;
 
   _ViewModel({
     required this.isLoading,
     required this.isFetchSuccessful,
     required this.fetchFeelings,
     required this.fetchFactors,
+    required this.fetchQuotes,
   });
 
   static _ViewModel fromStore(Store<AppState> store) {
     return _ViewModel(
-      isLoading: store.state.masterFeelingState.isLoading || store.state.masterFactorState.isLoading,
-      isFetchSuccessful:
-          store.state.masterFeelingState.isFetchSuccessful && store.state.masterFactorState.isFetchSuccessful,
+      isLoading: store.state.masterFeelingState.isLoading ||
+          store.state.masterFactorState.isLoading ||
+          store.state.quoteState.isLoading,
+      isFetchSuccessful: store.state.masterFeelingState.isFetchSuccessful &&
+          store.state.masterFactorState.isFetchSuccessful &&
+          store.state.quoteState.isFetchSuccessful,
+      fetchQuotes: () => store.dispatch(FetchQuotesActionFromApi()),
       fetchFeelings: () => store.dispatch(FetchMasterFeelingsActionFromApi()),
       fetchFactors: () => store.dispatch(FetchMasterFactorsActionFromApi()), // Dispatch action for factors
     );
