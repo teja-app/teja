@@ -23,13 +23,9 @@ class YearItem extends StatelessWidget {
     TextStyle textStyle;
 
     if (small) {
-      textStyle = textTheme.bodySmall
-              ?.copyWith(color: baseColor, fontWeight: FontWeight.bold) ??
-          const TextStyle();
+      textStyle = textTheme.bodySmall?.copyWith(color: baseColor, fontWeight: FontWeight.bold) ?? const TextStyle();
     } else {
-      textStyle = textTheme.titleLarge
-              ?.copyWith(color: baseColor, fontWeight: FontWeight.bold) ??
-          const TextStyle();
+      textStyle = textTheme.titleLarge?.copyWith(color: baseColor, fontWeight: FontWeight.bold) ?? const TextStyle();
     }
 
     BoxDecoration? decoration = isSelected || small

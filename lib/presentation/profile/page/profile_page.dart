@@ -56,6 +56,15 @@ class ProfilePage extends StatelessWidget {
                 const SizedBox(
                   height: 20,
                 ),
+                Button(
+                  text: "Edit Goal",
+                  buttonType: ButtonType.primary,
+                  width: 200,
+                  onPressed: () {
+                    HapticFeedback.selectionClick();
+                    goRouter.pushNamed(RootPath.goalSettings);
+                  },
+                ),
                 BentoBox(
                   key: const Key("RadarBento"),
                   gridWidth: 4,
