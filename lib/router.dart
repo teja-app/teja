@@ -11,6 +11,7 @@ import 'package:teja/presentation/onboarding/pages/onboarding_page.dart';
 import 'package:teja/presentation/onboarding/pages/sign_in_page.dart';
 import 'package:teja/presentation/onboarding/pages/sign_up_page.dart';
 import 'package:teja/presentation/profile/page/profile_page.dart';
+import 'package:teja/presentation/quotes/random_quote.dart';
 import 'package:teja/presentation/settings/pages/advanced_settings_page.dart';
 import 'package:teja/presentation/settings/pages/basic_settings_page.dart';
 import 'package:teja/presentation/settings/pages/notification_settings_page.dart';
@@ -108,6 +109,12 @@ final GoRouter router = GoRouter(
       name: RootPath.habit,
       path: '/habit',
       builder: (context, state) => const HabitsPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RootPath.inspiration,
+      path: '/inspiration',
+      builder: (context, state) => RandomQuotePage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,

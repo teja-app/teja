@@ -69,6 +69,8 @@ dependencies:
   infinite_scroll_pagination: ^4.0.0
   decimal: ^2.3.3
   health: ^8.1.0
+  share_plus: ^7.2.1
+  social_share: ^2.3.1
 
 dev_dependencies:
   flutter_test:
@@ -108,6 +110,7 @@ flutter:
     - assets/mood/
     - assets/mood/badge/
     - assets/habit/
+    - assets/quotes/
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

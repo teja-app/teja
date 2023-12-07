@@ -8,7 +8,6 @@ import 'package:teja/domain/redux/app_reducer.dart';
 import 'package:teja/domain/redux/root_saga.dart';
 
 import 'package:teja/domain/redux/app_state.dart';
-import 'package:teja/domain/redux/onboarding/actions.dart';
 import 'package:teja/domain/redux/logging_middleware.dart';
 import 'package:teja/shared/helpers/logger.dart';
 
@@ -17,8 +16,6 @@ Future<Store<AppState>> createStore(Isar isarInstance) async {
   final fileExists = await File(filePath).exists();
   print('File exists: $fileExists');
   await dotenv.load(fileName: filePath);
-  final googleClientIdIos = dotenv.env['GOOGLE_CLIENT_ID_IOS'];
-  final googleServerClientId = dotenv.env['GOOGLE_SERVER_CLIENT_ID'];
   var options = Options(
     //add an option to handle uncaught errors
     onError: (dynamic e, String s) {
@@ -44,13 +41,6 @@ Future<Store<AppState>> createStore(Isar isarInstance) async {
     // Add other dependencies if needed
   });
   sagaMiddleware.run(rootSaga);
-
-  store.dispatch(
-    SetGoogleClientIdsAction(
-      googleClientIdIos!,
-      googleServerClientId!,
-    ),
-  );
 
   return store;
 }

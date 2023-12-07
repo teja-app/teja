@@ -43,7 +43,7 @@ class ExplorePage extends StatelessWidget {
           'Inspiration',
           'assets/background/inspiration.svg',
           context,
-          RootPath.habit,
+          RootPath.inspiration,
         ),
       ],
     );
