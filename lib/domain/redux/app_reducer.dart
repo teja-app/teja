@@ -9,6 +9,7 @@ import 'package:teja/domain/redux/mood/master_factor/reducer.dart';
 import 'package:teja/domain/redux/mood/master_feeling/reducer.dart';
 import 'package:teja/domain/redux/onboarding/reducers.dart';
 import 'package:teja/domain/redux/quotes/quote_reducer.dart';
+import 'package:teja/domain/redux/visions/vision_reducer.dart';
 import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_reducer.dart';
 
 AppState _moodLogsReducer(AppState state, action) {
@@ -59,6 +60,12 @@ AppState _quoteReducer(AppState state, action) {
   );
 }
 
+AppState _visionReducer(AppState state, action) {
+  return state.copyWith(
+    visionState: visionReducer(state.visionState, action),
+  );
+}
+
 Reducer<AppState> appReducer = combineReducers<AppState>([
   ...authReducer,
   ...moodDetailReducer,
@@ -70,4 +77,5 @@ Reducer<AppState> appReducer = combineReducers<AppState>([
   _moodLogListReducer,
   _weeklyMoodReportReducer,
   _quoteReducer,
+  _visionReducer,
 ]);

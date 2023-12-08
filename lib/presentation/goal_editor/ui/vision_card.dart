@@ -1,28 +1,48 @@
 import 'package:flutter/material.dart';
 
-class Goal {
+class Vision {
   final IconData iconData;
   final String title;
   final String description;
   bool isSelected;
   int? order;
+  final String slug;
 
-  Goal({
+  Vision({
     required this.iconData,
     required this.title,
     required this.description,
+    required this.slug,
     this.isSelected = false,
     this.order,
   });
+
+  Vision copyWith({
+    IconData? iconData,
+    String? title,
+    String? description,
+    bool? isSelected,
+    int? order,
+    String? slug,
+  }) {
+    return Vision(
+      iconData: iconData ?? this.iconData,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      slug: slug ?? this.slug,
+      isSelected: isSelected ?? this.isSelected,
+      order: order ?? this.order,
+    );
+  }
 }
 
-class GoalCard extends StatelessWidget {
-  final Goal goal;
+class VisionCard extends StatelessWidget {
+  final Vision vision;
   final VoidCallback onTap;
 
-  const GoalCard({
+  const VisionCard({
     Key? key,
-    required this.goal,
+    required this.vision,
     required this.onTap,
   }) : super(key: key);
 
@@ -30,7 +50,7 @@ class GoalCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorSchema = Theme.of(context).colorScheme;
     return Card(
-      color: goal.isSelected ? colorSchema.surface : colorSchema.background, // Change color to indicate selection
+      color: vision.isSelected ? colorSchema.surface : colorSchema.background, // Change color to indicate selection
       child: InkWell(
         onTap: onTap,
         child: Padding(
@@ -39,38 +59,38 @@ class GoalCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Icon(
-                goal.iconData,
+                vision.iconData,
                 size: 48,
-                color: goal.isSelected ? colorSchema.background : colorSchema.surface,
+                color: vision.isSelected ? colorSchema.background : colorSchema.surface,
               ),
-              SizedBox(width: 16),
+              const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      goal.title,
+                      vision.title,
                       style: TextStyle(
-                        color: goal.isSelected ? colorSchema.background : colorSchema.surface,
+                        color: vision.isSelected ? colorSchema.background : colorSchema.surface,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
-                      goal.description,
+                      vision.description,
                       style: TextStyle(
-                        color: goal.isSelected ? colorSchema.background : colorSchema.surface,
+                        color: vision.isSelected ? colorSchema.background : colorSchema.surface,
                       ),
                     ),
                   ],
                 ),
               ),
-              if (goal.order != null)
+              if (vision.order != null)
                 Padding(
                   padding: const EdgeInsets.only(left: 8),
                   child: Text(
-                    goal.order.toString(),
+                    vision.order.toString(),
                     style: TextStyle(
                       color: colorSchema.background,
                       fontSize: 24,

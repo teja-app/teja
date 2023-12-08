@@ -1,8 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:teja/presentation/explore/list/pages/explote_page.dart';
-import 'package:teja/presentation/goal_editor/page/goal_editor_page.dart';
-import 'package:teja/presentation/habits/goal_settings/pages/goal_settings.dart';
+import 'package:teja/presentation/goal_editor/page/vision_picker_page.dart';
 import 'package:teja/presentation/habits/habit_list/pages/habits_page.dart';
 import 'package:teja/presentation/home/pages/home_page.dart';
 import 'package:teja/presentation/mood/detail/page/mood_detail.dart';
@@ -133,7 +132,7 @@ final GoRouter router = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       name: RootPath.goalSettings,
       path: '/goal_settings',
-      builder: (context, state) => GoalEditorPage(),
+      builder: (context, state) => const VisionPickerPage(),
     ),
     GoRoute(
       // Add this block for mood detail page
