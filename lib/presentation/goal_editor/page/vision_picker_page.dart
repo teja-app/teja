@@ -41,7 +41,7 @@ class _VisionPickerPageState extends State<VisionPickerPage> {
             child: Column(
               children: [
                 Text(
-                  "Which areas of your life are you most excited to enhance? Let's prioritize your journey. Don't worry you can edit this any time.",
+                  "Which areas of your life are you most excited to enhance? Let's prioritize your journey.",
                   style: textTheme.titleSmall,
                 ),
                 const SizedBox(
@@ -53,7 +53,6 @@ class _VisionPickerPageState extends State<VisionPickerPage> {
                     itemBuilder: (context, index) {
                       final vision = viewModel.allVisions[index];
                       final isSelected = viewModel.isSelected(vision.slug);
-
                       return VisionCard(
                         vision: vision.copyWith(isSelected: isSelected),
                         onTap: () => viewModel.onVisionTap(vision.slug),
@@ -62,7 +61,7 @@ class _VisionPickerPageState extends State<VisionPickerPage> {
                   ),
                 ),
                 Button(
-                  text: "Save Vision",
+                  text: "Next",
                   buttonType: ButtonType.primary,
                   width: 200,
                   onPressed: () {
