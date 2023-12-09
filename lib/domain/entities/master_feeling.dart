@@ -1,21 +1,17 @@
 // lib/domain/entities/feeling.dart
 
-import 'package:teja/domain/entities/master_factor.dart';
-
 class MasterFeelingEntity {
   final int? id;
   final String slug;
   final String name;
-  final String description;
-  final int moodId;
-  final List<MasterFactorEntity>? factors;
+  final int energy;
+  final int pleasantness;
 
   MasterFeelingEntity({
     required this.slug,
     required this.name,
-    required this.description,
-    required this.moodId,
-    this.factors = const [],
+    required this.energy,
+    required this.pleasantness,
     this.id,
   });
 
@@ -23,17 +19,15 @@ class MasterFeelingEntity {
   MasterFeelingEntity copyWith({
     String? slug,
     String? name,
-    String? description,
-    int? moodId,
-    List<MasterFactorEntity>? factors,
+    int? energy,
+    int? pleasantness,
     int? id,
   }) {
     return MasterFeelingEntity(
       slug: slug ?? this.slug,
       name: name ?? this.name,
-      description: description ?? this.description,
-      moodId: moodId ?? this.moodId,
-      factors: factors ?? this.factors,
+      energy: energy ?? this.energy,
+      pleasantness: pleasantness ?? this.pleasantness,
       id: id ?? this.id,
     );
   }

@@ -9,7 +9,6 @@ import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:teja/domain/redux/mood/master_feeling/actions.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:teja/domain/redux/app_state.dart';
-import 'package:teja/shared/common/description_button.dart';
 
 class FeelingScreen extends StatefulWidget {
   const FeelingScreen({super.key});
@@ -43,10 +42,10 @@ class _FeelingScreenState extends State<FeelingScreen> {
     // setState(() {
     _allFeelings = feelings.cast<MasterFeelingEntity>();
     // Filter the comprehensive _feelings list based on currentMood
-    _filteredFeelings = _allFeelings.where((emotion) => emotion.moodId == currentMood).toList();
+    // _filteredFeelings = _allFeelings.where((emotion) => emotion.moodId == currentMood).toList();
 
     // Initialize _multiSelectItems
-    _multiSelectItems = _filteredFeelings.map((e) => MultiSelectItem<MasterFeelingEntity>(e, e.name)).toList();
+    _multiSelectItems = _allFeelings.map((e) => MultiSelectItem<MasterFeelingEntity>(e, e.name)).toList();
     // });
   }
 
@@ -54,59 +53,17 @@ class _FeelingScreenState extends State<FeelingScreen> {
     setState(() {
       _allFeelings = masterFeelings.cast<MasterFeelingEntity>();
       // Filter the comprehensive _feelings list based on currentMood
-      _filteredFeelings = _allFeelings.where((emotion) => emotion.moodId == currentMood).toList();
+      // _filteredFeelings = _allFeelings.where((emotion) => emotion.moodId == currentMood).toList();
 
       // Initialize _multiSelectItems
-      _multiSelectItems = _filteredFeelings.map((e) => MultiSelectItem<MasterFeelingEntity>(e, e.name)).toList();
+      _multiSelectItems = _allFeelings.map((e) => MultiSelectItem<MasterFeelingEntity>(e, e.name)).toList();
     });
   }
-
-  // void _showAllFeelings() {
-  //   showModalBottomSheet(
-  //     isScrollControlled: true,
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return MultiSelectBottomSheet(
-  //         searchable: true,
-  //         items: _allFeelings
-  //             .map((e) => MultiSelectItem<MasterFeelingEntity>(e, e.name))
-  //             .toList(),
-  //         maxChildSize: 0.7,
-  //         minChildSize: 0.3,
-  //         initialChildSize: 0.5,
-  //         onConfirm: (values) {
-  //           setState(() {
-  //             _selectedFeelings = values;
-
-  //             for (var emotion in _selectedFeelings) {
-  //               if (!_filteredFeelings.contains(emotion)) {
-  //                 _filteredFeelings.add(emotion);
-  //                 _multiSelectItems.add(MultiSelectItem<MasterFeelingEntity>(
-  //                     emotion, emotion.name));
-  //               }
-  //             }
-  //           });
-  //         },
-  //         initialValue: _selectedFeelings,
-  //       );
-  //     },
-  //   );
-  // }
 
   // Return 'active' if the mood is selected, otherwise 'inactive'
   String getMoodIconPath(int moodIndex) {
     return 'assets/icons/mood_${moodIndex}_active.svg';
   }
-
-  // void _onFeelingSelectionChanged(List<MasterFeelingEntity> newSelections) {
-  //   final store = StoreProvider.of<AppState>(context);
-  //   List<String> selectedFeelingSlugs = newSelections.map((feeling) => feeling.slug).toSet().toList();
-  //   store.dispatch(TriggerUpdateFeelingsAction(
-  //     store.state.moodEditorState.currentMoodLog!.id, // or some other way to get the moodLogId
-  //     selectedFeelingSlugs,
-  //     newSelections,
-  //   ));
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -176,9 +133,9 @@ class _FeelingScreenState extends State<FeelingScreen> {
                                     FormFieldState<List<MasterFeelingEntity?>> state) {
                                   bool isSelected =
                                       selectedFeelings.any((selectedFeeling) => selectedFeeling.id == item.value?.id);
-                                  return DescriptionButton(
-                                    title: item.value!.name,
-                                    description: item.value!.description,
+                                  return Button(
+                                    text: item.value!.name,
+                                    width: 100,
                                     onPressed: () {
                                       final store = StoreProvider.of<AppState>(context);
                                       bool isAlreadySelected = selectedFeelings
@@ -216,17 +173,6 @@ class _FeelingScreenState extends State<FeelingScreen> {
                             }
                           },
                         ),
-                      // Container(
-                      //   margin: const EdgeInsets.all(8.0),
-                      //   child: TextButton(
-                      //     onPressed: _showAllFeelings,
-                      //     child: Text(
-                      //       "View more feelings options",
-                      //       style: textTheme.labelLarge,
-                      //     ),
-                      //   ),
-                      // ),
-                      // Next Button
                     ],
                   ),
                 ),

@@ -25,8 +25,8 @@ class MasterFeelingRepository {
         if (existingFeeling != null) {
           // Update existing record
           existingFeeling.name = feeling.name;
-          existingFeeling.moodId = feeling.moodId;
-          existingFeeling.description = feeling.description;
+          existingFeeling.energy = feeling.energy; // updated
+          existingFeeling.pleasantness = feeling.pleasantness; // updated
           id = await isar.masterFeelings.put(existingFeeling);
         } else {
           // Add new record
@@ -42,8 +42,8 @@ class MasterFeelingRepository {
     return MasterFeelingEntity(
       slug: feeling.slug,
       name: feeling.name,
-      moodId: feeling.moodId,
-      description: feeling.description,
+      energy: feeling.energy, // updated
+      pleasantness: feeling.pleasantness, // updated
       id: feeling.isarId,
     );
   }

@@ -18,26 +18,20 @@ class MoodApi {
     const String url = '/mood/feelings';
     Response response = await _apiHelper.get(url, authToken: authToken);
     List<dynamic> jsonResponse = response.data;
+
     // Deserialize the JSON to DTOs and then to Entities
     List<MasterFeelingEntity> feelings = jsonResponse.map((json) {
       // Parse the main feeling
       MasterFeelingDto feelingDto = MasterFeelingDto.fromJson(json);
-      MasterFeelingEntity feeling = MasterFeelingEntity(
+      return MasterFeelingEntity(
         slug: feelingDto.slug,
         name: feelingDto.name,
-        moodId: feelingDto.moodId,
-        description: feelingDto.description,
+        energy: feelingDto.energy,
+        pleasantness: feelingDto.pleasantness,
+        id: null, // Assuming id is not part of the DTO and is nullable in the entity
       );
-      // Parse associated factors
-      List<MasterFactorEntity> factors = feelingDto.factors!.map((factorDto) {
-        return MasterFactorEntity(
-          slug: factorDto.slug,
-          name: factorDto.name,
-          categoryId: factorDto.categoryId,
-        );
-      }).toList();
-      return feeling.copyWith(factors: factors);
     }).toList();
+
     return Future(() => feelings);
   }
 

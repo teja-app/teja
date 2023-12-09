@@ -17,20 +17,20 @@ const MasterFeelingSchema = CollectionSchema(
   name: r'MasterFeeling',
   id: 7833243150912925411,
   properties: {
-    r'description': PropertySchema(
+    r'energy': PropertySchema(
       id: 0,
-      name: r'description',
-      type: IsarType.string,
-    ),
-    r'moodId': PropertySchema(
-      id: 1,
-      name: r'moodId',
+      name: r'energy',
       type: IsarType.long,
     ),
     r'name': PropertySchema(
-      id: 2,
+      id: 1,
       name: r'name',
       type: IsarType.string,
+    ),
+    r'pleasantness': PropertySchema(
+      id: 2,
+      name: r'pleasantness',
+      type: IsarType.long,
     ),
     r'slug': PropertySchema(
       id: 3,
@@ -72,7 +72,6 @@ int _masterFeelingEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  bytesCount += 3 + object.description.length * 3;
   bytesCount += 3 + object.name.length * 3;
   bytesCount += 3 + object.slug.length * 3;
   return bytesCount;
@@ -84,9 +83,9 @@ void _masterFeelingSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.description);
-  writer.writeLong(offsets[1], object.moodId);
-  writer.writeString(offsets[2], object.name);
+  writer.writeLong(offsets[0], object.energy);
+  writer.writeString(offsets[1], object.name);
+  writer.writeLong(offsets[2], object.pleasantness);
   writer.writeString(offsets[3], object.slug);
 }
 
@@ -97,10 +96,10 @@ MasterFeeling _masterFeelingDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = MasterFeeling();
-  object.description = reader.readString(offsets[0]);
+  object.energy = reader.readLong(offsets[0]);
   object.isarId = id;
-  object.moodId = reader.readLong(offsets[1]);
-  object.name = reader.readString(offsets[2]);
+  object.name = reader.readString(offsets[1]);
+  object.pleasantness = reader.readLong(offsets[2]);
   object.slug = reader.readString(offsets[3]);
   return object;
 }
@@ -113,11 +112,11 @@ P _masterFeelingDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readString(offset)) as P;
-    case 1:
       return (reader.readLong(offset)) as P;
-    case 2:
+    case 1:
       return (reader.readString(offset)) as P;
+    case 2:
+      return (reader.readLong(offset)) as P;
     case 3:
       return (reader.readString(offset)) as P;
     default:
@@ -321,137 +320,57 @@ extension MasterFeelingQueryWhere
 extension MasterFeelingQueryFilter
     on QueryBuilder<MasterFeeling, MasterFeeling, QFilterCondition> {
   QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
-      descriptionEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+      energyEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'description',
+        property: r'energy',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
-      descriptionGreaterThan(
-    String value, {
+      energyGreaterThan(
+    int value, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'description',
+        property: r'energy',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
-      descriptionLessThan(
-    String value, {
+      energyLessThan(
+    int value, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'description',
+        property: r'energy',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
-      descriptionBetween(
-    String lower,
-    String upper, {
+      energyBetween(
+    int lower,
+    int upper, {
     bool includeLower = true,
     bool includeUpper = true,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'description',
+        property: r'energy',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
-      descriptionStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'description',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
-      descriptionEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'description',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
-      descriptionContains(String value, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'description',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
-      descriptionMatches(String pattern, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'description',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
-      descriptionIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'description',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
-      descriptionIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'description',
-        value: '',
       ));
     });
   }
@@ -504,62 +423,6 @@ extension MasterFeelingQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'isarId',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
-      moodIdEqualTo(int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'moodId',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
-      moodIdGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'moodId',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
-      moodIdLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'moodId',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
-      moodIdBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'moodId',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -699,6 +562,62 @@ extension MasterFeelingQueryFilter
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'name',
         value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      pleasantnessEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'pleasantness',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      pleasantnessGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'pleasantness',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      pleasantnessLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'pleasantness',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      pleasantnessBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'pleasantness',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
       ));
     });
   }
@@ -847,28 +766,15 @@ extension MasterFeelingQueryLinks
 
 extension MasterFeelingQuerySortBy
     on QueryBuilder<MasterFeeling, MasterFeeling, QSortBy> {
-  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy> sortByDescription() {
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy> sortByEnergy() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'description', Sort.asc);
+      return query.addSortBy(r'energy', Sort.asc);
     });
   }
 
-  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy>
-      sortByDescriptionDesc() {
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy> sortByEnergyDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'description', Sort.desc);
-    });
-  }
-
-  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy> sortByMoodId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'moodId', Sort.asc);
-    });
-  }
-
-  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy> sortByMoodIdDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'moodId', Sort.desc);
+      return query.addSortBy(r'energy', Sort.desc);
     });
   }
 
@@ -881,6 +787,20 @@ extension MasterFeelingQuerySortBy
   QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy> sortByNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.desc);
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy>
+      sortByPleasantness() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'pleasantness', Sort.asc);
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy>
+      sortByPleasantnessDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'pleasantness', Sort.desc);
     });
   }
 
@@ -899,16 +819,15 @@ extension MasterFeelingQuerySortBy
 
 extension MasterFeelingQuerySortThenBy
     on QueryBuilder<MasterFeeling, MasterFeeling, QSortThenBy> {
-  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy> thenByDescription() {
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy> thenByEnergy() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'description', Sort.asc);
+      return query.addSortBy(r'energy', Sort.asc);
     });
   }
 
-  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy>
-      thenByDescriptionDesc() {
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy> thenByEnergyDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'description', Sort.desc);
+      return query.addSortBy(r'energy', Sort.desc);
     });
   }
 
@@ -924,18 +843,6 @@ extension MasterFeelingQuerySortThenBy
     });
   }
 
-  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy> thenByMoodId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'moodId', Sort.asc);
-    });
-  }
-
-  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy> thenByMoodIdDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'moodId', Sort.desc);
-    });
-  }
-
   QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy> thenByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -945,6 +852,20 @@ extension MasterFeelingQuerySortThenBy
   QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy> thenByNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.desc);
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy>
+      thenByPleasantness() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'pleasantness', Sort.asc);
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy>
+      thenByPleasantnessDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'pleasantness', Sort.desc);
     });
   }
 
@@ -963,16 +884,9 @@ extension MasterFeelingQuerySortThenBy
 
 extension MasterFeelingQueryWhereDistinct
     on QueryBuilder<MasterFeeling, MasterFeeling, QDistinct> {
-  QueryBuilder<MasterFeeling, MasterFeeling, QDistinct> distinctByDescription(
-      {bool caseSensitive = true}) {
+  QueryBuilder<MasterFeeling, MasterFeeling, QDistinct> distinctByEnergy() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'description', caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<MasterFeeling, MasterFeeling, QDistinct> distinctByMoodId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'moodId');
+      return query.addDistinctBy(r'energy');
     });
   }
 
@@ -980,6 +894,13 @@ extension MasterFeelingQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'name', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QDistinct>
+      distinctByPleasantness() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'pleasantness');
     });
   }
 
@@ -999,21 +920,21 @@ extension MasterFeelingQueryProperty
     });
   }
 
-  QueryBuilder<MasterFeeling, String, QQueryOperations> descriptionProperty() {
+  QueryBuilder<MasterFeeling, int, QQueryOperations> energyProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'description');
-    });
-  }
-
-  QueryBuilder<MasterFeeling, int, QQueryOperations> moodIdProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'moodId');
+      return query.addPropertyName(r'energy');
     });
   }
 
   QueryBuilder<MasterFeeling, String, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
+    });
+  }
+
+  QueryBuilder<MasterFeeling, int, QQueryOperations> pleasantnessProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'pleasantness');
     });
   }
 

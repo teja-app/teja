@@ -35,8 +35,8 @@ class FeelingsListWidget extends StatelessWidget {
                   orElse: () => MasterFeelingEntity(
                     slug: feeling.feeling,
                     name: "Unknown",
-                    description: '',
-                    moodId: 1,
+                    energy: 0,
+                    pleasantness: 0,
                   ),
                 );
                 return BentoBox(

@@ -3,7 +3,7 @@ import 'package:isar/isar.dart';
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/entities/master_feeling.dart';
 import 'package:teja/domain/redux/mood/master_feeling/actions.dart';
-import 'package:teja/infrastructure/api/mood_api.dart';
+import 'package:teja/infrastructure/api/feeling_api.dart';
 import 'package:teja/infrastructure/database/isar_collections/master_feeling.dart';
 import 'package:teja/infrastructure/repositories/master_feeling.dart';
 import 'package:teja/shared/storage/secure_storage.dart';
@@ -61,22 +61,24 @@ class MasterFeelingSaga {
       final accessToken = Result<String?>();
       yield Call(readSecureData, args: ['access_token'], result: accessToken);
 
-      MoodApi moodApi = MoodApi();
+      FeelingApi moodApi = FeelingApi();
       var feelingsResult = Result<List<MasterFeelingEntity>>();
+      print("Here0");
       yield Call(
         moodApi.getMasterFeelings,
         args: [accessToken.value],
         result: feelingsResult,
       );
 
+      print("Here");
       var feelings = feelingsResult.value;
       if (feelings != null && feelings.isNotEmpty) {
         List<MasterFeeling> domainFeelings = feelings.map((entity) {
           return MasterFeeling()
             ..slug = entity.slug
             ..name = entity.name
-            ..moodId = entity.moodId
-            ..description = entity.description;
+            ..energy = entity.energy // updated
+            ..pleasantness = entity.pleasantness; // updated
         }).toList();
         // Add feelings
         var feelingRepo = MasterFeelingRepository(isar);
@@ -87,10 +89,17 @@ class MasterFeelingSaga {
           result: feelingIdsResult,
         );
 
+        print("Here1");
         var savedFeelingEntities = Result<List<MasterFeelingEntity>>();
         yield Call(
           MasterFeelingRepository(isar).getAllFeelingEntities,
           result: savedFeelingEntities,
+        );
+        yield Put(
+          MasterFeelingsFetchedSuccessAction(
+            savedFeelingEntities.value!,
+            DateTime.now(),
+          ),
         );
       } else {
         // Handle the null case, perhaps by dispatching an error action
@@ -99,6 +108,7 @@ class MasterFeelingSaga {
         );
       }
     }, Catch: (e, s) sync* {
+      print("e $e $s");
       yield Put(MasterFeelingsFetchFailedAction(e.toString()));
     });
   }

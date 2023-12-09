@@ -7,7 +7,6 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:teja/infrastructure/database/isar_collections/master_factor.dart';
 import 'package:teja/infrastructure/database/isar_collections/master_feeling.dart';
-import 'package:teja/infrastructure/database/isar_collections/master_feeling_factor.dart';
 import 'package:teja/infrastructure/database/isar_collections/mood_log.dart';
 import 'package:teja/infrastructure/database/isar_collections/quote.dart';
 import 'package:teja/infrastructure/database/isar_collections/vision.dart';
@@ -50,7 +49,6 @@ Future<Isar> openIsar() async {
       MoodLogSchema,
       MasterFeelingSchema,
       MasterFactorSchema,
-      FeelingFactorSchema,
       QuoteSchema,
       VisionSchema,
     ],

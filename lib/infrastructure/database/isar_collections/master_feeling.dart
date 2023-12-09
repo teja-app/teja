@@ -4,12 +4,12 @@ part 'master_feeling.g.dart';
 
 @Collection()
 class MasterFeeling {
-  Id isarId = Isar.autoIncrement; // Isar's internal auto-increment ID
+  Id isarId = Isar.autoIncrement;
 
   @Index(unique: true)
   late String slug;
 
   late String name;
-  late String description;
-  late int moodId;
+  late int energy;
+  late int pleasantness;
 }
