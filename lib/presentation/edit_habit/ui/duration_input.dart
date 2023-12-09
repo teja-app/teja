@@ -14,11 +14,11 @@ class _DurationInputWidgetState extends State<DurationInputWidget> {
   final TextEditingController _secondaryValueController = TextEditingController();
   String _primaryUnit = 'Days';
   String _secondaryUnit = 'Hours';
-  final List<String> _primaryUnits = ['Days', 'Hours', 'Minutes'];
+  final List<String> _primaryUnits = ['Days', 'Hours', 'Mins'];
   final Map<String, List<String>> _secondaryUnits = {
-    'Days': ['Hours', 'Minutes'],
-    'Hours': ['Minutes'],
-    'Minutes': []
+    'Days': ['Hours', 'Mins'],
+    'Hours': ['Mins'],
+    'Mins': []
   };
 
   void _updateDuration() {
@@ -31,7 +31,7 @@ class _DurationInputWidgetState extends State<DurationInputWidget> {
       if (_primaryUnit == 'Hours') {
         durationString += 'T${primaryValue}H';
       }
-      if (_secondaryUnit == 'Minutes') {
+      if (_secondaryUnit == 'Mins') {
         durationString += '${secondaryValue}M';
       }
     }
@@ -40,8 +40,21 @@ class _DurationInputWidgetState extends State<DurationInputWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
+        SizedBox(
+          width: 100, // Reduced width for primary value
+          child: TextField(
+            controller: _primaryValueController,
+            decoration: const InputDecoration(
+              labelText: 'Value',
+              border: OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.number,
+          ),
+        ),
+        const SizedBox(width: 8),
         DropdownButton<String>(
           value: _primaryUnit,
           onChanged: (String? newValue) {
@@ -58,35 +71,22 @@ class _DurationInputWidgetState extends State<DurationInputWidget> {
             );
           }).toList(),
         ),
-        TextField(
-          controller: _primaryValueController,
-          decoration: InputDecoration(labelText: 'Enter primary unit value'),
-          keyboardType: TextInputType.number,
-          onChanged: (value) => _updateDuration(),
-        ),
-        if (_secondaryUnits[_primaryUnit]!.isNotEmpty)
-          DropdownButton<String>(
-            value: _secondaryUnit,
-            onChanged: (String? newValue) {
-              setState(() {
-                _secondaryUnit = newValue!;
-                _updateDuration();
-              });
-            },
-            items: _secondaryUnits[_primaryUnit]!.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
+        if (_secondaryUnits[_primaryUnit]!.isNotEmpty) ...[
+          const SizedBox(width: 8),
+          SizedBox(
+            width: 100, // Reduced width for secondary value
+            child: TextField(
+              controller: _secondaryValueController,
+              decoration: const InputDecoration(
+                labelText: 'Add',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+            ),
           ),
-        if (_secondaryUnits[_primaryUnit]!.isNotEmpty)
-          TextField(
-            controller: _secondaryValueController,
-            decoration: InputDecoration(labelText: 'Enter secondary unit value'),
-            keyboardType: TextInputType.number,
-            onChanged: (value) => _updateDuration(),
-          ),
+          const SizedBox(width: 8),
+          Text(_secondaryUnits[_primaryUnit]![0]),
+        ],
       ],
     );
   }

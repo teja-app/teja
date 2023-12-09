@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:teja/domain/redux/habit/habit/habit_state.dart';
 import 'package:teja/domain/redux/home/home_state.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_state.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_state.dart';
