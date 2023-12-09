@@ -15,6 +15,13 @@ class MasterFeelingEntity {
     this.id,
   });
 
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is MasterFeelingEntity && other.id == id;
+  }
+
   // CopyWith method for immutability
   MasterFeelingEntity copyWith({
     String? slug,

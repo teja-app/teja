@@ -7,6 +7,7 @@ import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/master_feeling.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:teja/domain/redux/mood/master_feeling/actions.dart';
+import 'package:teja/presentation/mood/editor/ui/feeling_button.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:teja/domain/redux/app_state.dart';
 
@@ -65,6 +66,28 @@ class _FeelingScreenState extends State<FeelingScreen> {
     return 'assets/icons/mood_${moodIndex}_active.svg';
   }
 
+  void _handleFeelingSelection(MasterFeelingEntity feeling, _ViewModel vm) {
+    final store = StoreProvider.of<AppState>(context);
+    bool isAlreadySelected = vm.selectedFeelings?.contains(feeling) ?? false; // Null-aware check
+    List<MasterFeelingEntity> updatedSelectedFeelings = List.from(vm.selectedFeelings ?? []); // Null-aware
+
+    if (isAlreadySelected) {
+      updatedSelectedFeelings.removeWhere((selectedFeeling) => selectedFeeling.id == feeling.id);
+    } else {
+      updatedSelectedFeelings.add(feeling);
+    }
+
+    List<String> selectedFeelingSlugs = updatedSelectedFeelings.map((feeling) => feeling.slug).toSet().toList();
+
+    store.dispatch(
+      TriggerUpdateFeelingsAction(
+        vm.moodLogId,
+        selectedFeelingSlugs,
+        updatedSelectedFeelings,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -112,56 +135,26 @@ class _FeelingScreenState extends State<FeelingScreen> {
                         Builder(
                           builder: (BuildContext buildContext) {
                             List<MasterFeelingEntity> selectedFeelings = vm.selectedFeelings ?? [];
-                            print("selectedFeelings ${selectedFeelings}");
                             if (_multiSelectItems.isNotEmpty) {
-                              return MultiSelectChipField<MasterFeelingEntity>(
-                                scroll: false,
-                                items: _multiSelectItems,
-                                key: _multiSelectKey,
-                                showHeader: false,
-                                searchable: true,
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                    top: BorderSide(color: Colors.black12),
-                                  ),
+                              return GridView.builder(
+                                shrinkWrap: true, // Added this
+                                physics: NeverScrollableScrollPhysics(), // Added this
+                                padding: const EdgeInsets.all(10),
+                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                  crossAxisSpacing: 10,
+                                  mainAxisSpacing: 10,
                                 ),
-                                onTap: (List<MasterFeelingEntity?>? values) {
-                                  return null; // Explicitly returning null as a dynamic type.
-                                },
-                                chipWidth: 50,
-                                itemBuilder: (MultiSelectItem<MasterFeelingEntity?> item,
-                                    FormFieldState<List<MasterFeelingEntity?>> state) {
-                                  bool isSelected =
-                                      selectedFeelings.any((selectedFeeling) => selectedFeeling.id == item.value?.id);
-                                  return Button(
-                                    text: item.value!.name,
-                                    width: 100,
-                                    onPressed: () {
-                                      final store = StoreProvider.of<AppState>(context);
-                                      bool isAlreadySelected = selectedFeelings
-                                          .any((selectedFeeling) => selectedFeeling.id == item.value?.id);
-                                      List<MasterFeelingEntity> updatedSelectedFeelings = List.from(selectedFeelings);
-
-                                      if (isAlreadySelected) {
-                                        updatedSelectedFeelings.removeWhere((feeling) => feeling.id == item.value!.id);
-                                      } else {
-                                        var feelingToAdd =
-                                            _allFeelings.firstWhere((feeling) => feeling.id == item.value!.id);
-                                        updatedSelectedFeelings.add(feelingToAdd);
-                                      }
-
-                                      List<String> selectedFeelingSlugs =
-                                          updatedSelectedFeelings.map((feeling) => feeling.slug).toSet().toList();
-
-                                      store.dispatch(
-                                        TriggerUpdateFeelingsAction(
-                                          vm.moodLogId,
-                                          selectedFeelingSlugs,
-                                          updatedSelectedFeelings,
-                                        ),
-                                      );
-                                    },
-                                    icon: isSelected ? AntDesign.check : null,
+                                itemCount: vm.masterFeelings.length,
+                                itemBuilder: (context, index) {
+                                  final feeling = vm.masterFeelings[index];
+                                  return FeelingButton(
+                                    feeling: feeling,
+                                    isSelected: vm.selectedFeelings?.contains(feeling) ?? false, // Null-aware check
+                                    onSelect: (selectedFeeling) => _handleFeelingSelection(
+                                      selectedFeeling,
+                                      vm,
+                                    ), // Corrected function signature
                                   );
                                 },
                               );
