@@ -3,8 +3,6 @@ import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/entities/feeling.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:teja/domain/redux/mood/logs/mood_logs_actions.dart';
-import 'package:teja/infrastructure/repositories/feeling_factor_repository.dart';
-import 'package:teja/infrastructure/repositories/master_factor.dart';
 import 'package:teja/infrastructure/repositories/master_feeling.dart';
 import 'package:teja/infrastructure/repositories/mood_log_repository.dart';
 import 'package:teja/infrastructure/database/isar_collections/mood_log.dart';
@@ -22,10 +20,6 @@ class MoodEditorSaga {
     yield TakeEvery(
       _handleUpdateFactorsAction,
       pattern: UpdateFactorsAction,
-    );
-    yield TakeEvery(
-      _fetchLinkedFactorsAction,
-      pattern: FetchLinkedFactorsAction,
     );
   }
 
@@ -75,31 +69,9 @@ class MoodEditorSaga {
         return MoodLogFeeling()..feeling = slug;
       }).toList();
       yield Call(moodLogRepository.updateFeelingsForMoodLog, args: [action.moodLogId, updatedFeelings]);
-      yield Put(FetchLinkedFactorsAction(action.feelingSlugs));
     }, Catch: (e, s) sync* {
       yield Put(MoodUpdateFailedAction(e.toString()));
     });
-  }
-
-  _fetchLinkedFactorsAction({required FetchLinkedFactorsAction action}) sync* {
-    var isarResult = Result<Isar>();
-    yield GetContext('isar', result: isarResult);
-    Isar isar = isarResult.value!;
-
-    var masterFeelingRepository = MasterFeelingRepository(isar);
-    var feelingFactorRepository = FeelingFactorRepository(isar);
-
-    // Convert feeling slugs to IDs
-    var feelingIdsResult = Result<List<int>>();
-    yield Call(masterFeelingRepository.convertSlugsToIds, args: [action.feelingSlugs], result: feelingIdsResult);
-
-    // Fetch linked factors
-    var factorResults = Result<Map<int, List<int>>>();
-    yield Call(feelingFactorRepository.getFactorsLinkedToFeelings,
-        args: [feelingIdsResult.value!], result: factorResults);
-
-    // Dispatch an action to update state with fetched factors
-    yield Put(UpdateLinkedFactorsSuccessAction(factorResults.value));
   }
 
   _handleUpdateFactorsAction({required UpdateFactorsAction action}) sync* {

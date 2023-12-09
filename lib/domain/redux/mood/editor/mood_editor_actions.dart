@@ -105,10 +105,3 @@ class UpdateFactorsFailureAction {
 class ClearMoodEditorFormAction {
   const ClearMoodEditorFormAction();
 }
-
-@immutable
-class FetchLinkedFactorsAction {
-  final List<String> feelingSlugs;
-
-  const FetchLinkedFactorsAction(this.feelingSlugs);
-}
