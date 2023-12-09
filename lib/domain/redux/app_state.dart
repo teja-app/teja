@@ -23,7 +23,6 @@ class AppState {
   final MasterFeelingState masterFeelingState;
   final MasterFactorState masterFactorState;
   final WeeklyMoodReportState weeklyMoodReportState;
-  final HabitState habitState;
   final QuoteState quoteState;
   final VisionState visionState;
 
@@ -37,7 +36,6 @@ class AppState {
     required this.masterFeelingState,
     required this.masterFactorState,
     required this.weeklyMoodReportState,
-    required this.habitState,
     required this.quoteState,
     required this.visionState,
   });
@@ -52,7 +50,6 @@ class AppState {
     MasterFactorState? masterFactorState,
     MoodLogListState? moodLogListState,
     WeeklyMoodReportState? weeklyMoodReportState,
-    HabitState? habitState,
     QuoteState? quoteState,
     VisionState? visionState,
   }) {
@@ -66,7 +63,6 @@ class AppState {
       masterFactorState: masterFactorState ?? this.masterFactorState,
       moodLogListState: moodLogListState ?? this.moodLogListState,
       weeklyMoodReportState: weeklyMoodReportState ?? this.weeklyMoodReportState,
-      habitState: habitState ?? this.habitState,
       quoteState: quoteState ?? this.quoteState,
       visionState: visionState ?? this.visionState,
     );
@@ -83,7 +79,6 @@ class AppState {
       masterFactorState: MasterFactorState.initial(),
       moodLogListState: MoodLogListState.initial(),
       weeklyMoodReportState: WeeklyMoodReportState.initial(),
-      habitState: HabitState.initial(),
       quoteState: QuoteState.initial(),
       visionState: VisionState.initial(),
     );

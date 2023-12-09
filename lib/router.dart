@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:teja/presentation/edit_habit/pages/edig_habit_page.dart';
 import 'package:teja/presentation/explore/list/pages/explote_page.dart';
 import 'package:teja/presentation/goal_editor/page/vision_picker_page.dart';
-import 'package:teja/presentation/habits/habit_list/pages/habits_page.dart';
 import 'package:teja/presentation/home/pages/home_page.dart';
 import 'package:teja/presentation/mood/detail/page/mood_detail.dart';
 import 'package:teja/presentation/mood/editor/pages/mood_edit.dart';
@@ -52,6 +52,7 @@ class RootPath {
   static const guide = "guide";
   static const journal = "journal";
   static const habit = "habit";
+  static const editHabit = "edit_habit";
   static const inspiration = "inspiration";
   static const settings = "settings";
   static const moodEdit = "mood_edit";
@@ -106,9 +107,9 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
-      name: RootPath.habit,
-      path: '/habit',
-      builder: (context, state) => const HabitsPage(),
+      name: RootPath.editHabit,
+      path: '/edit_habit',
+      builder: (context, state) => const EditHabitPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
