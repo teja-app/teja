@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:icons_flutter/icons_flutter.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/master_feeling.dart';
@@ -20,16 +19,13 @@ class FeelingScreen extends StatefulWidget {
 
 class _FeelingScreenState extends State<FeelingScreen> {
   late List<MasterFeelingEntity> _allFeelings;
-  late List<MasterFeelingEntity> _filteredFeelings;
-  final _multiSelectKey = GlobalKey<FormFieldState>();
-  List<MultiSelectItem<MasterFeelingEntity>> _multiSelectItems = [];
+  Map<int, List<MasterFeelingEntity>> _groupedFeelings = {};
 
   @override
   void initState() {
     super.initState();
     _allFeelings = [];
-    _filteredFeelings = [];
-    _multiSelectItems = []; // Empty list initialization
+    _groupedFeelings = {}; // Initialize as an empty map
     // Dispatching the action to load feelings when the widget initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
@@ -39,26 +35,44 @@ class _FeelingScreenState extends State<FeelingScreen> {
   }
 
   void _initializeFeelings(List<MasterFeelingEntity> feelings, int currentMood) {
-    // Initialize the comprehensive list of emotions mapped to their respective moods
-    // setState(() {
     _allFeelings = feelings.cast<MasterFeelingEntity>();
-    // Filter the comprehensive _feelings list based on currentMood
-    // _filteredFeelings = _allFeelings.where((emotion) => emotion.moodId == currentMood).toList();
-
-    // Initialize _multiSelectItems
-    _multiSelectItems = _allFeelings.map((e) => MultiSelectItem<MasterFeelingEntity>(e, e.name)).toList();
-    // });
+    _groupAndSortFeelings();
   }
 
   void settingState(List<MasterFeelingEntity> masterFeelings, int currentMood) {
     setState(() {
       _allFeelings = masterFeelings.cast<MasterFeelingEntity>();
-      // Filter the comprehensive _feelings list based on currentMood
-      // _filteredFeelings = _allFeelings.where((emotion) => emotion.moodId == currentMood).toList();
-
-      // Initialize _multiSelectItems
-      _multiSelectItems = _allFeelings.map((e) => MultiSelectItem<MasterFeelingEntity>(e, e.name)).toList();
+      _groupAndSortFeelings();
     });
+  }
+
+  void _groupAndSortFeelings() {
+    _groupedFeelings.clear();
+    for (var feeling in _allFeelings) {
+      int moodGroup = _mapPleasantnessToMood(feeling.pleasantness);
+      _groupedFeelings.putIfAbsent(moodGroup, () => []).add(feeling);
+    }
+
+    // Sort each group by the absolute value of energy level
+    _groupedFeelings.forEach((key, value) {
+      value.sort((a, b) => a.energy.abs().compareTo(b.energy.abs()));
+    });
+  }
+
+  int _mapPleasantnessToMood(int pleasantness) {
+    if (pleasantness == -4 || pleasantness == -5) {
+      return 1; // Mood 1
+    } else if (pleasantness == -2 || pleasantness == -3) {
+      return 2; // Mood 2
+    } else if (pleasantness == -1 || pleasantness == 1) {
+      return 3; // Mood 3
+    } else if (pleasantness == 2 || pleasantness == 3) {
+      return 4; // Mood 4
+    } else if (pleasantness == 4 || pleasantness == 5) {
+      return 5; // Mood 5
+    } else {
+      return 3; // Default to Mood 3 for any unexpected values
+    }
   }
 
   // Return 'active' if the mood is selected, otherwise 'inactive'
@@ -92,104 +106,121 @@ class _FeelingScreenState extends State<FeelingScreen> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
+
     return StoreConnector<AppState, _ViewModel>(
-        converter: (store) => _ViewModel.fromStore(store),
-        onInit: (store) => _initializeFeelings(store.state.masterFeelingState.masterFeelings ?? [],
-            store.state.moodEditorState.currentMoodLog?.moodRating ?? 0),
-        onDidChange: (previousViewModel, viewModel) => {
-              settingState(
-                viewModel.masterFeelings,
-                viewModel.moodRating,
-              )
-            },
-        builder: (context, vm) {
-          String moodIconPath = getMoodIconPath(vm.moodRating);
-          return SizedBox(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            child: Stack(children: [
-              SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          if (moodIconPath.isNotEmpty)
-                            SvgPicture.asset(
-                              moodIconPath,
-                              width: 32,
-                              height: 32,
-                            ),
-                          const SizedBox(width: 8),
-                        ],
+      converter: (store) => _ViewModel.fromStore(store),
+      onInit: (store) => _initializeFeelings(store.state.masterFeelingState.masterFeelings ?? [],
+          store.state.moodEditorState.currentMoodLog?.moodRating ?? 0),
+      onDidChange: (previousViewModel, viewModel) => {
+        settingState(
+          viewModel.masterFeelings,
+          viewModel.moodRating,
+        )
+      },
+      builder: (context, vm) {
+        String moodIconPath = getMoodIconPath(vm.moodRating);
+
+        return SizedBox(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: Stack(children: [
+            SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (moodIconPath.isNotEmpty)
+                      SvgPicture.asset(
+                        moodIconPath,
+                        width: 32,
+                        height: 32,
                       ),
-                      const SizedBox(height: 20),
-                      const Text(
-                        "What best describes this feeling?",
-                        style: TextStyle(fontSize: 24),
-                      ),
-                      if (!vm.isLoading && _allFeelings.isNotEmpty)
-                        Builder(
-                          builder: (BuildContext buildContext) {
-                            List<MasterFeelingEntity> selectedFeelings = vm.selectedFeelings ?? [];
-                            if (_multiSelectItems.isNotEmpty) {
-                              return GridView.builder(
-                                shrinkWrap: true, // Added this
-                                physics: NeverScrollableScrollPhysics(), // Added this
-                                padding: const EdgeInsets.all(10),
-                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 3,
-                                  crossAxisSpacing: 10,
-                                  mainAxisSpacing: 10,
+                    const SizedBox(height: 20),
+                    const Text(
+                      "What best describes this feeling?",
+                      style: TextStyle(fontSize: 24),
+                    ),
+                    if (!vm.isLoading)
+                      ..._groupedFeelings.entries.map((entry) {
+                        // Create a list of widget rows with margins between the buttons
+                        List<Widget> feelingRows = [];
+                        for (int i = 0; i < entry.value.length; i += 2) {
+                          feelingRows.add(
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4.0), // Add padding around each button
+                                    child: FeelingButton(
+                                      feeling: entry.value[i],
+                                      isSelected: vm.selectedFeelings?.contains(entry.value[i]) ?? false,
+                                      onSelect: (selectedFeeling) => _handleFeelingSelection(selectedFeeling, vm),
+                                    ),
+                                  ),
                                 ),
-                                itemCount: vm.masterFeelings.length,
-                                itemBuilder: (context, index) {
-                                  final feeling = vm.masterFeelings[index];
-                                  return FeelingButton(
-                                    feeling: feeling,
-                                    isSelected: vm.selectedFeelings?.contains(feeling) ?? false, // Null-aware check
-                                    onSelect: (selectedFeeling) => _handleFeelingSelection(
-                                      selectedFeeling,
-                                      vm,
-                                    ), // Corrected function signature
-                                  );
-                                },
-                              );
-                            } else {
-                              // Display a CircularProgressIndicator or some placeholder
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-                          },
-                        ),
-                    ],
-                  ),
+                                Expanded(
+                                  child: i + 1 < entry.value.length
+                                      ? Padding(
+                                          padding: const EdgeInsets.all(4.0), // Add padding around each button
+                                          child: FeelingButton(
+                                            feeling: entry.value[i + 1],
+                                            isSelected: vm.selectedFeelings?.contains(entry.value[i + 1]) ?? false,
+                                            onSelect: (selectedFeeling) => _handleFeelingSelection(selectedFeeling, vm),
+                                          ),
+                                        )
+                                      : Container(), // Empty container to balance the row
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(
+                              height: 40,
+                            ),
+                            Center(
+                              child: SvgPicture.asset(
+                                getMoodIconPath(entry.key), // Assume entry.key is the mood rating
+                                width: 32,
+                                height: 32,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 40,
+                            ),
+                            ...feelingRows, // Add the list of row widgets here
+                          ],
+                        );
+                      }).toList(),
+                  ],
                 ),
               ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  color: colorScheme.background,
-                  padding: EdgeInsets.all(10.0),
-                  child: Button(
-                    text: "Next",
-                    onPressed: () {
-                      final store = StoreProvider.of<AppState>(context);
-                      store.dispatch(const ChangePageAction(2));
-                    },
-                    buttonType: ButtonType.primary,
-                  ),
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                color: colorScheme.background,
+                padding: EdgeInsets.all(10.0),
+                child: Button(
+                  text: "Next",
+                  onPressed: () {
+                    final store = StoreProvider.of<AppState>(context);
+                    store.dispatch(const ChangePageAction(2));
+                  },
+                  buttonType: ButtonType.primary,
                 ),
               ),
-            ]),
-          );
-        });
+            ),
+          ]),
+        );
+      },
+    );
   }
 }
 
