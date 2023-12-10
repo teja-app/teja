@@ -1,27 +1,25 @@
 class MasterFactorEntity {
   final int? id;
   final String slug;
-  final String name;
-  final String categoryId;
+  final String title;
+  final List<SubCategoryEntity> subcategories;
 
   MasterFactorEntity({
-    required this.slug,
-    required this.name,
-    required this.categoryId,
     this.id,
+    required this.slug,
+    required this.title,
+    required this.subcategories,
   });
 
-  MasterFactorEntity copyWith({
-    String? slug,
-    String? name,
-    String? categoryId,
-    int? id,
-  }) {
-    return MasterFactorEntity(
-      slug: slug ?? this.slug,
-      name: name ?? this.name,
-      categoryId: categoryId ?? this.categoryId,
-      id: id ?? this.id,
-    );
-  }
+  // ... copyWith method remains the same
+}
+
+class SubCategoryEntity {
+  final String slug;
+  final String title;
+
+  SubCategoryEntity({
+    required this.slug,
+    required this.title,
+  });
 }

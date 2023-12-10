@@ -1,9 +1,8 @@
-// MasterFactorSaga
 import 'package:isar/isar.dart';
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/entities/master_factor.dart';
 import 'package:teja/domain/redux/mood/master_factor/actions.dart';
-import 'package:teja/infrastructure/api/mood_api.dart';
+import 'package:teja/infrastructure/api/factor_api.dart';
 import 'package:teja/infrastructure/database/isar_collections/master_factor.dart';
 import 'package:teja/infrastructure/repositories/master_factor.dart';
 import 'package:teja/shared/storage/secure_storage.dart';
@@ -23,12 +22,8 @@ class MasterFactorSaga {
       Isar isar = isarResult.value!;
       var factorRepo = MasterFactorRepository(isar);
 
-      // Assuming you have a repository for MasterFactor
       var cachedFactors = Result<List<MasterFactorEntity>>();
-      yield Call(
-        factorRepo.getAllFactorEntities, // Method to get cached factors
-        result: cachedFactors,
-      );
+      yield Call(factorRepo.getAllFactorEntities, result: cachedFactors);
 
       if (cachedFactors.value != null && cachedFactors.value!.isNotEmpty) {
         yield Put(MasterFactorsFetchedFromCacheAction(cachedFactors.value!));
@@ -49,42 +44,45 @@ class MasterFactorSaga {
       Isar isar = isarResult.value!;
       var factorRepo = MasterFactorRepository(isar);
 
-      // Assuming you have a method to fetch data from the API
       var factorsResult = Result<List<MasterFactorEntity>>();
 
-      // Fetch the access token
       final accessToken = Result<String?>();
       yield Call(readSecureData, args: ['access_token'], result: accessToken);
 
-      MoodApi moodApi = MoodApi();
+      FactorApi factorApi = FactorApi();
       yield Call(
-        moodApi.getMasterFactors,
+        factorApi.getMasterFactors,
         args: [accessToken.value],
         result: factorsResult,
       );
 
       if (factorsResult.value != null && factorsResult.value!.isNotEmpty) {
         List<MasterFactor> domainFactors = factorsResult.value!.map((entity) {
-          return MasterFactor()
+          var factor = MasterFactor()
             ..slug = entity.slug
-            ..name = entity.name
-            ..categoryId = entity.categoryId;
+            ..title = entity.title;
+
+          // Create a list of SubCategory from the subcategories in the entity
+          List<SubCategory> subCategoryList = entity.subcategories.map((subEntity) {
+            return SubCategory()
+              ..slug = subEntity.slug
+              ..title = subEntity.title;
+          }).toList();
+
+          // Assign the list directly to the factor's subcategories
+          factor.subcategories = subCategoryList;
+
+          return factor;
         }).toList();
-        yield Call(
-          factorRepo.addOrUpdateFactors,
-          args: [domainFactors],
-        );
+
+        yield Call(factorRepo.addOrUpdateFactors, args: [domainFactors]);
+
         var savedFactorEntities = Result<List<MasterFactorEntity>>();
-        yield Call(
-          MasterFactorRepository(isar).getAllFactorEntities,
-          result: savedFactorEntities,
-        );
-        yield Put(
-          MasterFactorsFetchedSuccessAction(
-            savedFactorEntities.value!,
-            DateTime.now(),
-          ),
-        );
+        yield Call(factorRepo.getAllFactorEntities, result: savedFactorEntities);
+        yield Put(MasterFactorsFetchedSuccessAction(
+          savedFactorEntities.value!,
+          DateTime.now(),
+        ));
       } else {
         yield Put(const MasterFactorsFetchFailedAction('No factors data received'));
       }

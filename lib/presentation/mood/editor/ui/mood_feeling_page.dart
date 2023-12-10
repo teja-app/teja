@@ -13,10 +13,10 @@ class FeelingScreen extends StatefulWidget {
   const FeelingScreen({super.key});
 
   @override
-  _FeelingScreenState createState() => _FeelingScreenState();
+  FeelingScreenState createState() => FeelingScreenState();
 }
 
-class _FeelingScreenState extends State<FeelingScreen> {
+class FeelingScreenState extends State<FeelingScreen> {
   late List<MasterFeelingEntity> _allFeelings;
   Map<int, List<MasterFeelingEntity>> _groupedFeelings = {};
 

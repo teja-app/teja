@@ -63,17 +63,10 @@ class UpdateFeelingsSuccessAction {
 }
 
 @immutable
-class UpdateLinkedFactorsSuccessAction {
-  final Map<int, List<int>>? feelingFactorLink;
-
-  const UpdateLinkedFactorsSuccessAction(this.feelingFactorLink);
-}
-
-@immutable
 class UpdateFactorsAction {
   final String? moodLogId;
   final int feelingId;
-  final List<MasterFactorEntity?> factors;
+  final List<SubCategoryEntity?> factors;
 
   const UpdateFactorsAction({
     required this.moodLogId,
@@ -86,7 +79,7 @@ class UpdateFactorsAction {
 class UpdateFactorsSuccessAction {
   final String? moodLogId;
   final int feelingId;
-  final List<MasterFactorEntity?>? factors;
+  final List<SubCategoryEntity?>? factors;
 
   const UpdateFactorsSuccessAction({
     required this.moodLogId,

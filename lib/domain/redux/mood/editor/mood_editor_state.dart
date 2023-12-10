@@ -11,8 +11,7 @@ class MoodEditorState {
   final bool isSubmitting;
   final String? errorMessage;
   final bool submissionSuccess;
-  final Map<int, List<int>>? feelingFactorLink;
-  final Map<int, List<MasterFactorEntity?>>? selectedFactorsForFeelings;
+  final Map<int, List<SubCategoryEntity?>>? selectedFactorsForFeelings;
 
   const MoodEditorState({
     this.currentMoodLog,
@@ -21,7 +20,6 @@ class MoodEditorState {
     this.submissionSuccess = false,
     this.selectedFactorsForFeelings,
     this.errorMessage,
-    this.feelingFactorLink,
     this.selectedFeelings,
   });
 
@@ -33,7 +31,7 @@ class MoodEditorState {
     bool? submissionSuccess,
     Map<int, List<int>>? feelingFactorLink,
     List<MasterFeelingEntity>? selectedFeelings,
-    Map<int, List<MasterFactorEntity?>>? selectedFactorsForFeelings,
+    Map<int, List<SubCategoryEntity?>>? selectedFactorsForFeelings,
   }) {
     return MoodEditorState(
       currentMoodLog: currentMoodLog ?? this.currentMoodLog,
@@ -41,7 +39,6 @@ class MoodEditorState {
       isSubmitting: isSubmitting ?? this.isSubmitting,
       errorMessage: errorMessage ?? this.errorMessage,
       submissionSuccess: submissionSuccess ?? this.submissionSuccess,
-      feelingFactorLink: feelingFactorLink ?? this.feelingFactorLink,
       selectedFeelings: selectedFeelings ?? this.selectedFeelings,
       selectedFactorsForFeelings: selectedFactorsForFeelings ?? this.selectedFactorsForFeelings,
     );

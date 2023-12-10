@@ -24,12 +24,6 @@ MoodEditorState _updateFeelingsSuccess(MoodEditorState state, UpdateFeelingsSucc
   return state;
 }
 
-MoodEditorState _updateLinkedFactorsSuccess(MoodEditorState state, UpdateLinkedFactorsSuccessAction action) {
-  return state.copyWith(
-    feelingFactorLink: action.feelingFactorLink, // Update the state with the new feeling-factor links
-  );
-}
-
 MoodEditorState _clearMoodEditorForm(MoodEditorState state, ClearMoodEditorFormAction action) {
   return MoodEditorState.initialState().copyWith(
     selectedFeelings: [],
@@ -37,10 +31,9 @@ MoodEditorState _clearMoodEditorForm(MoodEditorState state, ClearMoodEditorFormA
 }
 
 MoodEditorState _updateFactorsSuccess(MoodEditorState state, UpdateFactorsSuccessAction action) {
-  print("action ${action.factors?.length}");
   if (state.currentMoodLog?.id == action.moodLogId) {
     // Ensure that selectedFactorsForFeelings is not null
-    var updatedFactorsForFeelings = Map<int, List<MasterFactorEntity?>>.from(state.selectedFactorsForFeelings ?? {});
+    var updatedFactorsForFeelings = Map<int, List<SubCategoryEntity?>>.from(state.selectedFactorsForFeelings ?? {});
 
     // Update the factors for the specific feeling
     updatedFactorsForFeelings[action.feelingId] = action.factors ?? [];
@@ -58,6 +51,5 @@ final moodEditorReducer = combineReducers<MoodEditorState>([
   TypedReducer<MoodEditorState, ChangePageAction>(_changePage),
   TypedReducer<MoodEditorState, UpdateFeelingsSuccessAction>(_updateFeelingsSuccess),
   TypedReducer<MoodEditorState, ClearMoodEditorFormAction>(_clearMoodEditorForm),
-  TypedReducer<MoodEditorState, UpdateLinkedFactorsSuccessAction>(_updateLinkedFactorsSuccess),
   TypedReducer<MoodEditorState, UpdateFactorsSuccessAction>(_updateFactorsSuccess),
 ]);

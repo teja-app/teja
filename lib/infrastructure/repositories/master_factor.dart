@@ -13,13 +13,22 @@ class MasterFactorRepository {
       for (var factor in factors) {
         int id;
         var existingFactor = await isar.masterFactors.where().slugEqualTo(factor.slug).findFirst();
+        print("existingFactor ${existingFactor}");
         if (existingFactor != null) {
           // Update existing factor
-          existingFactor.name = factor.name;
-          existingFactor.categoryId = factor.categoryId;
+          existingFactor.title = factor.title;
+
+          // Handle subcategories
+          existingFactor.subcategories?.clear(); // Clear existing subcategories if they exist
+          print("subcategories");
+          print("factor.subcategories ${factor.subcategories!.length}");
+          if (factor.subcategories != null && factor.subcategories!.isNotEmpty) {
+            existingFactor.subcategories = List<SubCategory>.from(factor.subcategories!);
+          }
+
           id = await isar.masterFactors.put(existingFactor);
         } else {
-          // Add new factor
+          // Add new factor with its subcategories
           id = await isar.masterFactors.put(factor);
         }
         factorIds[factor.slug] = id;
@@ -37,23 +46,18 @@ class MasterFactorRepository {
     return factors.map(toEntity).toList();
   }
 
-  Future<List<String>> convertIdsToSlugs(List<int?> factorIds) async {
-    List<String> factorSlugs = [];
-    for (var id in factorIds) {
-      var factor = await isar.masterFactors.get(id!);
-      if (factor != null) {
-        factorSlugs.add(factor.slug);
-      }
-    }
-    return factorSlugs;
-  }
-
   MasterFactorEntity toEntity(MasterFactor factor) {
     return MasterFactorEntity(
       id: factor.isarId,
       slug: factor.slug,
-      name: factor.name,
-      categoryId: factor.categoryId,
+      title: factor.title,
+      subcategories: factor.subcategories
+              ?.map((subCategory) => SubCategoryEntity(
+                    slug: subCategory.slug,
+                    title: subCategory.title,
+                  ))
+              .toList() ??
+          [],
     );
   }
 }
