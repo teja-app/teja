@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/master_feeling.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
@@ -21,6 +20,9 @@ class _FeelingScreenState extends State<FeelingScreen> {
   late List<MasterFeelingEntity> _allFeelings;
   Map<int, List<MasterFeelingEntity>> _groupedFeelings = {};
 
+  Map<int, GlobalKey> _moodKeys = {};
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -34,9 +36,18 @@ class _FeelingScreenState extends State<FeelingScreen> {
     });
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
   void _initializeFeelings(List<MasterFeelingEntity> feelings, int currentMood) {
     _allFeelings = feelings.cast<MasterFeelingEntity>();
     _groupAndSortFeelings();
+    _groupedFeelings.forEach((mood, _) {
+      _moodKeys[mood] = GlobalKey();
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToCurrentMood(currentMood));
   }
 
   void settingState(List<MasterFeelingEntity> masterFeelings, int currentMood) {
@@ -102,6 +113,23 @@ class _FeelingScreenState extends State<FeelingScreen> {
     );
   }
 
+  // Add this method to handle the scrolling
+  void _scrollToCurrentMood(int moodRating) {
+    if (_moodKeys.containsKey(moodRating)) {
+      final keyContext = _moodKeys[moodRating]!.currentContext;
+      if (keyContext != null) {
+        // Scroll to the desired mood group
+        final RenderBox box = keyContext.findRenderObject() as RenderBox;
+        final position = box.localToGlobal(Offset.zero).dy - 200;
+        _scrollController.animateTo(
+          position,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeIn,
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -111,11 +139,11 @@ class _FeelingScreenState extends State<FeelingScreen> {
       converter: (store) => _ViewModel.fromStore(store),
       onInit: (store) => _initializeFeelings(store.state.masterFeelingState.masterFeelings ?? [],
           store.state.moodEditorState.currentMoodLog?.moodRating ?? 0),
-      onDidChange: (previousViewModel, viewModel) => {
+      onDidChange: (previousViewModel, viewModel) {
         settingState(
           viewModel.masterFeelings,
           viewModel.moodRating,
-        )
+        );
       },
       builder: (context, vm) {
         String moodIconPath = getMoodIconPath(vm.moodRating);
@@ -123,101 +151,113 @@ class _FeelingScreenState extends State<FeelingScreen> {
         return SizedBox(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          child: Stack(children: [
-            SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
+            children: [
+              // This Row contains the icon and title, always visible at the top
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                child: Row(
                   children: [
-                    if (moodIconPath.isNotEmpty)
-                      SvgPicture.asset(
-                        moodIconPath,
-                        width: 32,
-                        height: 32,
+                    if (moodIconPath.isNotEmpty) SvgPicture.asset(moodIconPath, width: 32, height: 32),
+                    const SizedBox(width: 10), // Spacing between icon and title
+                    Expanded(
+                      child: Text(
+                        "What best describes this feeling?",
+                        style: textTheme.titleLarge,
                       ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      "What best describes this feeling?",
-                      style: TextStyle(fontSize: 24),
                     ),
-                    if (!vm.isLoading)
-                      ..._groupedFeelings.entries.map((entry) {
-                        // Create a list of widget rows with margins between the buttons
-                        List<Widget> feelingRows = [];
-                        for (int i = 0; i < entry.value.length; i += 2) {
-                          feelingRows.add(
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4.0), // Add padding around each button
-                                    child: FeelingButton(
-                                      feeling: entry.value[i],
-                                      isSelected: vm.selectedFeelings?.contains(entry.value[i]) ?? false,
-                                      onSelect: (selectedFeeling) => _handleFeelingSelection(selectedFeeling, vm),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: i + 1 < entry.value.length
-                                      ? Padding(
-                                          padding: const EdgeInsets.all(4.0), // Add padding around each button
-                                          child: FeelingButton(
-                                            feeling: entry.value[i + 1],
-                                            isSelected: vm.selectedFeelings?.contains(entry.value[i + 1]) ?? false,
-                                            onSelect: (selectedFeeling) => _handleFeelingSelection(selectedFeeling, vm),
-                                          ),
-                                        )
-                                      : Container(), // Empty container to balance the row
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(
-                              height: 40,
-                            ),
-                            Center(
-                              child: SvgPicture.asset(
-                                getMoodIconPath(entry.key), // Assume entry.key is the mood rating
-                                width: 32,
-                                height: 32,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 40,
-                            ),
-                            ...feelingRows, // Add the list of row widgets here
-                          ],
-                        );
-                      }).toList(),
                   ],
                 ),
               ),
-            ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                color: colorScheme.background,
-                padding: EdgeInsets.all(10.0),
-                child: Button(
-                  text: "Next",
-                  onPressed: () {
-                    final store = StoreProvider.of<AppState>(context);
-                    store.dispatch(const ChangePageAction(2));
-                  },
-                  buttonType: ButtonType.primary,
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: _scrollController,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (!vm.isLoading)
+                          ..._groupedFeelings.entries.map((entry) {
+                            // Create a list of widget rows with margins between the buttons
+                            List<Widget> feelingRows = [];
+                            for (int i = 0; i < entry.value.length; i += 2) {
+                              feelingRows.add(
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(4.0), // Add padding around each button
+                                        child: FeelingButton(
+                                          feeling: entry.value[i],
+                                          isSelected: vm.selectedFeelings?.contains(entry.value[i]) ?? false,
+                                          onSelect: (selectedFeeling) => _handleFeelingSelection(selectedFeeling, vm),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: i + 1 < entry.value.length
+                                          ? Padding(
+                                              padding: const EdgeInsets.all(4.0), // Add padding around each button
+                                              child: FeelingButton(
+                                                feeling: entry.value[i + 1],
+                                                isSelected: vm.selectedFeelings?.contains(entry.value[i + 1]) ?? false,
+                                                onSelect: (selectedFeeling) =>
+                                                    _handleFeelingSelection(selectedFeeling, vm),
+                                              ),
+                                            )
+                                          : Container(), // Empty container to balance the row
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                            return Column(
+                              key: _moodKeys[entry.key], // Assign the GlobalKey here
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(
+                                  height: 40,
+                                ),
+                                Center(
+                                  child: SvgPicture.asset(
+                                    getMoodIconPath(entry.key), // Assume entry.key is the mood rating
+                                    width: 32,
+                                    height: 32,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 40,
+                                ),
+                                ...feelingRows, // Add the list of row widgets here
+                              ],
+                            );
+                          }).toList(),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ]),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  color: colorScheme.background,
+                  padding: const EdgeInsets.all(10.0),
+                  child: Button(
+                    text: "Next",
+                    onPressed: () {
+                      final store = StoreProvider.of<AppState>(context);
+                      store.dispatch(const ChangePageAction(2));
+                    },
+                    buttonType: ButtonType.primary,
+                  ),
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
@@ -246,7 +286,7 @@ class _ViewModel {
       moodLogId: store.state.moodEditorState.currentMoodLog!.id,
       moodRating: store.state.moodEditorState.currentMoodLog?.moodRating ?? 0,
       isLoading: store.state.masterFeelingState.isLoading,
-      masterFeelings: store.state.masterFeelingState.masterFeelings ?? [],
+      masterFeelings: store.state.masterFeelingState.masterFeelings,
       selectedFeelings: store.state.moodEditorState.selectedFeelings ?? [],
       fetchFeelings: () => store.dispatch(FetchMasterFeelingsActionFromCache()),
     );

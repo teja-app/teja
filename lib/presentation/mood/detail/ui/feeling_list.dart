@@ -40,17 +40,17 @@ class FeelingsListWidget extends StatelessWidget {
                   ),
                 );
                 return BentoBox(
-                    gridWidth: 4,
-                    gridHeight: 1,
-                    child: Column(
-                      children: [
-                        Text(
-                          masterFeeling.name,
-                          style: textTheme.titleLarge,
-                        ),
-                        if (feeling.factors!.isNotEmpty) ...feeling.factors!.map((factor) => Text(factor)),
-                      ],
-                    ));
+                  gridWidth: 4,
+                  gridHeight: 1,
+                  child: Column(
+                    children: [
+                      Text(
+                        masterFeeling.name,
+                        style: textTheme.titleLarge,
+                      ),
+                    ],
+                  ),
+                );
               },
             ),
           ],

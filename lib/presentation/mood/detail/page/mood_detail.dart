@@ -38,10 +38,10 @@ class MoodDetailPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _MoodDetailPageState createState() => _MoodDetailPageState();
+  MoodDetailPageState createState() => MoodDetailPageState();
 }
 
-class _MoodDetailPageState extends State<MoodDetailPage> {
+class MoodDetailPageState extends State<MoodDetailPage> {
   @override
   void initState() {
     super.initState();
@@ -71,7 +71,6 @@ class _MoodDetailPageState extends State<MoodDetailPage> {
       builder: (_, moodDetailPage) {
         Widget bodyContent = const Center(child: CircularProgressIndicator());
         if (moodDetailPage.selectedMoodLog != null) {
-          print("selectedMoodLog!.feelings ${moodDetailPage.selectedMoodLog!.feelings!.first}");
           bodyContent = Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Column(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teja/domain/entities/master_feeling.dart';
+import 'package:teja/shared/helpers/color.dart';
 
 class FeelingButton extends StatelessWidget {
   final MasterFeelingEntity feeling;
@@ -30,11 +31,9 @@ class FeelingButton extends StatelessWidget {
 
     // Use the absolute value of energy to adjust the darkness of the base color
     // The higher the energy, the darker the color
-    double adjustmentFactor = 1 - (energy.abs() / 5); // Normalize energy to a value between 0 and 1
+    double adjustmentFactor = (energy.abs() / 5); // Normalize energy to a value between 0 and 1
     // Darken the color
-    return HSLColor.fromColor(baseColor)
-        .withLightness(adjustmentFactor * HSLColor.fromColor(baseColor).lightness)
-        .toColor();
+    return darken(baseColor, adjustmentFactor * 0.5);
   }
 
   int _mapPleasantnessToMood(int pleasantness) {
@@ -55,18 +54,26 @@ class FeelingButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color backgroundColor = isSelected ? getFeelingColor(feeling.pleasantness, feeling.energy) : Colors.transparent;
+    Color borderColor = getFeelingColor(feeling.pleasantness, feeling.energy);
+    Color textColor = isSelected ? Colors.white : Colors.black;
+
     return GestureDetector(
       onTap: () => onSelect(feeling),
       child: Container(
         decoration: BoxDecoration(
-          color: getFeelingColor(feeling.pleasantness, feeling.energy),
+          color: backgroundColor,
           borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: borderColor,
+            width: 2,
+          ),
         ),
         height: 50,
         child: Center(
           child: Text(
             feeling.name,
-            style: const TextStyle(color: Colors.white),
+            style: TextStyle(color: textColor),
           ),
         ),
       ),
