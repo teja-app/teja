@@ -6,6 +6,7 @@ import 'package:teja/domain/entities/master_factor.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:teja/domain/redux/mood/master_factor/actions.dart';
+import 'package:teja/shared/common/button.dart'; // Import your custom Button
 
 class FactorsScreen extends StatefulWidget {
   const FactorsScreen({super.key});
@@ -38,18 +39,27 @@ class _FactorsScreenState extends State<FactorsScreen> {
                     style: textTheme.titleMedium,
                   ),
                   ...viewModel.factors.map((factor) {
-                    return ExpansionTile(
-                      title: Text(factor.title),
-                      children: factor.subcategories.map((subcategory) {
-                        bool isSelected = selectedSubcategories.contains(subcategory);
-                        return CheckboxListTile(
-                          title: Text(subcategory.title),
-                          value: isSelected,
-                          onChanged: (bool? selected) {
-                            _updateFactorsAction(viewModel.moodLogId, feeling.id!, subcategory, selected ?? false);
-                          },
-                        );
-                      }).toList(),
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Text(factor.title, style: textTheme.headline6),
+                        ),
+                        Wrap(
+                          spacing: 8.0,
+                          children: factor.subcategories.map((subcategory) {
+                            bool isSelected = selectedSubcategories.contains(subcategory);
+                            return Button(
+                              text: subcategory.title,
+                              icon: isSelected ? Icons.check : null,
+                              onPressed: () =>
+                                  _updateFactorsAction(viewModel.moodLogId, feeling.id!, subcategory, !isSelected),
+                              buttonType: isSelected ? ButtonType.primary : ButtonType.defaultButton,
+                            );
+                          }).toList(),
+                        ),
+                      ],
                     );
                   }).toList(),
                 ],
