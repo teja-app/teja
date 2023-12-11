@@ -65,33 +65,33 @@ class ProfilePage extends StatelessWidget {
                     goRouter.pushNamed(RootPath.goalSettings);
                   },
                 ),
-                BentoBox(
-                  key: const Key("RadarBento"),
-                  gridWidth: 4,
-                  gridHeight: 2.8,
-                  margin: 0,
-                  padding: 0,
-                  color: colorSchema.background,
-                  child: GoalChart.dark(
-                    ticks: ticks,
-                    features: features,
-                    data: data,
-                    reverseAxis: false,
-                    graphColors: [colorSchema.primary],
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Button(
-                  text: "Edit Goal",
-                  buttonType: ButtonType.primary,
-                  width: 200,
-                  onPressed: () {
-                    HapticFeedback.selectionClick();
-                    goRouter.pushNamed(RootPath.goalSettings);
-                  },
-                ),
+                // BentoBox(
+                //   key: const Key("RadarBento"),
+                //   gridWidth: 4,
+                //   gridHeight: 2.8,
+                //   margin: 0,
+                //   padding: 0,
+                //   color: colorSchema.background,
+                //   child: GoalChart.dark(
+                //     ticks: ticks,
+                //     features: features,
+                //     data: data,
+                //     reverseAxis: false,
+                //     graphColors: [colorSchema.primary],
+                //   ),
+                // ),
+                // const SizedBox(
+                //   height: 20,
+                // ),
+                // Button(
+                //   text: "Edit Goal",
+                //   buttonType: ButtonType.primary,
+                //   width: 200,
+                //   onPressed: () {
+                //     HapticFeedback.selectionClick();
+                //     goRouter.pushNamed(RootPath.goalSettings);
+                //   },
+                // ),
               ]),
             ),
             const SizedBox(
@@ -120,7 +120,7 @@ class ProfilePage extends StatelessWidget {
                 ),
               ]),
             ),
-            const ProfileWeeklyMoodChart(),
+            // const ProfileWeeklyMoodChart(),
           ],
         ),
       ),

@@ -139,12 +139,6 @@ class _HomePageState extends State<HomePage> {
               ),
               const SizedBox(height: 12),
               Text(
-                "Gratitude",
-                style: textTheme.titleSmall,
-              ),
-              const GratitudeCard(),
-              const SizedBox(height: 12),
-              Text(
                 "Affirmation",
                 style: textTheme.titleSmall,
               ),

@@ -21,15 +21,6 @@ class GratitudeCard extends StatelessWidget {
               style: textTheme.bodyLarge,
               textAlign: TextAlign.center,
             ),
-            // const SizedBox(height: 50.0),
-            // const Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //   children: <Widget>[
-            //     // Icon(AntDesign.staro),
-            //     // Icon(AntDesign.edit),
-            //     // Icon(AntDesign.export),
-            //   ],
-            // ),
           ],
         ),
       ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum ButtonType { defaultButton, primary, secondary }
+enum ButtonType { defaultButton, primary, secondary, disabled }
 
 class Button extends StatelessWidget {
   final String text;
@@ -35,6 +35,11 @@ class Button extends StatelessWidget {
       case ButtonType.secondary:
         textColor = Colors.black;
         backgroundColor = Colors.white;
+        borderColor = Colors.transparent;
+        break;
+      case ButtonType.disabled:
+        textColor = Colors.grey;
+        backgroundColor = Colors.transparent;
         borderColor = Colors.transparent;
         break;
       case ButtonType.defaultButton:

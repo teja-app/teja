@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:icons_flutter/icons_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:teja/domain/entities/feeling.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:teja/presentation/mood/editor/ui/mood_factor_page.dart';
+import 'package:teja/presentation/mood/editor/ui/mood_finish_screen.dart';
 import 'package:teja/presentation/mood/editor/ui/mood_initial_page.dart';
 import 'package:teja/presentation/mood/editor/ui/mood_feeling_page.dart';
+import 'package:teja/presentation/mood/editor/ui/mood_notes_screen.dart';
 
 class MoodEditPage extends StatefulWidget {
   const MoodEditPage({Key? key}) : super(key: key);
@@ -37,49 +40,69 @@ class MoodEditPageState extends State<MoodEditPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Mood')),
-      body: SafeArea(
-        child: StoreConnector<AppState, MoodEditViewModel>(
-          converter: MoodEditViewModel.fromStore,
-          builder: (context, viewModel) {
-            if (_controller.hasClients && viewModel.currentPageIndex != _controller.page?.round()) {
-              _controller.jumpToPage(viewModel.currentPageIndex);
-            }
-            return Column(
-              children: <Widget>[
-                SmoothPageIndicator(
-                  controller: _controller,
-                  count: viewModel.pageCount,
-                  effect: const ExpandingDotsEffect(),
-                  onDotClicked: (index) => _controller.animateToPage(
-                    index,
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                  ),
+    return StoreConnector<AppState, MoodEditViewModel>(
+        converter: MoodEditViewModel.fromStore,
+        builder: (context, viewModel) {
+          if (_controller.hasClients && viewModel.currentPageIndex != _controller.page?.round()) {
+            _controller.jumpToPage(viewModel.currentPageIndex);
+          }
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0, // Remove shadow
+              leading: IconButton(
+                icon: const Icon(AntDesign.close),
+                onPressed: () {
+                  // Action to close the screen or navigate back
+                  Navigator.of(context).pop();
+                },
+              ),
+              title: SmoothPageIndicator(
+                controller: _controller,
+                count: viewModel.pageCount,
+                effect: const ExpandingDotsEffect(),
+                onDotClicked: (index) => _controller.animateToPage(
+                  index,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
                 ),
-                Expanded(
-                  child: PageView.builder(
-                    controller: _controller,
-                    onPageChanged: viewModel.changePage,
-                    itemCount: viewModel.pageCount,
-                    itemBuilder: (context, index) {
-                      if (index == 0) {
-                        return MoodInitialPage(controller: _controller);
-                      } else if (index == 1) {
-                        return const FeelingScreen();
-                      } else {
-                        return FactorsScreen(feeling: viewModel.feelings[index - 2]);
-                      }
-                    },
+              ),
+            ),
+            body: SafeArea(
+              child: Column(
+                children: <Widget>[
+                  Expanded(
+                    child: PageView.builder(
+                      controller: _controller,
+                      onPageChanged: viewModel.changePage,
+                      itemCount: viewModel.pageCount,
+                      itemBuilder: (context, index) {
+                        if (index == 0) {
+                          // Initial page
+                          return MoodInitialPage(controller: _controller);
+                        } else if (index == 1) {
+                          // Feeling selection page
+                          return const FeelingScreen();
+                        } else if (index > 1 && index < viewModel.pageCount - 2) {
+                          // Factors pages, for each feeling
+                          return FactorsScreen(feeling: viewModel.feelings[index - 2]);
+                        } else if (index == viewModel.pageCount - 2) {
+                          // Notes page
+                          return NotesScreen(pageController: _controller);
+                        } else {
+                          // Finish page, the last page
+                          return FinishScreen(
+                            onFinish: () {},
+                          );
+                        }
+                      },
+                    ),
                   ),
-                ),
-              ],
-            );
-          },
-        ),
-      ),
-    );
+                ],
+              ),
+            ),
+          );
+        });
   }
 }
 
@@ -93,7 +116,7 @@ class MoodEditViewModel {
     required this.currentPageIndex,
     required this.feelings,
     required this.changePage,
-  }) : pageCount = feelings.length + 2; // +2 for initial and feeling pages
+  }) : pageCount = feelings.length + 3; // +2 for initial and feeling pages
 
   static MoodEditViewModel fromStore(Store<AppState> store) {
     return MoodEditViewModel(
