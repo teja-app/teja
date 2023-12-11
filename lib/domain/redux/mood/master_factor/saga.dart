@@ -87,6 +87,7 @@ class MasterFactorSaga {
         yield Put(const MasterFactorsFetchFailedAction('No factors data received'));
       }
     }, Catch: (e, s) sync* {
+      print("MasterFactorsFetchFailedAction $e $s");
       yield Put(MasterFactorsFetchFailedAction(e.toString()));
     });
   }

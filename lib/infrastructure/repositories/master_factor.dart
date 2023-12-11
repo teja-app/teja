@@ -19,7 +19,7 @@ class MasterFactorRepository {
           existingFactor.title = factor.title;
 
           // Handle subcategories
-          existingFactor.subcategories?.clear(); // Clear existing subcategories if they exist
+          existingFactor.subcategories = [];
           print("subcategories");
           print("factor.subcategories ${factor.subcategories!.length}");
           if (factor.subcategories != null && factor.subcategories!.isNotEmpty) {

@@ -13,20 +13,24 @@ class MoodEditPage extends StatefulWidget {
   const MoodEditPage({Key? key}) : super(key: key);
 
   @override
-  _MoodEditPageState createState() => _MoodEditPageState();
+  MoodEditPageState createState() => MoodEditPageState();
 }
 
-class _MoodEditPageState extends State<MoodEditPage> {
+class MoodEditPageState extends State<MoodEditPage> {
   late final PageController _controller;
+  late final Store<AppState> _store; // Add this line to store the reference
 
   @override
   void initState() {
     super.initState();
     _controller = PageController();
+    _store = StoreProvider.of<AppState>(context, listen: false); // Obtain the store reference
   }
 
   @override
   void dispose() {
+    _store.dispatch(const ClearMoodEditorFormAction()); // Use the stored reference
+
     _controller.dispose();
     super.dispose();
   }
@@ -39,6 +43,9 @@ class _MoodEditPageState extends State<MoodEditPage> {
         child: StoreConnector<AppState, MoodEditViewModel>(
           converter: MoodEditViewModel.fromStore,
           builder: (context, viewModel) {
+            if (_controller.hasClients && viewModel.currentPageIndex != _controller.page?.round()) {
+              _controller.jumpToPage(viewModel.currentPageIndex);
+            }
             return Column(
               children: <Widget>[
                 SmoothPageIndicator(

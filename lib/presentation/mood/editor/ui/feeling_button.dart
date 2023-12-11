@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:teja/domain/entities/master_feeling.dart';
-import 'package:teja/shared/helpers/color.dart';
 
 class FeelingButton extends StatelessWidget {
   final MasterFeelingEntity feeling;
@@ -31,9 +30,11 @@ class FeelingButton extends StatelessWidget {
 
     // Use the absolute value of energy to adjust the darkness of the base color
     // The higher the energy, the darker the color
-    double adjustmentFactor = (energy.abs() / 5); // Normalize energy to a value between 0 and 1
+    double adjustmentFactor = 1 - (energy.abs() / 5); // Normalize energy to a value between 0 and 1
     // Darken the color
-    return darken(baseColor, adjustmentFactor * 0.5);
+    return HSLColor.fromColor(baseColor)
+        .withLightness(adjustmentFactor * HSLColor.fromColor(baseColor).lightness)
+        .toColor();
   }
 
   int _mapPleasantnessToMood(int pleasantness) {

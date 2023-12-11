@@ -21,47 +21,72 @@ class _FactorsScreenState extends State<FactorsScreen> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
     return StoreConnector<AppState, FactorsViewModel>(
       converter: (store) => FactorsViewModel.fromStore(store, widget.feeling),
       builder: (context, viewModel) {
         List<SubCategoryEntity> selectedSubcategories =
             viewModel.selectedFactorsForFeelings?[widget.feeling.id]?.whereType<SubCategoryEntity>().toList() ?? [];
-
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Why are you ${widget.feeling.feeling}?',
-                style: textTheme.titleMedium,
+        return Stack(
+          children: [
+            SingleChildScrollView(
+              key: const Key("feelingPage"),
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Why do you feel ${widget.feeling.feeling}?',
+                    style: textTheme.titleMedium,
+                  ),
+                  ...viewModel.factors.map((factor) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Text(factor.title, style: textTheme.headline6),
+                        ),
+                        Wrap(
+                          spacing: 1.0,
+                          children: factor.subcategories.map((subcategory) {
+                            bool isSelected = selectedSubcategories.contains(subcategory);
+                            return Button(
+                              text: subcategory.title,
+                              icon: isSelected ? Icons.check : null,
+                              onPressed: () => _updateFactorsAction(
+                                  viewModel.moodLogId, widget.feeling.id!, subcategory, !isSelected),
+                              buttonType: isSelected ? ButtonType.primary : ButtonType.defaultButton,
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ],
               ),
-              ...viewModel.factors.map((factor) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Text(factor.title, style: textTheme.headline6),
-                    ),
-                    Wrap(
-                      spacing: 8.0,
-                      children: factor.subcategories.map((subcategory) {
-                        bool isSelected = selectedSubcategories.contains(subcategory);
-                        return Button(
-                          text: subcategory.title,
-                          icon: isSelected ? Icons.check : null,
-                          onPressed: () =>
-                              _updateFactorsAction(viewModel.moodLogId, widget.feeling.id!, subcategory, !isSelected),
-                          buttonType: isSelected ? ButtonType.primary : ButtonType.defaultButton,
-                        );
-                      }).toList(),
-                    ),
-                  ],
-                );
-              }).toList(),
-            ],
-          ),
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                color: colorScheme.background,
+                padding: const EdgeInsets.all(10.0),
+                child: Button(
+                  text: "Next",
+                  onPressed: () {
+                    final store = StoreProvider.of<AppState>(context);
+                    store.dispatch(ChangePageAction(viewModel.currentPageIndex + 1));
+                  },
+                  buttonType: ButtonType.primary,
+                ),
+              ),
+            ),
+          ],
         );
       },
     );
@@ -92,6 +117,7 @@ class FactorsViewModel {
   final Map<int, List<SubCategoryEntity?>>? selectedFactorsForFeelings;
   final Function() fetchFactors;
   final int moodRating;
+  final int currentPageIndex;
 
   FactorsViewModel({
     required this.moodLogId,
@@ -100,12 +126,14 @@ class FactorsViewModel {
     required this.fetchFactors,
     required this.moodRating,
     required this.selectedFactorsForFeelings,
+    required this.currentPageIndex,
   });
 
   static FactorsViewModel fromStore(Store<AppState> store, FeelingEntity feeling) {
     return FactorsViewModel(
       moodLogId: store.state.moodEditorState.currentMoodLog!.id,
       moodRating: store.state.moodEditorState.currentMoodLog?.moodRating ?? 0,
+      currentPageIndex: store.state.moodEditorState.currentPageIndex,
       selectedFactorsForFeelings: store.state.moodEditorState.selectedFactorsForFeelings,
       isLoading: store.state.masterFactorState.isLoading,
       factors: store.state.masterFactorState.masterFactors,

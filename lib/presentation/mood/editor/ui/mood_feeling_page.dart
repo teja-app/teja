@@ -151,91 +151,94 @@ class FeelingScreenState extends State<FeelingScreen> {
         return SizedBox(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          child: Column(
+          child: Stack(
             children: [
-              // This Row contains the icon and title, always visible at the top
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                child: Row(
-                  children: [
-                    if (moodIconPath.isNotEmpty) SvgPicture.asset(moodIconPath, width: 32, height: 32),
-                    const SizedBox(width: 10), // Spacing between icon and title
-                    Expanded(
-                      child: Text(
-                        "What best describes this feeling?",
-                        style: textTheme.titleLarge,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  controller: _scrollController,
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (!vm.isLoading)
-                          ..._groupedFeelings.entries.map((entry) {
-                            // Create a list of widget rows with margins between the buttons
-                            List<Widget> feelingRows = [];
-                            for (int i = 0; i < entry.value.length; i += 2) {
-                              feelingRows.add(
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(4.0), // Add padding around each button
-                                        child: FeelingButton(
-                                          feeling: entry.value[i],
-                                          isSelected: vm.selectedFeelings?.contains(entry.value[i]) ?? false,
-                                          onSelect: (selectedFeeling) => _handleFeelingSelection(selectedFeeling, vm),
-                                        ),
+              SingleChildScrollView(
+                controller: _scrollController,
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (!vm.isLoading)
+                        ..._groupedFeelings.entries.map((entry) {
+                          // Create a list of widget rows with margins between the buttons
+                          List<Widget> feelingRows = [];
+                          for (int i = 0; i < entry.value.length; i += 2) {
+                            feelingRows.add(
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4.0), // Add padding around each button
+                                      child: FeelingButton(
+                                        feeling: entry.value[i],
+                                        isSelected: vm.selectedFeelings?.contains(entry.value[i]) ?? false,
+                                        onSelect: (selectedFeeling) => _handleFeelingSelection(selectedFeeling, vm),
                                       ),
                                     ),
-                                    Expanded(
-                                      child: i + 1 < entry.value.length
-                                          ? Padding(
-                                              padding: const EdgeInsets.all(4.0), // Add padding around each button
-                                              child: FeelingButton(
-                                                feeling: entry.value[i + 1],
-                                                isSelected: vm.selectedFeelings?.contains(entry.value[i + 1]) ?? false,
-                                                onSelect: (selectedFeeling) =>
-                                                    _handleFeelingSelection(selectedFeeling, vm),
-                                              ),
-                                            )
-                                          : Container(), // Empty container to balance the row
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }
-                            return Column(
-                              key: _moodKeys[entry.key], // Assign the GlobalKey here
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(
-                                  height: 40,
-                                ),
-                                Center(
-                                  child: SvgPicture.asset(
-                                    getMoodIconPath(entry.key), // Assume entry.key is the mood rating
-                                    width: 32,
-                                    height: 32,
                                   ),
-                                ),
-                                const SizedBox(
-                                  height: 40,
-                                ),
-                                ...feelingRows, // Add the list of row widgets here
-                              ],
+                                  Expanded(
+                                    child: i + 1 < entry.value.length
+                                        ? Padding(
+                                            padding: const EdgeInsets.all(4.0), // Add padding around each button
+                                            child: FeelingButton(
+                                              feeling: entry.value[i + 1],
+                                              isSelected: vm.selectedFeelings?.contains(entry.value[i + 1]) ?? false,
+                                              onSelect: (selectedFeeling) =>
+                                                  _handleFeelingSelection(selectedFeeling, vm),
+                                            ),
+                                          )
+                                        : Container(), // Empty container to balance the row
+                                  ),
+                                ],
+                              ),
                             );
-                          }).toList(),
-                      ],
-                    ),
+                          }
+                          return Column(
+                            key: _moodKeys[entry.key], // Assign the GlobalKey here
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(
+                                height: 40,
+                              ),
+                              Center(
+                                child: SvgPicture.asset(
+                                  getMoodIconPath(entry.key), // Assume entry.key is the mood rating
+                                  width: 32,
+                                  height: 32,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 40,
+                              ),
+                              ...feelingRows, // Add the list of row widgets here
+                            ],
+                          );
+                        }).toList(),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  color: colorScheme.background,
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    children: [
+                      if (moodIconPath.isNotEmpty) SvgPicture.asset(moodIconPath, width: 32, height: 32),
+                      const SizedBox(width: 10), // Spacing between icon and title
+                      Expanded(
+                        child: Text(
+                          "What best describes this feeling?",
+                          style: textTheme.titleLarge,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
