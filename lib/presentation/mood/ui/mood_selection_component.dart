@@ -26,6 +26,16 @@ class MoodSelectionComponentState extends State<MoodSelectionComponent> {
   }
 
   @override
+  void didUpdateWidget(MoodSelectionComponent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialMood != oldWidget.initialMood) {
+      setState(() {
+        _selectedMoodIndex = widget.initialMood;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,

@@ -6,9 +6,11 @@ import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_actions.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_state.dart';
+import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:teja/presentation/mood/detail/ui/feeling_list.dart';
 import 'package:teja/presentation/mood/detail/ui/mood_rating_widget.dart';
 import 'package:teja/presentation/mood/detail/ui/setting_pop_up_menu.dart';
+import 'package:teja/router.dart';
 import 'package:teja/shared/common/bento_box.dart';
 
 class MoodEntryWidget extends StatelessWidget {
@@ -57,6 +59,12 @@ class MoodDetailPageState extends State<MoodDetailPage> {
         SnackBar(content: Text(errorMessage)),
       );
     }
+  }
+
+  void onEditMoodLog(String moodLogId) {
+    final store = StoreProvider.of<AppState>(context);
+    store.dispatch(InitializeMoodEditorAction(moodLogId));
+    GoRouter.of(context).pushNamed(RootPath.moodEdit);
   }
 
   @override
@@ -146,6 +154,9 @@ class MoodDetailPageState extends State<MoodDetailPage> {
                       );
                     },
                   );
+                },
+                onEdit: () {
+                  onEditMoodLog(widget.moodId);
                 },
               ),
             ],

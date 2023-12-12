@@ -53,14 +53,19 @@ class MasterFeelingRepository {
     return feeling?.slug ?? '';
   }
 
-  Future<List<int>> convertSlugsToIds(List<String> slugs) async {
-    List<int> ids = [];
+  Future<Map<String, MasterFeelingEntity>> getFeelingsBySlugs(List<String?> slugs) async {
+    Map<String, MasterFeelingEntity> feelingsMap = {};
+
     for (var slug in slugs) {
-      var feeling = await isar.masterFeelings.where().slugEqualTo(slug).findFirst();
-      if (feeling != null) {
-        ids.add(feeling.isarId);
+      if (slug != null) {
+        var feeling = await isar.masterFeelings.where().slugEqualTo(slug).findFirst();
+        if (feeling != null) {
+          print("feeling ${feeling.name}");
+          feelingsMap[slug] = toEntity(feeling);
+        }
       }
     }
-    return ids;
+
+    return feelingsMap;
   }
 }

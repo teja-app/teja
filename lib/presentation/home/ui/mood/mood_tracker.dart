@@ -21,7 +21,10 @@ class CombinedModel {
   final MoodLogsState moodLogsState;
   final HomeState homeState;
 
-  CombinedModel({required this.moodLogsState, required this.homeState});
+  CombinedModel({
+    required this.moodLogsState,
+    required this.homeState,
+  });
 }
 
 class MoodTrackerWidget extends StatefulWidget {
