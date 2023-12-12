@@ -4,14 +4,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:icons_flutter/icons_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/mood_log.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/home/home_state.dart';
+import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:teja/domain/redux/mood/logs/mood_logs_actions.dart';
 import 'package:teja/domain/redux/mood/logs/mood_logs_state.dart';
-import 'package:teja/presentation/home/ui/mood/mood_icons_layout.dart';
+import 'package:teja/presentation/mood/ui/mood_selection_component.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/button.dart';
 
@@ -159,7 +161,14 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
     ]);
   }
 
+  void _handleMoodSelected(int moodIndex) {
+    setState(() {
+      _selectedMoodIndex = moodIndex;
+    });
+  }
+
   Widget _moodTrackerLayout(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return SizedBox(
       width: 400,
       height: 200,
@@ -175,13 +184,54 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
             child: _showMoods
-                ? MoodIconsLayout(
-                    onMoodSelected: (int moodIndex) {
-                      setState(() {
-                        _selectedMoodIndex = moodIndex;
-                      });
-                    },
-                  )
+                ? Center(
+                    child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    Text(
+                      'How are you feeling?',
+                      style: textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 20),
+                    MoodSelectionComponent(
+                      onMoodSelected: _handleMoodSelected,
+                    ),
+                    if (_selectedMoodIndex != null) ...[
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Button(
+                            text: "Continue",
+                            buttonType: ButtonType.primary,
+                            icon: AntDesign.caretright,
+                            onPressed: () {
+                              if (_selectedMoodIndex != null) {
+                                final store = StoreProvider.of<AppState>(context);
+                                store.dispatch(TriggerSelectMoodAction(_selectedMoodIndex!));
+                                store.dispatch(const ChangePageAction(1));
+                                _selectedMoodIndex = null;
+                                _showMoods = false;
+                                GoRouter.of(context).pushNamed(RootPath.moodEdit);
+                              }
+                            },
+                          ),
+                          Button(
+                            text: "Done",
+                            icon: AntDesign.check,
+                            buttonType: ButtonType.secondary,
+                            onPressed: () {
+                              if (_selectedMoodIndex != null) {
+                                final store = StoreProvider.of<AppState>(context);
+                                store.dispatch(TriggerSelectMoodAction(_selectedMoodIndex!));
+                                _selectedMoodIndex = null;
+                                _showMoods = false;
+                                // Dispatch any other action if needed for 'Done' functionality
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ]))
                 : _initialLayout(),
           ),
         ],

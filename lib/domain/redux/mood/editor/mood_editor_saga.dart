@@ -29,16 +29,31 @@ class MoodEditorSaga {
     Isar isar = isarResult.value!;
 
     var moodLogRepository = MoodLogRepository(isar);
-    var moodLog = MoodLog()..moodRating = action.moodRating;
-    yield Try(() sync* {
+
+    if (action.moodLogId != null) {
+      // Use Result to capture the returned mood log
+      var moodLogResult = Result<MoodLog>();
+      yield Call(moodLogRepository.getMoodLogById, args: [action.moodLogId], result: moodLogResult);
+
+      MoodLog moodLog = moodLogResult.value!;
+      moodLog.moodRating = action.moodRating;
+
+      // Proceed with updating the mood log
       yield Call(moodLogRepository.addOrUpdateMoodLog, args: [moodLog]);
+
       // Dispatch an action to update the Redux state
       yield Put(SelectMoodSuccessAction(moodLogRepository.toEntity(moodLog)));
-      yield Put(MoodUpdatedAction("Successful"));
-      yield Put(FetchMoodLogsAction());
-    }, Catch: (e, s) sync* {
-      yield Put(MoodUpdateFailedAction(e.toString()));
-    });
+    } else {
+      // Create new mood log if no ID is provided
+      MoodLog newMoodLog = MoodLog()..moodRating = action.moodRating;
+      yield Call(moodLogRepository.addOrUpdateMoodLog, args: [newMoodLog]);
+
+      // Dispatch an action to update the Redux state
+      yield Put(SelectMoodSuccessAction(moodLogRepository.toEntity(newMoodLog)));
+    }
+
+    yield Put(MoodUpdatedAction("Successful"));
+    yield Put(FetchMoodLogsAction());
   }
 
   _handleUpdateFeelingsAction({required TriggerUpdateFeelingsAction action}) sync* {

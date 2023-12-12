@@ -6,11 +6,11 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:teja/domain/entities/feeling.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
-import 'package:teja/presentation/mood/editor/ui/mood_factor_page.dart';
-import 'package:teja/presentation/mood/editor/ui/mood_finish_screen.dart';
-import 'package:teja/presentation/mood/editor/ui/mood_initial_page.dart';
-import 'package:teja/presentation/mood/editor/ui/mood_feeling_page.dart';
-import 'package:teja/presentation/mood/editor/ui/mood_notes_screen.dart';
+import 'package:teja/presentation/mood/editor/screens/mood_factor_page.dart';
+import 'package:teja/presentation/mood/editor/screens/mood_feeling_page.dart';
+import 'package:teja/presentation/mood/editor/screens/mood_finish_screen.dart';
+import 'package:teja/presentation/mood/editor/screens/mood_initial_page.dart';
+import 'package:teja/presentation/mood/editor/screens/mood_notes_screen.dart';
 
 class MoodEditPage extends StatefulWidget {
   const MoodEditPage({Key? key}) : super(key: key);
@@ -116,7 +116,7 @@ class MoodEditViewModel {
     required this.currentPageIndex,
     required this.feelings,
     required this.changePage,
-  }) : pageCount = feelings.length + 3; // +2 for initial and feeling pages
+  }) : pageCount = feelings.length + 4; // +2 for initial and feeling pages
 
   static MoodEditViewModel fromStore(Store<AppState> store) {
     return MoodEditViewModel(
