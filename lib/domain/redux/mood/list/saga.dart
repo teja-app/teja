@@ -40,8 +40,6 @@ class MoodLogListSaga {
         yield Put(MoodLogsListFetchFailedAction('No mood logs found for the requested page.'));
       }
     }, Catch: (e, s) sync* {
-      print("e.toString() ${e.toString()}");
-      print("s ${s}");
       yield Put(MoodLogsListFetchFailedAction(e.toString()));
     });
   }

@@ -24,7 +24,7 @@ MoodEditorState _updateFeelingsSuccess(MoodEditorState state, UpdateFeelingsSucc
   return state;
 }
 
-MoodEditorState _clearMoodEditorForm(MoodEditorState state, ClearMoodEditorFormAction action) {
+MoodEditorState _clearMoodEditorFormSuccess(MoodEditorState state, ClearMoodEditorSuccessFormAction action) {
   return MoodEditorState.initialState().copyWith(
     selectedFeelings: [],
   );
@@ -50,6 +50,6 @@ final moodEditorReducer = combineReducers<MoodEditorState>([
   TypedReducer<MoodEditorState, SelectMoodSuccessAction>(_selectMood),
   TypedReducer<MoodEditorState, ChangePageAction>(_changePage),
   TypedReducer<MoodEditorState, UpdateFeelingsSuccessAction>(_updateFeelingsSuccess),
-  TypedReducer<MoodEditorState, ClearMoodEditorFormAction>(_clearMoodEditorForm),
+  TypedReducer<MoodEditorState, ClearMoodEditorSuccessFormAction>(_clearMoodEditorFormSuccess),
   TypedReducer<MoodEditorState, UpdateFactorsSuccessAction>(_updateFactorsSuccess),
 ]);

@@ -5,7 +5,9 @@ import 'package:redux/redux.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:teja/domain/entities/feeling.dart';
 import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/mood/detail/mood_detail_actions.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
+import 'package:teja/domain/redux/mood/list/actions.dart';
 import 'package:teja/presentation/mood/editor/screens/mood_factor_page.dart';
 import 'package:teja/presentation/mood/editor/screens/mood_feeling_page.dart';
 import 'package:teja/presentation/mood/editor/screens/mood_finish_screen.dart';
@@ -32,8 +34,7 @@ class MoodEditPageState extends State<MoodEditPage> {
 
   @override
   void dispose() {
-    _store.dispatch(const ClearMoodEditorFormAction()); // Use the stored reference
-
+    _store.dispatch(const ClearMoodEditorFormAction());
     _controller.dispose();
     super.dispose();
   }

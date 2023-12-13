@@ -3,7 +3,10 @@ import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/entities/feeling.dart';
 import 'package:teja/domain/entities/master_factor.dart';
 import 'package:teja/domain/entities/master_feeling.dart';
+import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/mood/detail/mood_detail_actions.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
+import 'package:teja/domain/redux/mood/list/actions.dart';
 import 'package:teja/domain/redux/mood/logs/mood_logs_actions.dart';
 import 'package:teja/infrastructure/repositories/master_factor.dart';
 import 'package:teja/infrastructure/repositories/master_feeling.dart';
@@ -25,6 +28,31 @@ class MoodEditorSaga {
       pattern: UpdateFactorsAction,
     );
     yield TakeEvery(_handleInitializeMoodEditor, pattern: InitializeMoodEditorAction);
+    yield TakeEvery(
+      _handleClearMoodEditorFormAction,
+      pattern: ClearMoodEditorFormAction,
+    );
+  }
+
+  _handleClearMoodEditorFormAction({required ClearMoodEditorFormAction action}) sync* {
+    // Select the current mood log ID from the app state
+    var moodLogIdResult = Result<String?>();
+    yield Select(
+      selector: (AppState state) => state.moodEditorState.currentMoodLog?.id,
+      result: moodLogIdResult,
+    );
+    String? moodLogId = moodLogIdResult.value;
+
+    if (moodLogId != null) {
+      // If the mood log ID is present, dispatch the necessary actions
+      yield Put(ResetMoodLogsListAction());
+      yield Put(LoadMoodDetailAction(moodLogId));
+      yield Put(const ClearMoodEditorSuccessFormAction());
+    } else {
+      // Handle the scenario when the mood log ID is not present
+      // Possibly dispatch other actions or handle state updates
+      yield Put(const ClearMoodEditorSuccessFormAction());
+    }
   }
 
   _handleInitializeMoodEditor({required InitializeMoodEditorAction action}) sync* {
