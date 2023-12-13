@@ -110,3 +110,8 @@ class UpdateFactorsFailureAction {
 class ClearMoodEditorFormAction {
   const ClearMoodEditorFormAction();
 }
+
+@immutable
+class ClearMoodEditorSuccessFormAction {
+  const ClearMoodEditorSuccessFormAction();
+}
