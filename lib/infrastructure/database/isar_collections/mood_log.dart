@@ -19,6 +19,9 @@ class MoodLog {
   late String id = Helpers.generateUniqueId();
 
   DateTime timestamp = DateTime.now();
+  DateTime createdAt = DateTime.now();
+  DateTime updatedAt = DateTime.now();
+
   late int moodRating;
   String? comment;
   String? senderId;

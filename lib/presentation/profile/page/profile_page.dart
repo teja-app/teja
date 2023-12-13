@@ -120,7 +120,7 @@ class ProfilePage extends StatelessWidget {
                 ),
               ]),
             ),
-            // const ProfileWeeklyMoodChart(),
+            const ProfileWeeklyMoodChart(),
           ],
         ),
       ),

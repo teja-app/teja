@@ -16,8 +16,13 @@ class InitializeMoodEditorAction {
 class TriggerSelectMoodAction {
   final int moodRating;
   final String? moodLogId;
+  final DateTime? timestamp;
 
-  const TriggerSelectMoodAction(this.moodRating, [this.moodLogId]);
+  const TriggerSelectMoodAction({
+    required this.moodRating,
+    this.timestamp,
+    this.moodLogId,
+  });
 }
 
 @immutable

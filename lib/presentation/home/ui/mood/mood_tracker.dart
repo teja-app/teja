@@ -9,7 +9,6 @@ import 'package:intl/intl.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/mood_log.dart';
 import 'package:teja/domain/redux/app_state.dart';
-import 'package:teja/domain/redux/home/home_state.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:teja/domain/redux/mood/logs/mood_logs_actions.dart';
 import 'package:teja/domain/redux/mood/logs/mood_logs_state.dart';
@@ -19,11 +18,11 @@ import 'package:teja/shared/common/button.dart';
 
 class CombinedModel {
   final MoodLogsState moodLogsState;
-  final HomeState homeState;
+  final DateTime? selectedDate;
 
   CombinedModel({
     required this.moodLogsState,
-    required this.homeState,
+    this.selectedDate,
   });
 }
 
@@ -60,18 +59,16 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
     return StoreConnector<AppState, CombinedModel>(
       converter: (store) => CombinedModel(
         moodLogsState: store.state.moodLogsState,
-        homeState: store.state.homeState,
+        selectedDate: store.state.homeState.selectedDate,
       ),
       builder: (_, combinedModel) {
-        // Assume we have a way to get the currently selected date
-        String formattedSelectedDate = DateFormat('yyyy-MM-dd').format(combinedModel.homeState.selectedDate!);
+        String formattedSelectedDate = DateFormat('yyyy-MM-dd').format(combinedModel.selectedDate!);
         MoodLogEntity? selectedDateMoodLog = combinedModel.moodLogsState.moodLogsByDate[formattedSelectedDate];
         if (selectedDateMoodLog != null) {
-          // If the mood log for the selected date exists, display the mood log
           return _moodLogLayout(selectedDateMoodLog);
         } else {
           // Otherwise, show the mood tracker
-          return _moodTrackerLayout(context);
+          return _moodTrackerLayout(context, combinedModel.selectedDate!);
         }
       },
     );
@@ -170,7 +167,7 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
     });
   }
 
-  Widget _moodTrackerLayout(BuildContext context) {
+  Widget _moodTrackerLayout(BuildContext context, DateTime selectedDate) {
     final textTheme = Theme.of(context).textTheme;
     return SizedBox(
       width: 400,
@@ -209,7 +206,10 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
                             onPressed: () {
                               if (_selectedMoodIndex != null) {
                                 final store = StoreProvider.of<AppState>(context);
-                                store.dispatch(TriggerSelectMoodAction(_selectedMoodIndex!));
+                                store.dispatch(TriggerSelectMoodAction(
+                                  moodRating: _selectedMoodIndex!,
+                                  timestamp: selectedDate,
+                                ));
                                 store.dispatch(const ChangePageAction(1));
                                 _selectedMoodIndex = null;
                                 _showMoods = false;
@@ -224,7 +224,10 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
                             onPressed: () {
                               if (_selectedMoodIndex != null) {
                                 final store = StoreProvider.of<AppState>(context);
-                                store.dispatch(TriggerSelectMoodAction(_selectedMoodIndex!));
+                                store.dispatch(TriggerSelectMoodAction(
+                                  moodRating: _selectedMoodIndex!,
+                                  timestamp: selectedDate,
+                                ));
                                 _selectedMoodIndex = null;
                                 _showMoods = false;
                                 // Dispatch any other action if needed for 'Done' functionality
