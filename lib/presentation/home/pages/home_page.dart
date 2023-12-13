@@ -125,24 +125,24 @@ class _HomePageState extends State<HomePage> {
                 child: MoodTrackerWidget(),
               ),
               const SizedBox(height: 10),
-              BentoBox(
-                gridWidth: 4,
-                gridHeight: 1,
-                tabletGridWidth: 5,
-                tabletGridHeight: 3,
-                desktopGridWidth: 6,
-                desktopGridHeight: 3.5,
-                child: Button(
-                  text: "Create Habit",
-                  onPressed: () => goRouter.pushNamed(RootPath.editHabit),
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                "Affirmation",
-                style: textTheme.titleSmall,
-              ),
-              const GratitudeCard(),
+              // BentoBox(
+              //   gridWidth: 4,
+              //   gridHeight: 1,
+              //   tabletGridWidth: 5,
+              //   tabletGridHeight: 3,
+              //   desktopGridWidth: 6,
+              //   desktopGridHeight: 3.5,
+              //   child: Button(
+              //     text: "Create Habit",
+              //     onPressed: () => goRouter.pushNamed(RootPath.editHabit),
+              //   ),
+              // ),
+              // const SizedBox(height: 12),
+              // Text(
+              //   "Affirmation",
+              //   style: textTheme.titleSmall,
+              // ),
+              // const GratitudeCard(),
             ],
           ),
         );
