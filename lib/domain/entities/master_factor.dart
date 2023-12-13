@@ -10,8 +10,6 @@ class MasterFactorEntity {
     required this.title,
     required this.subcategories,
   });
-
-  // ... copyWith method remains the same
 }
 
 class SubCategoryEntity {
@@ -22,4 +20,11 @@ class SubCategoryEntity {
     required this.slug,
     required this.title,
   });
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is SubCategoryEntity && other.slug == slug;
+  }
 }

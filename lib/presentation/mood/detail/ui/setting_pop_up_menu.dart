@@ -4,11 +4,13 @@ import 'package:icons_flutter/icons_flutter.dart';
 class SettingsPopupMenu extends StatelessWidget {
   final String moodId;
   final Function onDelete;
+  final Function onEdit;
 
   const SettingsPopupMenu({
     Key? key,
     required this.moodId,
     required this.onDelete,
+    required this.onEdit,
   }) : super(key: key);
 
   @override
@@ -21,7 +23,7 @@ class SettingsPopupMenu extends StatelessWidget {
       ),
       onSelected: (int result) {
         if (result == 0) {
-          // Handle edit action
+          onEdit();
         } else if (result == 1) {
           onDelete();
         }

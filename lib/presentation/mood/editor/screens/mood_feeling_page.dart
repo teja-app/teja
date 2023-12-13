@@ -5,7 +5,7 @@ import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/master_feeling.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:teja/domain/redux/mood/master_feeling/actions.dart';
-import 'package:teja/presentation/mood/editor/ui/feeling_button.dart';
+import 'package:teja/presentation/mood/ui/feeling_button.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:teja/domain/redux/app_state.dart';
 

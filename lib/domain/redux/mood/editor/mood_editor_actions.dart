@@ -6,6 +6,13 @@ import 'package:teja/domain/entities/mood_log.dart';
 import 'package:teja/domain/redux/core_actions.dart';
 
 @immutable
+class InitializeMoodEditorAction {
+  final String moodLogId;
+
+  const InitializeMoodEditorAction(this.moodLogId);
+}
+
+@immutable
 class TriggerSelectMoodAction {
   final int moodRating;
   final String? moodLogId;
