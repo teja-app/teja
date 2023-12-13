@@ -171,26 +171,51 @@ class MoodEditorSaga {
     var moodLogRepository = MoodLogRepository(isar);
 
     yield Try(() sync* {
-      // Dispatch success action to update Redux state
-      List<FeelingEntity> feelingsEntities = action.selectedFeelings
-          .map((masterFeeling) => FeelingEntity(
-                id: masterFeeling.id,
-                feeling: masterFeeling.slug,
-                // additional fields if needed
-              ))
-          .toList();
+      // Retrieve the current mood log
+      var currentMoodLogResult = Result<MoodLog>();
+      yield Call(moodLogRepository.getMoodLogById, args: [action.moodLogId], result: currentMoodLogResult);
+      MoodLog? currentMoodLog = currentMoodLogResult.value;
 
+      List<FeelingEntity> feelingsEntities = [];
+      List<MoodLogFeeling> updatedMoodLogFeelings = [];
+
+      if (currentMoodLog != null) {
+        // Create a map of existing feelings for easy lookup
+        Map<String, MoodLogFeeling> existingFeelingsMap = {};
+        for (var feeling in currentMoodLog.feelings ?? []) {
+          existingFeelingsMap[feeling.feeling ?? ''] = feeling;
+        }
+
+        for (var masterFeeling in action.selectedFeelings) {
+          // Check if the feeling already exists
+          var existingFeeling = existingFeelingsMap[masterFeeling.slug];
+
+          // Create or update FeelingEntity
+          feelingsEntities.add(FeelingEntity(
+            id: masterFeeling.id,
+            feeling: masterFeeling.slug,
+            factors: existingFeeling?.factors ?? [],
+            // Additional fields if needed
+          ));
+
+          // Update or add to MoodLogFeelings
+          updatedMoodLogFeelings.add(MoodLogFeeling()
+                ..feeling = masterFeeling.slug
+                ..factors = existingFeeling?.factors ?? [] // Retain existing factors if present
+              );
+        }
+
+        // Update the feelings in the mood log
+        currentMoodLog.feelings = updatedMoodLogFeelings;
+        yield Call(moodLogRepository.addOrUpdateMoodLog, args: [currentMoodLog]);
+      }
+
+      // Dispatch success action with the correct parameters
       yield Put(UpdateFeelingsSuccessAction(
         action.moodLogId,
         feelingsEntities,
         action.selectedFeelings,
       ));
-
-      // Additional Things:
-      List<MoodLogFeeling> updatedFeelings = action.feelingSlugs.map((slug) {
-        return MoodLogFeeling()..feeling = slug;
-      }).toList();
-      yield Call(moodLogRepository.updateFeelingsForMoodLog, args: [action.moodLogId, updatedFeelings]);
     }, Catch: (e, s) sync* {
       yield Put(MoodUpdateFailedAction(e.toString()));
     });
