@@ -28,32 +28,32 @@ class _MoodListPageState extends State<MoodListPage> {
   final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
   int lastLoadedPage = 0; // Track the last loaded page
 
-  void _loadMoreDataIfNeeded() {
-    final store = StoreProvider.of<AppState>(context, listen: false);
-    final moodLogsState = store.state.moodLogListState;
+  // void _loadMoreDataIfNeeded() {
+  //   final store = StoreProvider.of<AppState>(context, listen: false);
+  //   final moodLogsState = store.state.moodLogListState;
 
-    if (moodLogsState.isLoading || moodLogsState.isLastPage) {
-      // Either already loading or all data loaded
-      return;
-    }
+  //   if (moodLogsState.isLoading || moodLogsState.isLastPage) {
+  //     // Either already loading or all data loaded
+  //     return;
+  //   }
 
-    final positions = itemPositionsListener.itemPositions.value;
-    if (positions.isNotEmpty) {
-      final lastVisibleItemIndex = positions.last.index;
-      final totalLogs = moodLogsState.moodLogs.length;
-      final currentPage = totalLogs ~/ pageSize;
+  //   final positions = itemPositionsListener.itemPositions.value;
+  //   if (positions.isNotEmpty) {
+  //     final lastVisibleItemIndex = positions.last.index;
+  //     final totalLogs = moodLogsState.moodLogs.length;
+  //     final currentPage = totalLogs ~/ pageSize;
 
-      if (lastVisibleItemIndex >= totalLogs - 1 && lastLoadedPage != currentPage) {
-        lastLoadedPage = currentPage; // Update last loaded page
-        store.dispatch(LoadMoodLogsListAction(currentPage + 1, pageSize));
-      }
-    }
-  }
+  //     if (lastVisibleItemIndex >= totalLogs - 1 && lastLoadedPage != currentPage) {
+  //       lastLoadedPage = currentPage; // Update last loaded page
+  //       store.dispatch(LoadMoodLogsListAction(currentPage + 1, pageSize));
+  //     }
+  //   }
+  // }
 
   @override
   void initState() {
     super.initState();
-    itemPositionsListener.itemPositions.addListener(_loadMoreDataIfNeeded);
+    // itemPositionsListener.itemPositions.addListener(_loadMoreDataIfNeeded);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final store = StoreProvider.of<AppState>(context);
       store.dispatch(ResetMoodLogsListAction());

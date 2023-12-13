@@ -47,50 +47,49 @@ class SettingsPage extends StatelessWidget {
             child: ListView(
               children: <Widget>[
                 // Premium Banner
-                Container(
-                  margin: const EdgeInsets.all(10),
-                  height: 300,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    image: const DecorationImage(
-                      image: AssetImage(
-                          'assets/settings/banner.png'), // Replace 'assets/banner.jpg' with the path to your image
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
+                // Container(
+                //   margin: const EdgeInsets.all(10),
+                //   height: 300,
+                //   decoration: BoxDecoration(
+                //     borderRadius: BorderRadius.circular(10),
+                //     image: const DecorationImage(
+                //       image: AssetImage(
+                //           'assets/settings/banner.png'), // Replace 'assets/banner.jpg' with the path to your image
+                //       fit: BoxFit.cover,
+                //     ),
+                //   ),
+                // ),
                 // Personalize Section
                 const Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Text('Personalize', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 ),
-                ListTile(
-                  title: const Text('Preferences'),
-                  onTap: () => GoRouter.of(context).push('/settings/perferences'),
-                ),
+                // ListTile(
+                //   title: const Text('Preferences'),
+                //   onTap: () => GoRouter.of(context).push('/settings/perferences'),
+                // ),
                 ListTile(
                   title: const Text('Notification Settings'),
                   onTap: () => GoRouter.of(context).push('/settings/notification'),
                 ),
                 const Divider(),
-
                 // Account Section
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text('Account', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                ),
-                ListTile(
-                  title: const Text('Basic'),
-                  onTap: () => GoRouter.of(context).push('/settings/basic'),
-                ),
-                ListTile(
-                  title: const Text('Security'),
-                  onTap: () => GoRouter.of(context).push('/settings/security'),
-                ),
-                ListTile(
-                  title: const Text('Advanced Account Settings'),
-                  onTap: () => GoRouter.of(context).push('/settings/advanced'),
-                ),
+                // const Padding(
+                //   padding: EdgeInsets.all(8.0),
+                //   child: Text('Account', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                // ),
+                // ListTile(
+                //   title: const Text('Basic'),
+                //   onTap: () => GoRouter.of(context).push('/settings/basic'),
+                // ),
+                // ListTile(
+                //   title: const Text('Security'),
+                //   onTap: () => GoRouter.of(context).push('/settings/security'),
+                // ),
+                // ListTile(
+                //   title: const Text('Advanced Account Settings'),
+                //   onTap: () => GoRouter.of(context).push('/settings/advanced'),
+                // ),
                 _logout(context),
                 const Divider(),
                 // Community Section
@@ -107,7 +106,7 @@ class SettingsPage extends StatelessWidget {
                 ListTile(
                   title: const Text('Join Discord Community'),
                   onTap: () {
-                    _launchURL('https://discord.gg/XtekVBqP');
+                    _launchURL('https://discord.gg/Jvkqh97cfz');
                   },
                 ),
                 const Divider(),
@@ -117,9 +116,9 @@ class SettingsPage extends StatelessWidget {
                   child: Text('Help and Support', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 ),
                 ListTile(
-                  title: const Text('Report a Bug'),
+                  title: const Text('Report a bug'),
                   onTap: () {
-                    // Navigate to bug report form or open email template
+                    _launchURL('https://discord.gg/yRbJVhMedv');
                   },
                 ),
                 const Divider(),

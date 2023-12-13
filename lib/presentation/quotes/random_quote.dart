@@ -15,6 +15,7 @@ import 'package:teja/presentation/quotes/quote_view.dart';
 import 'package:social_share/social_share.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:teja/shared/common/bento_box.dart';
+import 'package:teja/shared/common/flexible_height_box.dart';
 
 class BackgroundStyle {
   final String imagePath;
@@ -48,7 +49,7 @@ class RandomQuotePage extends StatefulWidget {
 
 class _RandomQuotePageState extends State<RandomQuotePage> {
   final GlobalKey _globalKey = GlobalKey();
-  int currentBackgroundIndex = 1;
+  int currentBackgroundIndex = 0;
 
   QuoteEntity? randomQuote;
 
@@ -120,15 +121,14 @@ class _RandomQuotePageState extends State<RandomQuotePage> {
             backgroundColor: Colors.transparent,
           ),
           body: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               randomQuote == null
                   ? const Center(child: Text("No quotes available."))
                   : RepaintBoundary(
                       key: _globalKey,
-                      child: BentoBox(
+                      child: FlexibleHeightBox(
                         gridWidth: 4,
-                        gridHeight: 5,
                         padding: 0,
                         child: QuoteView(
                           quoteText: randomQuote!.text,
