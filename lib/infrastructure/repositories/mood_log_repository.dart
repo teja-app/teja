@@ -3,9 +3,9 @@ import 'package:isar/isar.dart';
 import 'package:teja/domain/entities/feeling.dart';
 import 'package:teja/domain/entities/mood_log.dart';
 import 'package:teja/domain/redux/mood/list/state.dart';
-import 'package:teja/infrastructure/managers/mood_badge_manager.dart';
+// import 'package:teja/infrastructure/managers/mood_badge_manager.dart';
 import 'package:teja/infrastructure/database/isar_collections/mood_log.dart';
-import 'package:teja/infrastructure/repositories/badge_repository.dart';
+// import 'package:teja/infrastructure/repositories/badge_repository.dart';
 
 class MoodLogRepository {
   final Isar isar;
@@ -74,11 +74,8 @@ class MoodLogRepository {
 
   Future<void> addOrUpdateMoodLog(MoodLog moodLog) async {
     await isar.writeTxn(() async {
+      moodLog.updatedAt = DateTime.now();
       await isar.moodLogs.put(moodLog);
-      // await calculateCurrentStreak();
-      // final criteria = await loadStreakBadgeCriteria();
-      // final moodBadgeManager = MoodBadgeManager(BadgeRepository(isar), this, criteria);
-      // await moodBadgeManager.evaluateAndAwardMoodBadges(inTransaction: true);
     });
   }
 

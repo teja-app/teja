@@ -63,14 +63,12 @@ class MasterFeelingSaga {
 
       FeelingApi moodApi = FeelingApi();
       var feelingsResult = Result<List<MasterFeelingEntity>>();
-      print("Here0");
       yield Call(
         moodApi.getMasterFeelings,
         args: [accessToken.value],
         result: feelingsResult,
       );
 
-      print("Here");
       var feelings = feelingsResult.value;
       if (feelings != null && feelings.isNotEmpty) {
         List<MasterFeeling> domainFeelings = feelings.map((entity) {
@@ -89,7 +87,6 @@ class MasterFeelingSaga {
           result: feelingIdsResult,
         );
 
-        print("Here1");
         var savedFeelingEntities = Result<List<MasterFeelingEntity>>();
         yield Call(
           MasterFeelingRepository(isar).getAllFeelingEntities,

@@ -22,30 +22,40 @@ const MoodLogSchema = CollectionSchema(
       name: r'comment',
       type: IsarType.string,
     ),
-    r'feelings': PropertySchema(
+    r'createdAt': PropertySchema(
       id: 1,
+      name: r'createdAt',
+      type: IsarType.dateTime,
+    ),
+    r'feelings': PropertySchema(
+      id: 2,
       name: r'feelings',
       type: IsarType.objectList,
       target: r'MoodLogFeeling',
     ),
     r'id': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'id',
       type: IsarType.string,
     ),
     r'moodRating': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'moodRating',
       type: IsarType.long,
     ),
     r'senderId': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'senderId',
       type: IsarType.string,
     ),
     r'timestamp': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'timestamp',
+      type: IsarType.dateTime,
+    ),
+    r'updatedAt': PropertySchema(
+      id: 7,
+      name: r'updatedAt',
       type: IsarType.dateTime,
     )
   },
@@ -120,16 +130,18 @@ void _moodLogSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.comment);
+  writer.writeDateTime(offsets[1], object.createdAt);
   writer.writeObjectList<MoodLogFeeling>(
-    offsets[1],
+    offsets[2],
     allOffsets,
     MoodLogFeelingSchema.serialize,
     object.feelings,
   );
-  writer.writeString(offsets[2], object.id);
-  writer.writeLong(offsets[3], object.moodRating);
-  writer.writeString(offsets[4], object.senderId);
-  writer.writeDateTime(offsets[5], object.timestamp);
+  writer.writeString(offsets[3], object.id);
+  writer.writeLong(offsets[4], object.moodRating);
+  writer.writeString(offsets[5], object.senderId);
+  writer.writeDateTime(offsets[6], object.timestamp);
+  writer.writeDateTime(offsets[7], object.updatedAt);
 }
 
 MoodLog _moodLogDeserialize(
@@ -140,17 +152,19 @@ MoodLog _moodLogDeserialize(
 ) {
   final object = MoodLog();
   object.comment = reader.readStringOrNull(offsets[0]);
+  object.createdAt = reader.readDateTime(offsets[1]);
   object.feelings = reader.readObjectList<MoodLogFeeling>(
-    offsets[1],
+    offsets[2],
     MoodLogFeelingSchema.deserialize,
     allOffsets,
     MoodLogFeeling(),
   );
-  object.id = reader.readString(offsets[2]);
+  object.id = reader.readString(offsets[3]);
   object.isarId = id;
-  object.moodRating = reader.readLong(offsets[3]);
-  object.senderId = reader.readStringOrNull(offsets[4]);
-  object.timestamp = reader.readDateTime(offsets[5]);
+  object.moodRating = reader.readLong(offsets[4]);
+  object.senderId = reader.readStringOrNull(offsets[5]);
+  object.timestamp = reader.readDateTime(offsets[6]);
+  object.updatedAt = reader.readDateTime(offsets[7]);
   return object;
 }
 
@@ -164,19 +178,23 @@ P _moodLogDeserializeProp<P>(
     case 0:
       return (reader.readStringOrNull(offset)) as P;
     case 1:
+      return (reader.readDateTime(offset)) as P;
+    case 2:
       return (reader.readObjectList<MoodLogFeeling>(
         offset,
         MoodLogFeelingSchema.deserialize,
         allOffsets,
         MoodLogFeeling(),
       )) as P;
-    case 2:
-      return (reader.readString(offset)) as P;
     case 3:
-      return (reader.readLong(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 4:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 5:
+      return (reader.readStringOrNull(offset)) as P;
+    case 6:
+      return (reader.readDateTime(offset)) as P;
+    case 7:
       return (reader.readDateTime(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -512,6 +530,59 @@ extension MoodLogQueryFilter
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'comment',
         value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> createdAtEqualTo(
+      DateTime value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'createdAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> createdAtGreaterThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'createdAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> createdAtLessThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'createdAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> createdAtBetween(
+    DateTime lower,
+    DateTime upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'createdAt',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
       ));
     });
   }
@@ -1050,6 +1121,59 @@ extension MoodLogQueryFilter
       ));
     });
   }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> updatedAtEqualTo(
+      DateTime value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> updatedAtGreaterThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> updatedAtLessThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> updatedAtBetween(
+    DateTime lower,
+    DateTime upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'updatedAt',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
 }
 
 extension MoodLogQueryObject
@@ -1075,6 +1199,18 @@ extension MoodLogQuerySortBy on QueryBuilder<MoodLog, MoodLog, QSortBy> {
   QueryBuilder<MoodLog, MoodLog, QAfterSortBy> sortByCommentDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'comment', Sort.desc);
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterSortBy> sortByCreatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'createdAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterSortBy> sortByCreatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'createdAt', Sort.desc);
     });
   }
 
@@ -1125,6 +1261,18 @@ extension MoodLogQuerySortBy on QueryBuilder<MoodLog, MoodLog, QSortBy> {
       return query.addSortBy(r'timestamp', Sort.desc);
     });
   }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterSortBy> sortByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterSortBy> sortByUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.desc);
+    });
+  }
 }
 
 extension MoodLogQuerySortThenBy
@@ -1138,6 +1286,18 @@ extension MoodLogQuerySortThenBy
   QueryBuilder<MoodLog, MoodLog, QAfterSortBy> thenByCommentDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'comment', Sort.desc);
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterSortBy> thenByCreatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'createdAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterSortBy> thenByCreatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'createdAt', Sort.desc);
     });
   }
 
@@ -1200,6 +1360,18 @@ extension MoodLogQuerySortThenBy
       return query.addSortBy(r'timestamp', Sort.desc);
     });
   }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterSortBy> thenByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterSortBy> thenByUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.desc);
+    });
+  }
 }
 
 extension MoodLogQueryWhereDistinct
@@ -1208,6 +1380,12 @@ extension MoodLogQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'comment', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QDistinct> distinctByCreatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'createdAt');
     });
   }
 
@@ -1236,6 +1414,12 @@ extension MoodLogQueryWhereDistinct
       return query.addDistinctBy(r'timestamp');
     });
   }
+
+  QueryBuilder<MoodLog, MoodLog, QDistinct> distinctByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'updatedAt');
+    });
+  }
 }
 
 extension MoodLogQueryProperty
@@ -1249,6 +1433,12 @@ extension MoodLogQueryProperty
   QueryBuilder<MoodLog, String?, QQueryOperations> commentProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'comment');
+    });
+  }
+
+  QueryBuilder<MoodLog, DateTime, QQueryOperations> createdAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'createdAt');
     });
   }
 
@@ -1280,6 +1470,12 @@ extension MoodLogQueryProperty
   QueryBuilder<MoodLog, DateTime, QQueryOperations> timestampProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'timestamp');
+    });
+  }
+
+  QueryBuilder<MoodLog, DateTime, QQueryOperations> updatedAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'updatedAt');
     });
   }
 }

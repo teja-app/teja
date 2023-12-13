@@ -122,6 +122,9 @@ class MoodEditorSaga {
     } else {
       // Create new mood log if no ID is provided
       MoodLog newMoodLog = MoodLog()..moodRating = action.moodRating;
+      if (action.timestamp != null) {
+        newMoodLog.timestamp = action.timestamp!;
+      }
       yield Call(moodLogRepository.addOrUpdateMoodLog, args: [newMoodLog]);
 
       // Dispatch an action to update the Redux state
