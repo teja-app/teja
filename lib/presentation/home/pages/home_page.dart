@@ -124,18 +124,6 @@ class _HomePageState extends State<HomePage> {
                 child: MoodTrackerWidget(),
               ),
               const SizedBox(height: 10),
-              BentoBox(
-                gridWidth: 4,
-                gridHeight: 1,
-                tabletGridWidth: 5,
-                tabletGridHeight: 3,
-                desktopGridWidth: 6,
-                desktopGridHeight: 3.5,
-                child: Button(
-                  text: "",
-                  onPressed: () => goRouter.pushNamed(RootPath.noteEditor),
-                ),
-              ),
             ],
           ),
         );
