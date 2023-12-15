@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/home/home_actions.dart';
-import 'package:teja/presentation/home/ui/engagement/gratitude.dart';
 import 'package:teja/presentation/home/ui/master_fetch/fetch_master_view.dart';
 import 'package:teja/presentation/home/ui/mood/mood_tracker.dart';
 import 'package:teja/presentation/navigation/buildDesktopDrawer.dart';
@@ -125,24 +124,18 @@ class _HomePageState extends State<HomePage> {
                 child: MoodTrackerWidget(),
               ),
               const SizedBox(height: 10),
-              // BentoBox(
-              //   gridWidth: 4,
-              //   gridHeight: 1,
-              //   tabletGridWidth: 5,
-              //   tabletGridHeight: 3,
-              //   desktopGridWidth: 6,
-              //   desktopGridHeight: 3.5,
-              //   child: Button(
-              //     text: "Create Habit",
-              //     onPressed: () => goRouter.pushNamed(RootPath.editHabit),
-              //   ),
-              // ),
-              // const SizedBox(height: 12),
-              // Text(
-              //   "Affirmation",
-              //   style: textTheme.titleSmall,
-              // ),
-              // const GratitudeCard(),
+              BentoBox(
+                gridWidth: 4,
+                gridHeight: 1,
+                tabletGridWidth: 5,
+                tabletGridHeight: 3,
+                desktopGridWidth: 6,
+                desktopGridHeight: 3.5,
+                child: Button(
+                  text: "",
+                  onPressed: () => goRouter.pushNamed(RootPath.noteEditor),
+                ),
+              ),
             ],
           ),
         );

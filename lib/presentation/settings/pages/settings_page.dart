@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/onboarding/actions.dart';
 import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -20,6 +21,7 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final GoRouter goRouter = GoRouter.of(context);
     final double screenWidth = MediaQuery.of(context).size.width;
     final double contentWidth = (screenWidth > 500) ? 500 : screenWidth; // Assuming 500 is the max width for content
 
@@ -73,24 +75,12 @@ class SettingsPage extends StatelessWidget {
                   onTap: () => GoRouter.of(context).push('/settings/notification'),
                 ),
                 const Divider(),
-                // Account Section
-                // const Padding(
-                //   padding: EdgeInsets.all(8.0),
-                //   child: Text('Account', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                // ),
-                // ListTile(
-                //   title: const Text('Basic'),
-                //   onTap: () => GoRouter.of(context).push('/settings/basic'),
-                // ),
-                // ListTile(
-                //   title: const Text('Security'),
-                //   onTap: () => GoRouter.of(context).push('/settings/security'),
-                // ),
-                // ListTile(
-                //   title: const Text('Advanced Account Settings'),
-                //   onTap: () => GoRouter.of(context).push('/settings/advanced'),
-                // ),
-                _logout(context),
+                ListTile(
+                  title: const Text('Start from Onboarding'),
+                  onTap: () {
+                    goRouter.goNamed(RootPath.root);
+                  },
+                ),
                 const Divider(),
                 // Community Section
                 const Padding(

@@ -20,29 +20,6 @@ class _AppState extends State<App> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      int currentTime = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-      final accessToken = await readSecureData('access_token');
-      if (accessToken != null && accessToken.isNotEmpty) {
-        try {
-          Map<String, dynamic> decodedToken = JwtDecoder.decode(accessToken);
-          int expiration = decodedToken['exp'];
-          // Redirect if the access token has expired.
-          if (currentTime < expiration) {
-            router.goNamed(RootPath.home);
-          } else {
-            logger.i('Access token has expired, redirecting to sign-in page.');
-            // Add navigation to sign-in page here if needed
-          }
-        } catch (e) {
-          logger.e('Error decoding token: $e');
-          // Handle decoding error or invalid token here
-        }
-      } else {
-        logger.i('No access token found, redirecting to sign-in page.');
-        // Add navigation to sign-in page here if needed
-      }
-    });
   }
 
   @override

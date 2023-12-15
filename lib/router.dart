@@ -7,6 +7,7 @@ import 'package:teja/presentation/home/pages/home_page.dart';
 import 'package:teja/presentation/mood/detail/page/mood_detail.dart';
 import 'package:teja/presentation/mood/editor/pages/mood_edit.dart';
 import 'package:teja/presentation/mood/list/pages/mood_list_page.dart';
+import 'package:teja/presentation/note_editor/note_editor_page.dart';
 import 'package:teja/presentation/onboarding/pages/onboarding_page.dart';
 import 'package:teja/presentation/onboarding/pages/sign_in_page.dart';
 import 'package:teja/presentation/onboarding/pages/sign_up_page.dart';
@@ -60,6 +61,7 @@ class RootPath {
   static const moodList = "mood_list";
   static const moodDetail = "mood_detail";
   static const goalSettings = "goal_settings";
+  static const noteEditor = "note_editor";
 }
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -75,6 +77,12 @@ final GoRouter router = GoRouter(
       name: RootPath.root,
       path: '/',
       builder: (context, state) => const OnboardingPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RootPath.noteEditor,
+      path: '/note_editor',
+      builder: (context, state) => const NoteEditorPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
