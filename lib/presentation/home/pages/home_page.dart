@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/home/home_actions.dart';
@@ -69,6 +70,10 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    Posthog posthog = Posthog();
+    posthog.screen(
+      screenName: 'Home Page',
+    );
     DateTime today = DateTime.now();
     DateTime tomorrow = today.add(const Duration(days: 1));
     DateTime now = DateTime.now();

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:teja/domain/redux/onboarding/auth_state.dart';
 import 'package:teja/router.dart';
-import 'package:teja/shared/helpers/logger.dart';
 import 'package:teja/domain/redux/app_state.dart';
-import 'package:teja/shared/storage/secure_storage.dart';
 import 'package:teja/theme/dark_theme.dart';
 import 'package:teja/theme/light_theme.dart';
 
