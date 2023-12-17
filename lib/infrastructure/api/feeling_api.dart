@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:teja/domain/entities/master_feeling.dart';
+import 'package:teja/domain/entities/master_feeling_entity.dart';
 import 'package:teja/infrastructure/api_helper.dart';
 import 'package:teja/infrastructure/dto/master_feelings_dto.dart';
 
@@ -18,9 +18,10 @@ class FeelingApi {
       return MasterFeelingEntity(
         slug: feelingDto.slug,
         name: feelingDto.name,
+        type: feelingDto.type,
+        parentSlug: feelingDto.parentSlug,
         energy: feelingDto.energy,
         pleasantness: feelingDto.pleasantness,
-        id: null, // Assuming id is not part of the DTO and is nullable in the entity
       );
     }).toList();
 

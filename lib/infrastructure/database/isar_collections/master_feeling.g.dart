@@ -27,14 +27,24 @@ const MasterFeelingSchema = CollectionSchema(
       name: r'name',
       type: IsarType.string,
     ),
-    r'pleasantness': PropertySchema(
+    r'parentSlug': PropertySchema(
       id: 2,
+      name: r'parentSlug',
+      type: IsarType.string,
+    ),
+    r'pleasantness': PropertySchema(
+      id: 3,
       name: r'pleasantness',
       type: IsarType.long,
     ),
     r'slug': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'slug',
+      type: IsarType.string,
+    ),
+    r'type': PropertySchema(
+      id: 5,
+      name: r'type',
       type: IsarType.string,
     )
   },
@@ -43,21 +53,7 @@ const MasterFeelingSchema = CollectionSchema(
   deserialize: _masterFeelingDeserialize,
   deserializeProp: _masterFeelingDeserializeProp,
   idName: r'isarId',
-  indexes: {
-    r'slug': IndexSchema(
-      id: 6169444064746062836,
-      name: r'slug',
-      unique: true,
-      replace: false,
-      properties: [
-        IndexPropertySchema(
-          name: r'slug',
-          type: IndexType.hash,
-          caseSensitive: true,
-        )
-      ],
-    )
-  },
+  indexes: {},
   links: {},
   embeddedSchemas: {},
   getId: _masterFeelingGetId,
@@ -73,7 +69,14 @@ int _masterFeelingEstimateSize(
 ) {
   var bytesCount = offsets.last;
   bytesCount += 3 + object.name.length * 3;
+  {
+    final value = object.parentSlug;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.slug.length * 3;
+  bytesCount += 3 + object.type.length * 3;
   return bytesCount;
 }
 
@@ -85,8 +88,10 @@ void _masterFeelingSerialize(
 ) {
   writer.writeLong(offsets[0], object.energy);
   writer.writeString(offsets[1], object.name);
-  writer.writeLong(offsets[2], object.pleasantness);
-  writer.writeString(offsets[3], object.slug);
+  writer.writeString(offsets[2], object.parentSlug);
+  writer.writeLong(offsets[3], object.pleasantness);
+  writer.writeString(offsets[4], object.slug);
+  writer.writeString(offsets[5], object.type);
 }
 
 MasterFeeling _masterFeelingDeserialize(
@@ -96,11 +101,13 @@ MasterFeeling _masterFeelingDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = MasterFeeling();
-  object.energy = reader.readLong(offsets[0]);
+  object.energy = reader.readLongOrNull(offsets[0]);
   object.isarId = id;
   object.name = reader.readString(offsets[1]);
-  object.pleasantness = reader.readLong(offsets[2]);
-  object.slug = reader.readString(offsets[3]);
+  object.parentSlug = reader.readStringOrNull(offsets[2]);
+  object.pleasantness = reader.readLongOrNull(offsets[3]);
+  object.slug = reader.readString(offsets[4]);
+  object.type = reader.readString(offsets[5]);
   return object;
 }
 
@@ -112,12 +119,16 @@ P _masterFeelingDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readLong(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 1:
       return (reader.readString(offset)) as P;
     case 2:
-      return (reader.readLong(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 3:
+      return (reader.readLongOrNull(offset)) as P;
+    case 4:
+      return (reader.readString(offset)) as P;
+    case 5:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -135,61 +146,6 @@ List<IsarLinkBase<dynamic>> _masterFeelingGetLinks(MasterFeeling object) {
 void _masterFeelingAttach(
     IsarCollection<dynamic> col, Id id, MasterFeeling object) {
   object.isarId = id;
-}
-
-extension MasterFeelingByIndex on IsarCollection<MasterFeeling> {
-  Future<MasterFeeling?> getBySlug(String slug) {
-    return getByIndex(r'slug', [slug]);
-  }
-
-  MasterFeeling? getBySlugSync(String slug) {
-    return getByIndexSync(r'slug', [slug]);
-  }
-
-  Future<bool> deleteBySlug(String slug) {
-    return deleteByIndex(r'slug', [slug]);
-  }
-
-  bool deleteBySlugSync(String slug) {
-    return deleteByIndexSync(r'slug', [slug]);
-  }
-
-  Future<List<MasterFeeling?>> getAllBySlug(List<String> slugValues) {
-    final values = slugValues.map((e) => [e]).toList();
-    return getAllByIndex(r'slug', values);
-  }
-
-  List<MasterFeeling?> getAllBySlugSync(List<String> slugValues) {
-    final values = slugValues.map((e) => [e]).toList();
-    return getAllByIndexSync(r'slug', values);
-  }
-
-  Future<int> deleteAllBySlug(List<String> slugValues) {
-    final values = slugValues.map((e) => [e]).toList();
-    return deleteAllByIndex(r'slug', values);
-  }
-
-  int deleteAllBySlugSync(List<String> slugValues) {
-    final values = slugValues.map((e) => [e]).toList();
-    return deleteAllByIndexSync(r'slug', values);
-  }
-
-  Future<Id> putBySlug(MasterFeeling object) {
-    return putByIndex(r'slug', object);
-  }
-
-  Id putBySlugSync(MasterFeeling object, {bool saveLinks = true}) {
-    return putByIndexSync(r'slug', object, saveLinks: saveLinks);
-  }
-
-  Future<List<Id>> putAllBySlug(List<MasterFeeling> objects) {
-    return putAllByIndex(r'slug', objects);
-  }
-
-  List<Id> putAllBySlugSync(List<MasterFeeling> objects,
-      {bool saveLinks = true}) {
-    return putAllByIndexSync(r'slug', objects, saveLinks: saveLinks);
-  }
 }
 
 extension MasterFeelingQueryWhereSort
@@ -270,57 +226,30 @@ extension MasterFeelingQueryWhere
       ));
     });
   }
-
-  QueryBuilder<MasterFeeling, MasterFeeling, QAfterWhereClause> slugEqualTo(
-      String slug) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'slug',
-        value: [slug],
-      ));
-    });
-  }
-
-  QueryBuilder<MasterFeeling, MasterFeeling, QAfterWhereClause> slugNotEqualTo(
-      String slug) {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'slug',
-              lower: [],
-              upper: [slug],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'slug',
-              lower: [slug],
-              includeLower: false,
-              upper: [],
-            ));
-      } else {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'slug',
-              lower: [slug],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'slug',
-              lower: [],
-              upper: [slug],
-              includeUpper: false,
-            ));
-      }
-    });
-  }
 }
 
 extension MasterFeelingQueryFilter
     on QueryBuilder<MasterFeeling, MasterFeeling, QFilterCondition> {
   QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
-      energyEqualTo(int value) {
+      energyIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'energy',
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      energyIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'energy',
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      energyEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'energy',
@@ -331,7 +260,7 @@ extension MasterFeelingQueryFilter
 
   QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
       energyGreaterThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -345,7 +274,7 @@ extension MasterFeelingQueryFilter
 
   QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
       energyLessThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -359,8 +288,8 @@ extension MasterFeelingQueryFilter
 
   QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
       energyBetween(
-    int lower,
-    int upper, {
+    int? lower,
+    int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -567,7 +496,179 @@ extension MasterFeelingQueryFilter
   }
 
   QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
-      pleasantnessEqualTo(int value) {
+      parentSlugIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'parentSlug',
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      parentSlugIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'parentSlug',
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      parentSlugEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'parentSlug',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      parentSlugGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'parentSlug',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      parentSlugLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'parentSlug',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      parentSlugBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'parentSlug',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      parentSlugStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'parentSlug',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      parentSlugEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'parentSlug',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      parentSlugContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'parentSlug',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      parentSlugMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'parentSlug',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      parentSlugIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'parentSlug',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      parentSlugIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'parentSlug',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      pleasantnessIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'pleasantness',
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      pleasantnessIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'pleasantness',
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      pleasantnessEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'pleasantness',
@@ -578,7 +679,7 @@ extension MasterFeelingQueryFilter
 
   QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
       pleasantnessGreaterThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -592,7 +693,7 @@ extension MasterFeelingQueryFilter
 
   QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
       pleasantnessLessThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -606,8 +707,8 @@ extension MasterFeelingQueryFilter
 
   QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
       pleasantnessBetween(
-    int lower,
-    int upper, {
+    int? lower,
+    int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -756,6 +857,141 @@ extension MasterFeelingQueryFilter
       ));
     });
   }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition> typeEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'type',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      typeGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'type',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      typeLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'type',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition> typeBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'type',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      typeStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'type',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      typeEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'type',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      typeContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'type',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition> typeMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'type',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      typeIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'type',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterFilterCondition>
+      typeIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'type',
+        value: '',
+      ));
+    });
+  }
 }
 
 extension MasterFeelingQueryObject
@@ -790,6 +1026,19 @@ extension MasterFeelingQuerySortBy
     });
   }
 
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy> sortByParentSlug() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'parentSlug', Sort.asc);
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy>
+      sortByParentSlugDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'parentSlug', Sort.desc);
+    });
+  }
+
   QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy>
       sortByPleasantness() {
     return QueryBuilder.apply(this, (query) {
@@ -813,6 +1062,18 @@ extension MasterFeelingQuerySortBy
   QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy> sortBySlugDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'slug', Sort.desc);
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy> sortByType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'type', Sort.asc);
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy> sortByTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'type', Sort.desc);
     });
   }
 }
@@ -855,6 +1116,19 @@ extension MasterFeelingQuerySortThenBy
     });
   }
 
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy> thenByParentSlug() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'parentSlug', Sort.asc);
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy>
+      thenByParentSlugDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'parentSlug', Sort.desc);
+    });
+  }
+
   QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy>
       thenByPleasantness() {
     return QueryBuilder.apply(this, (query) {
@@ -880,6 +1154,18 @@ extension MasterFeelingQuerySortThenBy
       return query.addSortBy(r'slug', Sort.desc);
     });
   }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy> thenByType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'type', Sort.asc);
+    });
+  }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QAfterSortBy> thenByTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'type', Sort.desc);
+    });
+  }
 }
 
 extension MasterFeelingQueryWhereDistinct
@@ -897,6 +1183,13 @@ extension MasterFeelingQueryWhereDistinct
     });
   }
 
+  QueryBuilder<MasterFeeling, MasterFeeling, QDistinct> distinctByParentSlug(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'parentSlug', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<MasterFeeling, MasterFeeling, QDistinct>
       distinctByPleasantness() {
     return QueryBuilder.apply(this, (query) {
@@ -910,6 +1203,13 @@ extension MasterFeelingQueryWhereDistinct
       return query.addDistinctBy(r'slug', caseSensitive: caseSensitive);
     });
   }
+
+  QueryBuilder<MasterFeeling, MasterFeeling, QDistinct> distinctByType(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'type', caseSensitive: caseSensitive);
+    });
+  }
 }
 
 extension MasterFeelingQueryProperty
@@ -920,7 +1220,7 @@ extension MasterFeelingQueryProperty
     });
   }
 
-  QueryBuilder<MasterFeeling, int, QQueryOperations> energyProperty() {
+  QueryBuilder<MasterFeeling, int?, QQueryOperations> energyProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'energy');
     });
@@ -932,7 +1232,13 @@ extension MasterFeelingQueryProperty
     });
   }
 
-  QueryBuilder<MasterFeeling, int, QQueryOperations> pleasantnessProperty() {
+  QueryBuilder<MasterFeeling, String?, QQueryOperations> parentSlugProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'parentSlug');
+    });
+  }
+
+  QueryBuilder<MasterFeeling, int?, QQueryOperations> pleasantnessProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'pleasantness');
     });
@@ -941,6 +1247,12 @@ extension MasterFeelingQueryProperty
   QueryBuilder<MasterFeeling, String, QQueryOperations> slugProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'slug');
+    });
+  }
+
+  QueryBuilder<MasterFeeling, String, QQueryOperations> typeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'type');
     });
   }
 }

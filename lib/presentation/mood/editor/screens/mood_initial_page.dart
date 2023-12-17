@@ -26,7 +26,6 @@ class MoodInitialPageState extends State<MoodInitialPage> {
         builder: (context, viewModel) {
           final currentMoodRating = viewModel.currentMoodLog?.moodRating;
           final currentMoodLogId = viewModel.currentMoodLog?.id;
-          print("currentMoodLog, ${viewModel.currentMoodLog?.id} ${viewModel.currentMoodLog?.moodRating}");
 
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,

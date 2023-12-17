@@ -2,7 +2,7 @@
 
 // Action to initiate the process of fetching master feelings
 import 'package:flutter/material.dart';
-import 'package:teja/domain/entities/master_feeling.dart';
+import 'package:teja/domain/entities/master_feeling_entity.dart';
 
 @immutable
 class FetchMasterFeelingsActionFromApi {}

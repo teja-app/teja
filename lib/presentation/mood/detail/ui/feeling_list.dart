@@ -4,7 +4,7 @@ import 'package:teja/domain/entities/feeling.dart';
 import 'package:teja/domain/entities/master_factor.dart';
 // import 'package:teja/shared/common/bento_box.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:teja/domain/entities/master_feeling.dart';
+import 'package:teja/domain/entities/master_feeling_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 
@@ -38,7 +38,7 @@ class FeelingsListWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        feelingWithSub.masterFeeling.name,
+                        feelingWithSub.masterFeeling!.name,
                         style: textTheme.titleLarge,
                       ),
                       ...feelingWithSub.subCategories.map((subCategory) => Padding(
@@ -69,15 +69,16 @@ class FeelingsListViewModel {
 
   static FeelingsListViewModel fromStore(Store<AppState> store, List<FeelingEntity> feelings) {
     List<FeelingWithSubCategories> feelingWithSubCategories = feelings.map((feelingEntity) {
-      var masterFeeling = store.state.masterFeelingState.masterFeelings.firstWhere(
-        (mFeeling) => mFeeling.slug == feelingEntity.feeling,
-        orElse: () => MasterFeelingEntity(
-          slug: feelingEntity.feeling,
-          name: "Unknown",
-          energy: 0,
-          pleasantness: 0,
-        ),
-      );
+      var existingFeelings = store.state.masterFeelingState.masterFeelings;
+
+      MasterFeelingEntity? existingFeeling = existingFeelings.isNotEmpty
+          ? existingFeelings.firstWhere((mFeeling) => mFeeling.slug == feelingEntity.feeling,
+              orElse: () => MasterFeelingEntity(
+                    name: "Unknown",
+                    slug: "unknown",
+                    type: "feeling",
+                  ))
+          : null;
 
       var subCategories = feelingEntity.factors?.map((slug) {
             return store.state.masterFactorState.masterFactors.expand((factor) => factor.subcategories).firstWhere(
@@ -87,7 +88,7 @@ class FeelingsListViewModel {
           }).toList() ??
           [];
 
-      return FeelingWithSubCategories(masterFeeling: masterFeeling, subCategories: subCategories);
+      return FeelingWithSubCategories(masterFeeling: existingFeeling, subCategories: subCategories);
     }).toList();
 
     return FeelingsListViewModel(
@@ -97,7 +98,7 @@ class FeelingsListViewModel {
 }
 
 class FeelingWithSubCategories {
-  final MasterFeelingEntity masterFeeling;
+  final MasterFeelingEntity? masterFeeling;
   final List<SubCategoryEntity> subCategories;
 
   FeelingWithSubCategories({

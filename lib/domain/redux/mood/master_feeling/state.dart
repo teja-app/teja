@@ -1,7 +1,7 @@
 // lib/domain/redux/mood/master_feeling/state.dart
 
 import 'package:flutter/foundation.dart';
-import 'package:teja/domain/entities/master_feeling.dart';
+import 'package:teja/domain/entities/master_feeling_entity.dart';
 
 @immutable
 class MasterFeelingState {
