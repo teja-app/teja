@@ -1,7 +1,7 @@
 // lib/domain/redux/mood/master_feeling/saga.dart
 import 'package:isar/isar.dart';
 import 'package:redux_saga/redux_saga.dart';
-import 'package:teja/domain/entities/master_feeling.dart';
+import 'package:teja/domain/entities/master_feeling_entity.dart';
 import 'package:teja/domain/redux/mood/master_feeling/actions.dart';
 import 'package:teja/infrastructure/api/feeling_api.dart';
 import 'package:teja/infrastructure/database/isar_collections/master_feeling.dart';
@@ -69,15 +69,18 @@ class MasterFeelingSaga {
         result: feelingsResult,
       );
 
-      var feelings = feelingsResult.value;
+      List<MasterFeelingEntity>? feelings = feelingsResult.value;
       if (feelings != null && feelings.isNotEmpty) {
         List<MasterFeeling> domainFeelings = feelings.map((entity) {
           return MasterFeeling()
             ..slug = entity.slug
             ..name = entity.name
-            ..energy = entity.energy // updated
-            ..pleasantness = entity.pleasantness; // updated
+            ..type = entity.type // New field added
+            ..parentSlug = entity.parentSlug // New field added, handle nulls if necessary
+            ..energy = entity.energy ?? 0 // Handle optional field, provide default if necessary
+            ..pleasantness = entity.pleasantness ?? 0; // Handle optional field, provide default if necessary
         }).toList();
+
         // Add feelings
         var feelingRepo = MasterFeelingRepository(isar);
         var feelingIdsResult = Result<Map<String, int>>();

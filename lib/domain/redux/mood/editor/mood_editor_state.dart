@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teja/domain/entities/master_factor.dart';
-import 'package:teja/domain/entities/master_feeling.dart';
+import 'package:teja/domain/entities/master_feeling_entity.dart';
 import 'package:teja/domain/entities/mood_log.dart';
 
 @immutable

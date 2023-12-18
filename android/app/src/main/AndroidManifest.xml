@@ -29,5 +29,9 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <meta-data android:name="com.posthog.posthog.API_KEY" android:value="phc_mKsbKa4mA0xUc8zt2T5d3MKifEZzfi00lSqsHpS7XmI" />
+        <meta-data android:name="com.posthog.posthog.POSTHOG_HOST" android:value="https://app.posthog.com" />
+        <meta-data android:name="com.posthog.posthog.TRACK_APPLICATION_LIFECYCLE_EVENTS" android:value="false" />
+        <meta-data android:name="com.posthog.posthog.DEBUG" android:value="false" />
     </application>
 </manifest>

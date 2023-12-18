@@ -1,5 +1,5 @@
 import 'package:isar/isar.dart';
-import 'package:teja/domain/entities/master_feeling.dart';
+import 'package:teja/domain/entities/master_feeling_entity.dart';
 import 'package:teja/infrastructure/database/isar_collections/master_feeling.dart';
 
 class MasterFeelingRepository {
@@ -21,18 +21,26 @@ class MasterFeelingRepository {
     await isar.writeTxn(() async {
       for (var feeling in feelings) {
         int id;
-        var existingFeeling = await isar.masterFeelings.where().slugEqualTo(feeling.slug).findFirst();
-        if (existingFeeling != null) {
+        var existingFeelings = await isar.masterFeelings.filter().slugEqualTo(feeling.slug).findAll();
+
+        MasterFeeling? existingFeeling = existingFeelings.isNotEmpty
+            ? existingFeelings.firstWhere((f) => f.parentSlug == feeling.parentSlug, orElse: () => MasterFeeling())
+            : null;
+
+        if (existingFeeling != null && existingFeeling.isarId != 0) {
           // Update existing record
           existingFeeling.name = feeling.name;
-          existingFeeling.energy = feeling.energy; // updated
-          existingFeeling.pleasantness = feeling.pleasantness; // updated
+          existingFeeling.slug = feeling.slug;
+          existingFeeling.type = feeling.type;
+          existingFeeling.parentSlug = feeling.parentSlug;
+          existingFeeling.energy = feeling.energy; // Nullable
+          existingFeeling.pleasantness = feeling.pleasantness; // Nullable
           id = await isar.masterFeelings.put(existingFeeling);
         } else {
           // Add new record
           id = await isar.masterFeelings.put(feeling);
         }
-        feelingIds[feeling.slug] = id;
+        feelingIds[feeling.slug + (feeling.parentSlug ?? '')] = id;
       }
     });
     return feelingIds;
@@ -40,11 +48,13 @@ class MasterFeelingRepository {
 
   MasterFeelingEntity toEntity(MasterFeeling feeling) {
     return MasterFeelingEntity(
+      id: feeling.isarId,
       slug: feeling.slug,
       name: feeling.name,
-      energy: feeling.energy, // updated
-      pleasantness: feeling.pleasantness, // updated
-      id: feeling.isarId,
+      type: feeling.type,
+      parentSlug: feeling.parentSlug,
+      energy: feeling.energy, // Nullable
+      pleasantness: feeling.pleasantness, // Nullable
     );
   }
 
@@ -58,9 +68,8 @@ class MasterFeelingRepository {
 
     for (var slug in slugs) {
       if (slug != null) {
-        var feeling = await isar.masterFeelings.where().slugEqualTo(slug).findFirst();
+        var feeling = await isar.masterFeelings.filter().slugEqualTo(slug).findFirst();
         if (feeling != null) {
-          print("feeling ${feeling.name}");
           feelingsMap[slug] = toEntity(feeling);
         }
       }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/button.dart';
@@ -54,7 +55,12 @@ class OnboardingPage extends StatelessWidget {
                     key: const Key("homePage"),
                     text: "Let's Begin",
                     width: 300,
-                    onPressed: () => GoRouter.of(context).replaceNamed(RootPath.home),
+                    onPressed: () {
+                      Posthog().capture(
+                        eventName: 'begin_button_clicked',
+                      );
+                      GoRouter.of(context).replaceNamed(RootPath.home);
+                    },
                     buttonType: ButtonType.primary,
                   ),
                   const SizedBox(height: 20), // Add spacing at the bottom for better layout

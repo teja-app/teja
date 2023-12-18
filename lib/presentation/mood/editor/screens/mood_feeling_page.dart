@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:redux/redux.dart';
-import 'package:teja/domain/entities/master_feeling.dart';
+import 'package:teja/domain/entities/master_feeling_entity.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:teja/domain/redux/mood/master_feeling/actions.dart';
-import 'package:teja/presentation/mood/ui/feeling_button.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:teja/domain/redux/app_state.dart';
+
+import 'package:collection/collection.dart'; // Import collection package
 
 class FeelingScreen extends StatefulWidget {
   const FeelingScreen({super.key});
@@ -18,16 +18,15 @@ class FeelingScreen extends StatefulWidget {
 
 class FeelingScreenState extends State<FeelingScreen> {
   late List<MasterFeelingEntity> _allFeelings;
-  Map<int, List<MasterFeelingEntity>> _groupedFeelings = {};
 
-  Map<int, GlobalKey> _moodKeys = {};
-  final ScrollController _scrollController = ScrollController();
+  List<String> selectedBroadFeelings = [];
+  List<String> selectedSecondaryFeelings = [];
+  List<String> selectedDetailedFeelings = [];
 
   @override
   void initState() {
     super.initState();
     _allFeelings = [];
-    _groupedFeelings = {}; // Initialize as an empty map
     // Dispatching the action to load feelings when the widget initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
@@ -39,95 +38,100 @@ class FeelingScreenState extends State<FeelingScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    final vm = StoreProvider.of<AppState>(context, listen: false).state.moodEditorState;
+    _initializeSelectedFeelings(vm.selectedFeelings ?? []);
   }
 
-  void _initializeFeelings(List<MasterFeelingEntity> feelings, int currentMood) {
+  void _initializeSelectedFeelings(List<MasterFeelingEntity> selectedFeelings) {
+    selectedBroadFeelings =
+        selectedFeelings.where((feeling) => feeling.type == 'category').map((feeling) => feeling.slug).toList();
+    selectedSecondaryFeelings =
+        selectedFeelings.where((feeling) => feeling.type == 'subcategory').map((feeling) => feeling.slug).toList();
+    selectedDetailedFeelings =
+        selectedFeelings.where((feeling) => feeling.type == 'feeling').map((feeling) => feeling.slug).toList();
+    setState(() {}); // Trigger a rebuild if necessary
+  }
+
+  void _initializeFeelings(List<MasterFeelingEntity> feelings) {
     _allFeelings = feelings.cast<MasterFeelingEntity>();
-    _groupAndSortFeelings();
-    _groupedFeelings.forEach((mood, _) {
-      _moodKeys[mood] = GlobalKey();
-    });
-    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToCurrentMood(currentMood));
   }
 
-  void settingState(List<MasterFeelingEntity> masterFeelings, int currentMood) {
+  void settingState(List<MasterFeelingEntity> masterFeelings) {
     setState(() {
       _allFeelings = masterFeelings.cast<MasterFeelingEntity>();
-      _groupAndSortFeelings();
     });
-  }
-
-  void _groupAndSortFeelings() {
-    _groupedFeelings.clear();
-    for (var feeling in _allFeelings) {
-      int moodGroup = _mapPleasantnessToMood(feeling.pleasantness);
-      _groupedFeelings.putIfAbsent(moodGroup, () => []).add(feeling);
-    }
-
-    // Sort each group by the absolute value of energy level
-    _groupedFeelings.forEach((key, value) {
-      value.sort((a, b) => a.energy.abs().compareTo(b.energy.abs()));
-    });
-  }
-
-  int _mapPleasantnessToMood(int pleasantness) {
-    if (pleasantness == -4 || pleasantness == -5) {
-      return 1; // Mood 1
-    } else if (pleasantness == -2 || pleasantness == -3) {
-      return 2; // Mood 2
-    } else if (pleasantness == -1 || pleasantness == 1) {
-      return 3; // Mood 3
-    } else if (pleasantness == 2 || pleasantness == 3) {
-      return 4; // Mood 4
-    } else if (pleasantness == 4 || pleasantness == 5) {
-      return 5; // Mood 5
-    } else {
-      return 3; // Default to Mood 3 for any unexpected values
-    }
-  }
-
-  // Return 'active' if the mood is selected, otherwise 'inactive'
-  String getMoodIconPath(int moodIndex) {
-    return 'assets/icons/mood_${moodIndex}_active.svg';
   }
 
   void _handleFeelingSelection(MasterFeelingEntity feeling, _ViewModel vm) {
-    final store = StoreProvider.of<AppState>(context);
-    bool isAlreadySelected = vm.selectedFeelings?.contains(feeling) ?? false; // Null-aware check
-    List<MasterFeelingEntity> updatedSelectedFeelings = List.from(vm.selectedFeelings ?? []); // Null-aware
-
-    if (isAlreadySelected) {
-      updatedSelectedFeelings.removeWhere((selectedFeeling) => selectedFeeling.id == feeling.id);
-    } else {
-      updatedSelectedFeelings.add(feeling);
+    if (feeling.type == 'category') {
+      _updateFeelingSelection(feeling, selectedBroadFeelings);
+      selectedSecondaryFeelings.clear();
+      selectedDetailedFeelings.clear();
+    } else if (feeling.type == 'subcategory') {
+      _updateFeelingSelection(feeling, selectedSecondaryFeelings);
+      selectedDetailedFeelings.clear();
+    } else if (feeling.type == 'feeling') {
+      _updateFeelingSelection(feeling, selectedDetailedFeelings);
     }
 
-    List<String> selectedFeelingSlugs = updatedSelectedFeelings.map((feeling) => feeling.slug).toSet().toList();
-
-    store.dispatch(
-      TriggerUpdateFeelingsAction(
-        vm.moodLogId,
-        selectedFeelingSlugs,
-        updatedSelectedFeelings,
-      ),
-    );
+    setState(() {
+      _dispatchUpdateAction(vm);
+    });
   }
 
-  // Add this method to handle the scrolling
-  void _scrollToCurrentMood(int moodRating) {
-    if (_moodKeys.containsKey(moodRating)) {
-      final keyContext = _moodKeys[moodRating]!.currentContext;
-      if (keyContext != null) {
-        // Scroll to the desired mood group
-        final RenderBox box = keyContext.findRenderObject() as RenderBox;
-        final position = box.localToGlobal(Offset.zero).dy - 200;
-        _scrollController.animateTo(
-          position,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeIn,
-        );
+  void _updateFeelingSelection(MasterFeelingEntity feeling, List<String> selectedFeelings) {
+    bool isSelected = selectedFeelings.contains(feeling.slug);
+    if (isSelected) {
+      selectedFeelings.remove(feeling.slug);
+    } else {
+      selectedFeelings.add(feeling.slug);
+    }
+  }
+
+  void _dispatchUpdateAction(_ViewModel vm) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // ignore: prefer_collection_literals
+      List<String> selectedFeelingSlugs = [
+        ...selectedBroadFeelings,
+        ...selectedSecondaryFeelings,
+        ...selectedDetailedFeelings,
+      ].toSet().toList();
+
+      StoreProvider.of<AppState>(context).dispatch(
+        TriggerUpdateFeelingsAction(
+          vm.moodLogId,
+          selectedFeelingSlugs,
+          _getSelectedFeelingEntities(),
+        ),
+      );
+    });
+  }
+
+  List<MasterFeelingEntity> _getSelectedFeelingEntities() {
+    Set<MasterFeelingEntity> selectedEntities = {};
+
+    for (var slug in selectedBroadFeelings) {
+      var feeling = _allFeelings.firstWhereOrNull((f) => f.slug == slug);
+      if (feeling != null) {
+        selectedEntities.add(feeling);
       }
     }
+
+    for (var slug in selectedSecondaryFeelings) {
+      var feeling = _allFeelings.firstWhereOrNull((f) => f.slug == slug);
+      if (feeling != null) {
+        selectedEntities.add(feeling);
+      }
+    }
+
+    for (var slug in selectedDetailedFeelings) {
+      var feeling = _allFeelings.firstWhereOrNull((f) => f.slug == slug);
+      if (feeling != null) {
+        selectedEntities.add(feeling);
+      }
+    }
+
+    return selectedEntities.toList();
   }
 
   @override
@@ -137,107 +141,43 @@ class FeelingScreenState extends State<FeelingScreen> {
 
     return StoreConnector<AppState, _ViewModel>(
       converter: (store) => _ViewModel.fromStore(store),
-      onInit: (store) => _initializeFeelings(store.state.masterFeelingState.masterFeelings ?? [],
-          store.state.moodEditorState.currentMoodLog?.moodRating ?? 0),
+      onInit: (store) => _initializeFeelings(store.state.masterFeelingState.masterFeelings ?? []),
       onDidChange: (previousViewModel, viewModel) {
-        settingState(
-          viewModel.masterFeelings,
-          viewModel.moodRating,
-        );
+        settingState(viewModel.masterFeelings);
       },
       builder: (context, vm) {
-        String moodIconPath = getMoodIconPath(vm.moodRating);
-
         return SizedBox(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: Stack(
             children: [
               SingleChildScrollView(
-                controller: _scrollController,
                 child: Padding(
-                  padding: const EdgeInsets.all(20.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (!vm.isLoading)
-                        ..._groupedFeelings.entries.map((entry) {
-                          // Create a list of widget rows with margins between the buttons
-                          List<Widget> feelingRows = [];
-                          for (int i = 0; i < entry.value.length; i += 2) {
-                            feelingRows.add(
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(4.0), // Add padding around each button
-                                      child: FeelingButton(
-                                        feeling: entry.value[i],
-                                        isSelected: vm.selectedFeelings?.contains(entry.value[i]) ?? false,
-                                        onSelect: (selectedFeeling) => _handleFeelingSelection(selectedFeeling, vm),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: i + 1 < entry.value.length
-                                        ? Padding(
-                                            padding: const EdgeInsets.all(4.0), // Add padding around each button
-                                            child: FeelingButton(
-                                              feeling: entry.value[i + 1],
-                                              isSelected: vm.selectedFeelings?.contains(entry.value[i + 1]) ?? false,
-                                              onSelect: (selectedFeeling) =>
-                                                  _handleFeelingSelection(selectedFeeling, vm),
-                                            ),
-                                          )
-                                        : Container(), // Empty container to balance the row
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
-                          return Column(
-                            key: _moodKeys[entry.key], // Assign the GlobalKey here
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(
-                                height: 40,
-                              ),
-                              Center(
-                                child: SvgPicture.asset(
-                                  getMoodIconPath(entry.key), // Assume entry.key is the mood rating
-                                  width: 32,
-                                  height: 32,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 40,
-                              ),
-                              ...feelingRows, // Add the list of row widgets here
-                            ],
-                          );
-                        }).toList(),
-                    ],
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  color: colorScheme.background,
-                  padding: const EdgeInsets.all(10.0),
-                  child: Row(
-                    children: [
-                      if (moodIconPath.isNotEmpty) SvgPicture.asset(moodIconPath, width: 32, height: 32),
-                      const SizedBox(width: 10), // Spacing between icon and title
-                      Expanded(
-                        child: Text(
-                          "What best describes this feeling?",
-                          style: textTheme.titleLarge,
-                        ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text('Broader Feelings', style: textTheme.titleLarge),
                       ),
+                      buildLevel1Feelings(context, vm),
+                      if (selectedBroadFeelings.isNotEmpty) ...[
+                        const SizedBox(height: 20),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Text('Secondary Feelings', style: textTheme.titleLarge),
+                        ),
+                        buildLevel2Feelings(context, vm),
+                      ],
+                      if (selectedSecondaryFeelings.isNotEmpty) ...[
+                        const SizedBox(height: 20),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Text('Detailed Feelings', style: textTheme.titleLarge),
+                        ),
+                        buildLevel3Feelings(context, vm),
+                      ],
                     ],
                   ),
                 ),
@@ -263,6 +203,67 @@ class FeelingScreenState extends State<FeelingScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget buildLevel1Feelings(BuildContext context, _ViewModel vm) {
+    List<MasterFeelingEntity> broaderFeelings = _allFeelings.where((feeling) => feeling.type == 'category').toList();
+
+    return Wrap(
+      spacing: 8.0,
+      runSpacing: 8.0,
+      children: broaderFeelings.map((feeling) {
+        bool isSelected = selectedBroadFeelings.contains(feeling.slug);
+        return Button(
+          text: feeling.name,
+          onPressed: () {
+            _handleFeelingSelection(feeling, vm);
+          },
+          buttonType: isSelected ? ButtonType.primary : ButtonType.defaultButton,
+        );
+      }).toList(),
+    );
+  }
+
+  Widget buildLevel2Feelings(BuildContext context, _ViewModel vm) {
+    List<MasterFeelingEntity> secondaryFeelings = _allFeelings.where((feeling) {
+      return feeling.type == 'subcategory' && selectedBroadFeelings.contains(feeling.parentSlug);
+    }).toList();
+
+    return Wrap(
+      spacing: 8.0,
+      runSpacing: 8.0,
+      children: secondaryFeelings.map((feeling) {
+        bool isSelected = selectedSecondaryFeelings.contains(feeling.slug);
+        return Button(
+          text: feeling.name,
+          onPressed: () {
+            _handleFeelingSelection(feeling, vm);
+          },
+          buttonType: isSelected ? ButtonType.primary : ButtonType.defaultButton,
+        );
+      }).toList(),
+    );
+  }
+
+  Widget buildLevel3Feelings(BuildContext context, _ViewModel vm) {
+    List<MasterFeelingEntity> detailedFeelings = _allFeelings.where((feeling) {
+      return feeling.type == 'feeling' && selectedSecondaryFeelings.contains(feeling.parentSlug);
+    }).toList();
+
+    return Wrap(
+      spacing: 8.0,
+      runSpacing: 8.0,
+      children: detailedFeelings.map((feeling) {
+        bool isSelected = selectedDetailedFeelings.contains(feeling.slug);
+        return Button(
+          text: feeling.name,
+          onPressed: () {
+            _handleFeelingSelection(feeling, vm);
+          },
+          buttonType: isSelected ? ButtonType.primary : ButtonType.defaultButton,
+        );
+      }).toList(),
     );
   }
 }

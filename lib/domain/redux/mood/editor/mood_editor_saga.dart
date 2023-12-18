@@ -2,7 +2,7 @@ import 'package:isar/isar.dart';
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/entities/feeling.dart';
 import 'package:teja/domain/entities/master_factor.dart';
-import 'package:teja/domain/entities/master_feeling.dart';
+import 'package:teja/domain/entities/master_feeling_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_actions.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
