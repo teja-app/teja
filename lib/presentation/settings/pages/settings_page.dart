@@ -121,13 +121,13 @@ class SettingsPage extends StatelessWidget {
                 ListTile(
                   title: const Text('Terms of Service'),
                   onTap: () {
-                    _launchURL('https://terms-of-service-link.com');
+                    _launchURL('https://teja.app/terms');
                   },
                 ),
                 ListTile(
                   title: const Text('Privacy Policy'),
                   onTap: () {
-                    _launchURL('https://privacy-policy-link.com');
+                    _launchURL('https://teja.app/privacy');
                   },
                 ),
                 ListTile(
