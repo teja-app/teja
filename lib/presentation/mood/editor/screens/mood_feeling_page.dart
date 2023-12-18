@@ -7,6 +7,8 @@ import 'package:teja/domain/redux/mood/master_feeling/actions.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:teja/domain/redux/app_state.dart';
 
+import 'package:collection/collection.dart'; // Import collection package
+
 class FeelingScreen extends StatefulWidget {
   const FeelingScreen({super.key});
 
@@ -36,6 +38,18 @@ class FeelingScreenState extends State<FeelingScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    final vm = StoreProvider.of<AppState>(context, listen: false).state.moodEditorState;
+    _initializeSelectedFeelings(vm.selectedFeelings ?? []);
+  }
+
+  void _initializeSelectedFeelings(List<MasterFeelingEntity> selectedFeelings) {
+    selectedBroadFeelings =
+        selectedFeelings.where((feeling) => feeling.type == 'category').map((feeling) => feeling.slug).toList();
+    selectedSecondaryFeelings =
+        selectedFeelings.where((feeling) => feeling.type == 'subcategory').map((feeling) => feeling.slug).toList();
+    selectedDetailedFeelings =
+        selectedFeelings.where((feeling) => feeling.type == 'feeling').map((feeling) => feeling.slug).toList();
+    setState(() {}); // Trigger a rebuild if necessary
   }
 
   void _initializeFeelings(List<MasterFeelingEntity> feelings) {
@@ -49,25 +63,75 @@ class FeelingScreenState extends State<FeelingScreen> {
   }
 
   void _handleFeelingSelection(MasterFeelingEntity feeling, _ViewModel vm) {
-    final store = StoreProvider.of<AppState>(context);
-    bool isAlreadySelected = vm.selectedFeelings?.contains(feeling) ?? false; // Null-aware check
-    List<MasterFeelingEntity> updatedSelectedFeelings = List.from(vm.selectedFeelings ?? []); // Null-aware
-
-    if (isAlreadySelected) {
-      updatedSelectedFeelings.removeWhere((selectedFeeling) => selectedFeeling.id == feeling.id);
-    } else {
-      updatedSelectedFeelings.add(feeling);
+    if (feeling.type == 'category') {
+      _updateFeelingSelection(feeling, selectedBroadFeelings);
+      selectedSecondaryFeelings.clear();
+      selectedDetailedFeelings.clear();
+    } else if (feeling.type == 'subcategory') {
+      _updateFeelingSelection(feeling, selectedSecondaryFeelings);
+      selectedDetailedFeelings.clear();
+    } else if (feeling.type == 'feeling') {
+      _updateFeelingSelection(feeling, selectedDetailedFeelings);
     }
 
-    List<String> selectedFeelingSlugs = updatedSelectedFeelings.map((feeling) => feeling.slug).toSet().toList();
+    setState(() {
+      _dispatchUpdateAction(vm);
+    });
+  }
 
-    store.dispatch(
-      TriggerUpdateFeelingsAction(
-        vm.moodLogId,
-        selectedFeelingSlugs,
-        updatedSelectedFeelings,
-      ),
-    );
+  void _updateFeelingSelection(MasterFeelingEntity feeling, List<String> selectedFeelings) {
+    bool isSelected = selectedFeelings.contains(feeling.slug);
+    if (isSelected) {
+      selectedFeelings.remove(feeling.slug);
+    } else {
+      selectedFeelings.add(feeling.slug);
+    }
+  }
+
+  void _dispatchUpdateAction(_ViewModel vm) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // ignore: prefer_collection_literals
+      List<String> selectedFeelingSlugs = [
+        ...selectedBroadFeelings,
+        ...selectedSecondaryFeelings,
+        ...selectedDetailedFeelings,
+      ].toSet().toList();
+
+      StoreProvider.of<AppState>(context).dispatch(
+        TriggerUpdateFeelingsAction(
+          vm.moodLogId,
+          selectedFeelingSlugs,
+          _getSelectedFeelingEntities(),
+        ),
+      );
+    });
+  }
+
+  List<MasterFeelingEntity> _getSelectedFeelingEntities() {
+    Set<MasterFeelingEntity> selectedEntities = {};
+
+    for (var slug in selectedBroadFeelings) {
+      var feeling = _allFeelings.firstWhereOrNull((f) => f.slug == slug);
+      if (feeling != null) {
+        selectedEntities.add(feeling);
+      }
+    }
+
+    for (var slug in selectedSecondaryFeelings) {
+      var feeling = _allFeelings.firstWhereOrNull((f) => f.slug == slug);
+      if (feeling != null) {
+        selectedEntities.add(feeling);
+      }
+    }
+
+    for (var slug in selectedDetailedFeelings) {
+      var feeling = _allFeelings.firstWhereOrNull((f) => f.slug == slug);
+      if (feeling != null) {
+        selectedEntities.add(feeling);
+      }
+    }
+
+    return selectedEntities.toList();
   }
 
   @override
@@ -97,14 +161,14 @@ class FeelingScreenState extends State<FeelingScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: Text('Broader Feelings', style: textTheme.titleLarge),
                       ),
-                      buildLevel1Feelings(context),
+                      buildLevel1Feelings(context, vm),
                       if (selectedBroadFeelings.isNotEmpty) ...[
                         const SizedBox(height: 20),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: Text('Secondary Feelings', style: textTheme.titleLarge),
                         ),
-                        buildLevel2Feelings(context),
+                        buildLevel2Feelings(context, vm),
                       ],
                       if (selectedSecondaryFeelings.isNotEmpty) ...[
                         const SizedBox(height: 20),
@@ -112,7 +176,7 @@ class FeelingScreenState extends State<FeelingScreen> {
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: Text('Detailed Feelings', style: textTheme.titleLarge),
                         ),
-                        buildLevel3Feelings(context),
+                        buildLevel3Feelings(context, vm),
                       ],
                     ],
                   ),
@@ -142,8 +206,9 @@ class FeelingScreenState extends State<FeelingScreen> {
     );
   }
 
-  Widget buildLevel1Feelings(BuildContext context) {
+  Widget buildLevel1Feelings(BuildContext context, _ViewModel vm) {
     List<MasterFeelingEntity> broaderFeelings = _allFeelings.where((feeling) => feeling.type == 'category').toList();
+
     return Wrap(
       spacing: 8.0,
       runSpacing: 8.0,
@@ -152,15 +217,7 @@ class FeelingScreenState extends State<FeelingScreen> {
         return Button(
           text: feeling.name,
           onPressed: () {
-            setState(() {
-              if (isSelected) {
-                selectedBroadFeelings.remove(feeling.slug);
-                selectedSecondaryFeelings = []; // Reset secondary feelings if their parent is deselected
-              } else {
-                selectedBroadFeelings.add(feeling.slug);
-              }
-              selectedDetailedFeelings = []; // Reset detailed feelings on any change
-            });
+            _handleFeelingSelection(feeling, vm);
           },
           buttonType: isSelected ? ButtonType.primary : ButtonType.defaultButton,
         );
@@ -168,8 +225,7 @@ class FeelingScreenState extends State<FeelingScreen> {
     );
   }
 
-  Widget buildLevel2Feelings(BuildContext context) {
-    // We now need to get the union of all secondary feelings for the selected broad feelings
+  Widget buildLevel2Feelings(BuildContext context, _ViewModel vm) {
     List<MasterFeelingEntity> secondaryFeelings = _allFeelings.where((feeling) {
       return feeling.type == 'subcategory' && selectedBroadFeelings.contains(feeling.parentSlug);
     }).toList();
@@ -182,14 +238,7 @@ class FeelingScreenState extends State<FeelingScreen> {
         return Button(
           text: feeling.name,
           onPressed: () {
-            setState(() {
-              if (isSelected) {
-                selectedSecondaryFeelings.remove(feeling.slug);
-              } else {
-                selectedSecondaryFeelings.add(feeling.slug);
-              }
-              selectedDetailedFeelings = []; // Reset detailed feelings on any change
-            });
+            _handleFeelingSelection(feeling, vm);
           },
           buttonType: isSelected ? ButtonType.primary : ButtonType.defaultButton,
         );
@@ -197,10 +246,11 @@ class FeelingScreenState extends State<FeelingScreen> {
     );
   }
 
-  Widget buildLevel3Feelings(BuildContext context) {
+  Widget buildLevel3Feelings(BuildContext context, _ViewModel vm) {
     List<MasterFeelingEntity> detailedFeelings = _allFeelings.where((feeling) {
       return feeling.type == 'feeling' && selectedSecondaryFeelings.contains(feeling.parentSlug);
     }).toList();
+
     return Wrap(
       spacing: 8.0,
       runSpacing: 8.0,
@@ -209,13 +259,7 @@ class FeelingScreenState extends State<FeelingScreen> {
         return Button(
           text: feeling.name,
           onPressed: () {
-            setState(() {
-              if (isSelected) {
-                selectedDetailedFeelings.remove(feeling.slug);
-              } else {
-                selectedDetailedFeelings.add(feeling.slug);
-              }
-            });
+            _handleFeelingSelection(feeling, vm);
           },
           buttonType: isSelected ? ButtonType.primary : ButtonType.defaultButton,
         );

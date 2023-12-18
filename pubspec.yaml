@@ -74,6 +74,7 @@ dependencies:
   posthog_flutter: ^3.3.0
   connectivity_plus: ^5.0.2
   package_info_plus: ^4.2.0
+  collection: ^1.17.2
 
 dev_dependencies:
   flutter_test:
