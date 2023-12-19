@@ -17,82 +17,72 @@ class NotesScreen extends StatefulWidget {
 }
 
 class NotesScreenState extends State<NotesScreen> {
-  late int _remainingTime;
-  late Timer _timer;
-  bool _isButtonEnabled = false;
+  late FocusNode textFocusNode;
 
   @override
   void initState() {
     super.initState();
-    _remainingTime = 10;
-    _startTimer();
-  }
-
-  void _startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
-      if (_remainingTime == 0) {
-        setState(() {
-          _isButtonEnabled = true;
-          timer.cancel();
-        });
-      } else {
-        setState(() {
-          _remainingTime--;
-        });
-      }
-    });
+    textFocusNode = FocusNode();
   }
 
   @override
   void dispose() {
-    _timer.cancel();
+    textFocusNode.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return StoreConnector<AppState, NotesScreenModel>(
-      converter: (store) => NotesScreenModel.fromStore(store),
-      builder: (context, viewModel) {
-        return Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Your Notes',
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              const SizedBox(height: 10),
-              const Expanded(
-                child: TextField(
-                  maxLines: null,
-                  keyboardType: TextInputType.multiline,
-                  decoration: InputDecoration(
-                    hintText: 'Write your feelings or notes here...',
-                    border: InputBorder.none,
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return GestureDetector(
+      child: StoreConnector<AppState, NotesScreenModel>(
+        converter: (store) => NotesScreenModel.fromStore(store),
+        builder: (context, viewModel) {
+          return Scaffold(
+            body: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween, // Adjust the main axis alignment
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Your Notes',
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+                const SizedBox(height: 10),
+                Expanded(
+                  child: TextField(
+                    maxLines: null,
+                    focusNode: textFocusNode, // Assign the FocusNode here
+                    keyboardType: TextInputType.multiline,
+                    decoration: const InputDecoration(
+                      hintText: 'Write your feelings or notes here...',
+                      border: InputBorder.none,
+                    ),
                   ),
                 ),
-              ),
-              if (!_isButtonEnabled)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text('Please wait for $_remainingTime seconds.'),
+                Center(
+                  // Center the button horizontally
+                  child: Container(
+                    color: colorScheme.background,
+                    padding: const EdgeInsets.all(10.0),
+                    child: Button(
+                      text: "Next",
+                      width: 300,
+                      onPressed: () async {
+                        FocusScope.of(context).unfocus(); // Dismiss the keyboard
+                        await Future.delayed(const Duration(milliseconds: 100)); // Wait for keyboard to dismiss
+                        final store = StoreProvider.of<AppState>(context);
+                        store.dispatch(ChangePageAction(viewModel.currentPageIndex + 1));
+                      },
+                      buttonType: ButtonType.primary,
+                    ),
+                  ),
                 ),
-              Button(
-                text: "Next",
-                onPressed: _isButtonEnabled
-                    ? () {
-                        StoreProvider.of<AppState>(context).dispatch(
-                          ChangePageAction(viewModel.currentPageIndex + 1),
-                        );
-                      }
-                    : null,
-                buttonType: _isButtonEnabled ? ButtonType.primary : ButtonType.disabled,
-              ),
-            ],
-          ),
-        );
-      },
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

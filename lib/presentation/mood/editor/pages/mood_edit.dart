@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:go_router/go_router.dart';
 import 'package:icons_flutter/icons_flutter.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:teja/domain/entities/feeling.dart';
@@ -11,6 +13,7 @@ import 'package:teja/presentation/mood/editor/screens/mood_feeling_page.dart';
 import 'package:teja/presentation/mood/editor/screens/mood_finish_screen.dart';
 import 'package:teja/presentation/mood/editor/screens/mood_initial_page.dart';
 import 'package:teja/presentation/mood/editor/screens/mood_notes_screen.dart';
+import 'package:teja/router.dart';
 
 class MoodEditPage extends StatefulWidget {
   const MoodEditPage({Key? key}) : super(key: key);
@@ -39,6 +42,11 @@ class MoodEditPageState extends State<MoodEditPage> {
 
   @override
   Widget build(BuildContext context) {
+    Posthog posthog = Posthog();
+    posthog.screen(
+      screenName: 'Mood Edit',
+    );
+    final goRouter = GoRouter.of(context);
     return StoreConnector<AppState, MoodEditViewModel>(
         converter: MoodEditViewModel.fromStore,
         builder: (context, viewModel) {
@@ -73,7 +81,10 @@ class MoodEditPageState extends State<MoodEditPage> {
                   Expanded(
                     child: PageView.builder(
                       controller: _controller,
-                      onPageChanged: viewModel.changePage,
+                      onPageChanged: (int page) {
+                        viewModel.changePage(page);
+                        FocusManager.instance.primaryFocus?.unfocus();
+                      },
                       itemCount: viewModel.pageCount,
                       itemBuilder: (context, index) {
                         if (index == 0) {
@@ -91,7 +102,9 @@ class MoodEditPageState extends State<MoodEditPage> {
                         } else {
                           // Finish page, the last page
                           return FinishScreen(
-                            onFinish: () {},
+                            onFinish: () {
+                              goRouter.pushNamed(RootPath.home);
+                            },
                           );
                         }
                       },

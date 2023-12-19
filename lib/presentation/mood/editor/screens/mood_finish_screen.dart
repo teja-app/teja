@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:icons_flutter/icons_flutter.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 
@@ -18,6 +19,14 @@ class FinishScreen extends StatelessWidget {
           fontSize: 16,
         );
 
+    void _handleSurveyResponse(BuildContext context, String response) {
+      Posthog().capture(
+        eventName: 'survey sent',
+        properties: {"\$survey_id": "018c81d5-a04a-0000-5b8d-a27f1aa8f6a8", "\$survey_response": response},
+      );
+      onFinish();
+    }
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24.0),
       child: Column(
@@ -27,6 +36,7 @@ class FinishScreen extends StatelessWidget {
             gridWidth: 4,
             child: Column(
               children: [
+                const SizedBox(height: 50),
                 // Congratulatory Message
                 Text(
                   'Good job!',
@@ -43,46 +53,11 @@ class FinishScreen extends StatelessWidget {
                   style: bodyStyle,
                   textAlign: TextAlign.center,
                 ),
+                const SizedBox(height: 50),
               ],
             ),
           ),
-          FlexibleHeightBox(
-            gridWidth: 4,
-            child: Column(
-              children: [
-                // Congratulatory Message
-                Text(
-                  '“The whole future lies in uncertainty: live immediately.”\n— Seneca',
-                  style: bodyStyle,
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-          FlexibleHeightBox(
-            gridWidth: 4,
-            child: Column(
-              children: [
-                // Congratulatory Message
-                Text(
-                  'Take a moment to reflect on your day, write down your thoughts and how you can improve tomorrow.',
-                  style: bodyStyle,
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-          FlexibleHeightBox(
-            gridWidth: 4,
-            child: Column(children: [
-              // Next Steps or Actions
-              Text(
-                "What’s next? Consider doing a quick breathing exercise or take a walk to clear your mind.",
-                style: bodyStyle,
-                textAlign: TextAlign.center,
-              ),
-            ]),
-          ),
+          const SizedBox(height: 50),
           FlexibleHeightBox(
             gridWidth: 4,
             child: Column(
@@ -100,26 +75,25 @@ class FinishScreen extends StatelessWidget {
                     // Dislike Button
                     IconButton(
                       icon: const Icon(AntDesign.like1),
-                      onPressed: () => {}, // Handle feedback response
+                      onPressed: () => {_handleSurveyResponse(context, "Yes")}, // Handle feedback response
                     ),
                     // Like Button
                     IconButton(
                       icon: const Icon(AntDesign.dislike1),
-                      onPressed: () => {}, // Handle feedback response
+                      onPressed: () => {_handleSurveyResponse(context, "No")}, // Handle feedback response
                     ),
                   ],
                 ),
                 const SizedBox(height: 16),
-                // Finish Button
-                Button(
-                  text: 'Skip  & Finish',
-                  onPressed: onFinish,
-                  buttonType: ButtonType.disabled,
-                ),
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 50),
+          Button(
+            text: 'Skip  & Finish',
+            onPressed: onFinish,
+            buttonType: ButtonType.disabled,
+          ),
         ],
       ),
     );

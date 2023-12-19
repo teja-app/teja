@@ -13,6 +13,7 @@ Future<void> setPosthogContext() async {
         'token': 'testing',
       }
     });
+    Posthog().debug(true);
     return; // Exit if in debug mode
   }
 

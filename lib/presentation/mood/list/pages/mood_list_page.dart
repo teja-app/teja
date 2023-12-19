@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:icons_flutter/icons_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/mood_log.dart';
@@ -98,6 +99,10 @@ class _MoodListPageState extends State<MoodListPage> {
 
   @override
   Widget build(BuildContext context) {
+    Posthog posthog = Posthog();
+    posthog.screen(
+      screenName: 'Mood List Page',
+    );
     return Scaffold(
       bottomNavigationBar: isDesktop(context) ? null : buildMobileNavigationBar(context),
       appBar: AppBar(
