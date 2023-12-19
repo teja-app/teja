@@ -74,12 +74,7 @@ class DayItem extends StatelessWidget {
         decoration: isSelected
             ? BoxDecoration(
                 color: activeDayBackgroundColor ?? colorScheme.secondary,
-                border: Border(
-                  bottom: BorderSide(
-                    color: colorScheme.secondary, // Change this color as needed
-                    width: 2.0, // You can adjust the width as required
-                  ),
-                ),
+                borderRadius: BorderRadius.circular(4),
               )
             : const BoxDecoration(color: Colors.transparent),
         height: 70,
