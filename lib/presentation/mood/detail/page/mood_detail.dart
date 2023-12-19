@@ -13,6 +13,7 @@ import 'package:teja/presentation/mood/detail/ui/mood_rating_widget.dart';
 import 'package:teja/presentation/mood/detail/ui/setting_pop_up_menu.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/bento_box.dart';
+import 'package:teja/shared/common/flexible_height_box.dart';
 
 class MoodEntryWidget extends StatelessWidget {
   final DateTime timestamp;
@@ -110,6 +111,19 @@ class MoodDetailPageState extends State<MoodDetailPage> {
                     ),
                   ),
                 ),
+                if (moodDetailPage.selectedMoodLog!.comment != null &&
+                    moodDetailPage.selectedMoodLog!.comment!.isNotEmpty)
+                  FlexibleHeightBox(
+                    gridWidth: 4,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          moodDetailPage.selectedMoodLog!.comment!,
+                        ),
+                      ],
+                    ),
+                  ),
                 if (moodDetailPage.selectedMoodLog!.feelings != null &&
                     moodDetailPage.selectedMoodLog!.feelings!.isNotEmpty)
                   Padding(
@@ -166,7 +180,9 @@ class MoodDetailPageState extends State<MoodDetailPage> {
               ),
             ],
           ),
-          body: bodyContent,
+          body: SingleChildScrollView(
+            child: bodyContent,
+          ),
         );
       },
     );

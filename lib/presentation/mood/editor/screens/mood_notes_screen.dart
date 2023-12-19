@@ -18,17 +18,37 @@ class NotesScreen extends StatefulWidget {
 
 class NotesScreenState extends State<NotesScreen> {
   late FocusNode textFocusNode;
+  late TextEditingController textEditingController;
+  Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
     textFocusNode = FocusNode();
+    textEditingController = TextEditingController();
+    textEditingController.addListener(_onTextChanged);
   }
 
   @override
   void dispose() {
     textFocusNode.dispose();
+    textEditingController.removeListener(_onTextChanged);
+    textEditingController.dispose();
+    _debounce?.cancel();
     super.dispose();
+  }
+
+  void _onTextChanged() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 1000), _saveComment); // Adjust the duration as needed
+  }
+
+  void _saveComment() {
+    final store = StoreProvider.of<AppState>(context);
+    final currentMoodLogId = StoreProvider.of<AppState>(context).state.moodEditorState.currentMoodLog!.id;
+    final comment = textEditingController.text;
+
+    store.dispatch(UpdateMoodLogCommentAction(currentMoodLogId, comment));
   }
 
   @override
@@ -39,24 +59,35 @@ class NotesScreenState extends State<NotesScreen> {
       child: StoreConnector<AppState, NotesScreenModel>(
         converter: (store) => NotesScreenModel.fromStore(store),
         builder: (context, viewModel) {
+          if (textEditingController.text.isEmpty && viewModel.comment != null) {
+            textEditingController.text = viewModel.comment!;
+          }
+
           return Scaffold(
             body: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween, // Adjust the main axis alignment
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Your Notes',
-                  style: Theme.of(context).textTheme.headline6,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0), // Add horizontal padding
+                  child: Text(
+                    'Your Notes',
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
                 ),
                 const SizedBox(height: 10),
                 Expanded(
-                  child: TextField(
-                    maxLines: null,
-                    focusNode: textFocusNode, // Assign the FocusNode here
-                    keyboardType: TextInputType.multiline,
-                    decoration: const InputDecoration(
-                      hintText: 'Write your feelings or notes here...',
-                      border: InputBorder.none,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0), // Add horizontal padding
+                    child: TextField(
+                      controller: textEditingController,
+                      maxLines: null,
+                      focusNode: textFocusNode,
+                      keyboardType: TextInputType.multiline,
+                      decoration: const InputDecoration(
+                        hintText: 'Write your feelings or notes here...',
+                        border: InputBorder.none,
+                      ),
                     ),
                   ),
                 ),
@@ -89,16 +120,19 @@ class NotesScreenState extends State<NotesScreen> {
 
 class NotesScreenModel {
   final String moodLogId;
+  final String? comment;
   final int currentPageIndex;
 
   NotesScreenModel({
     required this.moodLogId,
     required this.currentPageIndex,
+    this.comment,
   });
 
   static NotesScreenModel fromStore(Store<AppState> store) {
     return NotesScreenModel(
       moodLogId: store.state.moodEditorState.currentMoodLog!.id,
+      comment: store.state.moodEditorState.currentMoodLog!.comment,
       currentPageIndex: store.state.moodEditorState.currentPageIndex,
     );
   }

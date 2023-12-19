@@ -27,6 +27,10 @@ class MoodEditorSaga {
       _handleUpdateFactorsAction,
       pattern: UpdateFactorsAction,
     );
+    yield TakeEvery(
+      _handleUpdateMoodLogComment,
+      pattern: UpdateMoodLogCommentAction,
+    );
     yield TakeEvery(_handleInitializeMoodEditor, pattern: InitializeMoodEditorAction);
     yield TakeEvery(
       _handleClearMoodEditorFormAction,
@@ -53,6 +57,24 @@ class MoodEditorSaga {
       // Possibly dispatch other actions or handle state updates
       yield Put(const ClearMoodEditorSuccessFormAction());
     }
+  }
+
+  _handleUpdateMoodLogComment({required UpdateMoodLogCommentAction action}) sync* {
+    var isarResult = Result<Isar>();
+    yield GetContext('isar', result: isarResult);
+    Isar isar = isarResult.value!;
+
+    var moodLogRepository = MoodLogRepository(isar);
+
+    yield Try(() sync* {
+      // Update the comment in the repository
+      yield Call(moodLogRepository.updateMoodLogComment, args: [action.moodLogId, action.comment]);
+
+      // Dispatch success action
+      yield Put(UpdateMoodLogCommentSuccessAction(action.moodLogId, action.comment));
+    }, Catch: (e, s) sync* {
+      yield Put(UpdateMoodLogCommentFailureAction(e.toString()));
+    });
   }
 
   _handleInitializeMoodEditor({required InitializeMoodEditorAction action}) sync* {

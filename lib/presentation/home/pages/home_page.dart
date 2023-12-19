@@ -17,6 +17,7 @@ import 'package:teja/router.dart';
 import 'package:teja/shared/common/bento_box.dart';
 import 'package:teja/calendar_timeline/calendar_timeline.dart';
 import 'package:teja/shared/common/button.dart';
+import 'package:teja/shared/common/flexible_height_box.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -119,13 +120,10 @@ class _HomePageState extends State<HomePage> {
                   child: FetchMasterView(),
                 ),
               const SizedBox(height: 10),
-              const BentoBox(
+              const FlexibleHeightBox(
                 gridWidth: 4,
-                gridHeight: 2.5,
                 tabletGridWidth: 5,
-                tabletGridHeight: 3,
                 desktopGridWidth: 6,
-                desktopGridHeight: 3.5,
                 child: MoodTrackerWidget(),
               ),
               const SizedBox(height: 10),

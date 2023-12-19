@@ -45,6 +45,14 @@ MoodEditorState _updateFactorsSuccess(MoodEditorState state, UpdateFactorsSucces
   return state;
 }
 
+MoodEditorState _updateMoodLogCommentSuccess(MoodEditorState state, UpdateMoodLogCommentSuccessAction action) {
+  if (state.currentMoodLog?.id == action.moodLogId) {
+    MoodLogEntity updatedMoodLog = state.currentMoodLog!.copyWith(comment: action.comment);
+    return state.copyWith(currentMoodLog: updatedMoodLog);
+  }
+  return state;
+}
+
 // Include the new reducer methods in the combined reducer
 final moodEditorReducer = combineReducers<MoodEditorState>([
   TypedReducer<MoodEditorState, SelectMoodSuccessAction>(_selectMood),
@@ -52,4 +60,5 @@ final moodEditorReducer = combineReducers<MoodEditorState>([
   TypedReducer<MoodEditorState, UpdateFeelingsSuccessAction>(_updateFeelingsSuccess),
   TypedReducer<MoodEditorState, ClearMoodEditorSuccessFormAction>(_clearMoodEditorFormSuccess),
   TypedReducer<MoodEditorState, UpdateFactorsSuccessAction>(_updateFactorsSuccess),
+  TypedReducer<MoodEditorState, UpdateMoodLogCommentSuccessAction>(_updateMoodLogCommentSuccess),
 ]);

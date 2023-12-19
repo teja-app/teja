@@ -75,6 +75,29 @@ class UpdateFeelingsSuccessAction {
 }
 
 @immutable
+class UpdateMoodLogCommentAction {
+  final String moodLogId;
+  final String comment;
+
+  const UpdateMoodLogCommentAction(this.moodLogId, this.comment);
+}
+
+@immutable
+class UpdateMoodLogCommentSuccessAction {
+  final String moodLogId;
+  final String comment;
+
+  const UpdateMoodLogCommentSuccessAction(this.moodLogId, this.comment);
+}
+
+@immutable
+class UpdateMoodLogCommentFailureAction {
+  final String error;
+
+  const UpdateMoodLogCommentFailureAction(this.error);
+}
+
+@immutable
 class UpdateFactorsAction {
   final String? moodLogId;
   final int feelingId;
