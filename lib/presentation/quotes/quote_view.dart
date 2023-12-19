@@ -35,7 +35,7 @@ class QuoteView extends StatelessWidget {
       decoration: BoxDecoration(
         image: DecorationImage(
           image: background,
-          fit: BoxFit.fitWidth,
+          fit: BoxFit.cover,
         ),
       ),
       alignment: alignment,
