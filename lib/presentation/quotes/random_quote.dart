@@ -14,8 +14,6 @@ import 'dart:math' as math;
 import 'package:teja/presentation/quotes/quote_view.dart';
 import 'package:social_share/social_share.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:teja/shared/common/bento_box.dart';
-import 'package:teja/shared/common/flexible_height_box.dart';
 
 class BackgroundStyle {
   final String imagePath;
@@ -35,8 +33,8 @@ List<BackgroundStyle> backgrounds = [
   ),
   BackgroundStyle(
     imagePath: 'assets/quotes/background_2.png',
-    style: QuoteStyle(textStyle: GoogleFonts.tomorrow(color: Colors.green[900], fontSize: 10.0), spacing: 20.0),
-    alignment: Alignment.topCenter,
+    style: QuoteStyle(textStyle: GoogleFonts.tomorrow(color: Colors.green[900], fontSize: 24.0), spacing: 20.0),
+    alignment: Alignment.center,
     isLogoAtTop: false,
   ),
   // Add more styles and backgrounds as needed
@@ -110,26 +108,47 @@ class _RandomQuotePageState extends State<RandomQuotePage> {
     }
   }
 
+  Widget _roundedIconButton(IconData icon, VoidCallback onPressed) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Container(
+      decoration: BoxDecoration(
+        color: colorScheme.background,
+        borderRadius: BorderRadius.circular(16), // Rounded corners
+      ),
+      child: IconButton(
+        icon: Icon(icon),
+        color: colorScheme.surface,
+        onPressed: onPressed,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var currentBackground = backgrounds[currentBackgroundIndex];
+
     return StoreConnector<AppState, _ViewModel>(
       converter: _ViewModel.fromStore,
       builder: (context, vm) {
         return Scaffold(
+          extendBodyBehindAppBar: true,
           appBar: AppBar(
             backgroundColor: Colors.transparent,
+            elevation: 0,
+            leading: Padding(
+              padding: const EdgeInsets.only(right: 12, left: 4),
+              child: _roundedIconButton(Icons.arrow_back, () => Navigator.of(context).pop()),
+            ),
           ),
-          body: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              randomQuote == null
-                  ? const Center(child: Text("No quotes available."))
-                  : RepaintBoundary(
+          body: randomQuote == null
+              ? const Center(child: Text("No quotes available."))
+              : Stack(
+                  children: [
+                    RepaintBoundary(
                       key: _globalKey,
-                      child: FlexibleHeightBox(
-                        gridWidth: 4,
-                        padding: 0,
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: double.infinity,
                         child: QuoteView(
                           quoteText: randomQuote!.text,
                           quoteAuthor: randomQuote!.author,
@@ -140,32 +159,22 @@ class _RandomQuotePageState extends State<RandomQuotePage> {
                         ),
                       ),
                     ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.shuffle),
-                      onPressed: _getRandomQuote,
-                    ),
-                    IconButton(
-                      icon: const Icon(FontAwesome.instagram),
-                      onPressed: () => _shareQuoteAsImage(platform: 'instagram'),
-                    ),
-                    IconButton(
-                      icon: const Icon(Entypo.share),
-                      onPressed: () => _shareQuoteAsImage(platform: 'share'),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.image),
-                      onPressed: changeBackground,
+                    Positioned(
+                      bottom: 16.0,
+                      left: 16.0,
+                      right: 16.0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _roundedIconButton(Icons.shuffle, _getRandomQuote),
+                          _roundedIconButton(FontAwesome.instagram, () => _shareQuoteAsImage(platform: 'instagram')),
+                          _roundedIconButton(Entypo.share, () => _shareQuoteAsImage(platform: 'share')),
+                          _roundedIconButton(Icons.image, changeBackground),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
         );
       },
     );
