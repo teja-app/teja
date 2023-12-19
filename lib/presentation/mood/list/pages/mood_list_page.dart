@@ -29,28 +29,6 @@ class _MoodListPageState extends State<MoodListPage> {
   final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
   int lastLoadedPage = 0; // Track the last loaded page
 
-  // void _loadMoreDataIfNeeded() {
-  //   final store = StoreProvider.of<AppState>(context, listen: false);
-  //   final moodLogsState = store.state.moodLogListState;
-
-  //   if (moodLogsState.isLoading || moodLogsState.isLastPage) {
-  //     // Either already loading or all data loaded
-  //     return;
-  //   }
-
-  //   final positions = itemPositionsListener.itemPositions.value;
-  //   if (positions.isNotEmpty) {
-  //     final lastVisibleItemIndex = positions.last.index;
-  //     final totalLogs = moodLogsState.moodLogs.length;
-  //     final currentPage = totalLogs ~/ pageSize;
-
-  //     if (lastVisibleItemIndex >= totalLogs - 1 && lastLoadedPage != currentPage) {
-  //       lastLoadedPage = currentPage; // Update last loaded page
-  //       store.dispatch(LoadMoodLogsListAction(currentPage + 1, pageSize));
-  //     }
-  //   }
-  // }
-
   @override
   void initState() {
     super.initState();
@@ -162,8 +140,6 @@ class _MoodListPageState extends State<MoodListPage> {
       // Add other Scaffold properties like floatingActionButton if needed
     );
   }
-
-  // Your _moodLogLayout method
 }
 
 // Widget to display the date header

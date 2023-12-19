@@ -47,6 +47,16 @@ class MoodLogRepository {
     return moodLogs.map((moodLog) => toEntity(moodLog)).toList();
   }
 
+  Future<void> updateMoodLogComment(String moodLogId, String comment) async {
+    await isar.writeTxn(() async {
+      MoodLog? moodLog = await isar.moodLogs.where().idEqualTo(moodLogId).findFirst();
+      if (moodLog != null) {
+        moodLog.comment = comment;
+        await isar.moodLogs.put(moodLog);
+      }
+    });
+  }
+
   Future<List<MoodLogEntity>> getMoodLogsForWeek(DateTime startDate, DateTime endDate) async {
     // Fetch mood logs between startDate and endDate
     final moodLogs = await isar.moodLogs.filter().timestampBetween(startDate, endDate).findAll();

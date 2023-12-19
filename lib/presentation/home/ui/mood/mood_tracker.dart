@@ -74,6 +74,36 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
     );
   }
 
+  Widget _getMoodEntryText(MoodLogEntity moodLog) {
+    final textTheme = Theme.of(context).textTheme;
+
+    if (moodLog.feelings != null && moodLog.feelings!.isNotEmpty) {
+      String feelingsText;
+      int feelingsCount = moodLog.feelings!.length;
+      if (feelingsCount > 2) {
+        // Get the first feeling and append 'and X more feelings'
+        var firstFeeling = moodLog.feelings!.first.feeling;
+        feelingsText = '$firstFeeling and ${feelingsCount - 1} more feelings';
+      } else if (feelingsCount == 2) {
+        // Directly join the two feelings with 'and'
+        feelingsText = moodLog.feelings!.map((e) => e.feeling).join(' and ');
+      } else {
+        // If only one feeling, display it directly
+        feelingsText = moodLog.feelings!.map((e) => e.feeling).join(', ');
+      }
+
+      return Text(
+        feelingsText,
+        style: textTheme.titleMedium,
+      );
+    } else {
+      return Text(
+        'No Feelings',
+        style: textTheme.titleMedium,
+      );
+    }
+  }
+
   Widget _moodLogLayout(MoodLogEntity moodLog) {
     final svgPath = 'assets/icons/mood_${moodLog.moodRating}_active.svg';
     final hasComments = moodLog.comment != null ? true : false;
@@ -125,14 +155,11 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
                       height: 24,
                     ),
                     const SizedBox(width: 8),
+                    _getMoodEntryText(moodLog),
+                    const Spacer(),
                     Text(
-                      'Mood Entry',
-                      style: textTheme.titleMedium,
-                    ),
-                    const Spacer(), // Pushes the timestamp to the right
-                    Text(
-                      DateFormat('hh:mm a').format(moodLog.timestamp), // Formats the timestamp to show time only
-                      style: const TextStyle(color: Colors.grey),
+                      DateFormat('hh:mm a').format(moodLog.timestamp),
+                      style: textTheme.bodySmall,
                     ),
                   ],
                 ),
@@ -140,7 +167,7 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
                 if (hasComments)
                   Text(
                     moodLog.comment!,
-                    style: const TextStyle(color: Colors.black),
+                    style: textTheme.bodySmall,
                   ),
                 if (hasTags) const SizedBox(height: 16),
                 if (hasTags)

@@ -26,14 +26,7 @@ class MoodLogsSaga {
         return;
       }
       final Map<DateTime, MoodLogEntity> moodLogsMap = {
-        for (var moodLog in moodLogs.value!)
-          moodLog.timestamp: MoodLogEntity(
-            id: moodLog.id,
-            timestamp: moodLog.timestamp,
-            moodRating: moodLog.moodRating,
-            feelings: [],
-            comment: moodLog.comment ?? "",
-          )
+        for (var moodLog in moodLogs.value!) moodLog.timestamp: moodLogRepository.toEntity(moodLog)
       };
 
       yield Put(FetchMoodLogsSuccessAction(moodLogsMap));

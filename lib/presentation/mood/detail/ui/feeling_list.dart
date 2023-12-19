@@ -30,29 +30,30 @@ class FeelingsListWidget extends StatelessWidget {
               style: TextStyle(color: Colors.grey, fontSize: 22),
             ),
             const SizedBox(height: 8),
-            ...viewModel.feelingWithSubCategories.map(
-              (feelingWithSub) {
-                return FlexibleHeightBox(
-                  gridWidth: 4,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        feelingWithSub.masterFeeling!.name,
-                        style: textTheme.titleLarge,
-                      ),
-                      ...feelingWithSub.subCategories.map((subCategory) => Padding(
-                            padding: const EdgeInsets.only(top: 4.0),
-                            child: Text(
-                              subCategory.title,
-                              style: textTheme.subtitle1,
-                            ),
-                          )),
-                    ],
-                  ),
-                );
-              },
-            ),
+            if (viewModel.feelingWithSubCategories.isNotEmpty)
+              ...viewModel.feelingWithSubCategories.map(
+                (feelingWithSub) {
+                  return FlexibleHeightBox(
+                    gridWidth: 4,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          feelingWithSub.masterFeeling!.name,
+                          style: textTheme.titleLarge,
+                        ),
+                        ...feelingWithSub.subCategories.map((subCategory) => Padding(
+                              padding: const EdgeInsets.only(top: 4.0),
+                              child: Text(
+                                subCategory.title,
+                                style: textTheme.subtitle1,
+                              ),
+                            )),
+                      ],
+                    ),
+                  );
+                },
+              ),
           ],
         );
       },
