@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_actions.dart';
@@ -69,6 +70,10 @@ class MoodDetailPageState extends State<MoodDetailPage> {
 
   @override
   Widget build(BuildContext pageContext) {
+    Posthog posthog = Posthog();
+    posthog.screen(
+      screenName: 'Mood Detail Page',
+    );
     return StoreConnector<AppState, MoodDetailState>(
       converter: (store) => store.state.moodDetailPage,
       onInitialBuild: (moodDetailPage) {
