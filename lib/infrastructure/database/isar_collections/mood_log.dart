@@ -9,6 +9,7 @@ class MoodLogFeeling {
   String? feeling;
   String? comment;
   List<String>? factors;
+  bool detailed = false; // Indicates if the user provided detailed information
 }
 
 @Collection()
@@ -27,4 +28,5 @@ class MoodLog {
   String? senderId;
 
   List<MoodLogFeeling>? feelings;
+  List<String>? factors; // Broad level factors affecting mood
 }

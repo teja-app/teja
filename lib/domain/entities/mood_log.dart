@@ -7,6 +7,7 @@ class MoodLogEntity {
   final int moodRating;
   String? comment;
   final List<FeelingEntity>? feelings;
+  final List<String>? factors; // New field for broad factors
 
   MoodLogEntity({
     required this.id,
@@ -14,6 +15,7 @@ class MoodLogEntity {
     required this.moodRating,
     this.feelings,
     this.comment,
+    this.factors, // Initialize the new field
   });
 
   // CopyWith method for immutability
@@ -23,6 +25,7 @@ class MoodLogEntity {
     int? moodRating,
     String? comment,
     List<FeelingEntity>? feelings,
+    List<String>? factors,
   }) {
     return MoodLogEntity(
       id: id ?? this.id,
@@ -30,6 +33,7 @@ class MoodLogEntity {
       moodRating: moodRating ?? this.moodRating,
       comment: comment ?? this.comment,
       feelings: feelings ?? this.feelings,
+      factors: factors ?? this.factors,
     );
   }
 }

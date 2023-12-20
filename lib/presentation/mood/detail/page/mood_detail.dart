@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:redux/redux.dart';
+import 'package:teja/domain/entities/master_factor.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_actions.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_state.dart';
@@ -69,22 +70,34 @@ class MoodDetailPageState extends State<MoodDetailPage> {
     GoRouter.of(context).pushNamed(RootPath.moodEdit);
   }
 
+  List<SubCategoryEntity> getFactors(List<MasterFactorEntity> masterFactors, List<String> factors) {
+    return factors.map((slug) {
+          return masterFactors.expand((factor) => factor.subcategories).firstWhere(
+                (subCategory) => subCategory.slug == slug,
+                orElse: () => SubCategoryEntity(slug: slug, title: "Unknown"),
+              );
+        }).toList() ??
+        [];
+  }
+
   @override
   Widget build(BuildContext pageContext) {
     Posthog posthog = Posthog();
     posthog.screen(
       screenName: 'Mood Detail Page',
     );
-    return StoreConnector<AppState, MoodDetailState>(
-      converter: (store) => store.state.moodDetailPage,
-      onInitialBuild: (moodDetailPage) {
-        if (moodDetailPage.errorMessage != null) {
-          _showErrorSnackbar(pageContext, moodDetailPage.errorMessage);
-        }
-      },
-      builder: (_, moodDetailPage) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return StoreConnector<AppState, MoodDetailPageViewModel>(
+      converter: (store) => MoodDetailPageViewModel.fromStore(store),
+      builder: (context, viewModel) {
+        MoodDetailState moodDetailPage = viewModel.moodDetailPage;
         Widget bodyContent = const Center(child: CircularProgressIndicator());
         if (moodDetailPage.selectedMoodLog != null) {
+          List<SubCategoryEntity> factors = [];
+          if (moodDetailPage.selectedMoodLog?.factors != null && moodDetailPage.selectedMoodLog!.factors!.isNotEmpty) {
+            factors = getFactors(viewModel.masterFactors, moodDetailPage.selectedMoodLog!.factors!);
+          }
           bodyContent = Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Column(
@@ -123,6 +136,34 @@ class MoodDetailPageState extends State<MoodDetailPage> {
                         ),
                       ],
                     ),
+                  ),
+                if (factors.isNotEmpty)
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      const SizedBox(height: 32),
+                      Text(
+                        'Factors',
+                        style: textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 8),
+                      FlexibleHeightBox(
+                        gridWidth: 4,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ...factors.map((subCategory) => Padding(
+                                  padding: const EdgeInsets.only(top: 4.0),
+                                  child: Text(
+                                    subCategory.title,
+                                    style: textTheme.titleSmall,
+                                  ),
+                                )),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 if (moodDetailPage.selectedMoodLog!.feelings != null &&
                     moodDetailPage.selectedMoodLog!.feelings!.isNotEmpty)
@@ -185,6 +226,23 @@ class MoodDetailPageState extends State<MoodDetailPage> {
           ),
         );
       },
+    );
+  }
+}
+
+class MoodDetailPageViewModel {
+  final MoodDetailState moodDetailPage;
+  final List<MasterFactorEntity> masterFactors;
+
+  MoodDetailPageViewModel({
+    required this.moodDetailPage,
+    required this.masterFactors,
+  });
+
+  static MoodDetailPageViewModel fromStore(Store<AppState> store) {
+    return MoodDetailPageViewModel(
+      moodDetailPage: store.state.moodDetailPage,
+      masterFactors: store.state.masterFactorState.masterFactors,
     );
   }
 }

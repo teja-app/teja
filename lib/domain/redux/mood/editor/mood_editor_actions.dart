@@ -75,6 +75,35 @@ class UpdateFeelingsSuccessAction {
 }
 
 @immutable
+class UpdateBroadFactorsAction {
+  final String moodLogId;
+  final List<String> factors;
+
+  const UpdateBroadFactorsAction({
+    required this.moodLogId,
+    required this.factors,
+  });
+}
+
+@immutable
+class UpdateBroadFactorsSuccessAction {
+  final String moodLogId;
+  final List<String> factors;
+
+  const UpdateBroadFactorsSuccessAction({
+    required this.moodLogId,
+    required this.factors,
+  });
+}
+
+@immutable
+class UpdateBroadFactorsFailureAction {
+  final String error;
+
+  const UpdateBroadFactorsFailureAction(this.error);
+}
+
+@immutable
 class UpdateMoodLogCommentAction {
   final String moodLogId;
   final String comment;
