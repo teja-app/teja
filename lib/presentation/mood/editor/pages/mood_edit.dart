@@ -8,7 +8,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:teja/domain/entities/feeling.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
-import 'package:teja/presentation/mood/editor/screens/mood_factor_page.dart';
+import 'package:teja/presentation/mood/editor/screens/mood_broad_factors_screen.dart';
 import 'package:teja/presentation/mood/editor/screens/mood_feeling_page.dart';
 import 'package:teja/presentation/mood/editor/screens/mood_finish_screen.dart';
 import 'package:teja/presentation/mood/editor/screens/mood_initial_page.dart';
@@ -93,11 +93,9 @@ class MoodEditPageState extends State<MoodEditPage> {
                         } else if (index == 1) {
                           // Feeling selection page
                           return const FeelingScreen();
-                        } else if (index > 1 && index < viewModel.pageCount - 2) {
-                          // Factors pages, for each feeling
-                          return FactorsScreen(feeling: viewModel.feelings[index - 2]);
-                        } else if (index == viewModel.pageCount - 2) {
-                          // Notes page
+                        } else if (index == 2) {
+                          return const BroadFactorsScreen();
+                        } else if (index == 3) {
                           return NotesScreen(pageController: _controller);
                         } else {
                           // Finish page, the last page
@@ -128,7 +126,7 @@ class MoodEditViewModel {
     required this.currentPageIndex,
     required this.feelings,
     required this.changePage,
-  }) : pageCount = feelings.length + 4; // +2 for initial and feeling pages
+  }) : pageCount = 5; // +2 for initial and feeling pages
 
   static MoodEditViewModel fromStore(Store<AppState> store) {
     return MoodEditViewModel(

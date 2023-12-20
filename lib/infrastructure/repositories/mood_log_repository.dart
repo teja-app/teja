@@ -107,10 +107,21 @@ class MoodLogRepository {
     }
   }
 
-  Future<void> updateFactorsForFeeling(String moodLogId, String feelingSlug, List<String>? factorSlugs) async {
-    print("Updating factors for feeling: $feelingSlug in mood log: $moodLogId");
-    print("New factors: $factorSlugs");
+  Future<void> updateBroadFactorsForMoodLog(String moodLogId, List<String> broadFactors) async {
+    await isar.writeTxn(() async {
+      MoodLog? moodLog = await isar.moodLogs.where().idEqualTo(moodLogId).findFirst();
+      print("broadFactors ${moodLogId} ${broadFactors} ${moodLog}");
+      if (moodLog != null) {
+        moodLog.factors = broadFactors; // Update the broad factors field
+        print("broadFactors ${moodLogId} ${broadFactors} ${moodLog}");
+        await isar.moodLogs.put(moodLog);
+      } else {
+        print("Mood log with ID $moodLogId not found.");
+      }
+    });
+  }
 
+  Future<void> updateFactorsForFeeling(String moodLogId, String feelingSlug, List<String>? factorSlugs) async {
     final MoodLog? moodLog = await getMoodLogById(moodLogId);
     if (moodLog != null && moodLog.feelings != null) {
       // Create a new list for updated feelings
@@ -194,8 +205,10 @@ class MoodLogRepository {
                 feeling: feeling.feeling ?? '',
                 comment: feeling.comment,
                 factors: feeling.factors,
+                detailed: feeling.detailed,
               ))
           .toList(),
+      factors: moodLog.factors, // Broad level factors from MoodLog class
     );
   }
 }

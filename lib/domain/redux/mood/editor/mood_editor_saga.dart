@@ -36,6 +36,10 @@ class MoodEditorSaga {
       _handleClearMoodEditorFormAction,
       pattern: ClearMoodEditorFormAction,
     );
+    yield TakeEvery(
+      _handleUpdateBroadFactorsAction,
+      pattern: UpdateBroadFactorsAction,
+    );
   }
 
   _handleClearMoodEditorFormAction({required ClearMoodEditorFormAction action}) sync* {
@@ -57,6 +61,25 @@ class MoodEditorSaga {
       // Possibly dispatch other actions or handle state updates
       yield Put(const ClearMoodEditorSuccessFormAction());
     }
+  }
+
+  _handleUpdateBroadFactorsAction({required UpdateBroadFactorsAction action}) sync* {
+    var isarResult = Result<Isar>();
+    yield GetContext('isar', result: isarResult);
+    Isar isar = isarResult.value!;
+
+    var moodLogRepository = MoodLogRepository(isar);
+    print("_handleUpdateBroadFactorsAction ${action.factors}");
+
+    yield Try(() sync* {
+      // Update the broad factors in the repository
+      yield Call(moodLogRepository.updateBroadFactorsForMoodLog, args: [action.moodLogId, action.factors]);
+
+      // Dispatch success action
+      yield Put(UpdateBroadFactorsSuccessAction(moodLogId: action.moodLogId, factors: action.factors));
+    }, Catch: (e, s) sync* {
+      yield Put(UpdateBroadFactorsFailureAction(e.toString()));
+    });
   }
 
   _handleUpdateMoodLogComment({required UpdateMoodLogCommentAction action}) sync* {

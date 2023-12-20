@@ -190,6 +190,23 @@ class MockMoodLogRepository extends _i1.Mock implements _i7.MoodLogRepository {
       ) as _i5.Future<List<dynamic>>);
 
   @override
+  _i5.Future<void> updateMoodLogComment(
+    String? moodLogId,
+    String? comment,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateMoodLogComment,
+          [
+            moodLogId,
+            comment,
+          ],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
   _i5.Future<List<_i3.MoodLogEntity>> getMoodLogsForWeek(
     DateTime? startDate,
     DateTime? endDate,
@@ -255,6 +272,23 @@ class MockMoodLogRepository extends _i1.Mock implements _i7.MoodLogRepository {
           [
             moodLogId,
             updatedFeelings,
+          ],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> updateBroadFactorsForMoodLog(
+    String? moodLogId,
+    List<String>? broadFactors,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateBroadFactorsForMoodLog,
+          [
+            moodLogId,
+            broadFactors,
           ],
         ),
         returnValue: _i5.Future<void>.value(),

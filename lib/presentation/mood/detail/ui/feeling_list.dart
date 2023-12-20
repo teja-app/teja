@@ -25,9 +25,9 @@ class FeelingsListWidget extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Feelings',
-              style: TextStyle(color: Colors.grey, fontSize: 22),
+              style: textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
             if (viewModel.feelingWithSubCategories.isNotEmpty)
