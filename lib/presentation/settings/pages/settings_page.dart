@@ -108,7 +108,19 @@ class SettingsPage extends StatelessWidget {
                 ListTile(
                   title: const Text('Report a bug'),
                   onTap: () {
-                    _launchURL('https://discord.gg/yRbJVhMedv');
+                    _launchURL('https://swayamapp.atlassian.net/servicedesk/customer/portal/1/group/1/create/11');
+                  },
+                ),
+                ListTile(
+                  title: const Text('Suggest Imporvements'),
+                  onTap: () {
+                    _launchURL('https://swayamapp.atlassian.net/servicedesk/customer/portal/1/group/1/create/9');
+                  },
+                ),
+                ListTile(
+                  title: const Text('Suggest New Feature'),
+                  onTap: () {
+                    _launchURL('https://swayamapp.atlassian.net/servicedesk/customer/portal/1/group/1/create/12');
                   },
                 ),
                 const Divider(),

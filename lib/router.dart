@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:teja/presentation/edit_habit/pages/edig_habit_page.dart';
-import 'package:teja/presentation/explore/list/pages/explote_page.dart';
+import 'package:teja/presentation/explore/list/pages/explore_page.dart';
 import 'package:teja/presentation/goal_editor/page/vision_picker_page.dart';
 import 'package:teja/presentation/home/pages/home_page.dart';
 import 'package:teja/presentation/mood/detail/page/mood_detail.dart';

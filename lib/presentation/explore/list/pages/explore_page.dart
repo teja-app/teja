@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:teja/presentation/navigation/buildDesktopDrawer.dart';
 import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/presentation/navigation/leadingContainer.dart';
@@ -14,39 +13,15 @@ class ExplorePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Widget mainBody = GridView.count(
-      crossAxisCount: 2,
-      childAspectRatio: 1.0,
+    final Widget mainBody = ListView(
       padding: const EdgeInsets.all(4.0),
-      mainAxisSpacing: 4.0,
-      crossAxisSpacing: 4.0,
       children: <Widget>[
-        _buildCategoryBox(
-          'Guides',
-          'assets/background/guide.svg',
-          context,
-          RootPath.habit,
-          isComingSoon: true,
-        ),
-        _buildCategoryBox(
-          'Goals & Habits',
-          'assets/background/goal.svg',
-          context,
-          RootPath.habit,
-          isComingSoon: true,
-        ),
-        _buildCategoryBox(
-          'Journal',
-          'assets/background/journal.svg',
-          context,
-          RootPath.habit,
-          isComingSoon: true,
-        ),
         _buildCategoryBox(
           'Inspiration',
           'assets/background/inspiration.svg',
           context,
           RootPath.inspiration,
+          'Discover quotes, affirmations, and more to inspire and motivate you.',
         ),
       ],
     );
@@ -57,36 +32,50 @@ class ExplorePage extends StatelessWidget {
         forceMaterialTransparency: true,
         leading: leadingNavBar(context),
         leadingWidth: 72,
+        actions: [
+          IconButton(
+            onPressed: () {
+              // Add functionality for any actions you want here.
+            },
+            icon: const Icon(Icons.info),
+          ),
+        ],
       ),
-      body: isDesktop(context)
-          ? Row(
-              children: [
-                buildDesktopNavigationBar(
-                  context,
-                ),
-                Expanded(
-                  child: mainBody,
-                ),
-              ],
-            )
-          : mainBody,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              'Discover and explore a world of inspiration and self-improvement.',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Expanded(
+            child: mainBody,
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildCategoryBox(String title, String svgPath, BuildContext context, String routeName,
+  Widget _buildCategoryBox(String title, String svgPath, BuildContext context, String routeName, String description,
       {bool isComingSoon = false}) {
     final GoRouter goRouter = GoRouter.of(context);
     final brightness = Theme.of(context).colorScheme.brightness;
-    return BentoBox(
-      gridWidth: 1,
-      gridHeight: 1,
-      child: GestureDetector(
-        onTap: () {
-          if (!isComingSoon) {
-            goRouter.pushNamed(routeName);
-            HapticFeedback.selectionClick();
-          }
-        },
+    return GestureDetector(
+      onTap: () {
+        if (!isComingSoon) {
+          goRouter.pushNamed(routeName);
+          HapticFeedback.selectionClick();
+        }
+      },
+      child: BentoBox(
+        gridWidth: 4,
+        gridHeight: 3,
         child: Stack(
           children: [
             Center(
@@ -108,7 +97,6 @@ class ExplorePage extends StatelessWidget {
             if (isComingSoon)
               Positioned.fill(
                 child: Container(
-                  color: Colors.black45,
                   child: const Center(
                     child: Text(
                       'Coming Soon',
@@ -121,6 +109,21 @@ class ExplorePage extends StatelessWidget {
                   ),
                 ),
               ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.all(8.0),
+                color: Colors.black.withOpacity(0.7),
+                child: Text(
+                  description,
+                  style: const TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
