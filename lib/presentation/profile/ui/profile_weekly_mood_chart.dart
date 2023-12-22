@@ -6,21 +6,23 @@ import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_actions.
 import 'package:teja/presentation/profile/ui/weekly_mood_chart.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:teja/shared/common/bento_box.dart';
+import 'package:teja/shared/common/flexible_height_box.dart';
 
 class ProfileWeeklyMoodChart extends StatefulWidget {
   const ProfileWeeklyMoodChart({Key? key}) : super(key: key);
 
   @override
-  _ProfileWeeklyMoodChartState createState() => _ProfileWeeklyMoodChartState();
+  ProfileWeeklyMoodChartState createState() => ProfileWeeklyMoodChartState();
 }
 
-class _ProfileWeeklyMoodChartState extends State<ProfileWeeklyMoodChart> {
+class ProfileWeeklyMoodChartState extends State<ProfileWeeklyMoodChart> {
   @override
   void initState() {
     super.initState();
     // Dispatch action to fetch weekly mood report
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final DateTime today = DateTime.now();
+      final DateTime now = DateTime.now();
+      final DateTime today = DateTime(now.year, now.month, now.day); // Reset time to midnight
       StoreProvider.of<AppState>(context).dispatch(FetchWeeklyMoodReportAction(today));
     });
   }
@@ -31,19 +33,18 @@ class _ProfileWeeklyMoodChartState extends State<ProfileWeeklyMoodChart> {
       converter: (store) => ProfileWeeklyMoodChartViewModel.fromStore(store),
       builder: (context, viewModel) {
         if (viewModel.isLoading) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
 
-        final currentWeekSpots = _convertMoodRatingsToSpots(viewModel.currentWeekAverageMoodRatings);
-        final previousWeekSpots = _convertMoodRatingsToSpots(viewModel.previousWeekAverageMoodRatings);
+        final currentWeekSpots = _currentWeekMoodRatingsToSpots(viewModel.currentWeekAverageMoodRatings);
+        final previousWeekSpots = _previousWeekMoodRatingsToSpots(viewModel.previousWeekAverageMoodRatings);
         final colorScheme = Theme.of(context).colorScheme;
 
         double averageMood = _calculateAverageMood(viewModel.currentWeekAverageMoodRatings);
         String moodTitle = _determineMoodTitle(averageMood);
         final colorSchema = Theme.of(context).colorScheme;
-        return BentoBox(
+        return FlexibleHeightBox(
           gridWidth: 4,
-          gridHeight: 5,
           child: Column(
             children: [
               Padding(
@@ -61,7 +62,7 @@ class _ProfileWeeklyMoodChartState extends State<ProfileWeeklyMoodChart> {
                 padding: 0,
                 color: colorSchema.background,
                 child: WeeklyMoodChart(
-                  key: Key("WeeklyMoodChart"),
+                  key: const Key("WeeklyMoodChart"),
                   currentWeekSpots: currentWeekSpots,
                   previousWeekSpots: previousWeekSpots,
                   currentWeekColor: colorScheme.primary,
@@ -92,7 +93,26 @@ class _ProfileWeeklyMoodChartState extends State<ProfileWeeklyMoodChart> {
     }
   }
 
-  List<FlSpot> _convertMoodRatingsToSpots(Map<DateTime, double> moodRatings) {
+  List<FlSpot> _currentWeekMoodRatingsToSpots(Map<DateTime, double> moodRatings) {
+    List<FlSpot?> weekSpots = List<FlSpot?>.filled(7, null);
+
+    // Assign actual data to the spots
+    moodRatings.forEach((date, rating) {
+      int dayOfWeek = date.weekday - 1; // Convert to 0-index (0 = Monday)
+      if (date.isBefore(DateTime.now().add(Duration(days: 1)))) {
+        weekSpots[dayOfWeek] = FlSpot(dayOfWeek.toDouble(), rating);
+      }
+    });
+
+    // Keep only spots up to the current day of the week
+    int currentDayIndex = DateTime.now().weekday - 1;
+    weekSpots = weekSpots.sublist(0, currentDayIndex + 1);
+
+    // Remove null values and convert to a list of FlSpot
+    return weekSpots.where((spot) => spot != null).cast<FlSpot>().toList();
+  }
+
+  List<FlSpot> _previousWeekMoodRatingsToSpots(Map<DateTime, double> moodRatings) {
     // Initialize all spots with null values except the first and last, which are set to a default value (e.g., 0)
     List<FlSpot?> weekSpots = List<FlSpot?>.filled(7, null);
     weekSpots[0] = FlSpot(0, 0); // Default value for the first day of the week
@@ -109,9 +129,7 @@ class _ProfileWeeklyMoodChartState extends State<ProfileWeeklyMoodChart> {
     FlSpot? lastKnownValue;
     for (var spot in weekSpots) {
       if (spot != null && spot.y != 0) {
-        if (firstKnownValue == null) {
-          firstKnownValue = spot;
-        }
+        firstKnownValue ??= spot;
         lastKnownValue = spot;
       }
     }

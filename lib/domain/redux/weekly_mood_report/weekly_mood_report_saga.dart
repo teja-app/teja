@@ -50,6 +50,6 @@ class WeeklyMoodReportSaga {
 
   DateTime _endOfWeek(DateTime date) {
     int daysToAdd = 7 - date.weekday; // Remaining days to Sunday
-    return date.add(Duration(days: daysToAdd - 1)); // Exclude Sunday itself
+    return date.add(Duration(days: daysToAdd));
   }
 }
