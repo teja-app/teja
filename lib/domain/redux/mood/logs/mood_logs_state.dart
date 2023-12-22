@@ -3,7 +3,7 @@ import 'package:teja/domain/entities/mood_log.dart';
 
 @immutable
 class MoodLogsState {
-  final Map<String, MoodLogEntity> moodLogsByDate; // String keys as date representations
+  final Map<String, List<MoodLogEntity>> moodLogsByDate;
   final bool isFetching;
   final String? errorMessage;
   final bool fetchSuccess;
@@ -16,7 +16,7 @@ class MoodLogsState {
   });
 
   MoodLogsState copyWith({
-    Map<String, MoodLogEntity>? moodLogsByDate,
+    Map<String, List<MoodLogEntity>>? moodLogsByDate,
     bool? isFetching,
     String? errorMessage,
     bool? fetchSuccess,

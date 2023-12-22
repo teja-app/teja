@@ -30,20 +30,31 @@ class MoodTrackerWidget extends StatefulWidget {
   const MoodTrackerWidget({super.key});
 
   @override
-  _MoodTrackerWidgetState createState() => _MoodTrackerWidgetState();
+  MoodTrackerWidgetState createState() => MoodTrackerWidgetState();
 }
 
-class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
+class MoodTrackerWidgetState extends State<MoodTrackerWidget> {
   bool _showMoods = false;
   int? _selectedMoodIndex; // To track the selected mood
+
+  void _updateShowMoods(List<MoodLogEntity>? moodLogs) {
+    if (moodLogs != null && moodLogs.isNotEmpty && !_showMoods) {
+      setState(() {
+        _showMoods = true;
+      });
+    } else if ((moodLogs == null || moodLogs.isEmpty) && _showMoods) {
+      setState(() {
+        _showMoods = false;
+      });
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final Store<AppState> store = StoreProvider.of<AppState>(context);
-      // Dispatch the action to fetch mood logs here
-      store.dispatch(FetchMoodLogsAction());
+      store.dispatch(const FetchMoodLogsAction());
     });
   }
 
@@ -56,6 +67,7 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return StoreConnector<AppState, CombinedModel>(
       converter: (store) => CombinedModel(
         moodLogsState: store.state.moodLogsState,
@@ -63,13 +75,54 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
       ),
       builder: (_, combinedModel) {
         String formattedSelectedDate = DateFormat('yyyy-MM-dd').format(combinedModel.selectedDate!);
-        MoodLogEntity? selectedDateMoodLog = combinedModel.moodLogsState.moodLogsByDate[formattedSelectedDate];
-        if (selectedDateMoodLog != null) {
-          return _moodLogLayout(selectedDateMoodLog);
-        } else {
-          // Otherwise, show the mood tracker
-          return _moodTrackerLayout(context, combinedModel.selectedDate!);
+
+        List<MoodLogEntity>? moodLogsForSelectedDate =
+            combinedModel.moodLogsState.moodLogsByDate[formattedSelectedDate];
+
+        // Check if mood logs exist for the selected date and update _showMoods accordingly
+        if (moodLogsForSelectedDate != null && moodLogsForSelectedDate.isNotEmpty) {
+          if (!_showMoods) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
+                setState(() {
+                  _showMoods = true;
+                });
+              }
+            });
+          }
         }
+
+        return Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: 10),
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Text(
+                  'Mood and Emotions',
+                  style: textTheme.titleLarge,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            // Display mood logs layout if they exist
+            if (_showMoods && moodLogsForSelectedDate != null && moodLogsForSelectedDate.isNotEmpty)
+              _moodLogsLayout(moodLogsForSelectedDate),
+            // Show the mood tracker layout
+            _moodTrackerLayout(context, combinedModel.selectedDate!),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _moodLogsLayout(List<MoodLogEntity> moodLogs) {
+    return ListView.builder(
+      shrinkWrap: true, // Allows ListView to determine its own height
+      physics: const NeverScrollableScrollPhysics(), // Disables scrolling within ListView
+      itemCount: moodLogs.length,
+      itemBuilder: (context, index) {
+        return _moodLogLayout(moodLogs[index]);
       },
     );
   }
@@ -112,17 +165,6 @@ class _MoodTrackerWidgetState extends State<MoodTrackerWidget> {
     final textTheme = Theme.of(context).textTheme;
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Padding(
-        padding: EdgeInsets.only(top: 10),
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: Text(
-            'Mood and Emotions',
-            style: textTheme.titleLarge,
-          ),
-        ),
-      ),
-      const SizedBox(height: 8),
       GestureDetector(
         onTap: () {
           // Assuming moodLog.id contains the unique identifier for the mood entry

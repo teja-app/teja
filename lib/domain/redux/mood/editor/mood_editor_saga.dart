@@ -55,10 +55,13 @@ class MoodEditorSaga {
       // If the mood log ID is present, dispatch the necessary actions
       yield Put(ResetMoodLogsListAction());
       yield Put(LoadMoodDetailAction(moodLogId));
+      yield Put(const FetchMoodLogsAction());
       yield Put(const ClearMoodEditorSuccessFormAction());
     } else {
       // Handle the scenario when the mood log ID is not present
       // Possibly dispatch other actions or handle state updates
+      yield Put(ResetMoodLogsListAction());
+      yield Put(const FetchMoodLogsAction());
       yield Put(const ClearMoodEditorSuccessFormAction());
     }
   }

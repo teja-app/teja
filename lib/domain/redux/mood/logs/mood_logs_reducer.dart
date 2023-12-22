@@ -8,7 +8,6 @@ final Reducer<MoodLogsState> moodLogsReducer = combineReducers<MoodLogsState>([
   TypedReducer<MoodLogsState, FetchMoodLogsAction>(_fetchMoodLogs),
   TypedReducer<MoodLogsState, FetchMoodLogsSuccessAction>(_fetchMoodLogsSuccess),
   TypedReducer<MoodLogsState, FetchMoodLogsErrorAction>(_fetchMoodLogsError),
-  TypedReducer<MoodLogsState, UpdateMoodLogAction>(_updateMoodLog),
   // ... add other TypedReducers for different actions as needed
 ]);
 
@@ -17,8 +16,8 @@ MoodLogsState _fetchMoodLogs(MoodLogsState state, FetchMoodLogsAction action) {
 }
 
 MoodLogsState _fetchMoodLogsSuccess(MoodLogsState state, FetchMoodLogsSuccessAction action) {
-  // Convert Map<DateTime, MoodLog> to Map<String, MoodLog>
-  Map<String, MoodLogEntity> stringKeyedMap = action.moodLogs.map((key, value) {
+  // Convert Map<DateTime, List<MoodLogEntity>> to Map<String, List<MoodLogEntity>>
+  Map<String, List<MoodLogEntity>> stringKeyedMap = action.moodLogs.map((key, value) {
     return MapEntry(DateFormat('yyyy-MM-dd').format(key), value);
   });
 
@@ -34,12 +33,5 @@ MoodLogsState _fetchMoodLogsError(MoodLogsState state, FetchMoodLogsErrorAction 
     moodLogsByDate: const {},
     isFetching: false,
     errorMessage: action.errorMessage,
-  );
-}
-
-MoodLogsState _updateMoodLog(MoodLogsState state, UpdateMoodLogAction action) {
-  String dateKey = DateFormat('yyyy-MM-dd').format(action.date);
-  return state.copyWith(
-    moodLogsByDate: Map<String, MoodLogEntity>.from(state.moodLogsByDate)..[dateKey] = action.moodLog,
   );
 }

@@ -22,12 +22,22 @@ class MoodLogsSaga {
       var moodLogs = Result<List<MoodLog>>();
       yield Call(moodLogRepository.getMoodLogsInDateRange, args: [startOfMonth, endOfMonth], result: moodLogs);
       if (moodLogs.value == null || moodLogs.value!.isEmpty) {
-        yield Put(FetchMoodLogsErrorAction("No mood logs found."));
+        yield Put(const FetchMoodLogsErrorAction("No mood logs found."));
         return;
       }
-      final Map<DateTime, MoodLogEntity> moodLogsMap = {
-        for (var moodLog in moodLogs.value!) moodLog.timestamp: moodLogRepository.toEntity(moodLog)
-      };
+      final Map<DateTime, List<MoodLogEntity>> moodLogsMap = {};
+
+      // Iterate over each mood log and organize them by date
+      for (var moodLog in moodLogs.value!) {
+        DateTime logDate = DateTime(moodLog.timestamp.year, moodLog.timestamp.month, moodLog.timestamp.day);
+        if (!moodLogsMap.containsKey(logDate)) {
+          // If the date is not in the map, add a new entry with a list containing this mood log
+          moodLogsMap[logDate] = [moodLogRepository.toEntity(moodLog)];
+        } else {
+          // If the date already exists in the map, append the mood log to the existing list
+          moodLogsMap[logDate]!.add(moodLogRepository.toEntity(moodLog));
+        }
+      }
 
       yield Put(FetchMoodLogsSuccessAction(moodLogsMap));
     }, Catch: (e, s) sync* {
