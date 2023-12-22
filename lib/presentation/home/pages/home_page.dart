@@ -7,6 +7,7 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/home/home_actions.dart';
+import 'package:teja/presentation/home/ui/count_down_timer.dart';
 import 'package:teja/presentation/home/ui/master_fetch/fetch_master_view.dart';
 import 'package:teja/presentation/home/ui/mood/mood_tracker.dart';
 import 'package:teja/presentation/navigation/buildDesktopDrawer.dart';
@@ -120,12 +121,14 @@ class _HomePageState extends State<HomePage> {
                   child: FetchMasterView(),
                 ),
               const SizedBox(height: 10),
-              const FlexibleHeightBox(
-                gridWidth: 4,
-                tabletGridWidth: 5,
-                desktopGridWidth: 6,
-                child: MoodTrackerWidget(),
-              ),
+              if (store.selectedDate != null && now.compareTo(store.selectedDate!) > 0)
+                const FlexibleHeightBox(
+                  gridWidth: 4,
+                  tabletGridWidth: 5,
+                  desktopGridWidth: 6,
+                  child: MoodTrackerWidget(),
+                ),
+              if (store.selectedDate != null && now.compareTo(store.selectedDate!) < 0) const CountdownTimer(),
               const SizedBox(height: 10),
             ],
           ),
