@@ -178,6 +178,17 @@ class FeelingScreenState extends State<FeelingScreen> {
                         ),
                         buildLevel3Feelings(context, vm),
                       ],
+                      const SizedBox(
+                        height: 200,
+                      ),
+                      const Text(
+                        "Remember, it's common to have multiple feelings, and it's okay not to verbalize them all. Selecting something close is better than nothing.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
+                      ),
                     ],
                   ),
                 ),
