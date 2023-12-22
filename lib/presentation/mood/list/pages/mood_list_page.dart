@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:icons_flutter/icons_flutter.dart';
@@ -11,7 +9,7 @@ import 'package:teja/domain/entities/mood_log.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/mood/list/actions.dart';
 import 'package:teja/presentation/mood/list/ui/filter_bottom_sheet.dart';
-import 'package:teja/presentation/mood/list/ui/mood_widget.dart';
+import 'package:teja/presentation/mood/ui/mood_detail_card.dart';
 import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
@@ -114,13 +112,7 @@ class _MoodListPageState extends State<MoodListPage> {
             listItems.add(DateHeaderWidget(date: date));
 
             // Wrap each day's logs in a FlexibleHeightBox
-            listItems.add(FlexibleHeightBox(
-              gridWidth: 4, // Adjust as needed
-              child: Column(
-                children: logs.map((log) => moodLogLayout(log, context)).toList(),
-              ),
-              // Add other parameters as needed
-            ));
+            listItems.addAll(logs.map((log) => moodLogLayout(log, context)).toList());
           });
 
           return Center(
