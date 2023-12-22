@@ -256,7 +256,7 @@ class MoodTrackerWidgetState extends State<MoodTrackerWidget> {
                 ? Center(
                     child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                     Text(
-                      'How are you feeling?',
+                      'How are you feeling now?',
                       style: textTheme.titleLarge,
                     ),
                     const SizedBox(height: 20),
