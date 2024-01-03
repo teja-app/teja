@@ -11,12 +11,8 @@ class JournalTemplateApi {
     Response response = await _apiHelper.get(url, authToken: authToken);
     List<dynamic> jsonResponse = response.data;
 
-    print("journalTemplateDto getJournalTemplates");
-
     List<JournalTemplateEntity> journalTemplates = jsonResponse.map((json) {
-      print("Raw JSON data: $json");
       JournalTemplateDto journalTemplateDto = JournalTemplateDto.fromJson(json);
-      print("journalTemplateDto ${journalTemplateDto}");
       return _convertDtoToEntity(journalTemplateDto);
     }).toList();
 
@@ -24,11 +20,8 @@ class JournalTemplateApi {
   }
 
   JournalTemplateEntity _convertDtoToEntity(JournalTemplateDto dto) {
-    print('Converting DTO to Entity: ${dto.toJson()}');
-
-    List<JournalQuestion> questions = dto.questions.map((qDto) {
-      print('Processing question: ${qDto.toJson()}');
-      return JournalQuestion(
+    List<JournalQuestionEntity> questions = dto.questions.map((qDto) {
+      return JournalQuestionEntity(
         id: qDto.id,
         text: qDto.text,
         type: qDto.type,
@@ -36,7 +29,7 @@ class JournalTemplateApi {
       );
     }).toList();
 
-    MetaData meta = MetaData(
+    MetaDataEntity meta = MetaDataEntity(
       version: dto.meta.version,
       author: dto.meta.author,
     );

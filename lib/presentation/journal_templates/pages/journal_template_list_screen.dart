@@ -1,40 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
-import 'package:teja/infrastructure/api/journal_template_api.dart';
+import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/journal/journal_template/actions.dart';
 import 'package:teja/presentation/journal_templates/ui/journal_template_card.dart';
 
-class JournalTemplateListScreen extends StatefulWidget {
-  @override
-  JournalTemplateListScreenState createState() => JournalTemplateListScreenState();
-}
-
-class JournalTemplateListScreenState extends State<JournalTemplateListScreen> {
-  List<JournalTemplateEntity> templates = [];
-  bool isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchTemplates();
-  }
-
-  Future<void> _fetchTemplates() async {
-    print("_fetchTemplates");
-    try {
-      var journalTemplateApi = JournalTemplateApi(); // Assuming this is how you instantiate it
-      templates = await journalTemplateApi.getJournalTemplates(null); // Replace 'null' with actual auth token if needed
-      print("templates ${templates}");
-      setState(() {
-        isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-        // Handle the error or show an error message
-      });
-      print("Error fetching templates: $e");
-    }
-  }
+class JournalTemplateListScreen extends StatelessWidget {
+  const JournalTemplateListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -42,12 +15,46 @@ class JournalTemplateListScreenState extends State<JournalTemplateListScreen> {
       appBar: AppBar(
         title: const Text("Journal Templates"),
       ),
-      body: ListView.builder(
-        itemCount: templates.length,
-        itemBuilder: (context, index) {
-          return JournalTemplateCard(template: templates[index]);
+      body: StoreConnector<AppState, _JournalTemplateListViewModel>(
+        onInit: (store) => store.dispatch(FetchJournalTemplatesActionFromCache()),
+        converter: (store) => _JournalTemplateListViewModel.fromStore(store),
+        builder: (context, vm) {
+          print("vm.templates.length ${vm.templates.length}");
+          if (vm.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (vm.errorMessage != null) {
+            return Center(child: Text('Error: ${vm.errorMessage}'));
+          } else {
+            return ListView.builder(
+              itemCount: vm.templates.length,
+              itemBuilder: (context, index) {
+                return JournalTemplateCard(template: vm.templates[index]);
+              },
+            );
+          }
         },
       ),
+    );
+  }
+}
+
+class _JournalTemplateListViewModel {
+  final List<JournalTemplateEntity> templates;
+  final bool isLoading;
+  final String? errorMessage;
+
+  _JournalTemplateListViewModel({
+    required this.templates,
+    required this.isLoading,
+    required this.errorMessage,
+  });
+
+  static _JournalTemplateListViewModel fromStore(Store<AppState> store) {
+    final state = store.state.journalTemplateState;
+    return _JournalTemplateListViewModel(
+      templates: state.templates,
+      isLoading: state.isLoading,
+      errorMessage: state.errorMessage,
     );
   }
 }

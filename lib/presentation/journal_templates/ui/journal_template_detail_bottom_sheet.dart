@@ -12,6 +12,7 @@ class JournalTemplateDetailBottomSheet extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
     final textTheme = theme.textTheme;
 
+    print("template.questions ${template.questions}");
     return Container(
       height: MediaQuery.of(context).size.height * 0.5, // Half the screen height
       padding: const EdgeInsets.all(16.0),

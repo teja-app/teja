@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/journal/journal_template/actions.dart';
 import 'package:teja/domain/redux/mood/master_factor/actions.dart';
 import 'package:teja/domain/redux/mood/master_feeling/actions.dart';
 import 'package:teja/domain/redux/quotes/quote_action.dart';
@@ -23,6 +24,7 @@ class _FetchMasterViewState extends State<FetchMasterView> {
       store.dispatch(FetchMasterFeelingsActionFromApi());
       store.dispatch(FetchMasterFactorsActionFromApi());
       store.dispatch(FetchQuotesActionFromApi());
+      store.dispatch(FetchJournalTemplatesActionFromApi());
     });
   }
 
@@ -46,6 +48,7 @@ class _FetchMasterViewState extends State<FetchMasterView> {
                   vm.fetchFeelings();
                   vm.fetchFactors();
                   vm.fetchQuotes();
+                  vm.fetchJournalTemplates();
                 },
                 text: 'Retry',
               ),
@@ -63,6 +66,7 @@ class _ViewModel {
   final Function fetchFeelings;
   final Function fetchFactors;
   final Function fetchQuotes;
+  final Function fetchJournalTemplates;
 
   _ViewModel({
     required this.isLoading,
@@ -70,19 +74,23 @@ class _ViewModel {
     required this.fetchFeelings,
     required this.fetchFactors,
     required this.fetchQuotes,
+    required this.fetchJournalTemplates,
   });
 
   static _ViewModel fromStore(Store<AppState> store) {
     return _ViewModel(
       isLoading: store.state.masterFeelingState.isLoading ||
           store.state.masterFactorState.isLoading ||
-          store.state.quoteState.isLoading,
+          store.state.quoteState.isLoading ||
+          store.state.journalTemplateState.isLoading,
       isFetchSuccessful: store.state.masterFeelingState.isFetchSuccessful &&
           store.state.masterFactorState.isFetchSuccessful &&
-          store.state.quoteState.isFetchSuccessful,
+          store.state.quoteState.isFetchSuccessful &&
+          store.state.journalTemplateState.isFetchSuccessful,
       fetchQuotes: () => store.dispatch(FetchQuotesActionFromApi()),
       fetchFeelings: () => store.dispatch(FetchMasterFeelingsActionFromApi()),
       fetchFactors: () => store.dispatch(FetchMasterFactorsActionFromApi()), // Dispatch action for factors
+      fetchJournalTemplates: () => store.dispatch(FetchJournalTemplatesActionFromApi()),
     );
   }
 }
