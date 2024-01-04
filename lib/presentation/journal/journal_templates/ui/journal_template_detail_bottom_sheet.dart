@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
+import 'package:teja/presentation/journal/journal_editor/pages/journal_editor_page.dart';
+import 'package:teja/router.dart';
 import 'package:teja/shared/common/button.dart';
 
 class JournalTemplateDetailBottomSheet extends StatelessWidget {
@@ -7,12 +10,36 @@ class JournalTemplateDetailBottomSheet extends StatelessWidget {
 
   const JournalTemplateDetailBottomSheet({Key? key, required this.template}) : super(key: key);
 
+  void _beginJournaling(BuildContext context) {
+    print("Beginning journaling with template: ${template.templateID}");
+
+    // Example: Navigate to a new screen for journaling
+    // Navigator.of(context).push(MaterialPageRoute(
+    //   builder: (context) => JournalEntryScreen(templateID: template.templateID),
+    // ));
+
+    // void _navigateToJournalEditor(BuildContext context, JournalTemplateEntity template) {
+    //   context.goNamed(
+    //     RootPath.journalEditor, // Use the name you defined for the route
+    //     extra: template,
+    //   );
+
+    final GoRouter goRouter = GoRouter.of(context);
+
+    // Navigate to the journal editor screen with the selected template
+    goRouter.pushNamed(
+      RootPath.journalEditor, // The name you defined for the journal editor route
+      extra: template, // Pass the selected template as an extra parameter
+    );
+    // Close the bottom sheet
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final textTheme = theme.textTheme;
 
-    print("template.questions ${template.questions}");
     return Container(
       height: MediaQuery.of(context).size.height * 0.5, // Half the screen height
       padding: const EdgeInsets.all(16.0),
@@ -42,9 +69,7 @@ class JournalTemplateDetailBottomSheet extends StatelessWidget {
           ),
           Button(
             text: 'Begin',
-            onPressed: () {
-              // Handle the journaling action
-            },
+            onPressed: () => _beginJournaling(context),
           ),
         ],
       ),

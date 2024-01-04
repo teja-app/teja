@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
-import 'package:teja/presentation/journal_templates/ui/journal_template_detail_bottom_sheet.dart';
+import 'package:teja/presentation/journal/journal_templates/ui/journal_template_detail_bottom_sheet.dart';
 
 class JournalTemplateCard extends StatelessWidget {
   final JournalTemplateEntity template;
