@@ -4,6 +4,7 @@ import 'package:teja/presentation/edit_habit/pages/edig_habit_page.dart';
 import 'package:teja/presentation/explore/list/pages/explore_page.dart';
 import 'package:teja/presentation/goal_editor/page/vision_picker_page.dart';
 import 'package:teja/presentation/home/pages/home_page.dart';
+import 'package:teja/presentation/journal_templates/pages/journal_template_list_screen.dart';
 import 'package:teja/presentation/mood/detail/page/mood_detail.dart';
 import 'package:teja/presentation/mood/editor/pages/mood_edit.dart';
 import 'package:teja/presentation/mood/list/pages/mood_list_page.dart';
@@ -62,6 +63,7 @@ class RootPath {
   static const moodDetail = "mood_detail";
   static const goalSettings = "goal_settings";
   static const noteEditor = "note_editor";
+  static const journalTemplateList = "journal_template_list";
 }
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -137,6 +139,12 @@ final GoRouter router = GoRouter(
       name: RootPath.moodList,
       path: '/mood_list',
       builder: (context, state) => const MoodListPage(),
+    ),
+    GoRoute(
+      path: '/journal_template_list',
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RootPath.journalTemplateList,
+      builder: (context, state) => JournalTemplateListScreen(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,

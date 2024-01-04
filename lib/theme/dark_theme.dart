@@ -21,6 +21,10 @@ final ThemeData darkTheme = ThemeData(
     surface: Colors.white,
     background: Colors.grey.shade900,
   ),
+  bottomSheetTheme: BottomSheetThemeData(
+    backgroundColor: Colors.grey.shade900, // Set the color you want for the bottom sheet in dark mode
+    modalBackgroundColor: Colors.grey.shade900, // This is for modal bottom sheets specifically
+  ),
   scaffoldBackgroundColor: Colors.grey.shade900,
   appBarTheme: AppBarTheme(
     // backgroundColor: Colors.grey.shade900,
