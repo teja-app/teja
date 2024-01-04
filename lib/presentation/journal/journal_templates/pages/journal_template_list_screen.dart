@@ -4,7 +4,7 @@ import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/journal_template/actions.dart';
-import 'package:teja/presentation/journal_templates/ui/journal_template_card.dart';
+import 'package:teja/presentation/journal/journal_templates/ui/journal_template_card.dart';
 
 class JournalTemplateListScreen extends StatelessWidget {
   const JournalTemplateListScreen({super.key});
