@@ -5,7 +5,9 @@ import 'package:teja/domain/redux/core_actions.dart';
 @immutable
 class InitializeJournalEditor {
   final String journalEntryId;
-  const InitializeJournalEditor(this.journalEntryId);
+  final String? templateId; // Make templateId optional
+
+  const InitializeJournalEditor(this.journalEntryId, {this.templateId});
 }
 
 @immutable

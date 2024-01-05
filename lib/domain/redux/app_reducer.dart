@@ -1,6 +1,7 @@
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/home/home_reducer.dart';
+import 'package:teja/domain/redux/journal/journal_editor/journal_editor_reducer.dart';
 import 'package:teja/domain/redux/journal/journal_template/reducer.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_reducer.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_reducer.dart';
@@ -73,6 +74,12 @@ AppState _journalTemplateReducer(AppState state, action) {
   );
 }
 
+AppState _journalEditorReducer(AppState state, action) {
+  return state.copyWith(
+    journalEditorState: journalEditorReducer(state.journalEditorState, action),
+  );
+}
+
 Reducer<AppState> appReducer = combineReducers<AppState>([
   ...authReducer,
   ...moodDetailReducer,
@@ -86,4 +93,5 @@ Reducer<AppState> appReducer = combineReducers<AppState>([
   _quoteReducer,
   _visionReducer,
   _journalTemplateReducer,
+  _journalEditorReducer,
 ]);
