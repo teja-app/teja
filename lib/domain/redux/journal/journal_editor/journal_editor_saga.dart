@@ -1,8 +1,11 @@
 import 'package:redux_saga/redux_saga.dart';
+import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.dart';
 import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart';
 import 'package:teja/infrastructure/repositories/journal_entry_repository.dart';
 import 'package:isar/isar.dart';
+import 'package:teja/infrastructure/repositories/journal_template_repository.dart';
+import 'package:teja/infrastructure/utils/helpers.dart';
 
 class JournalEditorSaga {
   Iterable<void> saga() sync* {
@@ -17,16 +20,44 @@ class JournalEditorSaga {
     Isar isar = isarResult.value!;
 
     var journalEntryRepository = JournalEntryRepository(isar);
+    var journalTemplateRepository = JournalTemplateRepository(isar); // Add repository to fetch journal templates
+    yield Try(() sync* {
+      var journalEntryResult = Result<JournalEntry>();
+      yield Call(journalEntryRepository.getJournalEntryById, args: [action.journalEntryId], result: journalEntryResult);
 
-    var journalEntryResult = Result<JournalEntry>();
-    yield Call(journalEntryRepository.getJournalEntryById, args: [action.journalEntryId], result: journalEntryResult);
+      if (journalEntryResult.value != null) {
+        // Existing entry found, convert it to entity and dispatch success action
 
-    if (journalEntryResult.value != null) {
-      JournalEntry journalEntry = journalEntryResult.value!;
-      yield Put(InitializeJournalEditorSuccessAction(journalEntryRepository.toEntity(journalEntry)));
-    } else {
-      yield Put(const InitializeJournalEditorFailureAction("Journal entry not found."));
-    }
+        JournalEntry journalEntry = journalEntryResult.value!;
+        yield Put(InitializeJournalEditorSuccessAction(journalEntryRepository.toEntity(journalEntry)));
+      } else {
+        // Fetch the journal template to get the questions
+        var journalTemplateResult = Result<JournalTemplateEntity>();
+        yield Call(journalTemplateRepository.getJournalTemplateById,
+            args: [action.templateId], result: journalTemplateResult);
+
+        JournalTemplateEntity journalTemplate = journalTemplateResult.value!; // Handle null case as needed
+
+        // Create a new entry with questions initialized from the template
+        JournalEntry newJournalEntry = JournalEntry()
+          ..id = Helpers.generateUniqueId()
+          ..templateId = action.journalEntryId
+          ..timestamp = DateTime.now()
+          ..createdAt = DateTime.now()
+          ..updatedAt = DateTime.now()
+          ..questions = journalTemplate.questions
+              .map((question) => QuestionAnswerPair()
+                ..questionId = question.id
+                ..questionText = question.text
+                ..answerText = "")
+              .toList();
+
+        yield Call(journalEntryRepository.addOrUpdateJournalEntry, args: [newJournalEntry]);
+        yield Put(InitializeJournalEditorSuccessAction(journalEntryRepository.toEntity(newJournalEntry)));
+      }
+    }, Catch: (e, s) sync* {
+      yield Put(InitializeJournalEditorFailureAction(e.toString()));
+    });
   }
 
   _handleSaveJournalEntry({required SaveJournalEntry action}) sync* {
@@ -73,6 +104,7 @@ class JournalEditorSaga {
 
       // Save the updated journal entry
       yield Try(() sync* {
+        print("_handleUpdateQuestionAnswer ${journalEntry}");
         yield Call(journalEntryRepository.addOrUpdateJournalEntry, args: [journalEntry]);
         yield Put(UpdateQuestionAnswerSuccessAction(
             journalEntryId: action.journalEntryId, questionId: action.questionId, answerText: action.answerText));

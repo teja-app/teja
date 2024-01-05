@@ -32,6 +32,32 @@ class JournalTemplateRepository {
     }).toList();
   }
 
+  Future<JournalTemplateEntity?> getJournalTemplateById(String templateId) async {
+    var isarTemplate = await isar.journalTemplates.where().templateIDEqualTo(templateId).findFirst();
+    print("isarTemplate ${isarTemplate?.questions}");
+    if (isarTemplate != null) {
+      final meta = MetaDataEntity(
+        version: isarTemplate.meta.version,
+        author: isarTemplate.meta.author,
+      );
+      return JournalTemplateEntity(
+        id: isarTemplate.id,
+        templateID: isarTemplate.templateID,
+        title: isarTemplate.title,
+        questions: isarTemplate.questions
+            .map((q) => JournalQuestionEntity(
+                  id: q.id,
+                  text: q.text,
+                  type: q.type,
+                  placeholder: q.placeholder ?? "",
+                ))
+            .toList(),
+        meta: meta,
+      );
+    }
+    return null; // Return null if the template is not found
+  }
+
   Future<void> addOrUpdateJournalTemplates(List<JournalTemplateEntity> templates) async {
     await isar.writeTxn(() async {
       for (var template in templates) {
