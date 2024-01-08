@@ -28,6 +28,17 @@ class JournalEntryRepository {
     });
   }
 
+  Future<List<JournalEntry>> getJournalEntriesInDateRange(DateTime start, DateTime end) async {
+    try {
+      // Fetch entries between the specified start and end dates
+      final List<JournalEntry> entries = await isar.journalEntrys.filter().timestampBetween(start, end).findAll();
+
+      return entries;
+    } catch (e) {
+      rethrow; // Propagate any errors for handling in the saga or higher-level logic
+    }
+  }
+
   JournalEntryEntity toEntity(JournalEntry journalEntry) {
     return JournalEntryEntity(
       id: journalEntry.id,

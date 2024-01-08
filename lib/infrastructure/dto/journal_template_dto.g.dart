@@ -28,10 +28,12 @@ Map<String, dynamic> _$JournalTemplateDtoToJson(JournalTemplateDto instance) =>
 
 HeaderDto _$HeaderDtoFromJson(Map<String, dynamic> json) => HeaderDto(
       title: json['title'] as String,
+      description: json['description'] as String?,
     );
 
 Map<String, dynamic> _$HeaderDtoToJson(HeaderDto instance) => <String, dynamic>{
       'title': instance.title,
+      'description': instance.description,
     };
 
 JournalQuestionDto _$JournalQuestionDtoFromJson(Map<String, dynamic> json) =>

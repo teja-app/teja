@@ -75,6 +75,7 @@ dependencies:
   connectivity_plus: ^5.0.2
   package_info_plus: ^4.2.0
   collection: ^1.17.2
+  rive: ^0.12.4
 
 dev_dependencies:
   flutter_test:
@@ -114,6 +115,7 @@ flutter:
     - assets/mood/
     - assets/mood/badge/
     - assets/quotes/
+    - assets/journal/
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
