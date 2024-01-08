@@ -50,9 +50,12 @@ class MoodEditPageState extends State<MoodEditPage> {
     return StoreConnector<AppState, MoodEditViewModel>(
         converter: MoodEditViewModel.fromStore,
         builder: (context, viewModel) {
-          if (_controller.hasClients && viewModel.currentPageIndex != _controller.page?.round()) {
-            _controller.jumpToPage(viewModel.currentPageIndex);
-          }
+          // Schedule a post-frame callback to update the page controller
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (_controller.hasClients && viewModel.currentPageIndex != _controller.page?.round()) {
+              _controller.jumpToPage(viewModel.currentPageIndex);
+            }
+          });
           return Scaffold(
             appBar: AppBar(
               backgroundColor: Colors.transparent,

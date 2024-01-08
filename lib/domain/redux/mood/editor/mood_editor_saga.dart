@@ -207,7 +207,7 @@ class MoodEditorSaga {
     }
 
     yield Put(MoodUpdatedAction("Successful"));
-    yield Put(FetchMoodLogsAction());
+    yield Put(const FetchMoodLogsAction());
   }
 
   _handleUpdateFeelingsAction({required TriggerUpdateFeelingsAction action}) sync* {
