@@ -17,13 +17,13 @@ class JournalEditorScreen extends StatefulWidget {
 
 class JournalEditorScreenState extends State<JournalEditorScreen> {
   late PageController _pageController;
-  late final Store<AppState> _store; // Add this line to store the reference
+  late final Store<AppState> _store;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
-    _store = StoreProvider.of<AppState>(context, listen: false); // Obtain the store reference
+    _store = StoreProvider.of<AppState>(context, listen: false);
   }
 
   @override
@@ -38,9 +38,13 @@ class JournalEditorScreenState extends State<JournalEditorScreen> {
     return StoreConnector<AppState, JournalEditViewModel>(
       converter: JournalEditViewModel.fromStore,
       builder: (context, viewModel) {
+        // Automatically update the page when the state changes
+        if (_pageController.hasClients && viewModel.currentPageIndex != _pageController.page?.round()) {
+          _pageController.jumpToPage(viewModel.currentPageIndex);
+        }
+
         return Scaffold(
           appBar: AppBar(
-            // title: Text(viewModel.templatesById[viewModel.currentJournalEntry.templateId]?.title ?? "Blank"),
             title: SmoothPageIndicator(
               controller: _pageController,
               count: viewModel.currentJournalEntry.questions!.length,
@@ -63,7 +67,6 @@ class JournalEditorScreenState extends State<JournalEditorScreen> {
             },
             itemBuilder: (context, index) {
               return JournalQuestionPage(
-                journalEntry: viewModel.currentJournalEntry,
                 questionIndex: index,
               );
             },
