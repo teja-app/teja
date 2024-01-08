@@ -5,6 +5,7 @@ import 'package:teja/presentation/edit_habit/pages/edig_habit_page.dart';
 import 'package:teja/presentation/explore/list/pages/explore_page.dart';
 import 'package:teja/presentation/goal_editor/page/vision_picker_page.dart';
 import 'package:teja/presentation/home/pages/home_page.dart';
+import 'package:teja/presentation/journal/journa_detail/pages/journal_detail_page.dart';
 import 'package:teja/presentation/journal/journal_editor/pages/journal_editor_page.dart';
 import 'package:teja/presentation/journal/journal_templates/pages/journal_template_list_screen.dart';
 import 'package:teja/presentation/mood/detail/page/mood_detail.dart';
@@ -67,6 +68,7 @@ class RootPath {
   static const noteEditor = "note_editor";
   static const journalTemplateList = "journal_template_list";
   static const journalEditor = "journal_editor";
+  static const journalDetail = "journal_detail";
 }
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -173,6 +175,15 @@ final GoRouter router = GoRouter(
       builder: (context, state) {
         final String? moodIdStr = state.uri.queryParameters['id'];
         return MoodDetailPage(moodId: moodIdStr!);
+      },
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RootPath.journalDetail,
+      path: '/journal_detail',
+      builder: (context, state) {
+        final String? journalEntryId = state.uri.queryParameters['id'];
+        return JournalDetailPage(journalEntryId: journalEntryId!);
       },
     ),
     GoRoute(

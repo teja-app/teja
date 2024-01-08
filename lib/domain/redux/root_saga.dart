@@ -1,4 +1,5 @@
 import 'package:redux_saga/redux_saga.dart';
+import 'package:teja/domain/redux/journal/detail/journal_detail_saga.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_saga.dart';
 import 'package:teja/domain/redux/journal/journal_logs/journal_logs_saga.dart';
 import 'package:teja/domain/redux/journal/journal_template/saga.dart';
@@ -27,4 +28,5 @@ Iterable<void> rootSaga() sync* {
   yield Fork(JournalTemplateSaga().saga);
   yield Fork(JournalEditorSaga().saga);
   yield Fork(JournalLogsSaga().saga);
+  yield Fork(JournalDetailSaga().saga);
 }
