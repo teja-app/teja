@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
+import 'package:teja/router.dart';
 
 Widget journalEntryLayout(JournalTemplateEntity template, JournalEntryEntity journalEntry, BuildContext context) {
   final textTheme = Theme.of(context).textTheme;
@@ -13,6 +15,12 @@ Widget journalEntryLayout(JournalTemplateEntity template, JournalEntryEntity jou
       onTap: () {
         // Add onTap functionality if needed, for example, to navigate to a detailed journal entry page
         HapticFeedback.selectionClick();
+        GoRouter.of(context).pushNamed(
+          RootPath.journalDetail,
+          queryParameters: {
+            "id": journalEntry.id,
+          },
+        );
       },
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
