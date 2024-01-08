@@ -11,6 +11,13 @@ class InitializeJournalEditor {
 }
 
 @immutable
+class ChangeJournalPageAction {
+  final int pageIndex;
+
+  const ChangeJournalPageAction(this.pageIndex);
+}
+
+@immutable
 class SaveJournalEntry {
   final JournalEntryEntity journalEntry;
   const SaveJournalEntry(this.journalEntry);

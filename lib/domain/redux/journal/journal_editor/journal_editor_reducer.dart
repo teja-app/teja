@@ -31,10 +31,15 @@ JournalEditorState _initializeJournalEditorFailure(
   return state.copyWith(error: action.error);
 }
 
+JournalEditorState _changeJournalPage(JournalEditorState state, ChangeJournalPageAction action) {
+  return state.copyWith(currentPageIndex: action.pageIndex);
+}
+
 final journalEditorReducer = combineReducers<JournalEditorState>([
   TypedReducer<JournalEditorState, SaveJournalEntry>(_updateJournalEntry),
   TypedReducer<JournalEditorState, UpdateQuestionAnswer>(_updateQuestionAnswer),
   TypedReducer<JournalEditorState, ClearJournalEditor>(_clearJournalEditor),
   TypedReducer<JournalEditorState, InitializeJournalEditorSuccessAction>(_initializeJournalEditorSuccess),
   TypedReducer<JournalEditorState, InitializeJournalEditorFailureAction>(_initializeJournalEditorFailure),
+  TypedReducer<JournalEditorState, ChangeJournalPageAction>(_changeJournalPage),
 ]);

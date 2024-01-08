@@ -2,20 +2,18 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
-import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.dart';
+import 'package:teja/shared/common/button.dart';
 
 class JournalQuestionPage extends StatefulWidget {
-  final JournalQuestionEntity question;
-  final PageController pageController;
-  final JournalEntryEntity? journalEntry;
+  final JournalEntryEntity journalEntry;
+  final int questionIndex; // Add this line to receive the question index
 
   const JournalQuestionPage({
     Key? key,
-    required this.question,
-    required this.pageController,
-    this.journalEntry,
+    required this.journalEntry, // Changed to required
+    required this.questionIndex, // Add this line
   }) : super(key: key);
 
   @override
@@ -31,62 +29,30 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
   void initState() {
     super.initState();
     textFocusNode = FocusNode();
-    String initialText = widget.journalEntry?.questions
-            ?.firstWhere(
-              (q) => q.questionId == widget.question.id,
-              orElse: () => QuestionAnswerPairEntity(),
-            )
-            ?.answerText ??
-        '';
+    String initialText = widget.journalEntry.questions![widget.questionIndex].answerText ?? '';
     textEditingController = TextEditingController(text: initialText);
     textEditingController.addListener(_onTextChanged);
   }
 
-  @override
-  void dispose() {
-    textFocusNode.dispose();
-    textEditingController.dispose();
-    _debounce?.cancel();
-    super.dispose();
-  }
-
   void _onTextChanged() {
-    if (_debounce?.isActive ?? false) {
-      _debounce!.cancel();
-    }
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce = Timer(const Duration(milliseconds: 1000), _saveAnswer);
   }
 
   void _saveAnswer() {
-    // Dispatch action to save the answer
     final store = StoreProvider.of<AppState>(context);
     store.dispatch(UpdateQuestionAnswer(
-      journalEntryId: widget.journalEntry?.id ?? '',
-      questionId: widget.question.id,
+      journalEntryId: widget.journalEntry.id,
+      questionId: widget.journalEntry.questions![widget.questionIndex].questionId!,
       answerText: textEditingController.text,
     ));
   }
 
-  void _goToNextPage() {
-    if (widget.pageController.hasClients) {
-      final int currentIndex = widget.pageController.page?.toInt() ?? 0;
-      final int totalLength = widget.pageController.positions.length;
-
-      if (currentIndex < totalLength - 1) {
-        _saveAnswer(); // Ensure answer is saved before navigating away
-        widget.pageController.nextPage(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-      } else {
-        print("Last page reached");
-        // Optionally handle the last page scenario (e.g., submit journal)
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final question = widget.journalEntry.questions![widget.questionIndex];
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
@@ -96,7 +62,7 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
-                widget.question.text,
+                question.questionText!,
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
             ),
@@ -109,18 +75,29 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
                   focusNode: textFocusNode,
                   maxLines: null,
                   keyboardType: TextInputType.multiline,
-                  decoration: InputDecoration(
-                    hintText: widget.question.placeholder ?? 'Write your response here...',
+                  decoration: const InputDecoration(
+                    hintText: 'Write your response here...',
                     border: InputBorder.none,
                   ),
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: ElevatedButton(
-                onPressed: _goToNextPage,
-                child: const Text('Next'),
+            Center(
+              // Center the button horizontally
+              child: Container(
+                color: colorScheme.background,
+                padding: const EdgeInsets.all(10.0),
+                child: Button(
+                  text: "Next",
+                  width: 300,
+                  onPressed: () async {
+                    FocusScope.of(context).unfocus(); // Dismiss the keyboard
+                    await Future.delayed(const Duration(milliseconds: 100)); // Wait for keyboard to dismiss
+                    // final store = StoreProvider.of<AppState>(context);
+                    // store.dispatch(ChangeJournalPageAction(viewModel.currentPageIndex + 1));
+                  },
+                  buttonType: ButtonType.primary,
+                ),
               ),
             ),
           ],

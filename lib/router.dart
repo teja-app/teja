@@ -101,11 +101,7 @@ final GoRouter router = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       name: RootPath.journalEditor, // Define a constant for this route
       path: '/journal_editor',
-      builder: (context, state) {
-        // Extract the JournalTemplateEntity from the state
-        final template = state.extra as JournalTemplateEntity;
-        return JournalEditorScreen(template: template);
-      },
+      builder: (context, state) => const JournalEditorScreen(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
