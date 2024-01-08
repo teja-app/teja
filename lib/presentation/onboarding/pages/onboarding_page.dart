@@ -2,19 +2,52 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:redux/redux.dart';
+import 'package:rive/rive.dart';
+import 'package:teja/domain/redux/journal/journal_template/actions.dart';
+import 'package:teja/domain/redux/mood/master_factor/actions.dart';
+import 'package:teja/domain/redux/mood/master_feeling/actions.dart';
+import 'package:teja/domain/redux/quotes/quote_action.dart';
 import 'package:teja/router.dart';
+import 'package:teja/shared/common/bento_box.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/shared/common/flexible_height_box.dart';
 
-class OnboardingPage extends StatelessWidget {
+class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
+
+  @override
+  _OnboardingPageState createState() => _OnboardingPageState();
+}
+
+class _OnboardingPageState extends State<OnboardingPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final store = StoreProvider.of<AppState>(context);
+      store.dispatch(FetchMasterFeelingsActionFromApi());
+      store.dispatch(FetchMasterFactorsActionFromApi());
+      store.dispatch(FetchQuotesActionFromApi());
+      store.dispatch(FetchJournalTemplatesActionFromApi());
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final Brightness themeBrightness = Theme.of(context).brightness;
     final textTheme = Theme.of(context).textTheme;
+    SMIInput<bool>? _isPressed;
+
+    void _onRiveInit(Artboard artboard) {
+      final controller = StateMachineController.fromArtboard(
+        artboard,
+        'unlock',
+      );
+      artboard.addController(controller!);
+      _isPressed = controller.findInput<bool>('isPressed') as SMIBool;
+    }
 
     return StoreConnector<AppState, Store<AppState>>(
       converter: (store) => store,
@@ -51,17 +84,39 @@ class OnboardingPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 40),
+                  FlexibleHeightBox(
+                    gridWidth: 4,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 75,
+                          width: 75, // Set a width for the Rive animation for consistent sizing
+                          child: RiveAnimation.asset('assets/welcome/safe_icon.riv', onInit: _onRiveInit),
+                        ),
+                        Expanded(
+                          // Use Expanded to ensure the text takes the remaining space
+                          child: Text(
+                            "All your data is securely stored locally on your mobile device, ensuring your information remains private and accessible only to you.",
+                            style: textTheme.bodySmall,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 40),
                   Button(
                     key: const Key("homePage"),
                     text: "Let's Begin",
                     width: 300,
                     onPressed: () {
-                      Posthog().capture(
-                        eventName: 'begin_button_clicked',
-                      );
-                      GoRouter.of(context).replaceNamed(RootPath.home);
+                      _isPressed?.value = true;
+                      Future.delayed(const Duration(seconds: 2), () {
+                        GoRouter.of(context).replaceNamed(RootPath.home);
+                      });
                     },
-                    buttonType: ButtonType.primary,
                   ),
                   const SizedBox(height: 20), // Add spacing at the bottom for better layout
                 ],

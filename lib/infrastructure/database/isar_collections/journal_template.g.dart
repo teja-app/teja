@@ -17,30 +17,35 @@ const JournalTemplateSchema = CollectionSchema(
   name: r'JournalTemplate',
   id: 2155440280193656939,
   properties: {
-    r'id': PropertySchema(
+    r'description': PropertySchema(
       id: 0,
+      name: r'description',
+      type: IsarType.string,
+    ),
+    r'id': PropertySchema(
+      id: 1,
       name: r'id',
       type: IsarType.string,
     ),
     r'meta': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'meta',
       type: IsarType.object,
       target: r'MetaData',
     ),
     r'questions': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'questions',
       type: IsarType.objectList,
       target: r'JournalTemplateQuestion',
     ),
     r'templateID': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'templateID',
       type: IsarType.string,
     ),
     r'title': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'title',
       type: IsarType.string,
     )
@@ -82,6 +87,12 @@ int _journalTemplateEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  {
+    final value = object.description;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.id.length * 3;
   bytesCount += 3 +
       MetaDataSchema.estimateSize(
@@ -106,21 +117,22 @@ void _journalTemplateSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.id);
+  writer.writeString(offsets[0], object.description);
+  writer.writeString(offsets[1], object.id);
   writer.writeObject<MetaData>(
-    offsets[1],
+    offsets[2],
     allOffsets,
     MetaDataSchema.serialize,
     object.meta,
   );
   writer.writeObjectList<JournalTemplateQuestion>(
-    offsets[2],
+    offsets[3],
     allOffsets,
     JournalTemplateQuestionSchema.serialize,
     object.questions,
   );
-  writer.writeString(offsets[3], object.templateID);
-  writer.writeString(offsets[4], object.title);
+  writer.writeString(offsets[4], object.templateID);
+  writer.writeString(offsets[5], object.title);
 }
 
 JournalTemplate _journalTemplateDeserialize(
@@ -130,23 +142,24 @@ JournalTemplate _journalTemplateDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = JournalTemplate();
-  object.id = reader.readString(offsets[0]);
+  object.description = reader.readStringOrNull(offsets[0]);
+  object.id = reader.readString(offsets[1]);
   object.isarId = id;
   object.meta = reader.readObjectOrNull<MetaData>(
-        offsets[1],
+        offsets[2],
         MetaDataSchema.deserialize,
         allOffsets,
       ) ??
       MetaData();
   object.questions = reader.readObjectList<JournalTemplateQuestion>(
-        offsets[2],
+        offsets[3],
         JournalTemplateQuestionSchema.deserialize,
         allOffsets,
         JournalTemplateQuestion(),
       ) ??
       [];
-  object.templateID = reader.readString(offsets[3]);
-  object.title = reader.readString(offsets[4]);
+  object.templateID = reader.readString(offsets[4]);
+  object.title = reader.readString(offsets[5]);
   return object;
 }
 
@@ -158,15 +171,17 @@ P _journalTemplateDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 1:
+      return (reader.readString(offset)) as P;
+    case 2:
       return (reader.readObjectOrNull<MetaData>(
             offset,
             MetaDataSchema.deserialize,
             allOffsets,
           ) ??
           MetaData()) as P;
-    case 2:
+    case 3:
       return (reader.readObjectList<JournalTemplateQuestion>(
             offset,
             JournalTemplateQuestionSchema.deserialize,
@@ -174,9 +189,9 @@ P _journalTemplateDeserializeProp<P>(
             JournalTemplateQuestion(),
           ) ??
           []) as P;
-    case 3:
-      return (reader.readString(offset)) as P;
     case 4:
+      return (reader.readString(offset)) as P;
+    case 5:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -379,6 +394,160 @@ extension JournalTemplateQueryWhere
 
 extension JournalTemplateQueryFilter
     on QueryBuilder<JournalTemplate, JournalTemplate, QFilterCondition> {
+  QueryBuilder<JournalTemplate, JournalTemplate, QAfterFilterCondition>
+      descriptionIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'description',
+      ));
+    });
+  }
+
+  QueryBuilder<JournalTemplate, JournalTemplate, QAfterFilterCondition>
+      descriptionIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'description',
+      ));
+    });
+  }
+
+  QueryBuilder<JournalTemplate, JournalTemplate, QAfterFilterCondition>
+      descriptionEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'description',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalTemplate, JournalTemplate, QAfterFilterCondition>
+      descriptionGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'description',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalTemplate, JournalTemplate, QAfterFilterCondition>
+      descriptionLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'description',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalTemplate, JournalTemplate, QAfterFilterCondition>
+      descriptionBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'description',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalTemplate, JournalTemplate, QAfterFilterCondition>
+      descriptionStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'description',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalTemplate, JournalTemplate, QAfterFilterCondition>
+      descriptionEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'description',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalTemplate, JournalTemplate, QAfterFilterCondition>
+      descriptionContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'description',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalTemplate, JournalTemplate, QAfterFilterCondition>
+      descriptionMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'description',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalTemplate, JournalTemplate, QAfterFilterCondition>
+      descriptionIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'description',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<JournalTemplate, JournalTemplate, QAfterFilterCondition>
+      descriptionIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'description',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<JournalTemplate, JournalTemplate, QAfterFilterCondition>
       idEqualTo(
     String value, {
@@ -955,6 +1124,20 @@ extension JournalTemplateQueryLinks
 
 extension JournalTemplateQuerySortBy
     on QueryBuilder<JournalTemplate, JournalTemplate, QSortBy> {
+  QueryBuilder<JournalTemplate, JournalTemplate, QAfterSortBy>
+      sortByDescription() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'description', Sort.asc);
+    });
+  }
+
+  QueryBuilder<JournalTemplate, JournalTemplate, QAfterSortBy>
+      sortByDescriptionDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'description', Sort.desc);
+    });
+  }
+
   QueryBuilder<JournalTemplate, JournalTemplate, QAfterSortBy> sortById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -997,6 +1180,20 @@ extension JournalTemplateQuerySortBy
 
 extension JournalTemplateQuerySortThenBy
     on QueryBuilder<JournalTemplate, JournalTemplate, QSortThenBy> {
+  QueryBuilder<JournalTemplate, JournalTemplate, QAfterSortBy>
+      thenByDescription() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'description', Sort.asc);
+    });
+  }
+
+  QueryBuilder<JournalTemplate, JournalTemplate, QAfterSortBy>
+      thenByDescriptionDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'description', Sort.desc);
+    });
+  }
+
   QueryBuilder<JournalTemplate, JournalTemplate, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -1052,6 +1249,13 @@ extension JournalTemplateQuerySortThenBy
 
 extension JournalTemplateQueryWhereDistinct
     on QueryBuilder<JournalTemplate, JournalTemplate, QDistinct> {
+  QueryBuilder<JournalTemplate, JournalTemplate, QDistinct>
+      distinctByDescription({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'description', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<JournalTemplate, JournalTemplate, QDistinct> distinctById(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1079,6 +1283,13 @@ extension JournalTemplateQueryProperty
   QueryBuilder<JournalTemplate, int, QQueryOperations> isarIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isarId');
+    });
+  }
+
+  QueryBuilder<JournalTemplate, String?, QQueryOperations>
+      descriptionProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'description');
     });
   }
 

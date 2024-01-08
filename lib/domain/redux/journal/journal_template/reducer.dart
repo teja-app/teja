@@ -1,4 +1,5 @@
 import 'package:redux/redux.dart';
+import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/journal/journal_template/actions.dart';
 import 'package:teja/domain/redux/journal/journal_template/state.dart';
 
@@ -16,8 +17,14 @@ JournalTemplateState _fetchJournalTemplatesInProgress(
 
 JournalTemplateState _journalTemplatesFetchedSuccess(
     JournalTemplateState state, JournalTemplatesFetchedSuccessAction action) {
+  var newTemplatesById = Map<String, JournalTemplateEntity>.from(state.templatesById);
+  for (var template in action.templates) {
+    newTemplatesById[template.id] = template;
+  }
+
   return state.copyWith(
     templates: action.templates,
+    templatesById: newTemplatesById,
     isLoading: false,
     isFetchSuccessful: true,
     lastUpdatedAt: action.lastUpdatedAt,

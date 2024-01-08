@@ -2,12 +2,14 @@ class JournalTemplateEntity {
   final String id;
   final String templateID;
   final String title;
+  final String description;
   final List<JournalQuestionEntity> questions;
   final MetaDataEntity meta;
 
   JournalTemplateEntity({
     required this.id,
     required this.templateID,
+    required this.description,
     required this.title,
     required this.questions,
     required this.meta,
@@ -19,10 +21,12 @@ class JournalTemplateEntity {
     String? title,
     List<JournalQuestionEntity>? questions,
     MetaDataEntity? meta,
+    String? description,
   }) {
     return JournalTemplateEntity(
       id: id ?? this.id,
       templateID: templateID ?? this.templateID,
+      description: description ?? this.description,
       title: title ?? this.title,
       questions: questions ?? this.questions,
       meta: meta ?? this.meta,

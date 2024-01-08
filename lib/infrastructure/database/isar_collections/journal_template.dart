@@ -26,6 +26,7 @@ class JournalTemplate {
   late String id;
 
   late String title;
+  late String? description;
 
   late List<JournalTemplateQuestion> questions;
   late MetaData meta;

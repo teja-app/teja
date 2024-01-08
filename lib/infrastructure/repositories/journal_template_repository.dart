@@ -19,6 +19,7 @@ class JournalTemplateRepository {
         id: isarTemplate.id,
         templateID: isarTemplate.templateID,
         title: isarTemplate.title,
+        description: isarTemplate.description ?? "",
         questions: isarTemplate.questions
             .map((q) => JournalQuestionEntity(
                   id: q.id,
@@ -44,6 +45,7 @@ class JournalTemplateRepository {
         id: isarTemplate.id,
         templateID: isarTemplate.templateID,
         title: isarTemplate.title,
+        description: isarTemplate.description ?? "",
         questions: isarTemplate.questions
             .map((q) => JournalQuestionEntity(
                   id: q.id,
@@ -69,6 +71,7 @@ class JournalTemplateRepository {
             ..id = template.id
             ..templateID = template.templateID
             ..title = template.title
+            ..description = template.description
             ..meta.version = template.meta.version
             ..meta.author = template.meta.author
             ..questions = template.questions
@@ -89,6 +92,7 @@ class JournalTemplateRepository {
             ..id = template.id
             ..templateID = template.templateID
             ..title = template.title
+            ..description = template.description
             ..meta = meta
             ..questions = template.questions
                 .map((q) => JournalTemplateQuestion()

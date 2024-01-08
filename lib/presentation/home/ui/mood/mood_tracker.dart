@@ -37,18 +37,6 @@ class MoodTrackerWidgetState extends State<MoodTrackerWidget> {
   bool _showMoods = false;
   int? _selectedMoodIndex; // To track the selected mood
 
-  void _updateShowMoods(List<MoodLogEntity>? moodLogs) {
-    if (moodLogs != null && moodLogs.isNotEmpty && !_showMoods) {
-      setState(() {
-        _showMoods = true;
-      });
-    } else if ((moodLogs == null || moodLogs.isEmpty) && _showMoods) {
-      setState(() {
-        _showMoods = false;
-      });
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -95,7 +83,7 @@ class MoodTrackerWidgetState extends State<MoodTrackerWidget> {
         return Column(
           children: [
             Padding(
-              padding: EdgeInsets.only(top: 10),
+              padding: const EdgeInsets.only(top: 10),
               child: Align(
                 alignment: Alignment.topCenter,
                 child: Text(

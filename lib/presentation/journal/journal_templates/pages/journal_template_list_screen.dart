@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
+import 'package:rive/rive.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/journal_template/actions.dart';
@@ -25,11 +26,22 @@ class JournalTemplateListScreen extends StatelessWidget {
           } else if (vm.errorMessage != null) {
             return Center(child: Text('Error: ${vm.errorMessage}'));
           } else {
-            return ListView.builder(
-              itemCount: vm.templates.length,
-              itemBuilder: (context, index) {
-                return JournalTemplateCard(template: vm.templates[index]);
-              },
+            return Column(
+              children: [
+                const SizedBox(
+                  height: 200,
+                  child: RiveAnimation.asset('assets/journal/girl_and_dog.riv'),
+                ),
+                Expanded(
+                  // Wrap your ListView.builder in an Expanded widget
+                  child: ListView.builder(
+                    itemCount: vm.templates.length,
+                    itemBuilder: (context, index) {
+                      return JournalTemplateCard(template: vm.templates[index]);
+                    },
+                  ),
+                ),
+              ],
             );
           }
         },

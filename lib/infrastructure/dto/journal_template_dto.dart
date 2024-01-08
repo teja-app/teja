@@ -28,8 +28,12 @@ class JournalTemplateDto {
 @JsonSerializable()
 class HeaderDto {
   final String title;
+  final String? description;
 
-  HeaderDto({required this.title});
+  HeaderDto({
+    required this.title,
+    required this.description,
+  });
 
   factory HeaderDto.fromJson(Map<String, dynamic> json) => _$HeaderDtoFromJson(json);
 
