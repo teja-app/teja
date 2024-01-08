@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
+import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_actions.dart';
 
@@ -40,7 +41,7 @@ class JournalDetailPageState extends State<JournalDetailPage> {
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Journal Entry Detail'),
+            title: Text(viewModel.templatesById[viewModel.journalEntry!.templateId]!.title),
           ),
           body: _buildJournalEntryContent(viewModel.journalEntry!),
         );
@@ -86,9 +87,11 @@ class JournalDetailViewModel {
   final JournalEntryEntity? journalEntry;
   final bool isLoading;
   final String? errorMessage;
+  final Map<String, JournalTemplateEntity> templatesById;
 
   JournalDetailViewModel({
     required this.journalEntry,
+    required this.templatesById,
     required this.isLoading,
     required this.errorMessage,
   });
@@ -97,6 +100,7 @@ class JournalDetailViewModel {
     final state = store.state.journalDetailState;
     return JournalDetailViewModel(
       journalEntry: state.selectedJournalEntry,
+      templatesById: store.state.journalTemplateState.templatesById,
       isLoading: state.isLoading,
       errorMessage: state.errorMessage,
     );
