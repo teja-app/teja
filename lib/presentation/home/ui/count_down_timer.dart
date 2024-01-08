@@ -8,8 +8,11 @@ class CountdownTimer extends StatefulWidget {
   CountdownTimerState createState() => CountdownTimerState();
 }
 
+DateTime now = DateTime.now();
+DateTime midnightTomorrow = DateTime(now.year, now.month, now.day).add(const Duration(days: 1));
+
 class CountdownTimerState extends State<CountdownTimer> {
-  Duration duration = const Duration(hours: 2, minutes: 24, seconds: 54);
+  Duration duration = midnightTomorrow.difference(now);
 
   @override
   void initState() {
