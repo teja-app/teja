@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/mood/list/actions.dart';
 import 'package:teja/domain/redux/mood/list/state.dart';
@@ -43,8 +44,18 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final brightness = Theme.of(context).colorScheme.brightness;
+
     return Container(
       padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: theme.scaffoldBackgroundColor, // Use the theme's background color
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(25.0),
+          topRight: Radius.circular(25.0),
+        ),
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,7 +68,17 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             children: List.generate(5, (index) {
               int moodRating = index + 1;
               return ChoiceChip(
-                label: Text(moodRating.toString()),
+                label: SvgPicture.asset(
+                  'assets/icons/mood_${moodRating}_active.svg',
+                  width: 20,
+                  height: 20,
+                  colorFilter: ColorFilter.mode(
+                    brightness == Brightness.light ? Colors.black : Colors.white,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                selectedColor: brightness == Brightness.light ? Colors.white : Colors.black,
+                backgroundColor: brightness == Brightness.light ? Colors.white : Colors.black,
                 selected: selectedMoodRatings.contains(moodRating),
                 onSelected: (bool selected) {
                   setState(() {
