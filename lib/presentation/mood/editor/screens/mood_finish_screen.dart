@@ -33,7 +33,6 @@ class FinishScreen extends StatelessWidget {
             gridWidth: 4,
             child: Column(
               children: [
-                const SizedBox(height: 50),
                 // Congratulatory Message
                 Text(
                   'Good job!',
@@ -50,16 +49,15 @@ class FinishScreen extends StatelessWidget {
                   style: textTheme.bodyMedium,
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 50),
+                const SizedBox(height: 20),
               ],
             ),
           ),
-          const SizedBox(height: 50),
           FlexibleHeightBox(
             gridWidth: 4,
             child: Column(
               children: [
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
                 // Feedback Prompt
                 Text(
                   'Did you enjoy this mood check-in?',
@@ -82,7 +80,7 @@ class FinishScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
               ],
             ),
           ),
