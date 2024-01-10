@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:go_router/go_router.dart';
+import 'package:icons_flutter/icons_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
@@ -7,6 +10,8 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:intl/intl.dart';
 import 'package:teja/domain/redux/journal/journal_logs/journal_logs_actions.dart';
 import 'package:teja/presentation/journal/ui/journal_card.dart';
+import 'package:teja/router.dart';
+import 'package:teja/shared/common/button.dart';
 
 class JournalEntriesWidget extends StatefulWidget {
   const JournalEntriesWidget({Key? key}) : super(key: key);
@@ -33,9 +38,24 @@ class _JournalEntriesWidgetState extends State<JournalEntriesWidget> {
         String formattedDate =
             viewModel.selectedDate != null ? DateFormat('yyyy-MM-dd').format(viewModel.selectedDate!) : '';
 
+        final GoRouter goRouter = GoRouter.of(context);
         var journalEntries = viewModel.journalLogsByDate[formattedDate];
         if (journalEntries == null || journalEntries.isEmpty) {
-          return const Center(child: Text("No journal entries for this day."));
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Button(
+                  icon: AntDesign.addfile,
+                  text: "Create a Journal Entry",
+                  onPressed: () {
+                    HapticFeedback.selectionClick();
+                    goRouter.pushNamed(RootPath.journalTemplateList);
+                  },
+                ),
+              ],
+            ),
+          );
         }
 
         return ListView.builder(

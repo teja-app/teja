@@ -82,17 +82,6 @@ class MoodTrackerWidgetState extends State<MoodTrackerWidget> {
 
         return Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Text(
-                  'Mood and Emotions',
-                  style: textTheme.titleLarge,
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
             // Display mood logs layout if they exist
             if (_showMoods && moodLogsForSelectedDate != null && moodLogsForSelectedDate.isNotEmpty)
               _moodLogsLayout(moodLogsForSelectedDate),

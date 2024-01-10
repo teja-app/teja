@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/presentation/journal/journal_editor/ui/journal_editor_finish_page.dart';
 import 'package:teja/presentation/journal/journal_editor/ui/journal_editor_questions_page.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.dart';
+import 'package:teja/router.dart';
 
 class JournalEditorScreen extends StatefulWidget {
   const JournalEditorScreen({Key? key}) : super(key: key);
@@ -35,6 +38,7 @@ class JournalEditorScreenState extends State<JournalEditorScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final GoRouter goRouter = GoRouter.of(context);
     return StoreConnector<AppState, JournalEditViewModel>(
       converter: JournalEditViewModel.fromStore,
       builder: (context, viewModel) {
@@ -47,7 +51,7 @@ class JournalEditorScreenState extends State<JournalEditorScreen> {
           appBar: AppBar(
             title: SmoothPageIndicator(
               controller: _pageController,
-              count: viewModel.currentJournalEntry.questions!.length,
+              count: viewModel.currentJournalEntry.questions!.length + 1,
               effect: const ExpandingDotsEffect(),
               onDotClicked: (index) {
                 _pageController.animateToPage(
@@ -60,15 +64,24 @@ class JournalEditorScreenState extends State<JournalEditorScreen> {
           ),
           body: PageView.builder(
             controller: _pageController,
-            itemCount: viewModel.currentJournalEntry.questions!.length,
+            itemCount: viewModel.currentJournalEntry.questions!.length + 1,
             onPageChanged: (int page) {
               viewModel.changePage(page);
               FocusManager.instance.primaryFocus?.unfocus();
             },
             itemBuilder: (context, index) {
-              return JournalQuestionPage(
-                questionIndex: index,
-              );
+              if (index < viewModel.currentJournalEntry.questions!.length) {
+                return JournalQuestionPage(
+                  questionIndex: index,
+                );
+              } else {
+                // FinishScreen as the last page
+                return JournalFinishScreen(
+                  onFinish: () {
+                    goRouter.goNamed(RootPath.home);
+                  },
+                );
+              }
             },
           ),
         );

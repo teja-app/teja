@@ -17,18 +17,6 @@ class FetchMasterView extends StatefulWidget {
 
 class _FetchMasterViewState extends State<FetchMasterView> {
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final store = StoreProvider.of<AppState>(context);
-      store.dispatch(FetchMasterFeelingsActionFromApi());
-      store.dispatch(FetchMasterFactorsActionFromApi());
-      store.dispatch(FetchQuotesActionFromApi());
-      store.dispatch(FetchJournalTemplatesActionFromApi());
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, _ViewModel>(
       converter: _ViewModel.fromStore,
