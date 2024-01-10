@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:teja/domain/redux/home/home_state.dart';
+import 'package:teja/domain/redux/journal/detail/journal_detail_state.dart';
+import 'package:teja/domain/redux/journal/journal_editor/journal_editor_state.dart';
+import 'package:teja/domain/redux/journal/journal_logs/journal_logs_state.dart';
+import 'package:teja/domain/redux/journal/journal_template/state.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_state.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_state.dart';
 import 'package:teja/domain/redux/mood/list/state.dart';
@@ -24,6 +28,10 @@ class AppState {
   final WeeklyMoodReportState weeklyMoodReportState;
   final QuoteState quoteState;
   final VisionState visionState;
+  final JournalTemplateState journalTemplateState;
+  final JournalEditorState journalEditorState;
+  final JournalLogsState journalLogsState;
+  final JournalDetailState journalDetailState;
 
   const AppState({
     required this.authState,
@@ -37,6 +45,10 @@ class AppState {
     required this.weeklyMoodReportState,
     required this.quoteState,
     required this.visionState,
+    required this.journalTemplateState,
+    required this.journalEditorState,
+    required this.journalLogsState,
+    required this.journalDetailState,
   });
 
   AppState copyWith({
@@ -51,6 +63,10 @@ class AppState {
     WeeklyMoodReportState? weeklyMoodReportState,
     QuoteState? quoteState,
     VisionState? visionState,
+    JournalTemplateState? journalTemplateState,
+    JournalEditorState? journalEditorState,
+    JournalLogsState? journalLogsState,
+    JournalDetailState? journalDetailState,
   }) {
     return AppState(
       authState: authState ?? this.authState,
@@ -64,6 +80,10 @@ class AppState {
       weeklyMoodReportState: weeklyMoodReportState ?? this.weeklyMoodReportState,
       quoteState: quoteState ?? this.quoteState,
       visionState: visionState ?? this.visionState,
+      journalTemplateState: journalTemplateState ?? this.journalTemplateState,
+      journalEditorState: journalEditorState ?? this.journalEditorState,
+      journalLogsState: journalLogsState ?? this.journalLogsState,
+      journalDetailState: journalDetailState ?? this.journalDetailState,
     );
   }
 
@@ -80,6 +100,10 @@ class AppState {
       weeklyMoodReportState: WeeklyMoodReportState.initial(),
       quoteState: QuoteState.initial(),
       visionState: VisionState.initial(),
+      journalTemplateState: JournalTemplateState.initial(),
+      journalEditorState: JournalEditorState.initialState(),
+      journalLogsState: JournalLogsState.initialState(),
+      journalDetailState: JournalDetailState.initialState(),
     );
   }
 }

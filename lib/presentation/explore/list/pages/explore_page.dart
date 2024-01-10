@@ -23,6 +23,13 @@ class ExplorePage extends StatelessWidget {
           RootPath.inspiration,
           'Discover quotes, affirmations, and more to inspire and motivate you.',
         ),
+        _buildCategoryBox(
+          'Journal',
+          'assets/background/journal.svg',
+          context,
+          RootPath.journalTemplateList,
+          'Discover a guided journal for a better clarity with the prompts',
+        ),
       ],
     );
     return Scaffold(

@@ -72,7 +72,6 @@ class MoodEditorSaga {
     Isar isar = isarResult.value!;
 
     var moodLogRepository = MoodLogRepository(isar);
-    print("_handleUpdateBroadFactorsAction ${action.factors}");
 
     yield Try(() sync* {
       // Update the broad factors in the repository
@@ -208,7 +207,7 @@ class MoodEditorSaga {
     }
 
     yield Put(MoodUpdatedAction("Successful"));
-    yield Put(FetchMoodLogsAction());
+    yield Put(const FetchMoodLogsAction());
   }
 
   _handleUpdateFeelingsAction({required TriggerUpdateFeelingsAction action}) sync* {

@@ -63,6 +63,9 @@ class BroadFactorsScreenState extends State<BroadFactorsScreen> {
                       ],
                     );
                   }).toList(),
+                  const SizedBox(
+                    height: 200,
+                  ),
                 ],
               ),
             ),

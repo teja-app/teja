@@ -1,0 +1,60 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+import 'package:teja/domain/entities/journal_entry_entity.dart';
+import 'package:teja/domain/entities/journal_template_entity.dart';
+import 'package:teja/router.dart';
+
+Widget journalEntryLayout(JournalTemplateEntity template, JournalEntryEntity journalEntry, BuildContext context) {
+  final textTheme = Theme.of(context).textTheme;
+  final firstQuestion = journalEntry.questions?.isNotEmpty == true ? journalEntry.questions!.first : null;
+
+  return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    GestureDetector(
+      onTap: () {
+        // Add onTap functionality if needed, for example, to navigate to a detailed journal entry page
+        HapticFeedback.selectionClick();
+        GoRouter.of(context).pushNamed(
+          RootPath.journalDetail,
+          queryParameters: {
+            "id": journalEntry.id,
+          },
+        );
+      },
+      child: Card(
+        margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        elevation: 0.5, // Adjust the elevation for shadow effect
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 10.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                template.title,
+                style: textTheme.titleMedium,
+              ),
+              Text(
+                firstQuestion?.questionText ?? 'No question',
+                style: textTheme.titleSmall,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                firstQuestion?.answerText ?? 'No answer',
+                style: textTheme.bodySmall,
+              ),
+              const SizedBox(height: 16),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Text(
+                  DateFormat('hh:mm a').format(journalEntry.createdAt),
+                  style: textTheme.bodySmall,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  ]);
+}

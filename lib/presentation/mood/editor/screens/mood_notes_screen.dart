@@ -27,20 +27,25 @@ class NotesScreenState extends State<NotesScreen> {
     textFocusNode = FocusNode();
     textEditingController = TextEditingController();
     textEditingController.addListener(_onTextChanged);
+    textFocusNode.addListener(() {
+      if (!textFocusNode.hasFocus) {
+        _saveComment();
+      }
+    });
   }
 
   @override
   void dispose() {
-    textFocusNode.dispose();
-    textEditingController.removeListener(_onTextChanged);
-    textEditingController.dispose();
-    _debounce?.cancel();
+    _debounce?.cancel(); // Cancel the active debounce timer if it exists
+    textFocusNode.dispose(); // Dispose of the FocusNode
+    textEditingController.removeListener(_onTextChanged); // Remove the text change listener
+    textEditingController.dispose(); // Dispose of the TextEditingController
     super.dispose();
   }
 
   void _onTextChanged() {
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(const Duration(milliseconds: 1000), _saveComment); // Adjust the duration as needed
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), _saveComment);
   }
 
   void _saveComment() {

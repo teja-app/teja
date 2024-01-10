@@ -1,9 +1,13 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/presentation/edit_habit/pages/edig_habit_page.dart';
 import 'package:teja/presentation/explore/list/pages/explore_page.dart';
 import 'package:teja/presentation/goal_editor/page/vision_picker_page.dart';
 import 'package:teja/presentation/home/pages/home_page.dart';
+import 'package:teja/presentation/journal/journa_detail/pages/journal_detail_page.dart';
+import 'package:teja/presentation/journal/journal_editor/pages/journal_editor_page.dart';
+import 'package:teja/presentation/journal/journal_templates/pages/journal_template_list_screen.dart';
 import 'package:teja/presentation/mood/detail/page/mood_detail.dart';
 import 'package:teja/presentation/mood/editor/pages/mood_edit.dart';
 import 'package:teja/presentation/mood/list/pages/mood_list_page.dart';
@@ -62,6 +66,9 @@ class RootPath {
   static const moodDetail = "mood_detail";
   static const goalSettings = "goal_settings";
   static const noteEditor = "note_editor";
+  static const journalTemplateList = "journal_template_list";
+  static const journalEditor = "journal_editor";
+  static const journalDetail = "journal_detail";
 }
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -89,6 +96,12 @@ final GoRouter router = GoRouter(
       name: RootPath.signUp,
       path: '/sign_up',
       builder: (context, state) => SignUpPage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RootPath.journalEditor, // Define a constant for this route
+      path: '/journal_editor',
+      builder: (context, state) => const JournalEditorScreen(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
@@ -139,6 +152,12 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const MoodListPage(),
     ),
     GoRoute(
+      path: '/journal_template_list',
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RootPath.journalTemplateList,
+      builder: (context, state) => const JournalTemplateListScreen(),
+    ),
+    GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       name: RootPath.goalSettings,
       path: '/goal_settings',
@@ -152,6 +171,15 @@ final GoRouter router = GoRouter(
       builder: (context, state) {
         final String? moodIdStr = state.uri.queryParameters['id'];
         return MoodDetailPage(moodId: moodIdStr!);
+      },
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RootPath.journalDetail,
+      path: '/journal_detail',
+      builder: (context, state) {
+        final String? journalEntryId = state.uri.queryParameters['id'];
+        return JournalDetailPage(journalEntryId: journalEntryId!);
       },
     ),
     GoRoute(

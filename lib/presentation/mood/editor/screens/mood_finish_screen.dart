@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:icons_flutter/icons_flutter.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
+import 'package:rive/rive.dart';
 
 class FinishScreen extends StatelessWidget {
   final VoidCallback onFinish;
@@ -12,12 +12,7 @@ class FinishScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle headlineStyle = Theme.of(context).textTheme.headlineSmall!.copyWith(
-          fontWeight: FontWeight.bold,
-        );
-    TextStyle bodyStyle = Theme.of(context).textTheme.bodyMedium!.copyWith(
-          fontSize: 16,
-        );
+    final textTheme = Theme.of(context).textTheme;
 
     void _handleSurveyResponse(BuildContext context, String response) {
       Posthog().capture(
@@ -36,36 +31,35 @@ class FinishScreen extends StatelessWidget {
             gridWidth: 4,
             child: Column(
               children: [
-                const SizedBox(height: 50),
                 // Congratulatory Message
                 Text(
                   'Good job!',
-                  style: headlineStyle,
+                  style: textTheme.headlineSmall,
                   textAlign: TextAlign.center,
                 ),
-                SvgPicture.asset(
-                  "assets/icons/mood_done.svg",
-                  height: 100,
+                const SizedBox(
+                  height: 200,
+                  child: RiveAnimation.asset('assets/mood/perrito.riv'),
                 ),
                 const SizedBox(height: 20),
                 Text(
                   'You’ve completed your mood check-in.',
-                  style: bodyStyle,
+                  style: textTheme.bodyMedium,
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 50),
+                const SizedBox(height: 20),
               ],
             ),
           ),
-          const SizedBox(height: 50),
           FlexibleHeightBox(
             gridWidth: 4,
             child: Column(
               children: [
+                const SizedBox(height: 8),
                 // Feedback Prompt
                 Text(
                   'Did you enjoy this mood check-in?',
-                  style: bodyStyle,
+                  style: textTheme.titleSmall,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
@@ -84,7 +78,7 @@ class FinishScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
               ],
             ),
           ),
