@@ -166,10 +166,10 @@ class _RandomQuotePageState extends State<RandomQuotePage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          _roundedIconButton(Icons.shuffle, _getRandomQuote),
+                          _roundedIconButton(AntDesign.forward, _getRandomQuote),
                           _roundedIconButton(FontAwesome.instagram, () => _shareQuoteAsImage(platform: 'instagram')),
                           _roundedIconButton(Entypo.share, () => _shareQuoteAsImage(platform: 'share')),
-                          _roundedIconButton(Icons.image, changeBackground),
+                          _roundedIconButton(Entypo.palette, changeBackground),
                         ],
                       ),
                     ),
