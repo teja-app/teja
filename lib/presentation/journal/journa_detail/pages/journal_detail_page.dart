@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_actions.dart';
+import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.dart';
+import 'package:teja/presentation/journal/journa_detail/ui/journal_setting_menu.dart';
+import 'package:teja/router.dart';
 
 class JournalDetailPage extends StatefulWidget {
   final String journalEntryId;
@@ -26,8 +30,14 @@ class JournalDetailPageState extends State<JournalDetailPage> {
     });
   }
 
+  void onEditJournal(String journalId) {
+    final store = StoreProvider.of<AppState>(context);
+    store.dispatch(InitializeJournalEditor(journalEntryId: journalId));
+    GoRouter.of(context).pushNamed(RootPath.journalEditor);
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext pageContext) {
     return StoreConnector<AppState, JournalDetailViewModel>(
       converter: (store) => JournalDetailViewModel.fromStore(store),
       builder: (context, viewModel) {
@@ -42,6 +52,45 @@ class JournalDetailPageState extends State<JournalDetailPage> {
         return Scaffold(
           appBar: AppBar(
             title: Text(viewModel.templatesById[viewModel.journalEntry!.templateId]!.title),
+            actions: [
+              JournalMenuSettings(
+                journalId: viewModel.journalEntry!.id,
+                onDelete: () {
+                  showDialog(
+                    context: pageContext,
+                    builder: (BuildContext dialogContext) {
+                      return AlertDialog(
+                        title: const Text('Confirm Delete'),
+                        content: const Text(
+                          'Are you sure you want to delete this entry?',
+                        ),
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text('Cancel'),
+                            onPressed: () {
+                              Navigator.of(dialogContext).pop();
+                            },
+                          ),
+                          TextButton(
+                            child: const Text('Delete'),
+                            onPressed: () {
+                              StoreProvider.of<AppState>(dialogContext).dispatch(DeleteJournalDetailAction(
+                                viewModel.journalEntry!.id,
+                              ));
+                              Navigator.of(dialogContext).pop();
+                              GoRouter.of(pageContext).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                onEdit: () {
+                  onEditJournal(viewModel.journalEntry!.id);
+                },
+              ),
+            ],
           ),
           body: _buildJournalEntryContent(viewModel.journalEntry!),
         );

@@ -88,8 +88,6 @@ class _HomePageState extends State<HomePage> {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
 
-    final GoRouter goRouter = GoRouter.of(context);
-
     final Widget mainBody = StoreConnector<AppState, _ViewModel>(
       converter: _ViewModel.fromStore,
       builder: (context, store) {
@@ -115,12 +113,6 @@ class _HomePageState extends State<HomePage> {
                 selectableDayPredicate: (date) => date.isBefore(tomorrow),
                 locale: 'en_ISO',
               ),
-              if (!store.isFetchSuccessful)
-                const BentoBox(
-                  gridWidth: 4,
-                  gridHeight: 1.5,
-                  child: FetchMasterView(),
-                ),
               const SizedBox(height: 10),
               if (store.selectedDate != null && now.compareTo(store.selectedDate!) > 0) ...[
                 const FlexibleHeightBox(
@@ -175,20 +167,14 @@ class _HomePageState extends State<HomePage> {
 
 class _ViewModel {
   final DateTime? selectedDate;
-  final bool isFetchSuccessful;
 
   _ViewModel({
     this.selectedDate,
-    required this.isFetchSuccessful,
   });
 
   static _ViewModel fromStore(Store<AppState> store) {
     return _ViewModel(
       selectedDate: store.state.homeState.selectedDate,
-      isFetchSuccessful: store.state.masterFeelingState.isFetchSuccessful &&
-          store.state.masterFactorState.isFetchSuccessful &&
-          store.state.quoteState.isFetchSuccessful &&
-          store.state.journalTemplateState.isFetchSuccessful,
     );
   }
 }

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
+import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/core_actions.dart';
 
 @immutable
 class InitializeJournalEditor {
-  final String journalEntryId;
-  final String? templateId; // Make templateId optional
+  final String? journalEntryId;
+  final JournalTemplateEntity? template; // Make templateId optional
 
-  const InitializeJournalEditor(this.journalEntryId, {this.templateId});
+  const InitializeJournalEditor({this.journalEntryId, this.template});
 }
 
 @immutable

@@ -20,28 +20,27 @@ class JournalEditorSaga {
     Isar isar = isarResult.value!;
 
     var journalEntryRepository = JournalEntryRepository(isar);
-    var journalTemplateRepository = JournalTemplateRepository(isar); // Add repository to fetch journal templates
+    var journalTemplateRepository = JournalTemplateRepository(isar);
     yield Try(() sync* {
-      var journalEntryResult = Result<JournalEntry>();
-      yield Call(journalEntryRepository.getJournalEntryById, args: [action.journalEntryId], result: journalEntryResult);
-
-      if (journalEntryResult.value != null) {
+      if (action.journalEntryId != null) {
         // Existing entry found, convert it to entity and dispatch success action
-
+        var journalEntryResult = Result<JournalEntry>();
+        yield Call(journalEntryRepository.getJournalEntryById,
+            args: [action.journalEntryId], result: journalEntryResult);
         JournalEntry journalEntry = journalEntryResult.value!;
         yield Put(InitializeJournalEditorSuccessAction(journalEntryRepository.toEntity(journalEntry)));
-      } else {
+      } else if (action.template != null && action.template?.id != null) {
         // Fetch the journal template to get the questions
         var journalTemplateResult = Result<JournalTemplateEntity>();
         yield Call(journalTemplateRepository.getJournalTemplateById,
-            args: [action.templateId], result: journalTemplateResult);
+            args: [action.template!.templateID], result: journalTemplateResult);
 
         JournalTemplateEntity journalTemplate = journalTemplateResult.value!; // Handle null case as needed
 
         // Create a new entry with questions initialized from the template
         JournalEntry newJournalEntry = JournalEntry()
           ..id = Helpers.generateUniqueId()
-          ..templateId = action.journalEntryId
+          ..templateId = action.template!.id
           ..timestamp = DateTime.now()
           ..createdAt = DateTime.now()
           ..updatedAt = DateTime.now()

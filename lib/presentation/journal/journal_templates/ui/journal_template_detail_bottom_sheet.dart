@@ -18,10 +18,8 @@ class JournalTemplateDetailBottomSheet extends StatelessWidget {
     final textTheme = theme.textTheme;
 
     void _beginJournaling(BuildContext context) {
-      print("Beginning journaling with template: ${template.templateID}");
-
       final store = StoreProvider.of<AppState>(context); // Get the Redux store
-      store.dispatch(InitializeJournalEditor(template.id, templateId: template.templateID));
+      store.dispatch(InitializeJournalEditor(template: template));
       // Navigate to the journal editor screen with the selected template
       GoRouter.of(context).pushNamed(
         RootPath.journalEditor, // The name you defined for the journal editor route

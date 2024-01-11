@@ -11,7 +11,7 @@ import 'package:teja/domain/redux/mood/detail/mood_detail_state.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:teja/presentation/mood/detail/ui/feeling_list.dart';
 import 'package:teja/presentation/mood/detail/ui/mood_rating_widget.dart';
-import 'package:teja/presentation/mood/detail/ui/setting_pop_up_menu.dart';
+import 'package:teja/presentation/mood/detail/ui/mood_setting_menu.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/bento_box.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
@@ -54,14 +54,6 @@ class MoodDetailPageState extends State<MoodDetailPage> {
       Store<AppState> store = StoreProvider.of<AppState>(context);
       store.dispatch(LoadMoodDetailAction(widget.moodId));
     });
-  }
-
-  void _showErrorSnackbar(BuildContext context, String? errorMessage) {
-    if (errorMessage != null && errorMessage.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage)),
-      );
-    }
   }
 
   void onEditMoodLog(String moodLogId) {

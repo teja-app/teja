@@ -25,6 +25,10 @@ class JournalTemplateSaga {
 
       if (cachedTemplates.value != null && cachedTemplates.value!.isNotEmpty) {
         yield Put(JournalTemplatesFetchedFromCacheAction(cachedTemplates.value!));
+        yield Put(JournalTemplatesFetchedSuccessAction(
+          cachedTemplates.value!,
+          DateTime.now(),
+        ));
       } else {
         yield Put(FetchJournalTemplatesActionFromApi());
       }
