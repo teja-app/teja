@@ -6,34 +6,51 @@ import 'package:intl/intl.dart';
 import 'package:teja/domain/entities/mood_log.dart';
 import 'package:teja/router.dart';
 
-Widget _getMoodEntryText(MoodLogEntity moodLog, BuildContext context) {
-  final textTheme = Theme.of(context).textTheme;
+Map<String, String> _getMoodEntryText(MoodLogEntity moodLog, BuildContext context) {
+  String mainText = '';
+  String secondaryText = '';
+
+  // Determine the time of day based on moodLog.timestamp
+  String timeOfDay;
+  int hour = moodLog.timestamp.hour;
+  if (hour >= 5 && hour < 12) {
+    timeOfDay = 'in the morning';
+  } else if (hour >= 12 && hour < 17) {
+    timeOfDay = 'in the afternoon';
+  } else if (hour >= 17 && hour < 21) {
+    timeOfDay = 'in the evening';
+  } else {
+    timeOfDay = 'at night';
+  }
 
   if (moodLog.feelings != null && moodLog.feelings!.isNotEmpty) {
-    String feelingsText;
-    int feelingsCount = moodLog.feelings!.length;
-    if (feelingsCount > 2) {
-      // Get the first feeling and append 'and X more feelings'
-      var firstFeeling = moodLog.feelings!.first.feeling;
-      feelingsText = '$firstFeeling and ${feelingsCount - 1} more feelings';
-    } else if (feelingsCount == 2) {
-      // Directly join the two feelings with 'and'
-      feelingsText = moodLog.feelings!.map((e) => e.feeling).join(' and ');
-    } else {
-      // If only one feeling, display it directly
-      feelingsText = moodLog.feelings!.map((e) => e.feeling).join(', ');
+    // Main text with the first feeling
+    var firstFeeling = moodLog.feelings!.first.feeling;
+    mainText = 'You felt $firstFeeling $timeOfDay';
+
+    // Secondary text with additional feelings and factors
+    var additionalFeelings = moodLog.feelings!.skip(1).map((e) => e.feeling).toList();
+    if (additionalFeelings.isNotEmpty) {
+      secondaryText = 'and ${additionalFeelings.join(", ")}';
     }
 
-    return Text(
-      feelingsText,
-      style: textTheme.titleMedium,
-    );
+    // Adding factors to the secondary text if available
+    if (moodLog.factors != null && moodLog.factors!.isNotEmpty) {
+      String factorsText = moodLog.factors!.join(", ");
+      // Append factors to the secondary text
+      if (secondaryText.isNotEmpty) {
+        secondaryText += ' ';
+      }
+      secondaryText += 'due to $factorsText';
+    }
   } else {
-    return Text(
-      'No Feelings',
-      style: textTheme.titleMedium,
-    );
+    mainText = 'No Feelings';
   }
+
+  return {
+    'mainText': mainText,
+    'secondaryText': secondaryText,
+  };
 }
 
 Widget moodLogLayout(MoodLogEntity moodLog, BuildContext context) {
@@ -42,6 +59,8 @@ Widget moodLogLayout(MoodLogEntity moodLog, BuildContext context) {
   final tags = [];
   final hasTags = tags.isNotEmpty;
   final textTheme = Theme.of(context).textTheme;
+
+  Map<String, String> moodTexts = _getMoodEntryText(moodLog, context);
 
   return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
     GestureDetector(
@@ -76,7 +95,10 @@ Widget moodLogLayout(MoodLogEntity moodLog, BuildContext context) {
                     height: 24,
                   ),
                   const SizedBox(width: 8),
-                  _getMoodEntryText(moodLog, context),
+                  Text(
+                    moodTexts['mainText']!,
+                    style: textTheme.titleMedium,
+                  ),
                   const Spacer(),
                   Text(
                     DateFormat('hh:mm a').format(moodLog.timestamp),
@@ -84,7 +106,18 @@ Widget moodLogLayout(MoodLogEntity moodLog, BuildContext context) {
                   ),
                 ],
               ),
+              if (moodTexts['secondaryText']!.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    moodTexts['secondaryText']!,
+                    style: textTheme.labelMedium,
+                  ),
+                ),
               if (hasComments || hasTags) const SizedBox(height: 8),
+              const SizedBox(
+                height: 6,
+              ),
               if (hasComments)
                 Text(
                   moodLog.comment!,
