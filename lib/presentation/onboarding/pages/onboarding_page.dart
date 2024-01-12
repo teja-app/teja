@@ -9,7 +9,6 @@ import 'package:teja/domain/redux/mood/master_factor/actions.dart';
 import 'package:teja/domain/redux/mood/master_feeling/actions.dart';
 import 'package:teja/domain/redux/quotes/quote_action.dart';
 import 'package:teja/router.dart';
-import 'package:teja/shared/common/bento_box.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
@@ -31,6 +30,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
       store.dispatch(FetchMasterFactorsActionFromApi());
       store.dispatch(FetchQuotesActionFromApi());
       store.dispatch(FetchJournalTemplatesActionFromApi());
+
+      // Cache Fetch
+      store.dispatch(FetchMasterFeelingsActionFromCache());
+      store.dispatch(FetchMasterFactorsActionFromCache());
+      store.dispatch(FetchQuotesActionFromCache());
+      store.dispatch(FetchJournalTemplatesActionFromCache());
     });
   }
 
