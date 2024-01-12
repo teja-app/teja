@@ -14,10 +14,16 @@ DateTime midnightTomorrow = DateTime(now.year, now.month, now.day).add(const Dur
 class CountdownTimerState extends State<CountdownTimer> {
   Duration duration = midnightTomorrow.difference(now);
 
+  Timer? _timer;
+
   @override
   void initState() {
     super.initState();
-    Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
       setState(() {
         if (duration.inSeconds <= 0) {
           timer.cancel();
@@ -26,6 +32,12 @@ class CountdownTimerState extends State<CountdownTimer> {
         }
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
