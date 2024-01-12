@@ -14,7 +14,7 @@ class JournalFinishScreen extends StatelessWidget {
   void _handleSurveyResponse(BuildContext context, String response) {
     Posthog().capture(
       eventName: 'survey sent',
-      properties: {"\$survey_id": "018c81d5-a04a-0000-5b8d-a27f1aa8f6a8", "\$survey_response": response},
+      properties: {"\$survey_id": "018cfeff-21d8-0000-3eae-0df53fb0043f", "\$survey_response": response},
     );
     onFinish();
   }
