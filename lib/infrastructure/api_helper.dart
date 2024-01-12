@@ -7,7 +7,7 @@ class ApiHelper {
   final Dio _dio = Dio();
 
   ApiHelper() {
-    _dio.options.baseUrl = baseUrl!;
+    _dio.options.baseUrl = Env().baseUrl;
   }
 
   Future<Response<T>> _safeRequest<T>(
