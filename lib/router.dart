@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:teja/domain/entities/journal_template_entity.dart';
+import 'package:teja/infrastructure/utils/notification_service.dart';
 import 'package:teja/presentation/edit_habit/pages/edig_habit_page.dart';
 import 'package:teja/presentation/explore/list/pages/explore_page.dart';
 import 'package:teja/presentation/goal_editor/page/vision_picker_page.dart';
@@ -24,6 +24,8 @@ import 'package:teja/presentation/settings/pages/perference_settings_page.dart';
 import 'package:teja/presentation/settings/pages/security_settings_page.dart';
 import 'package:teja/presentation/settings/pages/settings_page.dart';
 import 'package:teja/shared/helpers/logger.dart';
+
+import 'main.dart';
 
 class RouteLoggingObserver extends NavigatorObserver {
   @override
@@ -191,7 +193,9 @@ final GoRouter router = GoRouter(
           GoRoute(
             name: SettingPath.notification,
             path: 'notification',
-            builder: (context, state) => const NotificationSettingsPage(),
+            builder: (context, state) => NotificationSettingsPage(
+              notificationService: notificationService,
+            ),
           ),
           GoRoute(
             name: SettingPath.perferences,

@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:teja/infrastructure/utils/notification_service.dart';
 
 class NotificationSettingsPage extends StatefulWidget {
-  const NotificationSettingsPage({super.key});
+  final NotificationService notificationService;
+
+  const NotificationSettingsPage({super.key, required this.notificationService});
 
   @override
-  _NotificationSettingsPageState createState() =>
-      _NotificationSettingsPageState();
+  NotificationSettingsPageState createState() => NotificationSettingsPageState();
 }
 
-class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
+class NotificationSettingsPageState extends State<NotificationSettingsPage> {
   TimeOfDay morningPreparationTime = const TimeOfDay(hour: 8, minute: 0);
   TimeOfDay eveningReflectionTime = const TimeOfDay(hour: 21, minute: 0);
   TimeOfDay dailyFocusTime = const TimeOfDay(hour: 14, minute: 30);
@@ -19,8 +21,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
   bool dailyFocusEnabled = true;
   bool dailyJournalingPromptEnabled = true;
 
-  Future<void> _selectTime(BuildContext context, TimeOfDay initialTime,
-      Function(TimeOfDay) onTimeSelected) async {
+  Future<void> _selectTime(BuildContext context, TimeOfDay initialTime, Function(TimeOfDay) onTimeSelected) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: initialTime,
@@ -31,9 +32,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double contentWidth = (screenWidth > 500)
-        ? 500
-        : screenWidth; // Assuming 500 is the max width for content
+    final double contentWidth = (screenWidth > 500) ? 500 : screenWidth; // Assuming 500 is the max width for content
 
     return Scaffold(
       appBar: AppBar(
@@ -69,8 +68,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
               ),
               _buildNotificationTile(
                 title: 'Evening Wind-down',
-                subtitle:
-                    'Reflect on your day and set the tone for a restful evening.',
+                subtitle: 'Reflect on your day and set the tone for a restful evening.',
                 time: eveningReflectionTime,
                 onTimeSelected: (TimeOfDay time) {
                   setState(() {
@@ -131,6 +129,39 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
     );
   }
 
+  Future<void> _handleToggle(String title, TimeOfDay time, bool isEnabled) async {
+    final int hour = time.hour;
+    final int minute = time.minute;
+    final int notificationId = _getNotificationId(title); // A method to map titles to unique notification IDs
+
+    if (isEnabled) {
+      print("_handleToggle ${title} $time $isEnabled");
+      await widget.notificationService.scheduleNotification(
+        title: title,
+        body: 'Reminder: $title',
+        hour: hour,
+        minute: minute,
+      );
+    } else {
+      widget.notificationService.cancelNotification(notificationId);
+    }
+  }
+
+  int _getNotificationId(String title) {
+    switch (title) {
+      case 'Morning Kickstart':
+        return 1;
+      case 'Evening Wind-down':
+        return 2;
+      case 'Focus Reminder':
+        return 3;
+      case 'Journaling Cue':
+        return 4;
+      default:
+        return 0; // Default ID for unknown titles
+    }
+  }
+
   Widget _buildNotificationTile({
     required String title,
     required String subtitle,
@@ -140,17 +171,14 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
     required Function(bool) onToggle,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-          vertical: 10.0), // Add padding to increase space
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
         children: [
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title,
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold)),
+                Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 Text(subtitle),
               ],
             ),
@@ -159,7 +187,10 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
             children: [
               Switch(
                 value: notificationEnabled,
-                onChanged: onToggle,
+                onChanged: (bool value) async {
+                  onToggle(value);
+                  await _handleToggle(title, time, value);
+                },
               ),
               ElevatedButton(
                 onPressed: () => _selectTime(context, time, onTimeSelected),
