@@ -10,8 +10,10 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/mood/list/actions.dart';
 import 'package:teja/presentation/mood/list/ui/filter_bottom_sheet.dart';
 import 'package:teja/presentation/mood/ui/mood_detail_card.dart';
+import 'package:teja/presentation/navigation/buildDesktopDrawer.dart';
 import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
+import 'package:teja/presentation/navigation/leadingContainer.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 
 class MoodListPage extends StatefulWidget {
@@ -79,11 +81,50 @@ class _MoodListPageState extends State<MoodListPage> {
     posthog.screen(
       screenName: 'Mood List Page',
     );
+
+    final mainBody = StoreConnector<AppState, MoodListViewModel>(
+      converter: (store) => MoodListViewModel.fromStore(store),
+      builder: (context, viewModel) {
+        if (viewModel.isLoading && viewModel.moodLogs.isEmpty) {
+          return Center(child: CircularProgressIndicator());
+        }
+
+        // Group mood logs by date
+        var groupedLogs = groupMoodLogsByDate(viewModel.moodLogs);
+
+        // List of widgets to render (headers and mood logs)
+        List<Widget> listItems = [];
+
+        // Build the list with date headers
+        groupedLogs.forEach((date, logs) {
+          // Add date header
+          listItems.add(DateHeaderWidget(date: date));
+
+          // Wrap each day's logs in a FlexibleHeightBox
+          listItems.addAll(logs.map((log) => moodLogLayout(log, context)).toList());
+        });
+
+        return Center(
+          child: FlexibleHeightBox(
+            gridWidth: 4,
+            color: Theme.of(context).scaffoldBackgroundColor,
+            child: ScrollablePositionedList.builder(
+              itemCount: listItems.length,
+              itemBuilder: (context, index) => listItems[index],
+              itemScrollController: itemScrollController,
+              itemPositionsListener: itemPositionsListener,
+            ),
+          ),
+        );
+      },
+    );
     return Scaffold(
       bottomNavigationBar: isDesktop(context) ? null : buildMobileNavigationBar(context),
       appBar: AppBar(
         title: const Text('Journal'),
         forceMaterialTransparency: true,
+        leading: leadingNavBar(context),
+        leadingWidth: 72,
         actions: [
           IconButton(
             icon: const Icon(AntDesign.filter),
@@ -93,42 +134,14 @@ class _MoodListPageState extends State<MoodListPage> {
           ),
         ],
       ),
-      body: StoreConnector<AppState, MoodListViewModel>(
-        converter: (store) => MoodListViewModel.fromStore(store),
-        builder: (context, viewModel) {
-          if (viewModel.isLoading && viewModel.moodLogs.isEmpty) {
-            return Center(child: CircularProgressIndicator());
-          }
-
-          // Group mood logs by date
-          var groupedLogs = groupMoodLogsByDate(viewModel.moodLogs);
-
-          // List of widgets to render (headers and mood logs)
-          List<Widget> listItems = [];
-
-          // Build the list with date headers
-          groupedLogs.forEach((date, logs) {
-            // Add date header
-            listItems.add(DateHeaderWidget(date: date));
-
-            // Wrap each day's logs in a FlexibleHeightBox
-            listItems.addAll(logs.map((log) => moodLogLayout(log, context)).toList());
-          });
-
-          return Center(
-            child: FlexibleHeightBox(
-              gridWidth: 4,
-              color: Theme.of(context).scaffoldBackgroundColor,
-              child: ScrollablePositionedList.builder(
-                itemCount: listItems.length,
-                itemBuilder: (context, index) => listItems[index],
-                itemScrollController: itemScrollController,
-                itemPositionsListener: itemPositionsListener,
-              ),
-            ),
-          );
-        },
-      ),
+      body: isDesktop(context)
+          ? Row(
+              children: [
+                buildDesktopNavigationBar(context), // The NavigationRail
+                Expanded(child: mainBody), // Main content area
+              ],
+            )
+          : mainBody, // If not desktop, just show the main body
       // Add other Scaffold properties like floatingActionButton if needed
     );
   }

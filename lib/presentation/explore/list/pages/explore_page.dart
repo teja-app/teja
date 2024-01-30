@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:teja/presentation/navigation/buildDesktopDrawer.dart';
 import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/presentation/navigation/leadingContainer.dart';
@@ -13,7 +14,7 @@ class ExplorePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Widget mainBody = ListView(
+    final Widget listView = ListView(
       padding: const EdgeInsets.all(4.0),
       children: <Widget>[
         _buildCategoryBox(
@@ -29,6 +30,24 @@ class ExplorePage extends StatelessWidget {
           context,
           RootPath.journalTemplateList,
           'Discover a guided journal for a better clarity with the prompts',
+        ),
+      ],
+    );
+    final mainBody = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Text(
+            'Discover and explore a world of inspiration and self-improvement.',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        Expanded(
+          child: listView,
         ),
       ],
     );
@@ -48,24 +67,14 @@ class ExplorePage extends StatelessWidget {
           ),
         ],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'Discover and explore a world of inspiration and self-improvement.',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Expanded(
-            child: mainBody,
-          ),
-        ],
-      ),
+      body: isDesktop(context)
+          ? Row(
+              children: [
+                buildDesktopNavigationBar(context), // The NavigationRail
+                Expanded(child: mainBody), // Main content area
+              ],
+            )
+          : mainBody, // If not desktop, just show the main body
     );
   }
 

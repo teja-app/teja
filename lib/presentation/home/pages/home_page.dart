@@ -157,7 +157,12 @@ class _HomePageState extends State<HomePage> {
           ? Row(
               children: [
                 buildDesktopNavigationBar(context), // The NavigationRail
-                Expanded(child: mainBody), // Main content area
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.topCenter, // Adjust this as needed
+                    child: mainBody,
+                  ),
+                ), // Main content area
               ],
             )
           : mainBody, // If not desktop, just show the main body
