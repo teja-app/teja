@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:teja/domain/entities/mood_log.dart';
+import 'package:teja/presentation/mood/ui/attachement_image.dart';
 import 'package:teja/router.dart';
 
 Map<String, String> _getMoodEntryText(MoodLogEntity moodLog, BuildContext context) {
@@ -26,7 +27,7 @@ Map<String, String> _getMoodEntryText(MoodLogEntity moodLog, BuildContext contex
   if (moodLog.feelings != null && moodLog.feelings!.isNotEmpty) {
     // Main text with the first feeling
     var firstFeeling = moodLog.feelings!.first.feeling;
-    mainText = 'You felt $firstFeeling $timeOfDay';
+    mainText = 'Felt $firstFeeling $timeOfDay';
 
     // Secondary text with additional feelings and factors
     var additionalFeelings = moodLog.feelings!.skip(1).map((e) => e.feeling).toList();
@@ -133,6 +134,26 @@ Widget moodLogLayout(MoodLogEntity moodLog, BuildContext context) {
                             backgroundColor: Colors.grey[200],
                           ))
                       .toList(),
+                ),
+              if (moodLog.attachments != null && moodLog.attachments!.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: SizedBox(
+                    height: 100, // Height for the horizontal list
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: moodLog.attachments!.length,
+                      itemBuilder: (context, index) {
+                        var attachment = moodLog.attachments![index];
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: AttachmentImage(
+                            imagePath: attachment.path,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ),
             ],
           ),

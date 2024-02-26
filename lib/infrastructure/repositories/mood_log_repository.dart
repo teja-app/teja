@@ -1,4 +1,6 @@
 // lib/infrastructure/repositories/mood_log_repository.dart
+import 'dart:io';
+
 import 'package:isar/isar.dart';
 import 'package:teja/domain/entities/feeling.dart';
 import 'package:teja/domain/entities/mood_log.dart';
@@ -45,6 +47,50 @@ class MoodLogRepository {
     final moodLogs = await query.findAll();
 
     return moodLogs.map((moodLog) => toEntity(moodLog)).toList();
+  }
+
+  Future<void> addAttachmentToMoodLog(String moodLogId, MoodLogAttachmentEntity attachmentEntity) async {
+    await isar.writeTxn(() async {
+      final moodLog = await isar.moodLogs.filter().idEqualTo(moodLogId).findFirst();
+      if (moodLog != null) {
+        final attachment = MoodLogAttachment()
+          ..id = attachmentEntity.id
+          ..type = attachmentEntity.type
+          ..path = attachmentEntity.path;
+
+        final attachments = List<MoodLogAttachment>.from(moodLog.attachments ?? [])..add(attachment);
+        moodLog.attachments = attachments;
+        await isar.moodLogs.put(moodLog);
+      }
+    });
+  }
+
+  Future<void> removeAttachmentFromMoodLog(String moodLogId, String attachmentId) async {
+    await isar.writeTxn(() async {
+      final moodLog = await isar.moodLogs.filter().idEqualTo(moodLogId).findFirst();
+      if (moodLog != null && moodLog.attachments != null) {
+        // Create a new list that excludes the attachment to be removed
+        List<MoodLogAttachment> updatedAttachments =
+            moodLog.attachments!.where((attachment) => attachment.id != attachmentId).toList();
+
+        // Update the mood log with the new list of attachments
+        moodLog.attachments = updatedAttachments;
+        await isar.moodLogs.put(moodLog);
+
+        // Optionally, handle file deletion here if needed
+        // Assuming you have a method to safely delete the file
+        try {
+          final fileToDelete = File(attachmentId); // Ensure this path is correct
+          if (await fileToDelete.exists()) {
+            await fileToDelete.delete();
+          }
+        } catch (e) {
+          print("Error deleting file: $e");
+        }
+      } else {
+        print("Mood log with ID $moodLogId not found or has no attachments.");
+      }
+    });
   }
 
   Future<void> updateMoodLogComment(String moodLogId, String comment) async {
@@ -195,6 +241,14 @@ class MoodLogRepository {
   }
 
   MoodLogEntity toEntity(MoodLog moodLog) {
+    List<MoodLogAttachmentEntity>? attachments = moodLog.attachments
+        ?.map((attachment) => MoodLogAttachmentEntity(
+              id: attachment.id,
+              type: attachment.type,
+              path: attachment.path,
+            ))
+        .toList();
+
     return MoodLogEntity(
       id: moodLog.id,
       timestamp: moodLog.timestamp,
@@ -208,7 +262,8 @@ class MoodLogRepository {
                 detailed: feeling.detailed,
               ))
           .toList(),
-      factors: moodLog.factors, // Broad level factors from MoodLog class
+      factors: moodLog.factors,
+      attachments: attachments,
     );
   }
 }

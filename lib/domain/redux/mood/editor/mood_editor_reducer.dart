@@ -61,6 +61,20 @@ MoodEditorState _updateMoodLogCommentSuccess(MoodEditorState state, UpdateMoodLo
   return state;
 }
 
+MoodEditorState _addAttachmentSuccess(MoodEditorState state, AddAttachmentSuccessAction action) {
+  final updatedAttachments = List<MoodLogAttachmentEntity>.from(state.currentMoodLog?.attachments ?? [])
+    ..add(action.attachment);
+  final updatedMoodLog = state.currentMoodLog?.copyWith(attachments: updatedAttachments);
+  return state.copyWith(currentMoodLog: updatedMoodLog);
+}
+
+MoodEditorState _removeAttachmentSuccess(MoodEditorState state, RemoveAttachmentSuccessAction action) {
+  final updatedAttachments =
+      state.currentMoodLog?.attachments?.where((attachment) => attachment.id != action.attachmentId).toList();
+  final updatedMoodLog = state.currentMoodLog?.copyWith(attachments: updatedAttachments);
+  return state.copyWith(currentMoodLog: updatedMoodLog);
+}
+
 // Include the new reducer methods in the combined reducer
 final moodEditorReducer = combineReducers<MoodEditorState>([
   TypedReducer<MoodEditorState, SelectMoodSuccessAction>(_selectMood),
@@ -70,4 +84,6 @@ final moodEditorReducer = combineReducers<MoodEditorState>([
   TypedReducer<MoodEditorState, UpdateFactorsSuccessAction>(_updateFactorsSuccess),
   TypedReducer<MoodEditorState, UpdateMoodLogCommentSuccessAction>(_updateMoodLogCommentSuccess),
   TypedReducer<MoodEditorState, UpdateBroadFactorsSuccessAction>(_updateBroadFactorsSuccess),
+  TypedReducer<MoodEditorState, AddAttachmentSuccessAction>(_addAttachmentSuccess),
+  TypedReducer<MoodEditorState, RemoveAttachmentSuccessAction>(_removeAttachmentSuccess),
 ]);

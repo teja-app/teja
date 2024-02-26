@@ -9,6 +9,7 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_actions.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_state.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
+import 'package:teja/presentation/mood/ui/attachement_image.dart';
 import 'package:teja/presentation/mood/detail/ui/feeling_list.dart';
 import 'package:teja/presentation/mood/detail/ui/mood_rating_widget.dart';
 import 'package:teja/presentation/mood/detail/ui/mood_setting_menu.dart';
@@ -113,6 +114,26 @@ class MoodDetailPageState extends State<MoodDetailPage> {
                           timestamp: moodDetailPage.selectedMoodLog!.timestamp,
                         ),
                       ],
+                    ),
+                  ),
+                ),
+                BentoBox(
+                  gridWidth: 4,
+                  gridHeight: 1.3,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0), // Add some vertical padding
+                    child: GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(), // to disable GridView's scrolling
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 4, // Adjust based on your design
+                      ),
+                      itemCount: moodDetailPage.selectedMoodLog!.attachments!.length,
+                      itemBuilder: (context, index) {
+                        return AttachmentImage(
+                          imagePath: moodDetailPage.selectedMoodLog!.attachments![index].path,
+                        );
+                      },
                     ),
                   ),
                 ),

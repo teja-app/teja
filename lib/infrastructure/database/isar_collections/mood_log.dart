@@ -11,6 +11,13 @@ class MoodLogFeeling {
   bool detailed = false; // Indicates if the user provided detailed information
 }
 
+@Embedded()
+class MoodLogAttachment {
+  late String id;
+  late String type;
+  late String path;
+}
+
 @Collection()
 class MoodLog {
   Id isarId = Isar.autoIncrement; // Isar's internal auto-increment ID
@@ -28,4 +35,5 @@ class MoodLog {
 
   List<MoodLogFeeling>? feelings;
   List<String>? factors; // Broad level factors affecting mood
+  List<MoodLogAttachment>? attachments; // For Image
 }

@@ -17,49 +17,55 @@ const MoodLogSchema = CollectionSchema(
   name: r'MoodLog',
   id: 2805799627561539018,
   properties: {
-    r'comment': PropertySchema(
+    r'attachments': PropertySchema(
       id: 0,
+      name: r'attachments',
+      type: IsarType.objectList,
+      target: r'MoodLogAttachment',
+    ),
+    r'comment': PropertySchema(
+      id: 1,
       name: r'comment',
       type: IsarType.string,
     ),
     r'createdAt': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'createdAt',
       type: IsarType.dateTime,
     ),
     r'factors': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'factors',
       type: IsarType.stringList,
     ),
     r'feelings': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'feelings',
       type: IsarType.objectList,
       target: r'MoodLogFeeling',
     ),
     r'id': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'id',
       type: IsarType.string,
     ),
     r'moodRating': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'moodRating',
       type: IsarType.long,
     ),
     r'senderId': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'senderId',
       type: IsarType.string,
     ),
     r'timestamp': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'timestamp',
       type: IsarType.dateTime,
     ),
     r'updatedAt': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'updatedAt',
       type: IsarType.dateTime,
     )
@@ -85,7 +91,10 @@ const MoodLogSchema = CollectionSchema(
     )
   },
   links: {},
-  embeddedSchemas: {r'MoodLogFeeling': MoodLogFeelingSchema},
+  embeddedSchemas: {
+    r'MoodLogFeeling': MoodLogFeelingSchema,
+    r'MoodLogAttachment': MoodLogAttachmentSchema
+  },
   getId: _moodLogGetId,
   getLinks: _moodLogGetLinks,
   attach: _moodLogAttach,
@@ -98,6 +107,20 @@ int _moodLogEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  {
+    final list = object.attachments;
+    if (list != null) {
+      bytesCount += 3 + list.length * 3;
+      {
+        final offsets = allOffsets[MoodLogAttachment]!;
+        for (var i = 0; i < list.length; i++) {
+          final value = list[i];
+          bytesCount +=
+              MoodLogAttachmentSchema.estimateSize(value, offsets, allOffsets);
+        }
+      }
+    }
+  }
   {
     final value = object.comment;
     if (value != null) {
@@ -146,20 +169,26 @@ void _moodLogSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.comment);
-  writer.writeDateTime(offsets[1], object.createdAt);
-  writer.writeStringList(offsets[2], object.factors);
+  writer.writeObjectList<MoodLogAttachment>(
+    offsets[0],
+    allOffsets,
+    MoodLogAttachmentSchema.serialize,
+    object.attachments,
+  );
+  writer.writeString(offsets[1], object.comment);
+  writer.writeDateTime(offsets[2], object.createdAt);
+  writer.writeStringList(offsets[3], object.factors);
   writer.writeObjectList<MoodLogFeeling>(
-    offsets[3],
+    offsets[4],
     allOffsets,
     MoodLogFeelingSchema.serialize,
     object.feelings,
   );
-  writer.writeString(offsets[4], object.id);
-  writer.writeLong(offsets[5], object.moodRating);
-  writer.writeString(offsets[6], object.senderId);
-  writer.writeDateTime(offsets[7], object.timestamp);
-  writer.writeDateTime(offsets[8], object.updatedAt);
+  writer.writeString(offsets[5], object.id);
+  writer.writeLong(offsets[6], object.moodRating);
+  writer.writeString(offsets[7], object.senderId);
+  writer.writeDateTime(offsets[8], object.timestamp);
+  writer.writeDateTime(offsets[9], object.updatedAt);
 }
 
 MoodLog _moodLogDeserialize(
@@ -169,21 +198,27 @@ MoodLog _moodLogDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = MoodLog();
-  object.comment = reader.readStringOrNull(offsets[0]);
-  object.createdAt = reader.readDateTime(offsets[1]);
-  object.factors = reader.readStringList(offsets[2]);
+  object.attachments = reader.readObjectList<MoodLogAttachment>(
+    offsets[0],
+    MoodLogAttachmentSchema.deserialize,
+    allOffsets,
+    MoodLogAttachment(),
+  );
+  object.comment = reader.readStringOrNull(offsets[1]);
+  object.createdAt = reader.readDateTime(offsets[2]);
+  object.factors = reader.readStringList(offsets[3]);
   object.feelings = reader.readObjectList<MoodLogFeeling>(
-    offsets[3],
+    offsets[4],
     MoodLogFeelingSchema.deserialize,
     allOffsets,
     MoodLogFeeling(),
   );
-  object.id = reader.readString(offsets[4]);
+  object.id = reader.readString(offsets[5]);
   object.isarId = id;
-  object.moodRating = reader.readLong(offsets[5]);
-  object.senderId = reader.readStringOrNull(offsets[6]);
-  object.timestamp = reader.readDateTime(offsets[7]);
-  object.updatedAt = reader.readDateTime(offsets[8]);
+  object.moodRating = reader.readLong(offsets[6]);
+  object.senderId = reader.readStringOrNull(offsets[7]);
+  object.timestamp = reader.readDateTime(offsets[8]);
+  object.updatedAt = reader.readDateTime(offsets[9]);
   return object;
 }
 
@@ -195,27 +230,34 @@ P _moodLogDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readObjectList<MoodLogAttachment>(
+        offset,
+        MoodLogAttachmentSchema.deserialize,
+        allOffsets,
+        MoodLogAttachment(),
+      )) as P;
     case 1:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 2:
-      return (reader.readStringList(offset)) as P;
+      return (reader.readDateTime(offset)) as P;
     case 3:
+      return (reader.readStringList(offset)) as P;
+    case 4:
       return (reader.readObjectList<MoodLogFeeling>(
         offset,
         MoodLogFeelingSchema.deserialize,
         allOffsets,
         MoodLogFeeling(),
       )) as P;
-    case 4:
-      return (reader.readString(offset)) as P;
     case 5:
-      return (reader.readLong(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 6:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 7:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 8:
+      return (reader.readDateTime(offset)) as P;
+    case 9:
       return (reader.readDateTime(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -409,6 +451,110 @@ extension MoodLogQueryWhere on QueryBuilder<MoodLog, MoodLog, QWhereClause> {
 
 extension MoodLogQueryFilter
     on QueryBuilder<MoodLog, MoodLog, QFilterCondition> {
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> attachmentsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'attachments',
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> attachmentsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'attachments',
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition>
+      attachmentsLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'attachments',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> attachmentsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'attachments',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition>
+      attachmentsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'attachments',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition>
+      attachmentsLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'attachments',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition>
+      attachmentsLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'attachments',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition>
+      attachmentsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'attachments',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
   QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> commentIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -1434,6 +1580,13 @@ extension MoodLogQueryFilter
 
 extension MoodLogQueryObject
     on QueryBuilder<MoodLog, MoodLog, QFilterCondition> {
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> attachmentsElement(
+      FilterQuery<MoodLogAttachment> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'attachments');
+    });
+  }
+
   QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> feelingsElement(
       FilterQuery<MoodLogFeeling> q) {
     return QueryBuilder.apply(this, (query) {
@@ -1689,6 +1842,13 @@ extension MoodLogQueryProperty
   QueryBuilder<MoodLog, int, QQueryOperations> isarIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isarId');
+    });
+  }
+
+  QueryBuilder<MoodLog, List<MoodLogAttachment>?, QQueryOperations>
+      attachmentsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'attachments');
     });
   }
 
@@ -2431,3 +2591,500 @@ extension MoodLogFeelingQueryFilter
 
 extension MoodLogFeelingQueryObject
     on QueryBuilder<MoodLogFeeling, MoodLogFeeling, QFilterCondition> {}
+
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+
+const MoodLogAttachmentSchema = Schema(
+  name: r'MoodLogAttachment',
+  id: -5143512524021778349,
+  properties: {
+    r'id': PropertySchema(
+      id: 0,
+      name: r'id',
+      type: IsarType.string,
+    ),
+    r'path': PropertySchema(
+      id: 1,
+      name: r'path',
+      type: IsarType.string,
+    ),
+    r'type': PropertySchema(
+      id: 2,
+      name: r'type',
+      type: IsarType.string,
+    )
+  },
+  estimateSize: _moodLogAttachmentEstimateSize,
+  serialize: _moodLogAttachmentSerialize,
+  deserialize: _moodLogAttachmentDeserialize,
+  deserializeProp: _moodLogAttachmentDeserializeProp,
+);
+
+int _moodLogAttachmentEstimateSize(
+  MoodLogAttachment object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  bytesCount += 3 + object.id.length * 3;
+  bytesCount += 3 + object.path.length * 3;
+  bytesCount += 3 + object.type.length * 3;
+  return bytesCount;
+}
+
+void _moodLogAttachmentSerialize(
+  MoodLogAttachment object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeString(offsets[0], object.id);
+  writer.writeString(offsets[1], object.path);
+  writer.writeString(offsets[2], object.type);
+}
+
+MoodLogAttachment _moodLogAttachmentDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  final object = MoodLogAttachment();
+  object.id = reader.readString(offsets[0]);
+  object.path = reader.readString(offsets[1]);
+  object.type = reader.readString(offsets[2]);
+  return object;
+}
+
+P _moodLogAttachmentDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
+    case 0:
+      return (reader.readString(offset)) as P;
+    case 1:
+      return (reader.readString(offset)) as P;
+    case 2:
+      return (reader.readString(offset)) as P;
+    default:
+      throw IsarError('Unknown property with id $propertyId');
+  }
+}
+
+extension MoodLogAttachmentQueryFilter
+    on QueryBuilder<MoodLogAttachment, MoodLogAttachment, QFilterCondition> {
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      idEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'id',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      idGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'id',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      idLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'id',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      idBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'id',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      idStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'id',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      idEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'id',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      idContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'id',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      idMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'id',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      idIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'id',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      idIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'id',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      pathEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'path',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      pathGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'path',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      pathLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'path',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      pathBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'path',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      pathStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'path',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      pathEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'path',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      pathContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'path',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      pathMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'path',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      pathIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'path',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      pathIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'path',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      typeEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'type',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      typeGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'type',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      typeLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'type',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      typeBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'type',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      typeStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'type',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      typeEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'type',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      typeContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'type',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      typeMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'type',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      typeIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'type',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAttachment, MoodLogAttachment, QAfterFilterCondition>
+      typeIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'type',
+        value: '',
+      ));
+    });
+  }
+}
+
+extension MoodLogAttachmentQueryObject
+    on QueryBuilder<MoodLogAttachment, MoodLogAttachment, QFilterCondition> {}

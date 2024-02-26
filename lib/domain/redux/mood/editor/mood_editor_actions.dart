@@ -167,3 +167,61 @@ class ClearMoodEditorFormAction {
 class ClearMoodEditorSuccessFormAction {
   const ClearMoodEditorSuccessFormAction();
 }
+
+@immutable
+class AddAttachmentAction {
+  final String moodLogId;
+  final MoodLogAttachmentEntity attachment;
+
+  const AddAttachmentAction({
+    required this.moodLogId,
+    required this.attachment,
+  });
+}
+
+@immutable
+class AddAttachmentSuccessAction {
+  final String moodLogId;
+  final MoodLogAttachmentEntity attachment;
+
+  const AddAttachmentSuccessAction({
+    required this.moodLogId,
+    required this.attachment,
+  });
+}
+
+@immutable
+class AddAttachmentFailureAction {
+  final String error;
+
+  const AddAttachmentFailureAction(this.error);
+}
+
+@immutable
+class RemoveAttachmentAction {
+  final String moodLogId;
+  final String attachmentId;
+
+  const RemoveAttachmentAction({
+    required this.moodLogId,
+    required this.attachmentId,
+  });
+}
+
+@immutable
+class RemoveAttachmentSuccessAction {
+  final String moodLogId;
+  final String attachmentId;
+
+  const RemoveAttachmentSuccessAction({
+    required this.moodLogId,
+    required this.attachmentId,
+  });
+}
+
+@immutable
+class RemoveAttachmentFailureAction {
+  final String error;
+
+  const RemoveAttachmentFailureAction(this.error);
+}

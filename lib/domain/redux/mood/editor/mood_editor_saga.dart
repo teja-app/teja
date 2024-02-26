@@ -40,6 +40,8 @@ class MoodEditorSaga {
       _handleUpdateBroadFactorsAction,
       pattern: UpdateBroadFactorsAction,
     );
+    yield TakeEvery(_handleAddAttachment, pattern: AddAttachmentAction);
+    yield TakeEvery(_handleRemoveAttachment, pattern: RemoveAttachmentAction);
   }
 
   _handleClearMoodEditorFormAction({required ClearMoodEditorFormAction action}) sync* {
@@ -303,6 +305,44 @@ class MoodEditorSaga {
       ));
     }, Catch: (e, s) sync* {
       yield Put(MoodUpdateFailedAction(e.toString()));
+    });
+  }
+
+  _handleAddAttachment({required AddAttachmentAction action}) sync* {
+    var isarResult = Result<Isar>();
+    yield GetContext('isar', result: isarResult);
+    Isar isar = isarResult.value!;
+    var moodLogRepository = MoodLogRepository(isar);
+
+    yield Try(() sync* {
+      // Call repository method to add attachment
+      yield Call(moodLogRepository.addAttachmentToMoodLog, args: [action.moodLogId, action.attachment]);
+
+      // Dispatch success action
+      yield Put(AddAttachmentSuccessAction(moodLogId: action.moodLogId, attachment: action.attachment));
+    }, Catch: (e, s) sync* {
+      // Dispatch failure action
+      yield Put(AddAttachmentFailureAction(e.toString()));
+    });
+  }
+
+  _handleRemoveAttachment({required RemoveAttachmentAction action}) sync* {
+    var isarResult = Result<Isar>();
+    yield GetContext('isar', result: isarResult);
+    Isar isar = isarResult.value!;
+    var moodLogRepository = MoodLogRepository(isar);
+
+    yield Try(() sync* {
+      // Call repository method to remove attachment
+      print("${action.moodLogId}, ${action.attachmentId}");
+      yield Call(moodLogRepository.removeAttachmentFromMoodLog, args: [action.moodLogId, action.attachmentId]);
+
+      // Dispatch success action
+      yield Put(RemoveAttachmentSuccessAction(moodLogId: action.moodLogId, attachmentId: action.attachmentId));
+    }, Catch: (e, s) sync* {
+      // Dispatch failure action
+      print("e.toString() ${e.toString()}");
+      yield Put(RemoveAttachmentFailureAction(e.toString()));
     });
   }
 }
