@@ -148,7 +148,7 @@ Widget moodLogLayout(MoodLogEntity moodLog, BuildContext context) {
                         return Padding(
                           padding: const EdgeInsets.only(right: 8.0),
                           child: AttachmentImage(
-                            imagePath: attachment.path,
+                            relativeImagePath: attachment.path,
                           ),
                         );
                       },

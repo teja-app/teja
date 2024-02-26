@@ -9,7 +9,10 @@ import 'package:teja/domain/entities/mood_log.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:teja/infrastructure/utils/helpers.dart';
+import 'package:teja/infrastructure/utils/image_storage_helper.dart';
 import 'package:teja/shared/common/button.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 
 class NotesScreen extends StatefulWidget {
   final PageController pageController;
@@ -67,12 +70,17 @@ class NotesScreenState extends State<NotesScreen> {
         final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
         if (pickedFile != null) {
-          // Assuming you have a method to generate a unique ID for each attachment
+          // Save the image to the app's directory
+          final String relativePath = await ImageStorageHelper.saveImagePermanently(pickedFile.path);
+
+          // Generate a unique ID for the attachment (ensure you have a method for this)
           String attachmentId = Helpers.generateUniqueId();
+
+          // Create a new attachment entity with the relative path
           MoodLogAttachmentEntity newAttachment = MoodLogAttachmentEntity(
             id: attachmentId,
             type: 'image',
-            path: pickedFile.path,
+            path: relativePath, // Store the relative path
           );
 
           // Dispatch an action to add this attachment
@@ -165,6 +173,50 @@ class NotesScreenState extends State<NotesScreen> {
     );
   }
 
+  Widget _buildAttachmentImage(String relativeImagePath) {
+    return FutureBuilder<File>(
+      future: ImageStorageHelper.getImage(relativeImagePath),
+      builder: (BuildContext context, AsyncSnapshot<File> snapshot) {
+        if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+          // When the Future is resolved
+          return Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              image: DecorationImage(
+                image: FileImage(snapshot.data!),
+                fit: BoxFit.cover,
+              ),
+            ),
+          );
+        } else if (snapshot.connectionState == ConnectionState.waiting || !snapshot.hasData) {
+          // While the Future is loading
+          return Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              color: Colors.grey[200], // Placeholder color
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Center(child: CircularProgressIndicator()), // Loading indicator
+          );
+        } else {
+          // If an error occurs
+          return Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              color: Colors.grey[200], // Placeholder color
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(Icons.error), // Error icon
+          );
+        }
+      },
+    );
+  }
+
   Widget _buildAttachmentsList(String moodLogId, List<MoodLogAttachmentEntity> attachments, BuildContext context) {
     return SizedBox(
       height: 120, // Adjust the container height to fit the content
@@ -183,17 +235,7 @@ class NotesScreenState extends State<NotesScreen> {
             padding: const EdgeInsets.all(8.0),
             child: Stack(
               children: [
-                Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    image: DecorationImage(
-                      image: FileImage(File(attachment.path)),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
+                _buildAttachmentImage(attachment.path), // Refactor to use FutureBuilder
                 Positioned(
                   right: 0,
                   top: 0,

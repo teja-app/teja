@@ -87,6 +87,7 @@ class MoodDetailPageState extends State<MoodDetailPage> {
         MoodDetailState moodDetailPage = viewModel.moodDetailPage;
         Widget bodyContent = const Center(child: CircularProgressIndicator());
         if (moodDetailPage.selectedMoodLog != null) {
+          final moodLog = moodDetailPage.selectedMoodLog;
           List<SubCategoryEntity> factors = [];
           if (moodDetailPage.selectedMoodLog?.factors != null && moodDetailPage.selectedMoodLog!.factors!.isNotEmpty) {
             factors = getFactors(viewModel.masterFactors, moodDetailPage.selectedMoodLog!.factors!);
@@ -117,26 +118,27 @@ class MoodDetailPageState extends State<MoodDetailPage> {
                     ),
                   ),
                 ),
-                BentoBox(
-                  gridWidth: 4,
-                  gridHeight: 1.3,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0), // Add some vertical padding
-                    child: GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(), // to disable GridView's scrolling
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4, // Adjust based on your design
+                if (moodLog?.attachments != null && moodLog!.attachments!.isNotEmpty)
+                  BentoBox(
+                    gridWidth: 4,
+                    gridHeight: 1.3,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0), // Add some vertical padding
+                      child: GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(), // to disable GridView's scrolling
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4, // Adjust based on your design
+                        ),
+                        itemCount: moodDetailPage.selectedMoodLog!.attachments!.length,
+                        itemBuilder: (context, index) {
+                          return AttachmentImage(
+                            relativeImagePath: moodDetailPage.selectedMoodLog!.attachments![index].path,
+                          );
+                        },
                       ),
-                      itemCount: moodDetailPage.selectedMoodLog!.attachments!.length,
-                      itemBuilder: (context, index) {
-                        return AttachmentImage(
-                          imagePath: moodDetailPage.selectedMoodLog!.attachments![index].path,
-                        );
-                      },
                     ),
                   ),
-                ),
                 if (moodDetailPage.selectedMoodLog!.comment != null &&
                     moodDetailPage.selectedMoodLog!.comment!.isNotEmpty)
                   FlexibleHeightBox(

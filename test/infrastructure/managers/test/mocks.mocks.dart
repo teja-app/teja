@@ -190,6 +190,40 @@ class MockMoodLogRepository extends _i1.Mock implements _i7.MoodLogRepository {
       ) as _i5.Future<List<dynamic>>);
 
   @override
+  _i5.Future<void> addAttachmentToMoodLog(
+    String? moodLogId,
+    _i3.MoodLogAttachmentEntity? attachmentEntity,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #addAttachmentToMoodLog,
+          [
+            moodLogId,
+            attachmentEntity,
+          ],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> removeAttachmentFromMoodLog(
+    String? moodLogId,
+    String? attachmentId,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #removeAttachmentFromMoodLog,
+          [
+            moodLogId,
+            attachmentId,
+          ],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
   _i5.Future<void> updateMoodLogComment(
     String? moodLogId,
     String? comment,
