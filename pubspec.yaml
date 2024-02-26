@@ -78,6 +78,8 @@ dependencies:
   rive: ^0.12.4
   flutter_local_notifications: ^16.3.0
   flutter_native_timezone: ^2.0.0
+  archive: ^3.4.10
+  file_picker: ^6.1.1
 
 dev_dependencies:
   flutter_test:

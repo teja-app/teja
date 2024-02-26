@@ -25,6 +25,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.2"
+  archive:
+    dependency: "direct main"
+    description:
+      name: archive
+      sha256: "22600aa1e926be775fa5fe7e6894e7fb3df9efda8891c73f70fb3262399a432d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.4.10"
   args:
     dependency: transitive
     description:
@@ -289,6 +297,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.4"
+  file_picker:
+    dependency: "direct main"
+    description:
+      name: file_picker
+      sha256: "4e42aacde3b993c5947467ab640882c56947d9d27342a5b6f2895b23956954a6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.1.1"
   file_selector_linux:
     dependency: transitive
     description:
@@ -975,6 +991,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.6"
+  pointycastle:
+    dependency: transitive
+    description:
+      name: pointycastle
+      sha256: "43ac87de6e10afabc85c445745a7b799e04de84cebaa4fd7bf55a5e1e9604d29"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.7.4"
   pool:
     dependency: transitive
     description:

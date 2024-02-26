@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:teja/infrastructure/utils/notification_service.dart';
 import 'package:teja/presentation/edit_habit/pages/edig_habit_page.dart';
 import 'package:teja/presentation/explore/list/pages/explore_page.dart';
 import 'package:teja/presentation/goal_editor/page/vision_picker_page.dart';
@@ -15,7 +14,6 @@ import 'package:teja/presentation/note_editor/note_editor_page.dart';
 import 'package:teja/presentation/onboarding/pages/onboarding_page.dart';
 import 'package:teja/presentation/onboarding/pages/sign_in_page.dart';
 import 'package:teja/presentation/onboarding/pages/sign_up_page.dart';
-import 'package:teja/presentation/profile/page/profile_page.dart';
 import 'package:teja/presentation/quotes/random_quote.dart';
 import 'package:teja/presentation/settings/pages/advanced_settings_page.dart';
 import 'package:teja/presentation/settings/pages/basic_settings_page.dart';
@@ -23,6 +21,7 @@ import 'package:teja/presentation/settings/pages/notification_settings_page.dart
 import 'package:teja/presentation/settings/pages/perference_settings_page.dart';
 import 'package:teja/presentation/settings/pages/security_settings_page.dart';
 import 'package:teja/presentation/settings/pages/settings_page.dart';
+import 'package:teja/presentation/settings/pages/sync_settings_page.dart';
 import 'package:teja/shared/helpers/logger.dart';
 
 import 'main.dart';
@@ -43,6 +42,7 @@ class RouteLoggingObserver extends NavigatorObserver {
 
 class SettingPath {
   static const notification = "notification";
+  static const sync = "sync";
   static const perferences = "perferences";
   static const basic = "basic";
   static const security = "security";
@@ -119,12 +119,6 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
-      name: RootPath.profile,
-      path: '/profile',
-      builder: (context, state) => const ProfilePage(),
-    ),
-    GoRoute(
-      parentNavigatorKey: _rootNavigatorKey,
       name: RootPath.explore,
       path: '/explore',
       builder: (context, state) => const ExplorePage(),
@@ -190,6 +184,11 @@ final GoRouter router = GoRouter(
         path: '/settings',
         builder: (context, state) => const SettingsPage(),
         routes: [
+          GoRoute(
+            name: SettingPath.sync,
+            path: 'sync',
+            builder: (context, state) => const SyncSettingsPage(),
+          ),
           GoRoute(
             name: SettingPath.notification,
             path: 'notification',

@@ -86,6 +86,15 @@ class SettingsPage extends StatelessWidget {
                     onTap: () => GoRouter.of(context).push('/settings/notification'),
                   ),
                   const Divider(),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('Data', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  ),
+                  ListTile(
+                    title: const Text('Data Sync - Export & Import'),
+                    onTap: () => GoRouter.of(context).push('/settings/sync'),
+                  ),
+                  const Divider(),
                   ListTile(
                     title: const Text('Start from Onboarding'),
                     onTap: () {
