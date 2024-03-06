@@ -5,6 +5,7 @@ import 'package:archive/archive_io.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
+import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:redux_saga/redux_saga.dart';
 import 'package:share_plus/share_plus.dart';
@@ -47,6 +48,37 @@ class SyncSaga {
     return FilePicker.platform.pickFiles();
   }
 
+  // Helper function to process zip file and extract attachments
+  Future<void> _processZipFileAndExtractAttachments(File file, Isar isar) async {
+    final bytes = await file.readAsBytes();
+    final archive = ZipDecoder().decodeBytes(bytes);
+
+    for (final file in archive) {
+      final filename = file.name;
+      final data = file.content as List<int>;
+
+      if (filename.endsWith('.json')) {
+        // Handle JSON data as before
+        String jsonString = utf8.decode(data);
+        dynamic jsonData = jsonDecode(jsonString);
+
+        if (filename.contains("journalEntrys")) {
+          await _importJournalEntrys(jsonData, isar);
+        } else if (filename.contains("moodLogs")) {
+          await _importMoodLogs(jsonData, isar);
+        }
+        // Add more conditions for other collections
+      } else {
+        // Handle attachments
+        final documentsDirectory = await getApplicationDocumentsDirectory();
+        final outputPath = p.join(documentsDirectory.path, filename);
+        final outputFile = File(outputPath);
+        await outputFile.create(recursive: true);
+        await outputFile.writeAsBytes(data);
+      }
+    }
+  }
+
   _importJSON({required ImportJSONAction action}) sync* {
     yield Try(() sync* {
       var isarResult = Result<Isar>();
@@ -59,27 +91,7 @@ class SyncSaga {
 
       if (result != null && result.files.single.path != null) {
         File file = File(result.files.single.path!);
-        Result<dynamic> fileBytesResult = Result<dynamic>();
-        yield Call(file.readAsBytes, result: fileBytesResult);
-        final bytes =
-            fileBytesResult.value as Uint8List; // Or simply `fileBytesResult.value` if you're okay with dynamic
-
-        final archive = ZipDecoder().decodeBytes(bytes);
-
-        for (final file in archive) {
-          final filename = file.name;
-          final data = file.content as List<int>;
-          String jsonString = utf8.decode(data);
-          dynamic jsonData = jsonDecode(jsonString);
-
-          // Step 3: Import JSON data into Isar collections
-          if (filename.contains("journalEntrys")) {
-            yield Call(_importJournalEntrys, args: [jsonData, isar]);
-          } else if (filename.contains("moodLogs")) {
-            yield Call(_importMoodLogs, args: [jsonData, isar]);
-          }
-          // Add more conditions for other collections
-        }
+        yield Call(_processZipFileAndExtractAttachments, args: [file, isar]);
       }
     }, Catch: (e, s) sync* {
       yield Put(ImportJSONActionFailed(e.toString()));
@@ -122,6 +134,7 @@ class SyncSaga {
     String zipFilePath = '${directory.path}/tejaBackup.zip';
     encoder.create(zipFilePath);
 
+    // Add JSON data for each collection
     for (var collectionName in collectionNames) {
       // Simulate fetching data for the collection and preparing JSON
       var dataResult = await dynamicFunction(isar, collectionName);
@@ -131,6 +144,15 @@ class SyncSaga {
       await jsonFile.writeAsString(jsonString);
 
       encoder.addFile(jsonFile);
+    }
+
+    // Add attachments from the documents directory
+    final documentsDirectory = await getApplicationDocumentsDirectory();
+    final files = documentsDirectory.listSync(); // List all files
+    for (var file in files) {
+      if (file is File) {
+        encoder.addFile(file, file.path.substring(documentsDirectory.path.length));
+      }
     }
 
     encoder.close();

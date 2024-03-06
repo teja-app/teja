@@ -31,7 +31,7 @@ class SyncSettingsPageState extends State<SyncSettingsPage> {
       converter: (store) => store,
       builder: (context, store) {
         return ListTile(
-          title: const Text('Export JSON'),
+          title: const Text('Export Data'),
           onTap: () {
             store.dispatch(const ExportJSONAction());
           },
@@ -50,7 +50,7 @@ class SyncSettingsPageState extends State<SyncSettingsPage> {
       builder: (context, store) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Security Settings'),
+            title: const Text('Backup and Restore'),
           ),
           body: Center(
             child: Container(
