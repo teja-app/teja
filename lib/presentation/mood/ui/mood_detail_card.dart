@@ -54,16 +54,27 @@ Map<String, String> _getMoodEntryText(MoodLogEntity moodLog, BuildContext contex
   };
 }
 
-Widget moodLogLayout(MoodLogEntity moodLog, BuildContext context) {
+class MoodLogLayoutConfig {
+  final bool includeComments;
+  final bool includeAttachments;
+
+  MoodLogLayoutConfig({this.includeComments = true, this.includeAttachments = true});
+}
+
+Widget moodLogLayout(MoodLogEntity? moodLog, BuildContext context, [MoodLogLayoutConfig? config]) {
+  if (moodLog == null) {
+    return Center(child: Text("Mood log is not available"));
+  }
+
   final svgPath = 'assets/icons/mood_${moodLog.moodRating}_active.svg';
-  final hasComments = moodLog.comment != null ? true : false;
-  final tags = [];
-  final hasTags = tags.isNotEmpty;
+  final includeComments = config?.includeComments ?? true;
+  final includeAttachments = config?.includeAttachments ?? true;
   final textTheme = Theme.of(context).textTheme;
 
+  // Extract moodLog details with null checks
   Map<String, String> moodTexts = _getMoodEntryText(moodLog, context);
 
-  return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+  List<Widget> columnChildren = [
     GestureDetector(
       onTap: () {
         // Assuming moodLog.id contains the unique identifier for the mood entry
@@ -72,16 +83,11 @@ Widget moodLogLayout(MoodLogEntity moodLog, BuildContext context) {
         // Use GoRouter to navigate to the MoodDetailPage
         GoRouter.of(context).pushNamed(
           RootPath.moodDetail,
-          queryParameters: {
-            "id": moodId,
-          },
+          queryParameters: {"id": moodId},
         );
       },
       child: Card(
-        margin: const EdgeInsets.symmetric(
-          horizontal: 8,
-          vertical: 8,
-        ),
+        margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         elevation: 0.5, // Adjusts the elevation for shadow effect
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 10.0),
@@ -90,52 +96,24 @@ Widget moodLogLayout(MoodLogEntity moodLog, BuildContext context) {
             children: [
               Row(
                 children: [
-                  SvgPicture.asset(
-                    svgPath,
-                    width: 24,
-                    height: 24,
-                  ),
+                  SvgPicture.asset(svgPath, width: 24, height: 24),
                   const SizedBox(width: 8),
-                  Text(
-                    moodTexts['mainText']!,
-                    style: textTheme.titleMedium,
-                  ),
+                  Text(moodTexts['mainText']!, style: textTheme.titleMedium),
                   const Spacer(),
-                  Text(
-                    DateFormat('hh:mm a').format(moodLog.timestamp),
-                    style: textTheme.bodySmall,
-                  ),
+                  Text(DateFormat('hh:mm a').format(moodLog.timestamp), style: textTheme.bodySmall),
                 ],
               ),
               if (moodTexts['secondaryText']!.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
-                  child: Text(
-                    moodTexts['secondaryText']!,
-                    style: textTheme.labelMedium,
-                  ),
+                  child: Text(moodTexts['secondaryText']!, style: textTheme.labelMedium),
                 ),
-              if (hasComments || hasTags) const SizedBox(height: 8),
-              const SizedBox(
-                height: 6,
-              ),
-              if (hasComments)
-                Text(
-                  moodLog.comment!,
-                  style: textTheme.bodySmall,
+              if (includeComments && moodLog.comment != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(moodLog.comment!, style: textTheme.bodySmall),
                 ),
-              if (hasTags) const SizedBox(height: 16),
-              if (hasTags)
-                Wrap(
-                  spacing: 8,
-                  children: tags
-                      .map((tag) => Chip(
-                            label: Text(tag),
-                            backgroundColor: Colors.grey[200],
-                          ))
-                      .toList(),
-                ),
-              if (moodLog.attachments != null && moodLog.attachments!.isNotEmpty)
+              if (includeAttachments && moodLog.attachments != null && moodLog.attachments!.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: SizedBox(
@@ -147,9 +125,7 @@ Widget moodLogLayout(MoodLogEntity moodLog, BuildContext context) {
                         var attachment = moodLog.attachments![index];
                         return Padding(
                           padding: const EdgeInsets.only(right: 8.0),
-                          child: AttachmentImage(
-                            relativeImagePath: attachment.path,
-                          ),
+                          child: AttachmentImage(relativeImagePath: attachment.path),
                         );
                       },
                     ),
@@ -160,5 +136,7 @@ Widget moodLogLayout(MoodLogEntity moodLog, BuildContext context) {
         ),
       ),
     ),
-  ]);
+  ];
+
+  return Column(crossAxisAlignment: CrossAxisAlignment.start, children: columnChildren);
 }

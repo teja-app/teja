@@ -10,6 +10,7 @@ import 'package:teja/presentation/journal/journal_templates/pages/journal_templa
 import 'package:teja/presentation/mood/detail/page/mood_detail.dart';
 import 'package:teja/presentation/mood/editor/pages/mood_edit.dart';
 import 'package:teja/presentation/mood/list/pages/mood_list_page.dart';
+import 'package:teja/presentation/mood/share/pages/mood_share.dart';
 import 'package:teja/presentation/note_editor/note_editor_page.dart';
 import 'package:teja/presentation/onboarding/pages/onboarding_page.dart';
 import 'package:teja/presentation/onboarding/pages/sign_in_page.dart';
@@ -66,6 +67,7 @@ class RootPath {
   static const moodEdit = "mood_edit";
   static const moodList = "mood_list";
   static const moodDetail = "mood_detail";
+  static const moodShare = "mood_share";
   static const goalSettings = "goal_settings";
   static const noteEditor = "note_editor";
   static const journalTemplateList = "journal_template_list";
@@ -148,6 +150,26 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const MoodListPage(),
     ),
     GoRoute(
+      // Add this block for mood detail page
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RootPath.moodDetail,
+      path: '/mood_detail',
+      builder: (context, state) {
+        final String? moodIdStr = state.uri.queryParameters['id'];
+        return MoodDetailPage(moodId: moodIdStr!);
+      },
+    ),
+    GoRoute(
+      // Add this block for mood detail page
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RootPath.moodShare,
+      path: '/mood_share',
+      builder: (context, state) {
+        final String? moodIdStr = state.uri.queryParameters['id'];
+        return MoodSharePage(moodId: moodIdStr!);
+      },
+    ),
+    GoRoute(
       path: '/journal_template_list',
       parentNavigatorKey: _rootNavigatorKey,
       name: RootPath.journalTemplateList,
@@ -158,16 +180,6 @@ final GoRouter router = GoRouter(
       name: RootPath.goalSettings,
       path: '/goal_settings',
       builder: (context, state) => const VisionPickerPage(),
-    ),
-    GoRoute(
-      // Add this block for mood detail page
-      parentNavigatorKey: _rootNavigatorKey,
-      name: RootPath.moodDetail,
-      path: '/mood_detail',
-      builder: (context, state) {
-        final String? moodIdStr = state.uri.queryParameters['id'];
-        return MoodDetailPage(moodId: moodIdStr!);
-      },
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,

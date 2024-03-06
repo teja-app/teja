@@ -73,6 +73,15 @@ class MoodDetailPageState extends State<MoodDetailPage> {
         [];
   }
 
+  void onShareMoodLog(String moodLogId) {
+    GoRouter.of(context).pushNamed(
+      RootPath.moodShare,
+      queryParameters: {
+        "id": moodLogId,
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext pageContext) {
     Posthog posthog = Posthog();
@@ -232,6 +241,9 @@ class MoodDetailPageState extends State<MoodDetailPage> {
                 },
                 onEdit: () {
                   onEditMoodLog(widget.moodId);
+                },
+                onShare: () {
+                  onShareMoodLog(widget.moodId);
                 },
               ),
             ],

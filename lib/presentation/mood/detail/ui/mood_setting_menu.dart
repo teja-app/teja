@@ -5,12 +5,14 @@ class SettingsPopupMenu extends StatelessWidget {
   final String moodId;
   final Function onDelete;
   final Function onEdit;
+  final Function onShare;
 
   const SettingsPopupMenu({
     Key? key,
     required this.moodId,
     required this.onDelete,
     required this.onEdit,
+    required this.onShare,
   }) : super(key: key);
 
   @override
@@ -25,6 +27,8 @@ class SettingsPopupMenu extends StatelessWidget {
         if (result == 0) {
           onEdit();
         } else if (result == 1) {
+          onShare();
+        } else if (result == 2) {
           onDelete();
         }
       },
@@ -35,6 +39,10 @@ class SettingsPopupMenu extends StatelessWidget {
         ),
         const PopupMenuItem<int>(
           value: 1,
+          child: Text('Share'),
+        ),
+        const PopupMenuItem<int>(
+          value: 2,
           child: Text('Delete'),
         ),
       ],
