@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teja/domain/redux/home/home_state.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_state.dart';
+import 'package:teja/domain/redux/journal/featured_journal_template/state.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_state.dart';
 import 'package:teja/domain/redux/journal/journal_logs/journal_logs_state.dart';
 import 'package:teja/domain/redux/journal/journal_template/state.dart';
@@ -32,6 +33,7 @@ class AppState {
   final JournalEditorState journalEditorState;
   final JournalLogsState journalLogsState;
   final JournalDetailState journalDetailState;
+  final FeaturedJournalTemplateState featuredJournalTemplateState;
 
   const AppState({
     required this.authState,
@@ -49,6 +51,7 @@ class AppState {
     required this.journalEditorState,
     required this.journalLogsState,
     required this.journalDetailState,
+    required this.featuredJournalTemplateState,
   });
 
   AppState copyWith({
@@ -67,6 +70,7 @@ class AppState {
     JournalEditorState? journalEditorState,
     JournalLogsState? journalLogsState,
     JournalDetailState? journalDetailState,
+    FeaturedJournalTemplateState? featuredJournalTemplateState,
   }) {
     return AppState(
       authState: authState ?? this.authState,
@@ -84,6 +88,7 @@ class AppState {
       journalEditorState: journalEditorState ?? this.journalEditorState,
       journalLogsState: journalLogsState ?? this.journalLogsState,
       journalDetailState: journalDetailState ?? this.journalDetailState,
+      featuredJournalTemplateState: featuredJournalTemplateState ?? this.featuredJournalTemplateState,
     );
   }
 
@@ -104,6 +109,7 @@ class AppState {
       journalEditorState: JournalEditorState.initialState(),
       journalLogsState: JournalLogsState.initialState(),
       journalDetailState: JournalDetailState.initialState(),
+      featuredJournalTemplateState: FeaturedJournalTemplateState.initial(),
     );
   }
 }

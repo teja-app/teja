@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
-import 'package:rive/rive.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/journal_template/actions.dart';
@@ -17,10 +16,9 @@ class JournalTemplateListScreen extends StatelessWidget {
         title: const Text("Journal Templates"),
       ),
       body: StoreConnector<AppState, _JournalTemplateListViewModel>(
-        onInit: (store) => store.dispatch(FetchJournalTemplatesActionFromCache()),
+        onInit: (store) => {store.dispatch(FetchJournalTemplatesActionFromCache())},
         converter: (store) => _JournalTemplateListViewModel.fromStore(store),
         builder: (context, vm) {
-          print("vm.templates.length ${vm.templates.length}");
           if (vm.isLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (vm.errorMessage != null) {
@@ -28,10 +26,6 @@ class JournalTemplateListScreen extends StatelessWidget {
           } else {
             return Column(
               children: [
-                const SizedBox(
-                  height: 200,
-                  child: RiveAnimation.asset('assets/journal/girl_and_dog.riv'),
-                ),
                 Expanded(
                   // Wrap your ListView.builder in an Expanded widget
                   child: ListView.builder(

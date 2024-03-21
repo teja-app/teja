@@ -59,6 +59,7 @@ class RootPath {
   static const explore = "explore";
   static const guide = "guide";
   static const journal = "journal";
+  static const echo = "echo";
   static const habit = "habit";
   static const comingSoon = "coming_soon";
   static const editHabit = "edit_habit";

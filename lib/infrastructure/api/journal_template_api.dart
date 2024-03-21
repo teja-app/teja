@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:teja/domain/entities/journal_template_entity.dart'; // Ensure this entity is defined
 import 'package:teja/infrastructure/api_helper.dart';
+
+import 'package:teja/domain/entities/journal_template_entity.dart'; // Ensure this entity is defined
 import 'package:teja/infrastructure/dto/journal_template_dto.dart'; // Updated DTO file
 
 class JournalTemplateApi {

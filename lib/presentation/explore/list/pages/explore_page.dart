@@ -1,148 +1,226 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:go_router/go_router.dart';
-import 'package:teja/presentation/navigation/buildDesktopDrawer.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
+import 'package:teja/domain/entities/featured_journal_template_entity.dart';
+import 'package:teja/domain/entities/journal_template_entity.dart';
+import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/presentation/explore/datas/category_json.dart';
+import 'package:teja/presentation/journal/journal_templates/ui/journal_template_card.dart';
 import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
-import 'package:teja/presentation/navigation/leadingContainer.dart';
 import 'package:teja/router.dart';
-import 'package:teja/shared/common/bento_box.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:teja/theme/padding.dart';
+import 'package:teja/presentation/explore/widgets/clipper.dart';
+import 'package:teja/presentation/explore/widgets/custom_categories_button.dart';
+import 'package:teja/presentation/explore/widgets/custom_category_card.dart';
+import 'package:teja/presentation/explore/widgets/custom_promotion_card.dart';
+import 'package:teja/presentation/explore/widgets/custom_search_field.dart';
+import 'package:teja/presentation/explore/widgets/custom_title.dart';
+import 'package:flutter/material.dart';
+import 'dart:ui';
 
-class ExplorePage extends StatelessWidget {
-  const ExplorePage({Key? key}) : super(key: key);
+class ExplorePage extends StatefulWidget {
+  const ExplorePage({
+    Key? key,
+  }) : super(key: key);
 
   @override
+  ExplorePageState createState() => ExplorePageState();
+}
+
+class ExplorePageState extends State<ExplorePage> {
+  @override
   Widget build(BuildContext context) {
-    final Widget listView = ListView(
-      padding: const EdgeInsets.all(4.0),
-      children: <Widget>[
-        _buildCategoryBox(
-          'Inspiration',
-          'assets/background/inspiration.svg',
-          context,
-          RootPath.inspiration,
-          'Discover quotes, affirmations, and more to inspire and motivate you.',
-        ),
-        _buildCategoryBox(
-          'Journal',
-          'assets/background/journal.svg',
-          context,
-          RootPath.journalTemplateList,
-          'Discover a guided journal for a better clarity with the prompts',
-        ),
-      ],
-    );
-    final mainBody = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Text(
-            'Discover and explore a world of inspiration and self-improvement.',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        Expanded(
-          child: listView,
-        ),
-      ],
-    );
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       bottomNavigationBar: isDesktop(context) ? null : buildMobileNavigationBar(context),
-      appBar: AppBar(
-        title: const Text('Explore'),
-        forceMaterialTransparency: true,
-        leading: leadingNavBar(context),
-        leadingWidth: 72,
-        actions: [
-          IconButton(
-            onPressed: () {
-              // Add functionality for any actions you want here.
-            },
-            icon: const Icon(Icons.info),
-          ),
-        ],
+      backgroundColor: colorScheme.background,
+      extendBodyBehindAppBar: true,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(0.0),
+        child: AppBar(
+          elevation: 0.0,
+          backgroundColor: Colors.transparent,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
+        ),
       ),
-      body: isDesktop(context)
-          ? Row(
-              children: [
-                buildDesktopNavigationBar(context), // The NavigationRail
-                Expanded(child: mainBody), // Main content area
-              ],
-            )
-          : mainBody, // If not desktop, just show the main body
+      body: StoreConnector<AppState, ExplorePageViewModel>(
+        converter: (store) => ExplorePageViewModel.fromStore(store),
+        builder: (context, viewModel) {
+          return getBody(viewModel);
+        },
+      ),
     );
   }
 
-  Widget _buildCategoryBox(String title, String svgPath, BuildContext context, String routeName, String description,
-      {bool isComingSoon = false}) {
-    final GoRouter goRouter = GoRouter.of(context);
-    final brightness = Theme.of(context).colorScheme.brightness;
-    return GestureDetector(
-      onTap: () {
-        if (!isComingSoon) {
-          goRouter.pushNamed(routeName);
-          HapticFeedback.selectionClick();
-        }
-      },
-      child: BentoBox(
-        gridWidth: 4,
-        gridHeight: 3,
-        child: Stack(
-          children: [
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  SvgPicture.asset(
-                    svgPath,
-                    height: 100, // Adjust the height as needed
-                    colorFilter: ColorFilter.mode(
-                      brightness == Brightness.light ? Colors.black : Colors.white,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                  Text(title),
-                ],
-              ),
-            ),
-            if (isComingSoon)
-              Positioned.fill(
+  Widget getBody(ExplorePageViewModel viewModel) {
+    var size = MediaQuery.of(context).size;
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
+    return SingleChildScrollView(
+      padding: const EdgeInsets.only(bottom: spacer),
+      child: Column(
+        children: [
+          Stack(
+            alignment: Alignment.topCenter,
+            children: [
+              ClipPath(
+                clipper: BottomClipper(),
                 child: Container(
-                  child: const Center(
-                    child: Text(
-                      'Coming Soon',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      ),
+                    width: size.width,
+                    height: 300.0,
+                    decoration: BoxDecoration(
+                      color: colorScheme.secondary,
+                    )),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: appPadding, right: appPadding),
+                child: Column(
+                  children: <Widget>[
+                    const SizedBox(height: spacer + 24),
+                    //search
+                    CustomSearchField(
+                      hintField: 'Try "Seneca"',
+                      backgroundColor: colorScheme.background,
                     ),
-                  ),
+                    const SizedBox(height: spacer - 30.0),
+                    //categoy card
+                    const CustomCategoryCard(),
+                  ],
                 ),
               ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                padding: const EdgeInsets.all(8.0),
-                color: Colors.black.withOpacity(0.7),
-                child: Text(
-                  description,
-                  style: const TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+            ],
+          ),
+          const SizedBox(height: smallSpacer),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.only(
+              left: appPadding,
+              right: appPadding - 10.0,
             ),
-          ],
-        ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: List.generate(PersonalJournalingCategories1.length, (index) {
+                    return GestureDetector(
+                      onTap: () {},
+                      child: CustomCategoriesButton(title: PersonalJournalingCategories1[index]['title']),
+                    );
+                  }),
+                ),
+                Row(
+                  children: List.generate(PersonalJournalingCategories2.length, (index) {
+                    return GestureDetector(
+                      onTap: () {},
+                      child: CustomCategoriesButton(title: PersonalJournalingCategories2[index]['title']),
+                    );
+                  }),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: smallSpacer),
+          //promotion card
+          const CustomPromotionCard(),
+          const SizedBox(height: smallSpacer),
+          //feature courses
+          const Padding(
+            padding: EdgeInsets.only(left: appPadding, right: appPadding),
+            child: CustomTitle(
+              title: 'Featured Journals',
+              route: RootPath.journalTemplateList,
+            ),
+          ),
+          const SizedBox(height: smallSpacer),
+          StoreConnector<AppState, List<JournalTemplateEntity>>(
+              converter: (store) => store.state.journalTemplateState.templates.take(5).toList(),
+              builder: (context, templates) {
+                return SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.only(
+                    left: appPadding,
+                    right: appPadding - 10.0,
+                  ),
+                  child: Wrap(
+                    children: List.generate(viewModel.featuredTemplates.length, (index) {
+                      var data = viewModel.featuredTemplates[index];
+                      JournalTemplateEntity? journalTemplateEntity = viewModel.templatesById[data.template];
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 15.0, bottom: 20.0),
+                        child: GestureDetector(
+                          onTap: () {},
+                          child: JournalTemplateCard(
+                            template: journalTemplateEntity!,
+                            templateType: JournalTemplateCardCardType.bento,
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                );
+              }),
+          const SizedBox(height: spacer - 20.0),
+
+          // //feature category
+          // const Padding(
+          //   padding: EdgeInsets.only(left: appPadding, right: appPadding),
+          //   child: CustomTitle(title: 'Latest Tapes'),
+          // ),
+          // const SizedBox(height: smallSpacer),
+          // SingleChildScrollView(
+          //   scrollDirection: Axis.horizontal,
+          //   padding: const EdgeInsets.only(
+          //     left: appPadding,
+          //     right: appPadding - 10.0,
+          //   ),
+          //   child: Wrap(
+          //     children: List.generate(CoursesJson.length, (index) {
+          //       var data = CoursesJson[index];
+
+          //       return Padding(
+          //         padding: const EdgeInsets.only(right: 15.0, bottom: 20.0),
+          //         child: GestureDetector(
+          //           child: CustomCourseCardExpand(
+          //             thumbNail: data['image'],
+          //             videoAmount: data['video'],
+          //             title: data['title'],
+          //             userProfile: data['user_profile'],
+          //             userName: data['user_name'],
+          //             price: data['price'],
+          //           ),
+          //         ),
+          //       );
+          //     }),
+          //   ),
+          // ),
+        ],
       ),
+    );
+  }
+}
+
+class ExplorePageViewModel {
+  final bool isLoading;
+  final String? errorMessage;
+  final List<FeaturedJournalTemplateEntity> featuredTemplates;
+  final Map<String, JournalTemplateEntity> templatesById;
+
+  ExplorePageViewModel({
+    required this.isLoading,
+    this.errorMessage,
+    required this.featuredTemplates,
+    required this.templatesById,
+  });
+
+  // Factory constructor to create ViewModel from the Redux store state
+  factory ExplorePageViewModel.fromStore(Store<AppState> store) {
+    final state = store.state.featuredJournalTemplateState;
+    final journalTemplateState = store.state.journalTemplateState;
+    return ExplorePageViewModel(
+      isLoading: state.isLoading,
+      errorMessage: state.errorMessage,
+      featuredTemplates: state.templates,
+      templatesById: journalTemplateState.templatesById,
     );
   }
 }
