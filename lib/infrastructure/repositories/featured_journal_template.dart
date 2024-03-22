@@ -1,72 +1,37 @@
-import 'package:isar/isar.dart';
+import 'package:hive/hive.dart';
 import 'package:teja/domain/entities/featured_journal_template_entity.dart';
-import 'package:teja/infrastructure/database/isar_collections/featured_journal_template.dart';
+import 'package:teja/infrastructure/database/hive_collections/featured_journal_template.dart';
 
 class FeaturedJournalTemplateRepository {
-  final Isar isar;
-
-  FeaturedJournalTemplateRepository(this.isar);
+  late Box<FeaturedJournalTemplate> _box;
 
   Future<List<FeaturedJournalTemplateEntity>> getAllFeaturedTemplateEntities() async {
-    var isarTemplates = await isar.featuredJournalTemplates.where().sortByPriority().findAll();
-
-    return isarTemplates.map((isarTemplate) {
-      return FeaturedJournalTemplateEntity(
-        id: isarTemplate.id,
-        template: isarTemplate.template,
-        featured: isarTemplate.featured,
-        priority: isarTemplate.priority,
-        active: isarTemplate.active,
-      );
-    }).toList();
-  }
-
-  Future<FeaturedJournalTemplateEntity?> getFeaturedJournalTemplateById(String template) async {
-    var isarTemplate = await isar.featuredJournalTemplates.where().templateEqualTo(template).findFirst();
-    if (isarTemplate != null) {
-      return FeaturedJournalTemplateEntity(
-        id: isarTemplate.id,
-        template: isarTemplate.template,
-        featured: isarTemplate.featured,
-        priority: isarTemplate.priority,
-        active: isarTemplate.active,
-      );
-    }
-    return null; // Return null if the template is not found
+    final box = Hive.box(FeaturedJournalTemplate.boxKey);
+    return box.values
+        .map((hiveTemplate) => FeaturedJournalTemplateEntity(
+              id: _box.keyAt(_box.values.toList().indexOf(hiveTemplate)).toString(),
+              template: hiveTemplate.template,
+              featured: hiveTemplate.featured,
+              priority: hiveTemplate.priority,
+              active: hiveTemplate.active,
+            ))
+        .toList();
   }
 
   Future<void> clearFeaturedJournalTemplates() async {
-    await isar.writeTxn(() async {
-      await isar.featuredJournalTemplates.clear();
-    });
+    await Hive.box(FeaturedJournalTemplate.boxKey).clear();
   }
 
   Future<void> addOrUpdateFeaturedJournalTemplates(List<FeaturedJournalTemplateEntity> templates) async {
-    await isar.writeTxn(() async {
-      for (var template in templates) {
-        final existingTemplate =
-            await isar.featuredJournalTemplates.where().templateEqualTo(template.template).findFirst();
-
-        if (existingTemplate != null) {
-          // Update existing template
-          existingTemplate
-            ..template = template.template
-            ..featured = template.featured
-            ..priority = template.priority
-            ..active = template.active;
-
-          await isar.featuredJournalTemplates.put(existingTemplate);
-        } else {
-          // Create a new template
-          final isarTemplate = FeaturedJournalTemplate()
-            ..template = template.template
-            ..featured = template.featured
-            ..priority = template.priority
-            ..active = template.active;
-
-          await isar.featuredJournalTemplates.put(isarTemplate);
-        }
-      }
-    });
+    var box = Hive.box(FeaturedJournalTemplate.boxKey); // Ensure the box is initialized
+    for (var templateEntity in templates) {
+      var hiveTemplate = FeaturedJournalTemplate()
+        ..template = templateEntity.template
+        ..featured = templateEntity.featured
+        ..priority = templateEntity.priority
+        ..active = templateEntity.active;
+      // Use the entity's id as the key for the Hive box entry
+      await box.put(templateEntity.id, hiveTemplate);
+    }
   }
 }
