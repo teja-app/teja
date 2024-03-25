@@ -4,7 +4,7 @@ import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/entities/journal_category_entity.dart';
-import 'package:teja/presentation/journal/journal_templates/ui/journal_template_card.dart';
+import 'package:teja/presentation/journal/ui/journal_template_card.dart';
 import 'package:teja/theme/padding.dart';
 
 class CategoryDetailPage extends StatelessWidget {
@@ -81,8 +81,6 @@ class CategoryDetailPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: spacer),
-                  // for (JournalTemplateEntity template in vm.templates)
-                  //   JournalTemplateCard(template: template, templateType: JournalTemplateCardCardType.bento),
                 ],
               ),
             ),

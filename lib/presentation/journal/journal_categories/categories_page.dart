@@ -52,16 +52,16 @@ class JournalCategoriesPage extends StatelessWidget {
                       ),
                       const SizedBox(height: miniSpacer),
                       Text(
-                        "A Personal Discovery",
+                        "Unlock Your Journey",
                         style: textTheme.titleLarge,
                       ),
                       const SizedBox(height: miniSpacer),
                       Text(
-                        "Let's think about one aspect of your life you want to improve.",
+                        "Imagine a space where every tool is tailored just for you, helping to illuminate paths you've yet to explore. With our Pro features, dive deeper into your personal growth journey. Where would you like to start?",
                         style: textTheme.labelSmall,
                       ),
                       const Button(
-                        text: "Begin",
+                        text: "Dive In",
                         icon: AntDesign.lock1,
                       )
                     ],

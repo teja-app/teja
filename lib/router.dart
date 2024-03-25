@@ -9,7 +9,6 @@ import 'package:teja/presentation/journal/journa_detail/pages/journal_detail_pag
 import 'package:teja/presentation/journal/journal_categories/categories_detail_page.dart';
 import 'package:teja/presentation/journal/journal_categories/categories_page.dart';
 import 'package:teja/presentation/journal/journal_editor/pages/journal_editor_page.dart';
-import 'package:teja/presentation/journal/journal_templates/pages/journal_template_list_screen.dart';
 import 'package:teja/presentation/mood/detail/page/mood_detail.dart';
 import 'package:teja/presentation/mood/editor/pages/mood_edit.dart';
 import 'package:teja/presentation/mood/list/pages/mood_list_page.dart';
@@ -76,7 +75,6 @@ class RootPath {
   static const moodShare = "mood_share";
   static const goalSettings = "goal_settings";
   static const noteEditor = "note_editor";
-  static const journalTemplateList = "journal_template_list";
   static const journalEditor = "journal_editor";
   static const journalDetail = "journal_detail";
 }
@@ -180,12 +178,6 @@ final GoRouter router = GoRouter(
         final String? moodIdStr = state.uri.queryParameters['id'];
         return MoodSharePage(moodId: moodIdStr!);
       },
-    ),
-    GoRoute(
-      path: '/journal_template_list',
-      parentNavigatorKey: _rootNavigatorKey,
-      name: RootPath.journalTemplateList,
-      builder: (context, state) => const JournalTemplateListScreen(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,

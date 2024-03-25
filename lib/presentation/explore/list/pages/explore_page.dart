@@ -6,7 +6,7 @@ import 'package:teja/domain/entities/featured_journal_template_entity.dart';
 import 'package:teja/domain/entities/journal_category_entity.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
-import 'package:teja/presentation/journal/journal_templates/ui/journal_template_card.dart';
+import 'package:teja/presentation/journal/ui/journal_template_card.dart';
 import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/router.dart';

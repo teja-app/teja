@@ -1,4 +1,3 @@
-import 'package:teja/presentation/explore/datas/promotion.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:teja/theme/padding.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +11,6 @@ class CustomPromotionCard extends StatelessWidget {
     var size = MediaQuery.of(context).size;
     final cardTheme = Theme.of(context).cardTheme;
     TextTheme textTheme = Theme.of(context).textTheme;
-    print("Promotion['image'].toString()${Promotion['image'].toString()}");
     return Padding(
       padding: const EdgeInsets.only(left: appPadding, right: appPadding),
       child: Stack(
@@ -21,7 +19,7 @@ class CustomPromotionCard extends StatelessWidget {
         children: [
           Container(
             width: size.width,
-            height: size.width * .450,
+            height: size.width * .5,
             padding: const EdgeInsets.all(20.0),
             decoration: BoxDecoration(
               color: cardTheme.color,
@@ -31,20 +29,29 @@ class CustomPromotionCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  Promotion['title'].toString(),
-                  style: textTheme.titleMedium,
-                ),
-                SizedBox(height: 7.0),
-                Container(
-                  width: size.width * .425,
-                  child: Text(Promotion['subTitle'].toString(), style: textTheme.titleLarge),
-                ),
-                Container(
-                  child: const Button(
-                    text: 'Try 7 Days Free',
-                    buttonType: ButtonType.primary,
+                SizedBox(
+                  width: size.width * .3,
+                  child: Text(
+                    "Free with streak",
+                    style: textTheme.titleMedium,
                   ),
+                ),
+                const SizedBox(height: 7.0),
+                SizedBox(
+                  width: size.width * .425,
+                  child: Text("Teja Pro", style: textTheme.titleLarge),
+                ),
+                SizedBox(
+                  width: size.width * .3,
+                  child: Text(
+                    "AI and Teja - Echo",
+                    style: textTheme.titleMedium,
+                  ),
+                ),
+                const Button(
+                  text: 'Know more',
+                  buttonType: ButtonType.primary,
+                  // onPressed: () => {},
                 ),
               ],
             ),
@@ -55,7 +62,7 @@ class CustomPromotionCard extends StatelessWidget {
             child: SizedBox(
               height: size.height * .4,
               child: SvgPicture.asset(
-                Promotion['image'].toString(),
+                'assets/explore/dog_reading_vector.svg',
                 height: 250,
               ),
             ),

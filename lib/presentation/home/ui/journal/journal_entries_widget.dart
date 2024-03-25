@@ -50,7 +50,7 @@ class _JournalEntriesWidgetState extends State<JournalEntriesWidget> {
                   text: "Create a Journal Entry",
                   onPressed: () {
                     HapticFeedback.selectionClick();
-                    goRouter.pushNamed(RootPath.journalTemplateList);
+                    goRouter.pushNamed(RootPath.journalCategory);
                   },
                 ),
               ],
