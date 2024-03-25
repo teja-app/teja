@@ -55,7 +55,6 @@
 	<string>We need access to your sleep data to provide sleep analysis</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We require access to your photo library to allow you to select photos for your journal entries in Teja.</string>
-
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -65,13 +64,6 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-	</array>
-	<key>UISupportedInterfaceOrientations~ipad</key>
-	<array>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 	<key>com.posthog.posthog.API_KEY</key>
 	<string>phc_mKsbKa4mA0xUc8zt2T5d3MKifEZzfi00lSqsHpS7XmI</string>
