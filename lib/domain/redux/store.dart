@@ -14,7 +14,6 @@ import 'package:teja/shared/helpers/logger.dart';
 Future<Store<AppState>> createStore(Isar isarInstance) async {
   const filePath = '.env.dev';
   final fileExists = await File(filePath).exists();
-  print('File exists: $fileExists');
   await dotenv.load(fileName: filePath);
   var options = Options(
     //add an option to handle uncaught errors

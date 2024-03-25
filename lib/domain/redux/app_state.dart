@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:teja/domain/redux/home/home_state.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_state.dart';
 import 'package:teja/domain/redux/journal/featured_journal_template/state.dart';
+import 'package:teja/domain/redux/journal/journal_category/state.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_state.dart';
 import 'package:teja/domain/redux/journal/journal_logs/journal_logs_state.dart';
 import 'package:teja/domain/redux/journal/journal_template/state.dart';
@@ -34,6 +35,7 @@ class AppState {
   final JournalLogsState journalLogsState;
   final JournalDetailState journalDetailState;
   final FeaturedJournalTemplateState featuredJournalTemplateState;
+  final JournalCategoryState journalCategoryState;
 
   const AppState({
     required this.authState,
@@ -52,6 +54,7 @@ class AppState {
     required this.journalLogsState,
     required this.journalDetailState,
     required this.featuredJournalTemplateState,
+    required this.journalCategoryState,
   });
 
   AppState copyWith({
@@ -71,6 +74,7 @@ class AppState {
     JournalLogsState? journalLogsState,
     JournalDetailState? journalDetailState,
     FeaturedJournalTemplateState? featuredJournalTemplateState,
+    JournalCategoryState? journalCategoryState,
   }) {
     return AppState(
       authState: authState ?? this.authState,
@@ -89,6 +93,7 @@ class AppState {
       journalLogsState: journalLogsState ?? this.journalLogsState,
       journalDetailState: journalDetailState ?? this.journalDetailState,
       featuredJournalTemplateState: featuredJournalTemplateState ?? this.featuredJournalTemplateState,
+      journalCategoryState: journalCategoryState ?? this.journalCategoryState,
     );
   }
 
@@ -110,6 +115,7 @@ class AppState {
       journalLogsState: JournalLogsState.initialState(),
       journalDetailState: JournalDetailState.initialState(),
       featuredJournalTemplateState: FeaturedJournalTemplateState.initial(),
+      journalCategoryState: JournalCategoryState.initial(),
     );
   }
 }

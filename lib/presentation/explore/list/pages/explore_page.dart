@@ -128,7 +128,7 @@ class ExplorePageState extends State<ExplorePage> {
             padding: EdgeInsets.only(left: appPadding, right: appPadding),
             child: CustomTitle(
               title: 'Featured Journals',
-              route: RootPath.journalTemplateList,
+              route: RootPath.journalCategory,
             ),
           ),
           const SizedBox(height: smallSpacer),

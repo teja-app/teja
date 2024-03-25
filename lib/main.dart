@@ -13,6 +13,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:teja/infrastructure/analytics/set_context.dart';
 import 'package:teja/infrastructure/database/hive_collections/featured_journal_template.dart';
+import 'package:teja/infrastructure/database/hive_collections/journal_category.dart';
 import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart';
 import 'package:teja/infrastructure/database/isar_collections/journal_template.dart';
 import 'package:teja/infrastructure/database/isar_collections/master_factor.dart';
@@ -44,7 +45,9 @@ Future<void> main() async {
   await notificationService.initialize(); // Initialize notifications
   await Hive.initFlutter();
   Hive.registerAdapter(FeaturedJournalTemplateAdapter());
+  Hive.registerAdapter(JournalCategoryAdapter());
   await Hive.openBox(FeaturedJournalTemplate.boxKey);
+  await Hive.openBox(JournalCategory.boxKey);
   if (Platform.isIOS) {
     // Request notification permissions on iOS
     await notificationService.requestIOSPermissions();
