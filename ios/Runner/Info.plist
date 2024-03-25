@@ -49,10 +49,6 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSHealthShareUsageDescription</key>
-	<string>We need access to your sleep data to provide sleep analysis</string>
-	<key>NSHealthUpdateUsageDescription</key>
-	<string>We need access to your sleep data to provide sleep analysis</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We require access to your photo library to allow you to select photos for your journal entries in Teja.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
