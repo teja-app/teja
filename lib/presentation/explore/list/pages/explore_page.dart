@@ -1,10 +1,11 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/featured_journal_template_entity.dart';
+import 'package:teja/domain/entities/journal_category_entity.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
-import 'package:teja/presentation/explore/datas/category_json.dart';
 import 'package:teja/presentation/journal/journal_templates/ui/journal_template_card.dart';
 import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
@@ -53,6 +54,15 @@ class ExplorePageState extends State<ExplorePage> {
     );
   }
 
+  void navigateToCategoryDetail(BuildContext context, String categoryId) {
+    GoRouter.of(context).pushNamed(
+      RootPath.journalCategoryDetail, // Assuming you've defined this path in your router
+      queryParameters: {
+        "id": categoryId,
+      },
+    );
+  }
+
   Widget getBody(ExplorePageViewModel viewModel) {
     var size = MediaQuery.of(context).size;
     ColorScheme colorScheme = Theme.of(context).colorScheme;
@@ -91,33 +101,43 @@ class ExplorePageState extends State<ExplorePage> {
             ],
           ),
           const SizedBox(height: smallSpacer),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.only(
-              left: appPadding,
-              right: appPadding - 10.0,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: List.generate(PersonalJournalingCategories1.length, (index) {
-                    return GestureDetector(
-                      onTap: () {},
-                      child: CustomCategoriesButton(title: PersonalJournalingCategories1[index]['title']),
-                    );
-                  }),
+          StoreConnector<AppState, ExplorePageViewModel>(
+            converter: (store) => ExplorePageViewModel.fromStore(store),
+            builder: (context, vm) {
+              // Convert the map entries to a list for easier manipulation
+              var categoriesList = vm.categoriesById.entries.toList();
+              // Calculate the split index based on the total number of categories
+              int splitIndex = categoriesList.length ~/ 2 + categoriesList.length % 2;
+
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.only(
+                  left: appPadding,
+                  right: appPadding - 10.0,
                 ),
-                Row(
-                  children: List.generate(PersonalJournalingCategories2.length, (index) {
-                    return GestureDetector(
-                      onTap: () {},
-                      child: CustomCategoriesButton(title: PersonalJournalingCategories2[index]['title']),
-                    );
-                  }),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: categoriesList.sublist(0, splitIndex).map((entry) {
+                        return CustomCategoriesButton(
+                          title: entry.value.name,
+                          onTap: () => navigateToCategoryDetail(context, entry.key),
+                        );
+                      }).toList(),
+                    ),
+                    Row(
+                      children: categoriesList.sublist(splitIndex).map((entry) {
+                        return CustomCategoriesButton(
+                          title: entry.value.name,
+                          onTap: () => navigateToCategoryDetail(context, entry.key),
+                        );
+                      }).toList(),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           ),
           const SizedBox(height: smallSpacer),
           //promotion card
@@ -160,39 +180,6 @@ class ExplorePageState extends State<ExplorePage> {
                 );
               }),
           const SizedBox(height: spacer - 20.0),
-
-          // //feature category
-          // const Padding(
-          //   padding: EdgeInsets.only(left: appPadding, right: appPadding),
-          //   child: CustomTitle(title: 'Latest Tapes'),
-          // ),
-          // const SizedBox(height: smallSpacer),
-          // SingleChildScrollView(
-          //   scrollDirection: Axis.horizontal,
-          //   padding: const EdgeInsets.only(
-          //     left: appPadding,
-          //     right: appPadding - 10.0,
-          //   ),
-          //   child: Wrap(
-          //     children: List.generate(CoursesJson.length, (index) {
-          //       var data = CoursesJson[index];
-
-          //       return Padding(
-          //         padding: const EdgeInsets.only(right: 15.0, bottom: 20.0),
-          //         child: GestureDetector(
-          //           child: CustomCourseCardExpand(
-          //             thumbNail: data['image'],
-          //             videoAmount: data['video'],
-          //             title: data['title'],
-          //             userProfile: data['user_profile'],
-          //             userName: data['user_name'],
-          //             price: data['price'],
-          //           ),
-          //         ),
-          //       );
-          //     }),
-          //   ),
-          // ),
         ],
       ),
     );
@@ -204,12 +191,14 @@ class ExplorePageViewModel {
   final String? errorMessage;
   final List<FeaturedJournalTemplateEntity> featuredTemplates;
   final Map<String, JournalTemplateEntity> templatesById;
+  final Map<String, JournalCategoryEntity> categoriesById;
 
   ExplorePageViewModel({
     required this.isLoading,
     this.errorMessage,
     required this.featuredTemplates,
     required this.templatesById,
+    required this.categoriesById,
   });
 
   // Factory constructor to create ViewModel from the Redux store state
@@ -221,6 +210,7 @@ class ExplorePageViewModel {
       errorMessage: state.errorMessage,
       featuredTemplates: state.templates,
       templatesById: journalTemplateState.templatesById,
+      categoriesById: store.state.journalCategoryState.categoriesById,
     );
   }
 }

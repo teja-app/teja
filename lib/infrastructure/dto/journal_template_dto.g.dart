@@ -15,6 +15,7 @@ JournalTemplateDto _$JournalTemplateDtoFromJson(Map<String, dynamic> json) =>
           .map((e) => JournalQuestionDto.fromJson(e as Map<String, dynamic>))
           .toList(),
       meta: MetaDataDto.fromJson(json['meta'] as Map<String, dynamic>),
+      category: json['category'] as String?,
     );
 
 Map<String, dynamic> _$JournalTemplateDtoToJson(JournalTemplateDto instance) =>
@@ -24,6 +25,7 @@ Map<String, dynamic> _$JournalTemplateDtoToJson(JournalTemplateDto instance) =>
       'header': instance.header,
       'questions': instance.questions,
       'meta': instance.meta,
+      'category': instance.category,
     };
 
 HeaderDto _$HeaderDtoFromJson(Map<String, dynamic> json) => HeaderDto(

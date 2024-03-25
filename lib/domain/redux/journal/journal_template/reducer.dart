@@ -18,13 +18,22 @@ JournalTemplateState _fetchJournalTemplatesInProgress(
 JournalTemplateState _journalTemplatesFetchedSuccess(
     JournalTemplateState state, JournalTemplatesFetchedSuccessAction action) {
   var newTemplatesById = Map<String, JournalTemplateEntity>.from(state.templatesById);
+  var newTemplatesByCategory = Map<String, List<JournalTemplateEntity>>();
+
   for (var template in action.templates) {
     newTemplatesById[template.id] = template;
+
+    if (newTemplatesByCategory.containsKey(template.category)) {
+      newTemplatesByCategory[template.category]?.add(template);
+    } else {
+      newTemplatesByCategory[template.category] = [template];
+    }
   }
 
   return state.copyWith(
     templates: action.templates,
     templatesById: newTemplatesById,
+    templatesByCategory: newTemplatesByCategory,
     isLoading: false,
     isFetchSuccessful: true,
     lastUpdatedAt: action.lastUpdatedAt,

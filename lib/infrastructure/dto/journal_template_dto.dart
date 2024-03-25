@@ -11,6 +11,7 @@ class JournalTemplateDto {
 
   final List<JournalQuestionDto> questions;
   final MetaDataDto meta;
+  final String? category;
 
   JournalTemplateDto({
     required this.id,
@@ -18,6 +19,7 @@ class JournalTemplateDto {
     required this.header,
     required this.questions,
     required this.meta,
+    this.category,
   });
 
   factory JournalTemplateDto.fromJson(Map<String, dynamic> json) => _$JournalTemplateDtoFromJson(json);

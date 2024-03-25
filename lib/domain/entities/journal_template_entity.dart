@@ -3,6 +3,7 @@ class JournalTemplateEntity {
   final String templateID;
   final String title;
   final String description;
+  final String category;
   final List<JournalQuestionEntity> questions;
   final MetaDataEntity meta;
 
@@ -13,6 +14,7 @@ class JournalTemplateEntity {
     required this.title,
     required this.questions,
     required this.meta,
+    required this.category,
   });
 
   JournalTemplateEntity copyWith({
@@ -22,6 +24,7 @@ class JournalTemplateEntity {
     List<JournalQuestionEntity>? questions,
     MetaDataEntity? meta,
     String? description,
+    String? category,
   }) {
     return JournalTemplateEntity(
       id: id ?? this.id,
@@ -30,6 +33,7 @@ class JournalTemplateEntity {
       title: title ?? this.title,
       questions: questions ?? this.questions,
       meta: meta ?? this.meta,
+      category: category ?? this.category,
     );
   }
 }

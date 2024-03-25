@@ -28,6 +28,9 @@ class JournalTemplate {
   late String title;
   late String? description;
 
+  @Index()
+  late String? category;
+
   late List<JournalTemplateQuestion> questions;
   late MetaData meta;
 }

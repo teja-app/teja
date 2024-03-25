@@ -39,6 +39,7 @@ class JournalTemplateApi {
       id: dto.id,
       templateID: dto.templateID,
       title: dto.header.title,
+      category: dto.category ?? "",
       description: dto.header.description ?? "",
       questions: questions,
       meta: meta,
