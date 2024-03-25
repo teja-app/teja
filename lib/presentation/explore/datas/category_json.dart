@@ -11,11 +11,11 @@ const List HomePageCategoryJson = [
     'title': 'Journal',
     'path': RootPath.journalTemplateList,
   },
-  {
-    'icon': 'assets/background/echo.svg',
-    'title': 'Echo',
-    'path': RootPath.echo,
-  },
+  // {
+  //   'icon': 'assets/background/echo.svg',
+  //   'title': 'Echo',
+  //   'path': RootPath.echo,
+  // },
 ];
 
 const List PersonalJournalingCategories1 = [

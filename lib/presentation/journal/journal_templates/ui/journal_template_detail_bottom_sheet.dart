@@ -30,8 +30,7 @@ class JournalTemplateDetailBottomSheet extends StatelessWidget {
     }
 
     return Container(
-      height: MediaQuery.of(context).size.height * 0.5, // Half the screen height
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(20.0),
       decoration: BoxDecoration(
         color: theme.scaffoldBackgroundColor, // Use the theme's background color
         borderRadius: const BorderRadius.only(
@@ -41,24 +40,34 @@ class JournalTemplateDetailBottomSheet extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min, // Adjust size to content
         children: <Widget>[
-          Text(template.title, style: textTheme.titleLarge),
+          Text(template.title, style: textTheme.headline6),
+          if (template.description.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Text(template.description, style: textTheme.bodyText2),
+          ],
           const SizedBox(height: 20),
           Expanded(
-            child: ListView.builder(
+            child: ListView.separated(
               itemCount: template.questions.length,
               itemBuilder: (context, index) {
                 final question = template.questions[index];
                 return ListTile(
-                  leading: Text('${index + 1}', style: textTheme.bodyLarge),
-                  title: Text(question.text),
+                  contentPadding: EdgeInsets.zero,
+                  leading: CircleAvatar(child: Text('${index + 1}')),
+                  title: Text(question.text, style: textTheme.bodyText1),
                 );
               },
+              separatorBuilder: (context, index) => const Divider(),
             ),
           ),
-          Button(
-            text: 'Begin',
-            onPressed: () => _beginJournaling(context),
+          Align(
+            alignment: Alignment.center,
+            child: Button(
+              text: 'Begin Journaling',
+              onPressed: () => _beginJournaling(context),
+            ),
           ),
         ],
       ),
