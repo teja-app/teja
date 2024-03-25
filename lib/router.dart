@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:teja/presentation/edit_habit/pages/edig_habit_page.dart';
 import 'package:teja/presentation/explore/list/pages/explore_page.dart';
+import 'package:teja/presentation/explore/list/pages/search_page.dart';
 import 'package:teja/presentation/goal_editor/page/vision_picker_page.dart';
 import 'package:teja/presentation/home/pages/home_page.dart';
 import 'package:teja/presentation/journal/journa_detail/pages/journal_detail_page.dart';
@@ -59,6 +60,7 @@ class RootPath {
   static const home = "home";
   static const profile = "profile";
   static const explore = "explore";
+  static const exploreSearch = "explore_search";
   static const guide = "guide";
   static const journal = "journal";
   static const echo = "echo";
@@ -134,6 +136,12 @@ final GoRouter router = GoRouter(
       name: RootPath.explore,
       path: '/explore',
       builder: (context, state) => const ExplorePage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RootPath.exploreSearch,
+      path: '/explore_search',
+      builder: (context, state) => const SearchPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,

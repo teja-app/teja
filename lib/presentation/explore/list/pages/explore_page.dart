@@ -89,7 +89,7 @@ class ExplorePageState extends State<ExplorePage> {
                     const SizedBox(height: spacer + 24),
                     //search
                     CustomSearchField(
-                      hintField: 'Try "Seneca"',
+                      hintField: 'Try "Focus"',
                       backgroundColor: colorScheme.background,
                     ),
                     const SizedBox(height: spacer - 30.0),
