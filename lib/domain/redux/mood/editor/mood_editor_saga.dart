@@ -162,7 +162,6 @@ class MoodEditorSaga {
               args: [factorSlugList],
               result: masterFactorEntitiesResult,
             );
-            print("factorSlugList ${factorSlugList} ${feelingEntityId} ${masterFactorEntitiesResult}");
             yield Put(UpdateFactorsSuccessAction(
               moodLogId: action.moodLogId,
               feelingId: feelingEntityId,
@@ -334,14 +333,12 @@ class MoodEditorSaga {
 
     yield Try(() sync* {
       // Call repository method to remove attachment
-      print("${action.moodLogId}, ${action.attachmentId}");
       yield Call(moodLogRepository.removeAttachmentFromMoodLog, args: [action.moodLogId, action.attachmentId]);
 
       // Dispatch success action
       yield Put(RemoveAttachmentSuccessAction(moodLogId: action.moodLogId, attachmentId: action.attachmentId));
     }, Catch: (e, s) sync* {
       // Dispatch failure action
-      print("e.toString() ${e.toString()}");
       yield Put(RemoveAttachmentFailureAction(e.toString()));
     });
   }

@@ -156,10 +156,8 @@ class MoodLogRepository {
   Future<void> updateBroadFactorsForMoodLog(String moodLogId, List<String> broadFactors) async {
     await isar.writeTxn(() async {
       MoodLog? moodLog = await isar.moodLogs.where().idEqualTo(moodLogId).findFirst();
-      print("broadFactors ${moodLogId} ${broadFactors} ${moodLog}");
       if (moodLog != null) {
         moodLog.factors = broadFactors; // Update the broad factors field
-        print("broadFactors ${moodLogId} ${broadFactors} ${moodLog}");
         await isar.moodLogs.put(moodLog);
       } else {
         print("Mood log with ID $moodLogId not found.");

@@ -103,7 +103,6 @@ class JournalEditorSaga {
 
       // Save the updated journal entry
       yield Try(() sync* {
-        print("_handleUpdateQuestionAnswer ${journalEntry}");
         yield Call(journalEntryRepository.addOrUpdateJournalEntry, args: [journalEntry]);
         yield Put(UpdateQuestionAnswerSuccessAction(
             journalEntryId: action.journalEntryId, questionId: action.questionId, answerText: action.answerText));

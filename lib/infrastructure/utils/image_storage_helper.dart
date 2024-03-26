@@ -11,8 +11,6 @@ class ImageStorageHelper {
       final name = path.basename(imagePath);
       final newImagePath = path.join(directory.path, name);
       final File newImageFile = await File(imagePath).copy(newImagePath);
-
-      print("saveImagePermanently ${newImageFile.path}");
       // Return the relative path to be stored in the database
       return path.relative(newImageFile.path, from: directory.path);
     } catch (e) {
@@ -26,7 +24,6 @@ class ImageStorageHelper {
   static Future<File> getImage(String relativePath) async {
     final directory = await getApplicationDocumentsDirectory();
     final imagePath = path.join(directory.path, relativePath);
-    print("getImage ${imagePath}");
     return File(imagePath);
   }
 }

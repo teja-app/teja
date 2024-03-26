@@ -64,7 +64,6 @@ class _JournalEntriesWidgetState extends State<JournalEntriesWidget> {
           itemCount: journalEntries.length,
           itemBuilder: (context, index) {
             var entry = journalEntries[index];
-            print("entry.templateId ${entry.templateId} ${viewModel.templatesById}");
             return journalEntryLayout(viewModel.templatesById[entry.templateId]!, entry, context);
           },
         );

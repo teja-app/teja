@@ -42,12 +42,10 @@ class JournalCategorySaga {
       // Clear existing categories in preparation for refresh
       yield Call(journalCategoryRepo.clearJournalCategories);
 
-      print("API Call");
       // Fetch categories from the API
       var api = JournalCategoryApi();
       var categoriesResult = Result<List<JournalCategoryEntity>>();
       yield Call(api.getJournalCategories, args: [null], result: categoriesResult);
-      print("categoriesResult ${categoriesResult}");
 
       if (categoriesResult.value != null && categoriesResult.value!.isNotEmpty) {
         // Save the fetched categories
@@ -62,7 +60,6 @@ class JournalCategorySaga {
         yield Put(const JournalCategoriesFetchFailedAction('No journal categories data received'));
       }
     }, Catch: (e, s) sync* {
-      print("e.toString() ${e.toString()}");
       yield Put(JournalCategoriesFetchFailedAction(e.toString()));
     });
   }

@@ -21,7 +21,6 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
     // Access the current filter state
     final currentFilter = store.state.moodLogListState.filter;
     // Initialize the selectedMoodRatings with the current filter state
-    print("_initializeFilter:selectedMoodRatings: ${currentFilter.selectedMoodRatings}");
     setState(() {
       selectedMoodRatings = List.from(currentFilter.selectedMoodRatings);
     });

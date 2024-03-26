@@ -25,7 +25,6 @@ class FeaturedJournalTemplateSaga {
       var cachedTemplates = Result<List<FeaturedJournalTemplateEntity>>();
       // Assume there's a repository method to get cached templates
       yield Call(featuredTemplateRepo.getAllFeaturedTemplateEntities, result: cachedTemplates);
-      print("cachedTemplates ${cachedTemplates}");
 
       if (cachedTemplates.value != null && cachedTemplates.value!.isNotEmpty) {
         yield Put(FeaturedJournalTemplatesFetchedFromCacheAction(cachedTemplates.value!));
@@ -51,7 +50,6 @@ class FeaturedJournalTemplateSaga {
       // Isar isar = isarResult.value!;
       var featuredTemplateRepo = FeaturedJournalTemplateRepository();
 
-      print("Before Clear");
       yield Call(
         featuredTemplateRepo.clearFeaturedJournalTemplates,
       );
@@ -67,7 +65,6 @@ class FeaturedJournalTemplateSaga {
 
       if (templatesResult.value != null && templatesResult.value!.isNotEmpty) {
         // Save the newly fetched templates
-        print("templatesResult.value ${templatesResult.value}");
         yield Call(featuredTemplateRepo.addOrUpdateFeaturedJournalTemplates, args: [templatesResult.value!]);
 
         // Dispatch success action with the fetched templates
@@ -79,7 +76,6 @@ class FeaturedJournalTemplateSaga {
         yield Put(const FeaturedJournalTemplatesFetchFailedAction('No featured templates data received'));
       }
     }, Catch: (e, s) sync* {
-      print("e.toString() ${e.toString()}");
       yield Put(FeaturedJournalTemplatesFetchFailedAction(e.toString()));
     });
   }

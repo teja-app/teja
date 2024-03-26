@@ -107,8 +107,7 @@ class MasterFeelingSaga {
           const MasterFeelingsFetchFailedAction('No feelings data received'),
         );
       }
-    }, Catch: (e, s) sync* {
-      print("e $e $s");
+    }, Catch: (e) sync* {
       yield Put(MasterFeelingsFetchFailedAction(e.toString()));
     });
   }

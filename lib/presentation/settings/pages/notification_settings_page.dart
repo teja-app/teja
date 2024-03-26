@@ -135,7 +135,6 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
     final int notificationId = _getNotificationId(title); // A method to map titles to unique notification IDs
 
     if (isEnabled) {
-      print("_handleToggle ${title} $time $isEnabled");
       await widget.notificationService.scheduleNotification(
         title: title,
         body: 'Reminder: $title',

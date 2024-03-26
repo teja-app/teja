@@ -32,7 +32,6 @@ JournalEditorState _initializeJournalEditorFailure(
 }
 
 JournalEditorState _changeJournalPage(JournalEditorState state, ChangeJournalPageAction action) {
-  print("action.pageIndex ${action.pageIndex}");
   return state.copyWith(currentPageIndex: action.pageIndex);
 }
 

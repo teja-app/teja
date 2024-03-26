@@ -10,14 +10,8 @@ class JournalCategoryApi {
     const String url = '/journal-categories';
     Response response = await _apiHelper.get(url, authToken: authToken);
     List<dynamic> jsonResponse = response.data;
-    print("jsonResponse ${jsonResponse}");
     List<JournalCategoryEntity> journalCategories = jsonResponse.map((json) {
-      try {
-        JournalCategoryDto.fromJson(json);
-      } catch (e) {
-        print("JSON: ${json}");
-        print('Error parsing journal category data: $e');
-      }
+      JournalCategoryDto.fromJson(json);
       JournalCategoryDto dto = JournalCategoryDto.fromJson(json);
 
       ImageSizes? sizes;
@@ -38,8 +32,6 @@ class JournalCategoryApi {
             filename: dto.featureImage!.sizes.card.filename,
           ),
         );
-
-        print("Sizes ${sizes}");
       }
 
       return JournalCategoryEntity(
@@ -55,8 +47,6 @@ class JournalCategoryApi {
             : null,
       );
     }).toList();
-
-    print("journalCategories ${journalCategories}");
 
     return journalCategories;
   }

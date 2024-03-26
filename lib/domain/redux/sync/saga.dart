@@ -39,7 +39,6 @@ class SyncSaga {
         yield Fork(_shareFile, args: [zipFilePathResult.value!]);
       }
     }, Catch: (e, s) sync* {
-      print("e.toString() ${e.toString()}");
       yield Put(ExportJSONActionFailed(e.toString()));
     });
   }

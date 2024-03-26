@@ -78,7 +78,6 @@ class QuoteSaga {
         yield Put(const QuotesFetchFailedAction('No quotes data received'));
       }
     }, Catch: (e, s) sync* {
-      print("e ${e}");
       yield Put(QuotesFetchFailedAction(e.toString()));
     });
   }

@@ -27,7 +27,6 @@ class _CustomSearchFieldState extends State<CustomSearchField> {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: () {
-        print("This is tapped");
         GoRouter.of(context).pushNamed(RootPath.exploreSearch); // Adapt the route as needed based on your routing setup
       },
       child: Container(

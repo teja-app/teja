@@ -61,7 +61,6 @@ class JournalTemplateSaga {
         yield Put(const JournalTemplatesFetchFailedAction('No templates data received'));
       }
     }, Catch: (e, s) sync* {
-      print("JournalTemplatesFetchFailedAction $e $s");
       yield Put(JournalTemplatesFetchFailedAction(e.toString()));
     });
   }
