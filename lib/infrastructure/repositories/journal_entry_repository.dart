@@ -28,6 +28,33 @@ class JournalEntryRepository {
     });
   }
 
+  Future<List<JournalEntryEntity>> getJournalEntriesPage(int pageKey, int pageSize,
+      {DateTime? startDate, DateTime? endDate}) async {
+    final startIndex = pageKey * pageSize;
+
+    var filterConditions = <FilterCondition>[];
+
+    // Example filter condition based on a hypothetical date range
+    if (startDate != null && endDate != null) {
+      filterConditions.add(FilterCondition.between(
+        property: 'timestamp',
+        lower: startDate,
+        upper: endDate,
+      ));
+    }
+
+    final query = isar.journalEntrys.buildQuery(
+      filter: filterConditions.isNotEmpty ? FilterGroup.and(filterConditions) : null,
+      sortBy: [const SortProperty(property: 'timestamp', sort: Sort.desc)],
+      offset: startIndex,
+      limit: pageSize,
+    );
+
+    final journalEntries = await query.findAll();
+
+    return journalEntries.map((moodLog) => toEntity(moodLog)).toList();
+  }
+
   Future<List<JournalEntry>> getJournalEntriesInDateRange(DateTime start, DateTime end) async {
     try {
       // Fetch entries between the specified start and end dates

@@ -12,7 +12,7 @@ import 'package:teja/presentation/journal/journal_categories/categories_page.dar
 import 'package:teja/presentation/journal/journal_editor/pages/journal_editor_page.dart';
 import 'package:teja/presentation/mood/detail/page/mood_detail.dart';
 import 'package:teja/presentation/mood/editor/pages/mood_edit.dart';
-import 'package:teja/presentation/mood/list/pages/mood_list_page.dart';
+import 'package:teja/presentation/timeline/pages/timeline_list_page.dart';
 import 'package:teja/presentation/mood/share/pages/mood_share.dart';
 import 'package:teja/presentation/note_editor/note_editor_page.dart';
 import 'package:teja/presentation/onboarding/pages/onboarding_page.dart';
@@ -70,7 +70,7 @@ class RootPath {
   static const inspiration = "inspiration";
   static const settings = "settings";
   static const moodEdit = "mood_edit";
-  static const moodList = "mood_list";
+  static const timeLine = "timeline";
   static const moodDetail = "mood_detail";
   static const journalCategory = "journal_categories";
   static const journalCategoryDetail = "journal_categories_detail";
@@ -163,9 +163,9 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
-      name: RootPath.moodList,
-      path: '/mood_list',
-      builder: (context, state) => const MoodListPage(),
+      name: RootPath.timeLine,
+      path: '/timeline',
+      builder: (context, state) => const TimelinePage(),
     ),
     GoRoute(
       // Add this block for mood detail page

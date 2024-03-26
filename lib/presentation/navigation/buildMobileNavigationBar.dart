@@ -48,7 +48,7 @@ Widget buildMobileNavigationBar(BuildContext context) {
           HapticFeedback.selectionClick();
           break;
         case 2:
-          goRouter.goNamed(RootPath.moodList);
+          goRouter.goNamed(RootPath.timeLine);
           HapticFeedback.selectionClick();
           break;
         case 3:

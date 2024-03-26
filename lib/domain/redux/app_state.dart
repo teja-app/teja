@@ -6,6 +6,7 @@ import 'package:teja/domain/redux/journal/journal_category/state.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_state.dart';
 import 'package:teja/domain/redux/journal/journal_logs/journal_logs_state.dart';
 import 'package:teja/domain/redux/journal/journal_template/state.dart';
+import 'package:teja/domain/redux/journal/list/journal_list_state.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_state.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_state.dart';
 import 'package:teja/domain/redux/mood/list/state.dart';
@@ -36,6 +37,7 @@ class AppState {
   final JournalDetailState journalDetailState;
   final FeaturedJournalTemplateState featuredJournalTemplateState;
   final JournalCategoryState journalCategoryState;
+  final JournalListState journalListState;
 
   const AppState({
     required this.authState,
@@ -55,6 +57,7 @@ class AppState {
     required this.journalDetailState,
     required this.featuredJournalTemplateState,
     required this.journalCategoryState,
+    required this.journalListState,
   });
 
   AppState copyWith({
@@ -75,6 +78,7 @@ class AppState {
     JournalDetailState? journalDetailState,
     FeaturedJournalTemplateState? featuredJournalTemplateState,
     JournalCategoryState? journalCategoryState,
+    JournalListState? journalListState,
   }) {
     return AppState(
       authState: authState ?? this.authState,
@@ -94,6 +98,7 @@ class AppState {
       journalDetailState: journalDetailState ?? this.journalDetailState,
       featuredJournalTemplateState: featuredJournalTemplateState ?? this.featuredJournalTemplateState,
       journalCategoryState: journalCategoryState ?? this.journalCategoryState,
+      journalListState: journalListState ?? this.journalListState,
     );
   }
 
@@ -116,6 +121,7 @@ class AppState {
       journalDetailState: JournalDetailState.initialState(),
       featuredJournalTemplateState: FeaturedJournalTemplateState.initial(),
       journalCategoryState: JournalCategoryState.initial(),
+      journalListState: JournalListState.initial(),
     );
   }
 }
