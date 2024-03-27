@@ -47,6 +47,8 @@
 		<string>whatsapp</string>
 		<string>tg</string>
 	</array>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Since it's a journal and personal data, faceID is a must</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSPhotoLibraryUsageDescription</key>

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -10,7 +11,7 @@ import 'package:teja/domain/redux/journal/journal_template/actions.dart';
 import 'package:teja/domain/redux/mood/master_factor/actions.dart';
 import 'package:teja/domain/redux/mood/master_feeling/actions.dart';
 import 'package:teja/domain/redux/quotes/quote_action.dart';
-import 'package:teja/router.dart';
+import 'package:teja/presentation/onboarding/widgets/authenticate.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
@@ -23,6 +24,8 @@ class OnboardingPage extends StatefulWidget {
 }
 
 class _OnboardingPageState extends State<OnboardingPage> {
+  SMIInput<bool>? _isPressed;
+
   @override
   void initState() {
     super.initState();
@@ -42,6 +45,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
       store.dispatch(FetchJournalTemplatesActionFromCache());
       store.dispatch(FetchFeaturedJournalTemplatesActionFromCache());
       store.dispatch(FetchJournalCategoriesActionFromCache());
+      if (_isPressed != null) {
+        _isPressed!.value = false;
+      }
     });
   }
 
@@ -49,13 +55,18 @@ class _OnboardingPageState extends State<OnboardingPage> {
   Widget build(BuildContext context) {
     final Brightness themeBrightness = Theme.of(context).brightness;
     final textTheme = Theme.of(context).textTheme;
-    SMIInput<bool>? _isPressed;
 
     void _onRiveInit(Artboard artboard) {
       final controller = StateMachineController.fromArtboard(
         artboard,
         'unlock',
       );
+      if (controller != null) {
+        artboard.addController(controller);
+        _isPressed = controller.findInput<bool>('isPressed');
+        // Optionally, you can also reset the animation state here if needed
+        _isPressed?.value = false; // Ensure this line is safe to run here as per your logic
+      }
       artboard.addController(controller!);
       _isPressed = controller.findInput<bool>('isPressed') as SMIBool;
     }
@@ -122,12 +133,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     key: const Key("homePage"),
                     text: "Let's Begin",
                     width: 300,
-                    onPressed: () {
-                      _isPressed?.value = true;
-                      Future.delayed(const Duration(seconds: 2), () {
-                        GoRouter.of(context).replaceNamed(RootPath.home);
-                      });
-                    },
+                    onPressed: () => authenticate(context, () {
+                      // This is the callback that gets called on successful authentication
+                      if (_isPressed != null) {
+                        _isPressed!.value = true; // Trigger the animation
+                      }
+                    }),
                   ),
                   const SizedBox(height: 20), // Add spacing at the bottom for better layout
                 ],

@@ -99,7 +99,7 @@ class SettingsPage extends StatelessWidget {
                   ),
                   const Divider(),
                   ListTile(
-                    title: const Text('Start from Onboarding'),
+                    title: const Text('Lock the app'),
                     onTap: () {
                       goRouter.goNamed(RootPath.root);
                     },
