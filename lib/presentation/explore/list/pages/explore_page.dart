@@ -6,6 +6,8 @@ import 'package:teja/domain/entities/featured_journal_template_entity.dart';
 import 'package:teja/domain/entities/journal_category_entity.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/presentation/home/ui/journal/frequently_used_template.dart';
+import 'package:teja/presentation/home/ui/journal/last_used_template.dart';
 import 'package:teja/presentation/journal/ui/journal_template_card.dart';
 import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
@@ -179,6 +181,9 @@ class ExplorePageState extends State<ExplorePage> {
                   ),
                 );
               }),
+          const LatestTemplatesUsed(),
+          const SizedBox(height: smallSpacer),
+          const FrequentlyUsedTemplates(),
           const SizedBox(height: spacer - 20.0),
         ],
       ),

@@ -9,7 +9,9 @@ import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/home/home_actions.dart';
 import 'package:teja/presentation/home/ui/count_down_timer.dart';
+import 'package:teja/presentation/home/ui/journal/frequently_used_template.dart';
 import 'package:teja/presentation/home/ui/journal/journal_entries_widget.dart';
+import 'package:teja/presentation/home/ui/journal/last_used_template.dart';
 import 'package:teja/presentation/home/ui/mood/mood_tracker.dart';
 import 'package:teja/presentation/navigation/buildDesktopDrawer.dart';
 import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
@@ -19,6 +21,7 @@ import 'package:teja/router.dart';
 import 'package:teja/calendar_timeline/calendar_timeline.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
+import 'package:teja/theme/padding.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -142,6 +145,10 @@ class _HomePageState extends State<HomePage> {
                   child: MoodTrackerWidget(),
                 ),
               ],
+              const SizedBox(height: smallSpacer),
+              const LatestTemplatesUsed(),
+              const SizedBox(height: smallSpacer),
+              const FrequentlyUsedTemplates(),
               if (store.selectedDate != null && now.compareTo(store.selectedDate!) < 0) const CountdownTimer(),
               const SizedBox(height: 10),
             ],

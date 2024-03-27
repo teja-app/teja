@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
+import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/router.dart';
 
 Widget journalEntryLayout(JournalTemplateEntity template, JournalEntryEntity journalEntry, BuildContext context) {

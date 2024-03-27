@@ -21,23 +21,27 @@ import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_state.da
 @immutable
 class AppState {
   final AuthState authState; // Nested AuthState
-  final MoodEditorState moodEditorState;
-  final MoodDetailState moodDetailPage;
-  final MoodLogsState moodLogsState;
-  final MoodLogListState moodLogListState;
   final HomeState homeState;
   final MasterFeelingState masterFeelingState;
   final MasterFactorState masterFactorState;
   final WeeklyMoodReportState weeklyMoodReportState;
   final QuoteState quoteState;
   final VisionState visionState;
+
+  // Mood
+  final MoodEditorState moodEditorState;
+  final MoodDetailState moodDetailPage;
+  final MoodLogsState moodLogsState;
+  final MoodLogListState moodLogListState;
+
+  // Journal
   final JournalTemplateState journalTemplateState;
   final JournalEditorState journalEditorState;
   final JournalLogsState journalLogsState;
   final JournalDetailState journalDetailState;
-  final FeaturedJournalTemplateState featuredJournalTemplateState;
   final JournalCategoryState journalCategoryState;
   final JournalListState journalListState;
+  final FeaturedJournalTemplateState featuredJournalTemplateState;
 
   const AppState({
     required this.authState,
