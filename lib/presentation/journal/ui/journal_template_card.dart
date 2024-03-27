@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:icons_flutter/icons_flutter.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/presentation/journal/ui/journal_template_detail_bottom_sheet.dart';
 import 'package:teja/shared/common/bento_box.dart';
@@ -31,15 +30,6 @@ class JournalTemplateCard extends StatelessWidget {
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                  icon: const Icon(AntDesign.close),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ],
-            ),
             Expanded(
               child: JournalTemplateDetailBottomSheet(template: template),
             ),

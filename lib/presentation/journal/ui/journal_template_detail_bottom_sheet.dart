@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
+import 'package:icons_flutter/icons_flutter.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.dart';
@@ -42,7 +43,16 @@ class JournalTemplateDetailBottomSheet extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min, // Adjust size to content
         children: <Widget>[
-          Text(template.title, style: textTheme.headline6),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(template.title, style: textTheme.titleLarge),
+              IconButton(
+                icon: const Icon(AntDesign.close),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          ),
           if (template.description.isNotEmpty) ...[
             const SizedBox(height: 10),
             Text(template.description, style: textTheme.bodyText2),
@@ -56,7 +66,7 @@ class JournalTemplateDetailBottomSheet extends StatelessWidget {
                 return ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: CircleAvatar(child: Text('${index + 1}')),
-                  title: Text(question.text, style: textTheme.bodyText1),
+                  title: Text(question.text, style: textTheme.bodyMedium),
                 );
               },
               separatorBuilder: (context, index) => const Divider(),

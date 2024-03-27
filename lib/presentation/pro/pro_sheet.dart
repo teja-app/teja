@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:icons_flutter/icons_flutter.dart';
 import 'package:teja/shared/common/button.dart';
 
@@ -8,23 +7,13 @@ void showProBottomSheet(BuildContext context, {bool showProPrompt = false}) {
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
-    backgroundColor: Colors.transparent,
     builder: (BuildContext context) {
       return showProPrompt
           ? const ProVersionStreakChallengeSheet()
-          : Column(
+          : const Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    IconButton(
-                      icon: const Icon(AntDesign.close),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-                const Expanded(
+                Expanded(
                   child: ProVersionStreakChallengeSheet(),
                 ),
               ],
@@ -38,23 +27,25 @@ class ProVersionStreakChallengeSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = Theme.of(context).textTheme;
+    final textTheme = Theme.of(context).textTheme;
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-      ),
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text(
-              '23-Day Streak Challenge',
-              style: textTheme.titleLarge,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  '23-Day Streak Challenge',
+                  style: textTheme.titleLarge,
+                ),
+                IconButton(
+                  icon: const Icon(AntDesign.close),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
             ),
             const SizedBox(height: 10),
             Text(
