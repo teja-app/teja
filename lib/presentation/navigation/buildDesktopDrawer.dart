@@ -24,7 +24,7 @@ Widget buildDesktopNavigationBar(BuildContext context) {
           goRouter.goNamed(RootPath.timeLine);
           break;
         case 3:
-          goRouter.goNamed(RootPath.profile);
+          goRouter.goNamed(RootPath.settings);
           break;
         // Handle other indices as needed
       }

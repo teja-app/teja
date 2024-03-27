@@ -147,8 +147,6 @@ class _HomePageState extends State<HomePage> {
               ],
               const SizedBox(height: smallSpacer),
               const LatestTemplatesUsed(),
-              const SizedBox(height: smallSpacer),
-              const FrequentlyUsedTemplates(),
               if (store.selectedDate != null && now.compareTo(store.selectedDate!) < 0) const CountdownTimer(),
               const SizedBox(height: 10),
             ],
@@ -163,15 +161,15 @@ class _HomePageState extends State<HomePage> {
         leading: leadingNavBar(context),
         leadingWidth: 72,
         actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 20),
-            child: IconButton(
-                icon: const Icon(Icons.person),
-                onPressed: () {
-                  GoRouter.of(context).pushNamed(RootPath.settings);
-                  HapticFeedback.selectionClick();
-                }),
-          ),
+          // Container(
+          //   margin: const EdgeInsets.only(right: 20),
+          //   child: IconButton(
+          //       icon: const Icon(Icons.person),
+          //       onPressed: () {
+          //         GoRouter.of(context).pushNamed(RootPath.settings);
+          //         HapticFeedback.selectionClick();
+          //       }),
+          // ),
         ],
       ),
       body: isDesktop(context)

@@ -16,8 +16,7 @@ enum AuthMethod {
 
 class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
   bool _isPremiumUser = true; // Assume not a premium user initially
-  AuthMethod _selectedAuthMethod =
-      AuthMethod.none; // Initially, no method is selected
+  AuthMethod _selectedAuthMethod = AuthMethod.none; // Initially, no method is selected
 
   void _changePassword() {
     // Logic to trigger a password reset email
@@ -66,13 +65,10 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
               const Divider(),
               ListTile(
                 title: const Text('Two-Factor Authentication'),
-                subtitle: Text(_isPremiumUser
-                    ? 'Enabled with custom passcode'
-                    : 'Upgrade to premium to enable'),
+                subtitle: Text(_isPremiumUser ? 'Enabled with custom passcode' : 'Upgrade to premium to enable'),
                 trailing: Switch(
                   value: _isPremiumUser,
-                  onChanged:
-                      _isPremiumUser ? _toggleTwoFactorAuthentication : null,
+                  onChanged: _isPremiumUser ? _toggleTwoFactorAuthentication : null,
                 ),
               ),
               if (_isPremiumUser) ...[

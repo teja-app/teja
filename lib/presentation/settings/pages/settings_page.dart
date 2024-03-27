@@ -5,6 +5,8 @@ import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/onboarding/actions.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/presentation/home/ui/master_fetch/fetch_master_view.dart';
+import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
+import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/bento_box.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -45,6 +47,7 @@ class SettingsPage extends StatelessWidget {
       converter: ViewModel.fromStore,
       builder: (context, store) {
         return Scaffold(
+          bottomNavigationBar: isDesktop(context) ? null : buildMobileNavigationBar(context),
           appBar: AppBar(
             title: const Text('Settings'),
           ),
