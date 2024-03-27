@@ -40,33 +40,18 @@ class _JournalEntriesWidgetState extends State<JournalEntriesWidget> {
 
         final GoRouter goRouter = GoRouter.of(context);
         var journalEntries = viewModel.journalLogsByDate[formattedDate];
-        if (journalEntries == null || journalEntries.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Button(
-                  icon: AntDesign.addfile,
-                  text: "Create a Journal Entry",
-                  onPressed: () {
-                    HapticFeedback.selectionClick();
-                    goRouter.pushNamed(RootPath.journalCategory);
-                  },
-                ),
-              ],
-            ),
+        if (journalEntries != null && journalEntries.isEmpty) {
+          return ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: journalEntries.length,
+            itemBuilder: (context, index) {
+              var entry = journalEntries[index];
+              return journalEntryLayout(viewModel.templatesById[entry.templateId]!, entry, context);
+            },
           );
         }
-
-        return ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: journalEntries.length,
-          itemBuilder: (context, index) {
-            var entry = journalEntries[index];
-            return journalEntryLayout(viewModel.templatesById[entry.templateId]!, entry, context);
-          },
-        );
+        return const SizedBox(height: 0);
       },
     );
   }

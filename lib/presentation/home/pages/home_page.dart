@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
+import 'package:icons_flutter/icons_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:redux/redux.dart';
@@ -16,6 +17,7 @@ import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/presentation/navigation/leadingContainer.dart';
 import 'package:teja/router.dart';
 import 'package:teja/calendar_timeline/calendar_timeline.dart';
+import 'package:teja/shared/common/button.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 
 class HomePage extends StatefulWidget {
@@ -85,6 +87,7 @@ class _HomePageState extends State<HomePage> {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
 
+    final GoRouter goRouter = GoRouter.of(context);
     final Widget mainBody = StoreConnector<AppState, _ViewModel>(
       converter: _ViewModel.fromStore,
       builder: (context, store) {
@@ -109,6 +112,20 @@ class _HomePageState extends State<HomePage> {
                 leftMargin: 20,
                 selectableDayPredicate: (date) => date.isBefore(tomorrow),
                 locale: 'en_ISO',
+              ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Adjust spacing as needed
+                children: [
+                  Button(
+                    icon: AntDesign.addfile,
+                    text: "Create a Journal Entry",
+                    onPressed: () {
+                      HapticFeedback.selectionClick();
+                      goRouter.pushNamed(RootPath.journalCategory);
+                    },
+                  ),
+                ],
               ),
               const SizedBox(height: 10),
               if (store.selectedDate != null && now.compareTo(store.selectedDate!) > 0) ...[

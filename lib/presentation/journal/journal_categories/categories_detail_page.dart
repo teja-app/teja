@@ -57,28 +57,19 @@ class CategoryDetailPage extends StatelessWidget {
                     "Journal",
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.only(
-                      left: appPadding,
-                      right: appPadding - 10.0,
-                    ),
-                    child: Wrap(
-                      children: List.generate(vm.templates.length, (index) {
-                        var data = vm.templates[index];
-                        JournalTemplateEntity? journalTemplateEntity = data;
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 15.0, bottom: 20.0),
-                          child: GestureDetector(
-                            onTap: () {},
-                            child: JournalTemplateCard(
-                              template: journalTemplateEntity!,
-                              templateType: JournalTemplateCardCardType.bento,
-                            ),
-                          ),
-                        );
-                      }),
-                    ),
+                  Wrap(
+                    children: List.generate(vm.templates.length, (index) {
+                      var data = vm.templates[index];
+                      JournalTemplateEntity? journalTemplateEntity = data;
+                      return GestureDetector(
+                        onTap: () {},
+                        child: JournalTemplateCard(
+                          template: journalTemplateEntity!,
+                          templateType: JournalTemplateCardCardType.flexible,
+                          gridWidth: 4,
+                        ),
+                      );
+                    }),
                   ),
                   const SizedBox(height: spacer),
                 ],
