@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:teja/presentation/explore/datas/category_json.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:teja/presentation/pro/pro_sheet.dart';
 
 class CustomCategoryCard extends StatelessWidget {
   const CustomCategoryCard({
@@ -25,8 +26,13 @@ class CustomCategoryCard extends StatelessWidget {
         children: List.generate(HomePageCategoryJson.length, (index) {
           return GestureDetector(
             onTap: () {
+              bool isPro = HomePageCategoryJson[index]['pro'];
               String path = HomePageCategoryJson[index]['path'];
-              goRouter.pushNamed(path);
+              if (isPro) {
+                showProBottomSheet(context);
+              } else {
+                goRouter.pushNamed(path);
+              }
               HapticFeedback.selectionClick();
             },
             child: Container(

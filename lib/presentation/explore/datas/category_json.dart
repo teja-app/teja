@@ -5,16 +5,19 @@ const List HomePageCategoryJson = [
     'icon': 'assets/background/inspiration.svg',
     'title': 'Inspire',
     'path': RootPath.inspiration,
+    'pro': false,
   },
   {
     'icon': 'assets/background/journal.svg',
     'title': 'Journal',
     'path': RootPath.journalCategory,
+    'pro': false,
   },
   {
     'icon': 'assets/background/echo.svg',
     'title': 'Echo',
     'path': RootPath.echo,
+    'pro': true,
   },
 ];
 

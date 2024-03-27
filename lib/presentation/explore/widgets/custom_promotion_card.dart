@@ -1,3 +1,4 @@
+import 'package:teja/presentation/pro/pro_sheet.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:teja/theme/padding.dart';
 import 'package:flutter/material.dart';
@@ -48,9 +49,10 @@ class CustomPromotionCard extends StatelessWidget {
                     style: textTheme.titleMedium,
                   ),
                 ),
-                const Button(
+                Button(
                   text: 'Know more',
                   buttonType: ButtonType.primary,
+                  onPressed: () => showProBottomSheet(context),
                   // onPressed: () => {},
                 ),
               ],
