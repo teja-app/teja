@@ -117,36 +117,31 @@ class _HomePageState extends State<HomePage> {
                 locale: 'en_ISO',
               ),
               const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Adjust spacing as needed
-                children: [
-                  Button(
-                    icon: AntDesign.addfile,
-                    text: "Create a Journal Entry",
-                    onPressed: () {
-                      HapticFeedback.selectionClick();
-                      goRouter.pushNamed(RootPath.journalCategory);
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
               if (store.selectedDate != null && now.compareTo(store.selectedDate!) > 0) ...[
-                const FlexibleHeightBox(
-                  gridWidth: 4,
-                  tabletGridWidth: 5,
-                  desktopGridWidth: 6,
-                  child: JournalEntriesWidget(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Adjust spacing as needed
+                  children: [
+                    Button(
+                      icon: AntDesign.addfile,
+                      text: "Create a Journal Entry",
+                      onPressed: () {
+                        HapticFeedback.selectionClick();
+                        goRouter.pushNamed(RootPath.journalCategory);
+                      },
+                    ),
+                  ],
                 ),
+                const SizedBox(height: 10),
+                JournalEntriesWidget(),
                 const FlexibleHeightBox(
                   gridWidth: 4,
                   tabletGridWidth: 5,
                   desktopGridWidth: 6,
                   child: MoodTrackerWidget(),
                 ),
+                const SizedBox(height: smallSpacer),
+                const LatestTemplatesUsed(),
               ],
-              const SizedBox(height: smallSpacer),
-              const LatestTemplatesUsed(),
               if (store.selectedDate != null && now.compareTo(store.selectedDate!) < 0) const CountdownTimer(),
               const SizedBox(height: 10),
             ],

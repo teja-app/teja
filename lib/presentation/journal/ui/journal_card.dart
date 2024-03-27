@@ -13,6 +13,7 @@ Widget journalEntryLayout(JournalTemplateEntity template, JournalEntryEntity jou
   final textTheme = Theme.of(context).textTheme;
   final firstQuestion = journalEntry.questions?.isNotEmpty == true ? journalEntry.questions!.first : null;
 
+  print("journalEntries ${journalEntry}");
   return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
     GestureDetector(
       onTap: () {

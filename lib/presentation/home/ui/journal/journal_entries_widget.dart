@@ -12,6 +12,7 @@ import 'package:teja/domain/redux/journal/journal_logs/journal_logs_actions.dart
 import 'package:teja/presentation/journal/ui/journal_card.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/button.dart';
+import 'package:teja/shared/common/flexible_height_box.dart';
 
 class JournalEntriesWidget extends StatefulWidget {
   const JournalEntriesWidget({Key? key}) : super(key: key);
@@ -32,7 +33,7 @@ class _JournalEntriesWidgetState extends State<JournalEntriesWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return StoreConnector<AppState, _ViewModel>(
+    final mainBody = StoreConnector<AppState, _ViewModel>(
       converter: _ViewModel.fromStore,
       builder: (context, viewModel) {
         String formattedDate =
@@ -40,20 +41,26 @@ class _JournalEntriesWidgetState extends State<JournalEntriesWidget> {
 
         final GoRouter goRouter = GoRouter.of(context);
         var journalEntries = viewModel.journalLogsByDate[formattedDate];
-        if (journalEntries != null && journalEntries.isEmpty) {
-          return ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: journalEntries.length,
-            itemBuilder: (context, index) {
-              var entry = journalEntries[index];
-              return journalEntryLayout(viewModel.templatesById[entry.templateId]!, entry, context);
-            },
+        if (journalEntries != null && !journalEntries.isEmpty) {
+          return FlexibleHeightBox(
+            gridWidth: 4,
+            tabletGridWidth: 5,
+            desktopGridWidth: 6,
+            child: ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: journalEntries.length,
+              itemBuilder: (context, index) {
+                var entry = journalEntries[index];
+                return journalEntryLayout(viewModel.templatesById[entry.templateId]!, entry, context);
+              },
+            ),
           );
         }
-        return const SizedBox(height: 0);
+        return Container();
       },
     );
+    return mainBody;
   }
 }
 
