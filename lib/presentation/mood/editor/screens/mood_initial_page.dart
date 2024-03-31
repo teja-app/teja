@@ -40,11 +40,21 @@ class MoodInitialPageState extends State<MoodInitialPage> {
                 onMoodSelected: (int moodIndex) {
                   final store = StoreProvider.of<AppState>(context);
                   if (currentMoodLogId != null) {
-                    store.dispatch(TriggerSelectMoodAction(moodRating: moodIndex, moodLogId: currentMoodLogId));
+                    store.dispatch(
+                      TriggerSelectMoodAction(
+                        moodRating: moodIndex,
+                        moodLogId: currentMoodLogId,
+                        timestamp: viewModel.selectedDate,
+                      ),
+                    );
                   } else {
-                    store.dispatch(TriggerSelectMoodAction(moodRating: moodIndex));
+                    store.dispatch(
+                      TriggerSelectMoodAction(
+                        moodRating: moodIndex,
+                        timestamp: viewModel.selectedDate,
+                      ),
+                    );
                   }
-                  store.dispatch(const ChangePageAction(1));
                 },
               ),
             ],
@@ -57,12 +67,14 @@ class MoodInitialPageState extends State<MoodInitialPage> {
 
 class MoodEditorViewModel {
   final MoodLogEntity? currentMoodLog;
+  final DateTime? selectedDate;
 
-  MoodEditorViewModel({this.currentMoodLog});
+  MoodEditorViewModel({this.currentMoodLog, this.selectedDate});
 
   static MoodEditorViewModel fromStore(Store<AppState> store) {
     return MoodEditorViewModel(
       currentMoodLog: store.state.moodEditorState.currentMoodLog,
+      selectedDate: store.state.homeState.selectedDate,
     );
   }
 }

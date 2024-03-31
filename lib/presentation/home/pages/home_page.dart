@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:icons_flutter/icons_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/home/home_actions.dart';
+import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
+import 'package:teja/domain/redux/mood/list/actions.dart';
 import 'package:teja/presentation/home/ui/count_down_timer.dart';
-import 'package:teja/presentation/home/ui/journal/frequently_used_template.dart';
 import 'package:teja/presentation/home/ui/journal/journal_entries_widget.dart';
 import 'package:teja/presentation/home/ui/journal/last_used_template.dart';
 import 'package:teja/presentation/home/ui/mood/mood_tracker.dart';
@@ -19,8 +20,7 @@ import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/presentation/navigation/leadingContainer.dart';
 import 'package:teja/router.dart';
 import 'package:teja/calendar_timeline/calendar_timeline.dart';
-import 'package:teja/shared/common/button.dart';
-import 'package:teja/shared/common/flexible_height_box.dart';
+import 'package:teja/shared/common/bento_box.dart';
 import 'package:teja/theme/padding.dart';
 
 class HomePage extends StatefulWidget {
@@ -32,6 +32,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool showCalendar = false;
+  static const int pageSize = 3000;
 
   get bottomNavigationBar => null;
 
@@ -74,6 +75,32 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    // itemPositionsListener.itemPositions.addListener(_loadMoreDataIfNeeded);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final store = StoreProvider.of<AppState>(context);
+      store.dispatch(ResetMoodLogsListAction());
+      store.dispatch(ResetJournalEntriesListAction());
+    });
+  }
+
+  void _loadInitialData() {
+    final Store<AppState> store = StoreProvider.of<AppState>(context);
+    // Assuming that the moodLogs list is empty after reset, load the first page
+    if (store.state.moodLogListState.moodLogs.isEmpty) {
+      store.dispatch(LoadMoodLogsListAction(0, pageSize));
+      store.dispatch(LoadJournalEntriesListAction(0, pageSize));
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _loadInitialData();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Posthog posthog = Posthog();
     posthog.screen(
@@ -89,6 +116,7 @@ class _HomePageState extends State<HomePage> {
 
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
+    final brightness = Theme.of(context).colorScheme.brightness;
 
     final GoRouter goRouter = GoRouter.of(context);
     final Widget mainBody = StoreConnector<AppState, _ViewModel>(
@@ -96,6 +124,8 @@ class _HomePageState extends State<HomePage> {
       builder: (context, store) {
         return SingleChildScrollView(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 getGreetingMessage(),
@@ -116,30 +146,78 @@ class _HomePageState extends State<HomePage> {
                 selectableDayPredicate: (date) => date.isBefore(tomorrow),
                 locale: 'en_ISO',
               ),
-              const SizedBox(height: 10),
               if (store.selectedDate != null && now.compareTo(store.selectedDate!) > 0) ...[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Adjust spacing as needed
+                const JournalEntriesWidget(),
+                const MoodTrackerWidget(),
+                const SizedBox(height: spacer),
+                Column(
                   children: [
-                    Button(
-                      icon: AntDesign.addfile,
-                      text: "Create a Journal Entry",
-                      onPressed: () {
-                        HapticFeedback.selectionClick();
-                        goRouter.pushNamed(RootPath.journalCategory);
-                      },
+                    Text("What would you like to journal?", style: textTheme.titleLarge),
+                    const SizedBox(height: smallSpacer),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            HapticFeedback.selectionClick();
+                            goRouter.pushNamed(RootPath.journalCategory);
+                          }, // Call the onPressed callback when the button is tapped
+                          child: BentoBox(
+                            gridWidth: 2,
+                            gridHeight: 1.5,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/journal/fountain_pen.svg',
+                                  width: 50,
+                                  height: 50,
+                                  colorFilter: ColorFilter.mode(
+                                    brightness == Brightness.light ? Colors.black : Colors.white,
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                                Text(
+                                  "Pen Down",
+                                  style: textTheme.titleLarge,
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            HapticFeedback.selectionClick();
+                            goRouter.pushNamed(RootPath.moodEdit);
+                          }, // Call
+                          child: BentoBox(
+                            gridWidth: 2,
+                            gridHeight: 1.5,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/mood/lotus.svg',
+                                  width: 50,
+                                  height: 50,
+                                  colorFilter: ColorFilter.mode(
+                                    brightness == Brightness.light ? Colors.black : Colors.white,
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                                Text(
+                                  "Track Mood",
+                                  style: textTheme.titleLarge,
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
-                JournalEntriesWidget(),
-                const FlexibleHeightBox(
-                  gridWidth: 4,
-                  tabletGridWidth: 5,
-                  desktopGridWidth: 6,
-                  child: MoodTrackerWidget(),
-                ),
-                const SizedBox(height: smallSpacer),
+                const SizedBox(height: spacer),
                 const LatestTemplatesUsed(),
               ],
               if (store.selectedDate != null && now.compareTo(store.selectedDate!) < 0) const CountdownTimer(),
@@ -155,7 +233,7 @@ class _HomePageState extends State<HomePage> {
         elevation: 0.0,
         leading: leadingNavBar(context),
         leadingWidth: 72,
-        actions: [
+        actions: const [
           // Container(
           //   margin: const EdgeInsets.only(right: 20),
           //   child: IconButton(

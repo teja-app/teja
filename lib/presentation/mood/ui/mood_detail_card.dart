@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:teja/domain/entities/mood_log.dart';
 import 'package:teja/presentation/mood/ui/attachement_image.dart';
 import 'package:teja/router.dart';
+import 'package:teja/shared/common/flexible_height_box.dart';
 
 Map<String, String> _getMoodEntryText(MoodLogEntity moodLog, BuildContext context) {
   String mainText = '';
@@ -86,9 +87,8 @@ Widget moodLogLayout(MoodLogEntity? moodLog, BuildContext context, [MoodLogLayou
           queryParameters: {"id": moodId},
         );
       },
-      child: Card(
-        margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        elevation: 0.5, // Adjusts the elevation for shadow effect
+      child: FlexibleHeightBox(
+        gridWidth: 4,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 10.0),
           child: Column(

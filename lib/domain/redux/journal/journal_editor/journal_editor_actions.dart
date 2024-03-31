@@ -82,6 +82,11 @@ class ClearJournalEditor {
 }
 
 @immutable
+class ClearJournalEditorSuccess {
+  const ClearJournalEditorSuccess();
+}
+
+@immutable
 class InitializeJournalEditorSuccessAction {
   final JournalEntryEntity journalEntry;
 

@@ -1,6 +1,10 @@
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
+import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/journal/detail/journal_detail_actions.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.dart';
+import 'package:teja/domain/redux/journal/journal_logs/journal_logs_actions.dart';
+import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
 import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart';
 import 'package:teja/infrastructure/repositories/journal_entry_repository.dart';
 import 'package:isar/isar.dart';
@@ -12,6 +16,33 @@ class JournalEditorSaga {
     yield TakeEvery(_handleInitializeJournalEditor, pattern: InitializeJournalEditor);
     yield TakeEvery(_handleSaveJournalEntry, pattern: SaveJournalEntry);
     yield TakeEvery(_handleUpdateQuestionAnswer, pattern: UpdateQuestionAnswer);
+    yield TakeEvery(_handleClearJournalFormAction, pattern: ClearJournalEditor);
+  }
+
+  _handleClearJournalFormAction({required ClearJournalEditor action}) sync* {
+    // Select the current mood log ID from the app state
+    var currentJournalEntry = Result<String?>();
+    yield Select(
+      selector: (AppState state) => state.journalEditorState.currentJournalEntry?.id,
+      result: currentJournalEntry,
+    );
+    String? journalEntryId = currentJournalEntry.value;
+
+    if (journalEntryId != null) {
+      // If the mood log ID is present, dispatch the necessary actions
+      yield Put(ResetJournalEntriesListAction());
+      yield Put(LoadJournalDetailAction(journalEntryId));
+      yield Put(const FetchJournalLogsAction());
+      yield Put(LoadJournalEntriesListAction(0, 3000));
+      yield Put(const ClearJournalEditorSuccess());
+    } else {
+      // Handle the scenario when the mood log ID is not present
+      // Possibly dispatch other actions or handle state updates
+      yield Put(ResetJournalEntriesListAction());
+      yield Put(const FetchJournalLogsAction());
+      yield Put(LoadJournalEntriesListAction(0, 3000));
+      yield Put(const ClearJournalEditorSuccess());
+    }
   }
 
   _handleInitializeJournalEditor({required InitializeJournalEditor action}) sync* {

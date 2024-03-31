@@ -13,6 +13,7 @@ import 'package:teja/presentation/journal/ui/journal_card.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
+import 'package:teja/theme/padding.dart';
 
 class JournalEntriesWidget extends StatefulWidget {
   const JournalEntriesWidget({Key? key}) : super(key: key);
@@ -33,6 +34,7 @@ class _JournalEntriesWidgetState extends State<JournalEntriesWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     final mainBody = StoreConnector<AppState, _ViewModel>(
       converter: _ViewModel.fromStore,
       builder: (context, viewModel) {
@@ -42,19 +44,28 @@ class _JournalEntriesWidgetState extends State<JournalEntriesWidget> {
         final GoRouter goRouter = GoRouter.of(context);
         var journalEntries = viewModel.journalLogsByDate[formattedDate];
         if (journalEntries != null && !journalEntries.isEmpty) {
-          return FlexibleHeightBox(
-            gridWidth: 4,
-            tabletGridWidth: 5,
-            desktopGridWidth: 6,
-            child: ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: journalEntries.length,
-              itemBuilder: (context, index) {
-                var entry = journalEntries[index];
-                return journalEntryLayout(viewModel.templatesById[entry.templateId]!, entry, context);
-              },
-            ),
+          return Column(
+            children: [
+              const SizedBox(height: spacer),
+              Text(
+                "Journals",
+                style: textTheme.titleMedium,
+              ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: List.generate(journalEntries.length, (index) {
+                    var entry = journalEntries[index];
+                    // Assuming journalEntryLayout is a method that returns a widget for displaying a journal entry
+                    // Wrap each item with Padding for spacing or any additional styling
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8.0), // Adjust the spacing as needed
+                      child: journalEntryLayout(viewModel.templatesById[entry.templateId]!, entry, context),
+                    );
+                  }),
+                ),
+              )
+            ],
           );
         }
         return Container();

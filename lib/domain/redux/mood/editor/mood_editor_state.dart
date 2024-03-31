@@ -15,7 +15,7 @@ class MoodEditorState {
 
   const MoodEditorState({
     this.currentMoodLog,
-    this.currentPageIndex = 1,
+    this.currentPageIndex = 0,
     this.isSubmitting = false,
     this.submissionSuccess = false,
     this.selectedFactorsForFeelings,

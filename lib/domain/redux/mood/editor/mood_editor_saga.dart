@@ -58,12 +58,14 @@ class MoodEditorSaga {
       yield Put(ResetMoodLogsListAction());
       yield Put(LoadMoodDetailAction(moodLogId));
       yield Put(const FetchMoodLogsAction());
+      yield Put(LoadMoodLogsListAction(0, 3000));
       yield Put(const ClearMoodEditorSuccessFormAction());
     } else {
       // Handle the scenario when the mood log ID is not present
       // Possibly dispatch other actions or handle state updates
       yield Put(ResetMoodLogsListAction());
       yield Put(const FetchMoodLogsAction());
+      yield Put(LoadMoodLogsListAction(0, 3000));
       yield Put(const ClearMoodEditorSuccessFormAction());
     }
   }
@@ -205,6 +207,7 @@ class MoodEditorSaga {
 
       // Dispatch an action to update the Redux state
       yield Put(SelectMoodSuccessAction(moodLogRepository.toEntity(newMoodLog)));
+      yield Put(const ChangePageAction(1));
     }
 
     yield Put(MoodUpdatedAction("Successful"));

@@ -5,8 +5,18 @@ final textTheme = ThemeData.light().textTheme;
 final ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
   cardColor: Colors.black,
-  textTheme: GoogleFonts.ubuntuTextTheme(
+  textTheme: GoogleFonts.notoSansTextTheme(
     ThemeData(brightness: Brightness.dark).textTheme,
+  ).copyWith(
+    titleMedium: GoogleFonts.outfit(
+      textStyle: const TextTheme().titleMedium,
+    ),
+    titleLarge: GoogleFonts.outfit(
+      textStyle: const TextTheme().titleLarge,
+    ),
+    titleSmall: GoogleFonts.outfit(
+      textStyle: const TextTheme().titleSmall,
+    ),
   ),
   cardTheme: CardTheme(color: Colors.grey.shade800),
   popupMenuTheme: PopupMenuThemeData(

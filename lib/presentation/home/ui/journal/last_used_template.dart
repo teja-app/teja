@@ -47,10 +47,6 @@ class LatestTemplatesUsed extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Padding(
-            //   padding: const EdgeInsets.all(8.0),
-            //   child: Text('Latest Templates Used', style: Theme.of(context).textTheme.headline6),
-            // ),
             Padding(
               padding: const EdgeInsets.only(left: appPadding, right: appPadding),
               child: Text('Latest Templates Used', style: textTheme.titleLarge),

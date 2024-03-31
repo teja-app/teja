@@ -13,12 +13,12 @@ const List HomePageCategoryJson = [
     'path': RootPath.journalCategory,
     'pro': false,
   },
-  {
-    'icon': 'assets/background/echo.svg',
-    'title': 'Echo',
-    'path': RootPath.echo,
-    'pro': true,
-  },
+  // {
+  //   'icon': 'assets/background/echo.svg',
+  //   'title': 'Echo',
+  //   'path': RootPath.echo,
+  //   'pro': true,
+  // },
 ];
 
 const List PersonalJournalingCategories1 = [

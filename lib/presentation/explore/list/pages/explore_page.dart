@@ -71,6 +71,8 @@ class ExplorePageState extends State<ExplorePage> {
     return SingleChildScrollView(
       padding: const EdgeInsets.only(bottom: spacer),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Stack(
             alignment: Alignment.topCenter,
@@ -142,9 +144,6 @@ class ExplorePageState extends State<ExplorePage> {
             },
           ),
           const SizedBox(height: smallSpacer),
-          //promotion card
-          const CustomPromotionCard(),
-          const SizedBox(height: smallSpacer),
           //feature courses
           const Padding(
             padding: EdgeInsets.only(left: appPadding, right: appPadding),
@@ -155,36 +154,35 @@ class ExplorePageState extends State<ExplorePage> {
           ),
           const SizedBox(height: smallSpacer),
           StoreConnector<AppState, List<JournalTemplateEntity>>(
-              converter: (store) => store.state.journalTemplateState.templates.take(5).toList(),
-              builder: (context, templates) {
-                return SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.only(
-                    left: appPadding,
-                    right: appPadding - 10.0,
-                  ),
-                  child: Wrap(
-                    children: List.generate(viewModel.featuredTemplates.length, (index) {
-                      var data = viewModel.featuredTemplates[index];
-                      JournalTemplateEntity? journalTemplateEntity = viewModel.templatesById[data.template];
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 15.0, bottom: 20.0),
-                        child: GestureDetector(
-                          onTap: () {},
-                          child: JournalTemplateCard(
-                            template: journalTemplateEntity!,
-                            templateType: JournalTemplateCardCardType.bento,
-                          ),
-                        ),
-                      );
-                    }),
-                  ),
-                );
-              }),
+            converter: (store) => store.state.journalTemplateState.templates.take(5).toList(),
+            builder: (context, templates) {
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.only(
+                  left: appPadding,
+                  right: appPadding - 10.0,
+                ),
+                child: Wrap(
+                  children: List.generate(viewModel.featuredTemplates.length, (index) {
+                    var data = viewModel.featuredTemplates[index];
+                    JournalTemplateEntity? journalTemplateEntity = viewModel.templatesById[data.template];
+                    return GestureDetector(
+                      onTap: () {},
+                      child: JournalTemplateCard(
+                        template: journalTemplateEntity!,
+                        templateType: JournalTemplateCardCardType.bento,
+                      ),
+                    );
+                  }),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: smallSpacer),
           const LatestTemplatesUsed(),
           const SizedBox(height: smallSpacer),
           const FrequentlyUsedTemplates(),
-          const SizedBox(height: spacer - 20.0),
+          // const SizedBox(height: spacer - 20.0),
         ],
       ),
     );

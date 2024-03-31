@@ -40,32 +40,33 @@ class JournalCategoriesPage extends StatelessWidget {
           return SingleChildScrollView(
             child: Column(
               children: [
-                BentoBox(
-                  gridHeight: 4,
-                  gridWidth: 4,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(
-                        height: 150,
-                        child: RiveAnimation.asset('assets/journal/girl_and_dog.riv'),
-                      ),
-                      const SizedBox(height: miniSpacer),
-                      Text(
-                        "Unlock Your Journey",
-                        style: textTheme.titleLarge,
-                      ),
-                      const SizedBox(height: miniSpacer),
-                      Text(
-                        "Imagine a space where every tool is tailored just for you, helping to illuminate paths you've yet to explore. With our Pro features, dive deeper into your personal growth journey. Where would you like to start?",
+                SizedBox(
+                  height: spacer,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(
+                      height: 150,
+                      child: RiveAnimation.asset('assets/journal/girl_and_dog.riv'),
+                    ),
+                    const SizedBox(height: smallSpacer),
+                    Text(
+                      "Unlock Your Journey",
+                      style: textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: smallSpacer),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 20),
+                      child: Text(
+                        "Imagine a space where every tool is tailored just for you, helping to illuminate paths you've yet to explore.",
                         style: textTheme.labelSmall,
                       ),
-                      const Button(
-                        text: "Dive In",
-                        icon: AntDesign.lock1,
-                      )
-                    ],
-                  ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: spacer,
                 ),
                 GridView.builder(
                   // You might not need these if using Expanded, but they are here if you choose shrinkWrap
@@ -84,21 +85,23 @@ class JournalCategoriesPage extends StatelessWidget {
                       onTap: () => navigateToCategoryDetail(context, category.id),
                       child: BentoBox(
                         gridWidth: 1,
-                        gridHeight: 1,
+                        gridHeight: 2,
+                        margin: 16,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             if (category.featureImage != null)
                               Image.network(
                                 'https://f000.backblazeb2.com/file/swayam-dev-master/${category.featureImage?.sizes.thumbnail?.filename}',
-                                width: 100,
-                                height: 100,
+                                width: 50,
+                                height: 50,
                                 fit: BoxFit.cover,
                               ),
                             const SizedBox(height: smallSpacer),
                             Text(
+                              maxLines: 3,
                               category.name,
-                              style: textTheme.titleMedium,
+                              style: textTheme.titleSmall,
                             ),
                           ],
                         ),

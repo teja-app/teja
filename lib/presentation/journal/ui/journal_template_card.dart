@@ -49,11 +49,15 @@ class JournalTemplateCard extends StatelessWidget {
         children: <Widget>[
           Text(
             template.title,
+            maxLines: 2,
             style: textTheme.titleMedium,
+            overflow: TextOverflow.ellipsis, // Add ellipsis to handle overflow
           ),
           Text(
             template.description,
-            style: textTheme.labelMedium,
+            style: textTheme.bodySmall,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis, // Add ellipsis to handle overflow
           ),
           // Add more details here if needed
         ],

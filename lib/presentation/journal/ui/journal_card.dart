@@ -8,6 +8,8 @@ import 'package:teja/domain/entities/journal_entry_entity.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/router.dart';
+import 'package:teja/shared/common/bento_box.dart';
+import 'package:teja/shared/common/flexible_height_box.dart';
 
 Widget journalEntryLayout(JournalTemplateEntity template, JournalEntryEntity journalEntry, BuildContext context) {
   final textTheme = Theme.of(context).textTheme;
@@ -26,9 +28,8 @@ Widget journalEntryLayout(JournalTemplateEntity template, JournalEntryEntity jou
           },
         );
       },
-      child: Card(
-        margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        elevation: 0.5, // Adjust the elevation for shadow effect
+      child: FlexibleHeightBox(
+        gridWidth: 4,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 10.0),
           child: Column(

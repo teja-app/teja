@@ -1,9 +1,9 @@
 PODS:
-  - AppAuth (1.6.2):
-    - AppAuth/Core (= 1.6.2)
-    - AppAuth/ExternalUserAgent (= 1.6.2)
-  - AppAuth/Core (1.6.2)
-  - AppAuth/ExternalUserAgent (1.6.2):
+  - AppAuth (1.7.3):
+    - AppAuth/Core (= 1.7.3)
+    - AppAuth/ExternalUserAgent (= 1.7.3)
+  - AppAuth/Core (1.7.3)
+  - AppAuth/ExternalUserAgent (1.7.3):
     - AppAuth/Core
   - connectivity_plus (0.0.1):
     - Flutter
@@ -79,12 +79,12 @@ PODS:
   - posthog_flutter (0.0.1):
     - Flutter
     - PostHog (~> 2.0)
-  - ReachabilitySwift (5.0.0)
+  - ReachabilitySwift (5.2.1)
   - rive_common (0.0.1):
     - Flutter
-  - SDWebImage (5.19.0):
-    - SDWebImage/Core (= 5.19.0)
-  - SDWebImage/Core (5.19.0)
+  - SDWebImage (5.19.1):
+    - SDWebImage/Core (= 5.19.1)
+  - SDWebImage/Core (5.19.1)
   - Sentry/HybridSDK (8.15.2):
     - SentryPrivate (= 8.15.2)
   - sentry_flutter (0.0.1):
@@ -180,7 +180,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
-  AppAuth: 3bb1d1cd9340bd09f5ed189fb00b1cc28e1e8570
+  AppAuth: a13994980c1ec792f7e2e665acd4d4aa6be43240
   connectivity_plus: bf0076dd84a130856aa636df1c71ccaff908fa1d
   device_info_plus: c6fb39579d0f423935b0c9ce7ee2f44b71b9fce6
   DKImagePickerController: b512c28220a2b8ac7419f21c491fc8534b7601ac
@@ -202,9 +202,9 @@ SPEC CHECKSUMS:
   path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
   PostHog: cec53400d07af379cc46c8982a757b2ecad48c9e
   posthog_flutter: 080dc6e4638a25095095965517ca84ce85581ef0
-  ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
+  ReachabilitySwift: 5ae15e16814b5f9ef568963fb2c87aeb49158c66
   rive_common: 3a4c254c6e4db7e4b9e05daeb3d1f47ae4f7bf76
-  SDWebImage: 981fd7e860af070920f249fd092420006014c3eb
+  SDWebImage: 40b0b4053e36c660a764958bff99eed16610acbb
   Sentry: 6f5742b4c47c17c9adcf265f6f328cf4a0ed1923
   sentry_flutter: 2c309a1d4b45e59d02cfa15795705687f1e2081b
   SentryPrivate: b2f7996f37781080f04a946eb4e377ff63c64195

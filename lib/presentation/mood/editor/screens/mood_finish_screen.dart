@@ -8,6 +8,7 @@ import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 import 'package:rive/rive.dart';
+import 'package:teja/theme/padding.dart';
 
 class FinishScreenModel {
   final int moodRating;
@@ -101,11 +102,10 @@ class FinishScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
                     ],
                   ),
                 ),
-              const SizedBox(height: 50),
+              const SizedBox(height: smallSpacer),
               Button(
                 text: 'Skip  & Finish',
                 onPressed: onFinish,

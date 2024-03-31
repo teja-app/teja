@@ -84,10 +84,10 @@ class SettingsPage extends StatelessWidget {
                   //   title: const Text('Preferences'),
                   //   onTap: () => GoRouter.of(context).push('/settings/perferences'),
                   // ),
-                  ListTile(
-                    title: const Text('Notification Settings'),
-                    onTap: () => GoRouter.of(context).push('/settings/notification'),
-                  ),
+                  // ListTile(
+                  //   title: const Text('Notification Settings'),
+                  //   onTap: () => GoRouter.of(context).push('/settings/notification'),
+                  // ),
                   const Divider(),
                   const Padding(
                     padding: EdgeInsets.all(8.0),
@@ -165,12 +165,12 @@ class SettingsPage extends StatelessWidget {
                       _launchURL('https://teja.app/privacy');
                     },
                   ),
-                  ListTile(
-                    title: const Text('Acknowledgement'),
-                    onTap: () {
-                      // Navigate to Acknowledgement sub-page
-                    },
-                  ),
+                  // ListTile(
+                  //   title: const Text('Acknowledgement'),
+                  //   onTap: () {
+                  //     // Navigate to Acknowledgement sub-page
+                  //   },
+                  // ),
                   // ... Other application related settings
                 ],
               ),

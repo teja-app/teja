@@ -37,17 +37,12 @@ class CategoryDetailPage extends StatelessWidget {
                     Center(
                       child: Image.network(
                         'https://f000.backblazeb2.com/file/swayam-dev-master/${vm.category!.featureImage?.sizes.card?.filename}',
-                        width: 300,
-                        height: 300,
+                        width: 200,
+                        height: 200,
                         fit: BoxFit.cover,
                       ),
                     ),
-                  const SizedBox(height: 24),
-                  Text(
-                    vm.category!.name,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: smallSpacer),
                   Text(
                     vm.category!.description,
                     style: Theme.of(context).textTheme.bodySmall,

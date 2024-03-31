@@ -22,7 +22,7 @@ class CustomCategoryCard extends StatelessWidget {
     return Container(
       alignment: Alignment.center,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: List.generate(HomePageCategoryJson.length, (index) {
           return GestureDetector(
             onTap: () {

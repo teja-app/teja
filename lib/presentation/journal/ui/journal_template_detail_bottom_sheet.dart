@@ -46,7 +46,14 @@ class JournalTemplateDetailBottomSheet extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(template.title, style: textTheme.titleLarge),
+              Flexible(
+                // Wrapping Text widget with Flexible
+                child: Text(
+                  template.title,
+                  style: textTheme.titleLarge,
+                  overflow: TextOverflow.clip, // Add ellipsis to handle overflow
+                ),
+              ),
               IconButton(
                 icon: const Icon(AntDesign.close),
                 onPressed: () => Navigator.pop(context),

@@ -3,9 +3,15 @@ import 'package:google_fonts/google_fonts.dart';
 
 final ThemeData lightTheme = ThemeData(
   cardColor: Colors.white,
-  textTheme: GoogleFonts.ubuntuTextTheme().copyWith(
+  textTheme: GoogleFonts.notoSansTextTheme().copyWith(
     bodyMedium: GoogleFonts.wixMadeforText(
       textStyle: const TextTheme().bodyMedium,
+    ),
+    bodyLarge: GoogleFonts.wixMadeforText(
+      textStyle: const TextTheme().bodyLarge,
+    ),
+    bodySmall: GoogleFonts.wixMadeforText(
+      textStyle: const TextTheme().bodySmall,
     ),
   ),
   cardTheme: const CardTheme(color: Colors.white),
