@@ -26,7 +26,8 @@ class _FetchMasterViewState extends State<FetchMasterView> {
           children: <Widget>[
             if (vm.isLoading) ...[
               const CircularProgressIndicator(),
-              const Text("Fetching configuration data offline mode"),
+              const Text(
+                  "Fetching configuration to use application in offline mode, please be connected to the internet"),
             ] else if (vm.isFetchSuccessful)
               const Text('Fetch successful!')
             else ...[

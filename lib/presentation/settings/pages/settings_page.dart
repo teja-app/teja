@@ -76,10 +76,10 @@ class SettingsPage extends StatelessWidget {
                       gridHeight: 1.5,
                       child: FetchMasterView(),
                     ),
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text('Personalize', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  ),
+                  // const Padding(
+                  //   padding: EdgeInsets.all(8.0),
+                  //   child: Text('Personalize', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  // ),
                   // ListTile(
                   //   title: const Text('Preferences'),
                   //   onTap: () => GoRouter.of(context).push('/settings/perferences'),
