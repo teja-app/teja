@@ -170,7 +170,6 @@ class ExplorePageState extends State<ExplorePage> {
                       onTap: () {},
                       child: JournalTemplateCard(
                         template: journalTemplateEntity!,
-                        templateType: JournalTemplateCardCardType.bento,
                       ),
                     );
                   }),
