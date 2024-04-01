@@ -82,22 +82,11 @@ class _HomePageState extends State<HomePage> {
       final store = StoreProvider.of<AppState>(context);
       store.dispatch(ResetMoodLogsListAction());
       store.dispatch(ResetJournalEntriesListAction());
+      if (store.state.moodLogListState.moodLogs.isEmpty) {
+        store.dispatch(LoadMoodLogsListAction(0, pageSize));
+        store.dispatch(LoadJournalEntriesListAction(0, pageSize));
+      }
     });
-  }
-
-  void _loadInitialData() {
-    final Store<AppState> store = StoreProvider.of<AppState>(context);
-    // Assuming that the moodLogs list is empty after reset, load the first page
-    if (store.state.moodLogListState.moodLogs.isEmpty) {
-      store.dispatch(LoadMoodLogsListAction(0, pageSize));
-      store.dispatch(LoadJournalEntriesListAction(0, pageSize));
-    }
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _loadInitialData();
   }
 
   @override

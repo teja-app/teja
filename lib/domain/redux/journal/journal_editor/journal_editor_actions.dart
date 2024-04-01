@@ -7,8 +7,9 @@ import 'package:teja/domain/redux/core_actions.dart';
 class InitializeJournalEditor {
   final String? journalEntryId;
   final JournalTemplateEntity? template; // Make templateId optional
+  final DateTime? timestamp;
 
-  const InitializeJournalEditor({this.journalEntryId, this.template});
+  const InitializeJournalEditor({this.journalEntryId, this.template, this.timestamp});
 }
 
 @immutable

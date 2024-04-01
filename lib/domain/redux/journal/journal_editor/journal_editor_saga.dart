@@ -72,7 +72,7 @@ class JournalEditorSaga {
         JournalEntry newJournalEntry = JournalEntry()
           ..id = Helpers.generateUniqueId()
           ..templateId = action.template!.id
-          ..timestamp = DateTime.now()
+          ..timestamp = action.timestamp ?? DateTime.now()
           ..createdAt = DateTime.now()
           ..updatedAt = DateTime.now()
           ..questions = journalTemplate.questions
