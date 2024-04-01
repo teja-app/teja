@@ -17,7 +17,7 @@ JournalEditorState _updateQuestionAnswer(JournalEditorState state, UpdateQuestio
   return state.copyWith(currentJournalEntry: state.currentJournalEntry?.copyWith(questions: updatedQuestions));
 }
 
-JournalEditorState _clearJournalEditor(JournalEditorState state, ClearJournalEditor action) {
+JournalEditorState _clearMoodEditorFormSuccess(JournalEditorState state, ClearJournalEditorSuccess action) {
   return JournalEditorState.initialState();
 }
 
@@ -38,7 +38,7 @@ JournalEditorState _changeJournalPage(JournalEditorState state, ChangeJournalPag
 final journalEditorReducer = combineReducers<JournalEditorState>([
   TypedReducer<JournalEditorState, SaveJournalEntry>(_updateJournalEntry),
   TypedReducer<JournalEditorState, UpdateQuestionAnswer>(_updateQuestionAnswer),
-  TypedReducer<JournalEditorState, ClearJournalEditor>(_clearJournalEditor),
+  TypedReducer<JournalEditorState, ClearJournalEditorSuccess>(_clearMoodEditorFormSuccess),
   TypedReducer<JournalEditorState, InitializeJournalEditorSuccessAction>(_initializeJournalEditorSuccess),
   TypedReducer<JournalEditorState, InitializeJournalEditorFailureAction>(_initializeJournalEditorFailure),
   TypedReducer<JournalEditorState, ChangeJournalPageAction>(_changeJournalPage),

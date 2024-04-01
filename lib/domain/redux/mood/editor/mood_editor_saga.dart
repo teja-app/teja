@@ -46,28 +46,33 @@ class MoodEditorSaga {
 
   _handleClearMoodEditorFormAction({required ClearMoodEditorFormAction action}) sync* {
     // Select the current mood log ID from the app state
-    var moodLogIdResult = Result<String?>();
-    yield Select(
-      selector: (AppState state) => state.moodEditorState.currentMoodLog?.id,
-      result: moodLogIdResult,
-    );
-    String? moodLogId = moodLogIdResult.value;
+    yield Try(() sync* {
+      var moodLogIdResult = Result<String?>();
+      yield Select(
+        selector: (AppState state) => state.moodEditorState.currentMoodLog?.id,
+        result: moodLogIdResult,
+      );
+      String? moodLogId = moodLogIdResult.value;
 
-    if (moodLogId != null) {
-      // If the mood log ID is present, dispatch the necessary actions
-      yield Put(ResetMoodLogsListAction());
-      yield Put(LoadMoodDetailAction(moodLogId));
-      yield Put(const FetchMoodLogsAction());
-      yield Put(LoadMoodLogsListAction(0, 3000));
-      yield Put(const ClearMoodEditorSuccessFormAction());
-    } else {
-      // Handle the scenario when the mood log ID is not present
-      // Possibly dispatch other actions or handle state updates
-      yield Put(ResetMoodLogsListAction());
-      yield Put(const FetchMoodLogsAction());
-      yield Put(LoadMoodLogsListAction(0, 3000));
-      yield Put(const ClearMoodEditorSuccessFormAction());
-    }
+      if (moodLogId != null) {
+        // If the mood log ID is present, dispatch the necessary actions
+        yield Put(ResetMoodLogsListAction());
+        yield Put(LoadMoodDetailAction(moodLogId));
+        yield Put(const FetchMoodLogsAction());
+        yield Put(LoadMoodLogsListAction(0, 3000));
+        yield Put(const ClearMoodEditorSuccessFormAction());
+      } else {
+        // Handle the scenario when the mood log ID is not present
+        // Possibly dispatch other actions or handle state updates
+        yield Put(ResetMoodLogsListAction());
+        yield Put(const FetchMoodLogsAction());
+        yield Put(LoadMoodLogsListAction(0, 3000));
+        yield Put(const ClearMoodEditorSuccessFormAction());
+      }
+    }, Catch: (e, s) sync* {
+      print("e.toString() ${e.toString()}");
+      yield Put(const ClearMoodEditorFailureFormAction());
+    });
   }
 
   _handleUpdateBroadFactorsAction({required UpdateBroadFactorsAction action}) sync* {

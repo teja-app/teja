@@ -31,6 +31,7 @@ class JournalEditorScreenState extends State<JournalEditorScreen> {
 
   @override
   void dispose() {
+    print("state.journalEditorState.currentJournalEntry, ${_store.state.journalEditorState.currentJournalEntry?.id}");
     _store.dispatch(const ClearJournalEditor());
     _pageController.dispose();
     super.dispose();
@@ -42,10 +43,12 @@ class JournalEditorScreenState extends State<JournalEditorScreen> {
     return StoreConnector<AppState, JournalEditViewModel>(
       converter: JournalEditViewModel.fromStore,
       builder: (context, viewModel) {
-        // Automatically update the page when the state changes
-        if (_pageController.hasClients && viewModel.currentPageIndex != _pageController.page?.round()) {
-          _pageController.jumpToPage(viewModel.currentPageIndex);
-        }
+        // Schedule a post-frame callback to update the page controller
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_pageController.hasClients && viewModel.currentPageIndex != _pageController.page?.round()) {
+            _pageController.jumpToPage(viewModel.currentPageIndex);
+          }
+        });
 
         return Scaffold(
           appBar: AppBar(

@@ -44,7 +44,7 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
   void _onTextChanged() {
     if (isUserInput) {
       if (_debounce?.isActive ?? false) _debounce!.cancel();
-      _debounce = Timer(const Duration(milliseconds: 1000), _saveAnswer);
+      _debounce = Timer(const Duration(milliseconds: 300), _saveAnswer);
     }
   }
 

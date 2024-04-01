@@ -21,28 +21,32 @@ class JournalEditorSaga {
 
   _handleClearJournalFormAction({required ClearJournalEditor action}) sync* {
     // Select the current mood log ID from the app state
-    var currentJournalEntry = Result<String?>();
-    yield Select(
-      selector: (AppState state) => state.journalEditorState.currentJournalEntry?.id,
-      result: currentJournalEntry,
-    );
-    String? journalEntryId = currentJournalEntry.value;
+    yield Try(() sync* {
+      var currentJournalIdResult = Result<String?>();
+      yield Select(
+        selector: (AppState state) => state.journalEditorState.currentJournalEntry?.id,
+        result: currentJournalIdResult,
+      );
+      String? journalEntryId = currentJournalIdResult.value;
 
-    if (journalEntryId != null) {
-      // If the mood log ID is present, dispatch the necessary actions
-      yield Put(ResetJournalEntriesListAction());
-      yield Put(LoadJournalDetailAction(journalEntryId));
-      yield Put(const FetchJournalLogsAction());
-      yield Put(LoadJournalEntriesListAction(0, 3000));
-      yield Put(const ClearJournalEditorSuccess());
-    } else {
-      // Handle the scenario when the mood log ID is not present
-      // Possibly dispatch other actions or handle state updates
-      yield Put(ResetJournalEntriesListAction());
-      yield Put(const FetchJournalLogsAction());
-      yield Put(LoadJournalEntriesListAction(0, 3000));
-      yield Put(const ClearJournalEditorSuccess());
-    }
+      if (journalEntryId != null) {
+        // If the mood log ID is present, dispatch the necessary actions
+        yield Put(ResetJournalEntriesListAction());
+        yield Put(LoadJournalDetailAction(journalEntryId));
+        yield Put(const FetchJournalLogsAction());
+        yield Put(LoadJournalEntriesListAction(0, 3000));
+        yield Put(const ClearJournalEditorSuccess());
+      } else {
+        // Handle the scenario when the mood log ID is not present
+        // Possibly dispatch other actions or handle state updates
+        yield Put(ResetJournalEntriesListAction());
+        yield Put(const FetchJournalLogsAction());
+        yield Put(LoadJournalEntriesListAction(0, 3000));
+        yield Put(const ClearJournalEditorSuccess());
+      }
+    }, Catch: (e, s) sync* {
+      yield Put(const ClearJournalEditorFailure());
+    });
   }
 
   _handleInitializeJournalEditor({required InitializeJournalEditor action}) sync* {

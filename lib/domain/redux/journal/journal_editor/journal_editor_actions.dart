@@ -88,6 +88,11 @@ class ClearJournalEditorSuccess {
 }
 
 @immutable
+class ClearJournalEditorFailure {
+  const ClearJournalEditorFailure();
+}
+
+@immutable
 class InitializeJournalEditorSuccessAction {
   final JournalEntryEntity journalEntry;
 

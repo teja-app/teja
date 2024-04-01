@@ -52,7 +52,7 @@ class NotesScreenState extends State<NotesScreen> {
 
   void _onTextChanged() {
     _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), _saveComment);
+    _debounce = Timer(const Duration(milliseconds: 300), _saveComment);
   }
 
   void _saveComment() {

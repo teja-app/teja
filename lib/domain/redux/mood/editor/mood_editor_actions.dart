@@ -169,6 +169,11 @@ class ClearMoodEditorSuccessFormAction {
 }
 
 @immutable
+class ClearMoodEditorFailureFormAction {
+  const ClearMoodEditorFailureFormAction();
+}
+
+@immutable
 class AddAttachmentAction {
   final String moodLogId;
   final MoodLogAttachmentEntity attachment;
