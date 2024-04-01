@@ -197,6 +197,7 @@ class MoodEditorSaga {
 
       // Dispatch an action to update the Redux state
       yield Put(SelectMoodSuccessAction(moodLogRepository.toEntity(moodLog)));
+      yield Put(const ChangePageAction(1));
     } else {
       // Create new mood log if no ID is provided
       MoodLog newMoodLog = MoodLog()..moodRating = action.moodRating;

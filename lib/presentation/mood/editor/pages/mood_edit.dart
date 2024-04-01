@@ -56,6 +56,7 @@ class MoodEditPageState extends State<MoodEditPage> {
               _controller.jumpToPage(viewModel.currentPageIndex);
             }
           });
+          final pageCount = viewModel.moodRating == null ? 1 : viewModel.pageCount;
           return Scaffold(
             appBar: AppBar(
               backgroundColor: Colors.transparent,
@@ -69,7 +70,7 @@ class MoodEditPageState extends State<MoodEditPage> {
               ),
               title: SmoothPageIndicator(
                 controller: _controller,
-                count: viewModel.pageCount,
+                count: pageCount == 1 ? 0 : pageCount,
                 effect: const ExpandingDotsEffect(),
                 onDotClicked: (index) => _controller.animateToPage(
                   index,
@@ -88,7 +89,7 @@ class MoodEditPageState extends State<MoodEditPage> {
                         viewModel.changePage(page);
                         FocusManager.instance.primaryFocus?.unfocus();
                       },
-                      itemCount: viewModel.pageCount,
+                      itemCount: pageCount,
                       itemBuilder: (context, index) {
                         if (index == 0) {
                           // Initial page
@@ -124,15 +125,18 @@ class MoodEditViewModel {
   final List<FeelingEntity> feelings;
   final Function(int) changePage;
   final int pageCount;
+  final int? moodRating;
 
   MoodEditViewModel({
     required this.currentPageIndex,
     required this.feelings,
     required this.changePage,
+    this.moodRating,
   }) : pageCount = 5; // +2 for initial and feeling pages
 
   static MoodEditViewModel fromStore(Store<AppState> store) {
     return MoodEditViewModel(
+      moodRating: store.state.moodEditorState.currentMoodLog?.moodRating,
       currentPageIndex: store.state.moodEditorState.currentPageIndex,
       feelings: store.state.moodEditorState.currentMoodLog?.feelings ?? [],
       changePage: (index) => store.dispatch(ChangePageAction(index)),

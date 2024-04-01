@@ -51,7 +51,6 @@ class MoodInitialPageState extends State<MoodInitialPage> {
                     store.dispatch(
                       TriggerSelectMoodAction(
                         moodRating: moodIndex,
-                        timestamp: viewModel.selectedDate,
                       ),
                     );
                   }
