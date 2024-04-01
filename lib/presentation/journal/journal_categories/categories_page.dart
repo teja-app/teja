@@ -68,47 +68,49 @@ class JournalCategoriesPage extends StatelessWidget {
                 const SizedBox(
                   height: spacer,
                 ),
-                GridView.builder(
-                  // You might not need these if using Expanded, but they are here if you choose shrinkWrap
-                  // shrinkWrap: true,
-                  // physics: NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2, // Adjust based on your design needs
-                    childAspectRatio: 1.0, // Adjust based on your design needs
-                  ),
-                  physics: const NeverScrollableScrollPhysics(), // Disable scrolling inside GridView
-                  shrinkWrap: true,
-                  itemCount: vm.categories.length,
-                  itemBuilder: (context, index) {
+                Wrap(
+                  spacing: 8.0, // Space between the boxes horizontally
+                  runSpacing: 16.0, // Space between the boxes vertically
+                  children: List<Widget>.generate(vm.categories.length, (index) {
                     final category = vm.categories[index];
                     return GestureDetector(
                       onTap: () => navigateToCategoryDetail(context, category.id),
                       child: BentoBox(
-                        gridWidth: 1,
-                        gridHeight: 2,
-                        margin: 16,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            if (category.featureImage != null)
-                              Image.network(
-                                'https://f000.backblazeb2.com/file/swayam-dev-master/${category.featureImage?.sizes.thumbnail?.filename}',
-                                width: 50,
-                                height: 50,
-                                fit: BoxFit.cover,
+                          gridWidth: 2,
+                          gridHeight: 3,
+                          margin: 16,
+                          padding: 4,
+                          child: Stack(
+                            children: [
+                              // If featureImage is not null, display the image covering the stack
+                              if (category.featureImage != null)
+                                Positioned.fill(
+                                  child: Image.network(
+                                    'https://f000.backblazeb2.com/file/swayam-dev-master/${category.featureImage?.sizes.thumbnail?.filename}',
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              // Positioned text at the bottom of the stack
+                              Positioned(
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                child: Container(
+                                  padding: EdgeInsets.all(extraSmallSpacer), // Use your defined smallSpacer for padding
+                                  color: Colors.white.withOpacity(1), // Optional: for better readability of text
+                                  child: Text(
+                                    category.name,
+                                    maxLines: 3,
+                                    textAlign: TextAlign.center, // Center the text (optional)
+                                    style: textTheme.titleSmall, // Your predefined text theme
+                                  ),
+                                ),
                               ),
-                            const SizedBox(height: smallSpacer),
-                            Text(
-                              maxLines: 3,
-                              category.name,
-                              style: textTheme.titleSmall,
-                            ),
-                          ],
-                        ),
-                      ),
+                            ],
+                          )),
                     );
-                  },
-                ),
+                  }),
+                )
               ],
             ),
           );

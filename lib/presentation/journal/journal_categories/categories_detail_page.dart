@@ -33,15 +33,19 @@ class CategoryDetailPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (vm.category!.featureImage != null)
-                    Center(
-                      child: Image.network(
-                        'https://f000.backblazeb2.com/file/swayam-dev-master/${vm.category!.featureImage?.sizes.card?.filename}',
-                        width: 200,
-                        height: 200,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                  Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: [
+                      // Image occupies the full width and height of the stack
+                      if (vm.category!.featureImage != null)
+                        Image.network(
+                          'https://f000.backblazeb2.com/file/swayam-dev-master/${vm.category!.featureImage?.sizes.card?.filename}',
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.width * 0.5, // You can adjust the ratio
+                          fit: BoxFit.cover,
+                        ),
+                    ],
+                  ),
                   const SizedBox(height: smallSpacer),
                   Text(
                     vm.category!.description,
