@@ -27,6 +27,7 @@ class JournalCategoriesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: Text("Journal"),
@@ -97,7 +98,7 @@ class JournalCategoriesPage extends StatelessWidget {
                                 right: 0,
                                 child: Container(
                                   padding: EdgeInsets.all(extraSmallSpacer), // Use your defined smallSpacer for padding
-                                  color: Colors.white.withOpacity(1), // Optional: for better readability of text
+                                  color: colorScheme.background.withOpacity(1),
                                   child: Text(
                                     category.name,
                                     maxLines: 3,
