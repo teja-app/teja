@@ -100,8 +100,14 @@ Widget moodLogLayout(MoodLogEntity? moodLog, BuildContext context, [MoodLogLayou
                 children: [
                   SvgPicture.asset(svgPath, width: 24, height: 24),
                   const SizedBox(width: 8),
-                  Text(moodTexts['mainText']!, style: textTheme.titleMedium),
-                  const Spacer(),
+                  Expanded(
+                    // Use Expanded instead of Flexible to fill the available space
+                    child: Text(
+                      moodTexts['mainText']!,
+                      style: textTheme.titleMedium,
+                    ),
+                  ),
+                  const SizedBox(width: 8), // Add some space between the text and the timestamp
                   Text(DateFormat('hh:mm a').format(moodLog.timestamp), style: textTheme.bodySmall),
                 ],
               ),

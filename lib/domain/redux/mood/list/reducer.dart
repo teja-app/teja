@@ -1,4 +1,5 @@
 import 'package:redux/redux.dart';
+import 'package:teja/domain/entities/mood_log.dart';
 import 'package:teja/domain/redux/mood/list/actions.dart';
 import 'package:teja/domain/redux/mood/list/state.dart';
 
@@ -33,9 +34,20 @@ MoodLogListState _resetMoodLogsListAction(MoodLogListState state, ResetMoodLogsL
 }
 
 MoodLogListState _moodLogsFetchedSuccess(MoodLogListState state, MoodLogsListFetchedSuccessAction action) {
+  List<MoodLogEntity> updatedMoodLogs = List<MoodLogEntity>.from(state.moodLogs);
+
+  for (var newLog in action.moodLogs) {
+    final index = updatedMoodLogs.indexWhere((existingLog) => existingLog.id == newLog.id);
+    if (index != -1) {
+      updatedMoodLogs[index] = newLog; // Update existing log with new content
+    } else {
+      updatedMoodLogs.add(newLog); // Add new log if not found
+    }
+  }
+
   return state.copyWith(
     isLoading: false,
-    moodLogs: [...state.moodLogs, ...action.moodLogs],
+    moodLogs: updatedMoodLogs,
     isLastPage: action.isLastPage,
     errorMessage: null,
   );

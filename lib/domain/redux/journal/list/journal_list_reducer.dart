@@ -1,4 +1,5 @@
 import 'package:redux/redux.dart';
+import 'package:teja/domain/entities/journal_entry_entity.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_state.dart';
 
@@ -23,9 +24,20 @@ JournalListState _resetJournalEntriesList(JournalListState state, ResetJournalEn
 }
 
 JournalListState _journalEntriesFetchedSuccess(JournalListState state, JournalEntriesListFetchedSuccessAction action) {
+  List<JournalEntryEntity> updatedJournalEntries = List<JournalEntryEntity>.from(state.journalEntries);
+
+  for (var newEntry in action.journalEntries) {
+    final index = updatedJournalEntries.indexWhere((existingEntry) => existingEntry.id == newEntry.id);
+    if (index != -1) {
+      updatedJournalEntries[index] = newEntry; // Update existing entry with new content
+    } else {
+      updatedJournalEntries.add(newEntry); // Add new entry if not found
+    }
+  }
+
   return state.copyWith(
     isLoading: false,
-    journalEntries: [...state.journalEntries, ...action.journalEntries],
+    journalEntries: updatedJournalEntries,
     isLastPage: action.isLastPage,
     errorMessage: null,
   );

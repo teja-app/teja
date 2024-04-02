@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:icons_flutter/icons_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -53,9 +52,10 @@ class _TimelinePageState extends State<TimelinePage> {
 
   void _loadInitialData() {
     final Store<AppState> store = StoreProvider.of<AppState>(context);
-    // Assuming that the moodLogs list is empty after reset, load the first page
-    if (store.state.moodLogListState.moodLogs.isEmpty) {
+    if (!store.state.moodLogListState.isLoading && store.state.moodLogListState.moodLogs.isEmpty) {
       store.dispatch(LoadMoodLogsListAction(0, pageSize));
+    }
+    if (!store.state.journalListState.isLoading && store.state.journalListState.journalEntries.isEmpty) {
       store.dispatch(LoadJournalEntriesListAction(0, pageSize));
     }
   }
