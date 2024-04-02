@@ -11,11 +11,15 @@ import 'package:teja/router.dart';
 import 'package:teja/shared/common/bento_box.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 
-Widget journalEntryLayout(JournalTemplateEntity template, JournalEntryEntity journalEntry, BuildContext context) {
+Widget journalEntryLayout(
+  JournalTemplateEntity template,
+  JournalEntryEntity journalEntry,
+  BuildContext context, {
+  double gridWidth = 4, // Optional parameter with default value
+}) {
   final textTheme = Theme.of(context).textTheme;
   final firstQuestion = journalEntry.questions?.isNotEmpty == true ? journalEntry.questions!.first : null;
 
-  print("journalEntries ${journalEntry}");
   return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
     GestureDetector(
       onTap: () {
@@ -29,7 +33,7 @@ Widget journalEntryLayout(JournalTemplateEntity template, JournalEntryEntity jou
         );
       },
       child: FlexibleHeightBox(
-        gridWidth: 4,
+        gridWidth: gridWidth!,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 10.0),
           child: Column(

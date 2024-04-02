@@ -58,8 +58,9 @@ Map<String, String> _getMoodEntryText(MoodLogEntity moodLog, BuildContext contex
 class MoodLogLayoutConfig {
   final bool includeComments;
   final bool includeAttachments;
+  final double gridWidth;
 
-  MoodLogLayoutConfig({this.includeComments = true, this.includeAttachments = true});
+  MoodLogLayoutConfig({this.includeComments = true, this.includeAttachments = true, this.gridWidth = 4});
 }
 
 Widget moodLogLayout(MoodLogEntity? moodLog, BuildContext context, [MoodLogLayoutConfig? config]) {
@@ -71,6 +72,7 @@ Widget moodLogLayout(MoodLogEntity? moodLog, BuildContext context, [MoodLogLayou
   final includeComments = config?.includeComments ?? true;
   final includeAttachments = config?.includeAttachments ?? true;
   final textTheme = Theme.of(context).textTheme;
+  final gridWidth = config!.gridWidth ?? 3.5;
 
   // Extract moodLog details with null checks
   Map<String, String> moodTexts = _getMoodEntryText(moodLog, context);
@@ -88,7 +90,7 @@ Widget moodLogLayout(MoodLogEntity? moodLog, BuildContext context, [MoodLogLayou
         );
       },
       child: FlexibleHeightBox(
-        gridWidth: 4,
+        gridWidth: gridWidth,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 10.0),
           child: Column(

@@ -40,17 +40,19 @@ class MoodInitialPageState extends State<MoodInitialPage> {
                 onMoodSelected: (int moodIndex) {
                   final store = StoreProvider.of<AppState>(context);
                   if (currentMoodLogId != null) {
+                    // Update of mood
                     store.dispatch(
                       TriggerSelectMoodAction(
                         moodRating: moodIndex,
                         moodLogId: currentMoodLogId,
-                        timestamp: viewModel.selectedDate,
                       ),
                     );
                   } else {
+                    // Create of mood
                     store.dispatch(
                       TriggerSelectMoodAction(
                         moodRating: moodIndex,
+                        timestamp: viewModel.selectedDate,
                       ),
                     );
                   }

@@ -13,6 +13,7 @@ import 'package:teja/domain/redux/mood/list/actions.dart';
 import 'package:teja/presentation/home/ui/count_down_timer.dart';
 import 'package:teja/presentation/home/ui/journal/journal_entries_widget.dart';
 import 'package:teja/presentation/home/ui/journal/last_used_template.dart';
+import 'package:teja/presentation/home/ui/journal_prompt/journal_prompt.dart';
 import 'package:teja/presentation/home/ui/mood/mood_tracker.dart';
 import 'package:teja/presentation/navigation/buildDesktopDrawer.dart';
 import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
@@ -105,9 +106,6 @@ class _HomePageState extends State<HomePage> {
 
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
-    final brightness = Theme.of(context).colorScheme.brightness;
-
-    final GoRouter goRouter = GoRouter.of(context);
     final Widget mainBody = StoreConnector<AppState, _ViewModel>(
       converter: _ViewModel.fromStore,
       builder: (context, store) {
@@ -116,9 +114,11 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                getGreetingMessage(),
-                style: textTheme.headlineSmall,
+              Center(
+                child: Text(
+                  getGreetingMessage(),
+                  style: textTheme.headlineSmall,
+                ),
               ),
               const SizedBox(height: 20),
               CalendarTimeline(
@@ -139,77 +139,12 @@ class _HomePageState extends State<HomePage> {
                 const JournalEntriesWidget(),
                 const MoodTrackerWidget(),
                 const SizedBox(height: spacer),
-                Column(
-                  children: [
-                    Text("What would you like to journal?", style: textTheme.titleLarge),
-                    const SizedBox(height: smallSpacer),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            HapticFeedback.selectionClick();
-                            goRouter.pushNamed(RootPath.journalCategory);
-                          }, // Call the onPressed callback when the button is tapped
-                          child: BentoBox(
-                            gridWidth: 2,
-                            gridHeight: 1.5,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/journal/fountain_pen.svg',
-                                  width: 50,
-                                  height: 50,
-                                  colorFilter: ColorFilter.mode(
-                                    brightness == Brightness.light ? Colors.black : Colors.white,
-                                    BlendMode.srcIn,
-                                  ),
-                                ),
-                                Text(
-                                  "Pen Down",
-                                  style: textTheme.titleLarge,
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            HapticFeedback.selectionClick();
-                            goRouter.pushNamed(RootPath.moodEdit);
-                          }, // Call
-                          child: BentoBox(
-                            gridWidth: 2,
-                            gridHeight: 1.5,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/mood/lotus.svg',
-                                  width: 50,
-                                  height: 50,
-                                  colorFilter: ColorFilter.mode(
-                                    brightness == Brightness.light ? Colors.black : Colors.white,
-                                    BlendMode.srcIn,
-                                  ),
-                                ),
-                                Text(
-                                  "Track Mood",
-                                  style: textTheme.titleLarge,
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                const JournalPrompt(),
                 const SizedBox(height: spacer),
                 const LatestTemplatesUsed(),
               ],
-              if (store.selectedDate != null && now.compareTo(store.selectedDate!) < 0) const CountdownTimer(),
+              if (store.selectedDate != null && now.compareTo(store.selectedDate!) < 0)
+                const Center(child: CountdownTimer()),
               const SizedBox(height: 10),
             ],
           ),

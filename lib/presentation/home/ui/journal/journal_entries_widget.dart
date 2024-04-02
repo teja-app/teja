@@ -2,17 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
-import 'package:icons_flutter/icons_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:intl/intl.dart';
 import 'package:teja/domain/redux/journal/journal_logs/journal_logs_actions.dart';
+import 'package:teja/presentation/home/ui/journal_prompt/pen_down_button.dart';
 import 'package:teja/presentation/journal/ui/journal_card.dart';
 import 'package:teja/router.dart';
-import 'package:teja/shared/common/button.dart';
-import 'package:teja/shared/common/flexible_height_box.dart';
 import 'package:teja/theme/padding.dart';
 
 class JournalEntriesWidget extends StatefulWidget {
@@ -54,15 +52,27 @@ class _JournalEntriesWidgetState extends State<JournalEntriesWidget> {
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                  children: List.generate(journalEntries.length, (index) {
-                    var entry = journalEntries[index];
-                    // Assuming journalEntryLayout is a method that returns a widget for displaying a journal entry
-                    // Wrap each item with Padding for spacing or any additional styling
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8.0), // Adjust the spacing as needed
-                      child: journalEntryLayout(viewModel.templatesById[entry.templateId]!, entry, context),
-                    );
-                  }),
+                  children: [
+                    ...List.generate(journalEntries.length, (index) {
+                      var entry = journalEntries[index];
+                      // Generate journal entry layout widgets
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8.0), // Adjust the spacing as needed
+                        child: journalEntryLayout(viewModel.templatesById[entry.templateId]!, entry, context,
+                            gridWidth: 3.8),
+                      );
+                    }),
+                    // After all journal entry widgets, add the PenDownButton
+                    PenDownButton(
+                      text: "+",
+                      gridWidth: 1,
+                      onTap: () {
+                        // Handle the onTap action for PenDownButton, like navigating to a page
+                        HapticFeedback.selectionClick();
+                        goRouter.pushNamed(RootPath.journalCategory);
+                      },
+                    ),
+                  ],
                 ),
               )
             ],

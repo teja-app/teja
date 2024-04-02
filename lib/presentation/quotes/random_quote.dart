@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
@@ -8,9 +9,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_flutter/icons_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:redux/redux.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:teja/domain/entities/quote_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
-import 'dart:math' as math;
 import 'package:teja/presentation/quotes/quote_view.dart';
 import 'package:social_share/social_share.dart';
 import 'package:share_plus/share_plus.dart';
@@ -40,6 +41,32 @@ List<BackgroundStyle> backgrounds = [
   // Add more styles and backgrounds as needed
 ];
 
+class _ViewModel {
+  final List<QuoteEntity> quotes;
+
+  _ViewModel({required this.quotes});
+
+  static _ViewModel fromStore(Store<AppState> store) {
+    return _ViewModel(
+      quotes: store.state.quoteState.quotes,
+    );
+  }
+
+// Gets a list of 10 unique random quotes.
+  /// If there are not enough quotes for a set of 10, it returns what is available.
+  List<QuoteEntity> getRandomQuotes(int count) {
+    if (quotes.isEmpty) return [];
+    var randomSet = <QuoteEntity>{};
+    var random = Random();
+    // Loop until the set contains 10 unique quotes or the entire list if it contains fewer than 10 quotes.
+    while (randomSet.length < count && randomSet.length < quotes.length) {
+      var randomIndex = random.nextInt(quotes.length);
+      randomSet.add(quotes[randomIndex]);
+    }
+    return randomSet.toList();
+  }
+}
+
 class RandomQuotePage extends StatefulWidget {
   @override
   _RandomQuotePageState createState() => _RandomQuotePageState();
@@ -47,38 +74,15 @@ class RandomQuotePage extends StatefulWidget {
 
 class _RandomQuotePageState extends State<RandomQuotePage> {
   final GlobalKey _globalKey = GlobalKey();
+  final PageController _pageController = PageController();
+
   int currentBackgroundIndex = 0;
 
   QuoteEntity? randomQuote;
 
-  @override
-  void initState() {
-    super.initState();
-    // Initially fetch a random quote when the widget is built
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getRandomQuote();
-    });
-  }
-
-  @override
-  void reassemble() {
-    super.reassemble();
-    // Initially fetch a random quote when the widget is built
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getRandomQuote();
-    });
-  }
-
   void changeBackground() {
     setState(() {
       currentBackgroundIndex = (currentBackgroundIndex + 1) % backgrounds.length;
-    });
-  }
-
-  void _getRandomQuote() {
-    final store = StoreProvider.of<AppState>(context);
-    setState(() {
-      randomQuote = _ViewModel.fromStore(store).getRandomQuote();
     });
   }
 
@@ -130,9 +134,20 @@ class _RandomQuotePageState extends State<RandomQuotePage> {
     return StoreConnector<AppState, _ViewModel>(
       converter: _ViewModel.fromStore,
       builder: (context, vm) {
+        final quotes = vm.getRandomQuotes(10);
         return Scaffold(
           extendBodyBehindAppBar: true,
           appBar: AppBar(
+            title: SmoothPageIndicator(
+              controller: _pageController,
+              count: quotes.length,
+              effect: const ExpandingDotsEffect(),
+              onDotClicked: (index) => _pageController.animateToPage(
+                index,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              ),
+            ),
             backgroundColor: Colors.transparent,
             elevation: 0,
             leading: Padding(
@@ -140,9 +155,35 @@ class _RandomQuotePageState extends State<RandomQuotePage> {
               child: _roundedIconButton(Icons.arrow_back, () => Navigator.of(context).pop()),
             ),
           ),
-          body: randomQuote == null
-              ? const Center(child: Text("No quotes available."))
-              : Stack(
+          body: PageView.builder(
+            controller: _pageController,
+            itemCount: quotes.length,
+            itemBuilder: (context, index) {
+              final quote = quotes[index % quotes.length]; // This line provides the "infinite" effect.
+              return GestureDetector(
+                onHorizontalDragEnd: (DragEndDetails details) {
+                  // Check the horizontal velocity of the drag to determine swipe direction
+                  if (details.primaryVelocity! < 0) {
+                    // User swiped Left
+                    // Navigate to the next page if not at the end of the list
+                    if (index < vm.quotes.length - 1) {
+                      _pageController.nextPage(
+                        duration: const Duration(milliseconds: 100),
+                        curve: Curves.ease,
+                      );
+                    }
+                  } else if (details.primaryVelocity! > 0) {
+                    // User swiped Right
+                    // Navigate to the previous page if not at the beginning of the list
+                    if (index > 0) {
+                      _pageController.previousPage(
+                        duration: const Duration(milliseconds: 100),
+                        curve: Curves.ease,
+                      );
+                    }
+                  }
+                },
+                child: Stack(
                   children: [
                     RepaintBoundary(
                       key: _globalKey,
@@ -150,8 +191,8 @@ class _RandomQuotePageState extends State<RandomQuotePage> {
                         width: double.infinity,
                         height: double.infinity,
                         child: QuoteView(
-                          quoteText: randomQuote!.text,
-                          quoteAuthor: randomQuote!.author,
+                          quoteText: quote!.text,
+                          quoteAuthor: quote!.author,
                           style: currentBackground.style,
                           background: AssetImage(currentBackground.imagePath),
                           alignment: currentBackground.alignment,
@@ -166,7 +207,6 @@ class _RandomQuotePageState extends State<RandomQuotePage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          _roundedIconButton(AntDesign.forward, _getRandomQuote),
                           _roundedIconButton(FontAwesome.instagram, () => _shareQuoteAsImage(platform: 'instagram')),
                           _roundedIconButton(Entypo.share, () => _shareQuoteAsImage(platform: 'share')),
                           _roundedIconButton(Entypo.palette, changeBackground),
@@ -175,26 +215,11 @@ class _RandomQuotePageState extends State<RandomQuotePage> {
                     ),
                   ],
                 ),
+              );
+            },
+          ),
         );
       },
     );
-  }
-}
-
-class _ViewModel {
-  final List<QuoteEntity> quotes;
-
-  _ViewModel({required this.quotes});
-
-  static _ViewModel fromStore(Store<AppState> store) {
-    return _ViewModel(
-      quotes: store.state.quoteState.quotes,
-    );
-  }
-
-  QuoteEntity? getRandomQuote() {
-    if (quotes.isEmpty) return null;
-    final randomIndex = math.Random().nextInt(quotes.length);
-    return quotes[randomIndex];
   }
 }

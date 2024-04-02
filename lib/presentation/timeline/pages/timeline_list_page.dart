@@ -116,7 +116,13 @@ class _TimelinePageState extends State<TimelinePage> {
       if (index < currentIndex + entry.value.length) {
         var item = entry.value[index - currentIndex];
         if (item is MoodLogEntity) {
-          return moodLogLayout(item, context); // Your widget to display a mood log
+          return moodLogLayout(
+            item,
+            context,
+            MoodLogLayoutConfig(
+              gridWidth: 4,
+            ),
+          ); // Your widget to display a mood log
         } else if (item is JournalEntryEntity) {
           return journalEntryLayout(
             templatesById[item.templateId]!,

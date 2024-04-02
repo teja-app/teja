@@ -722,6 +722,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
+  insta_image_viewer:
+    dependency: "direct main"
+    description:
+      name: insta_image_viewer
+      sha256: "9a81432b1ab907ea91c255ec079440afe43f999533422badffaa482dfb7fdfbb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   integration_test:
     dependency: "direct dev"
     description: flutter

@@ -1,7 +1,7 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:teja/infrastructure/utils/image_storage_helper.dart';
+import 'package:insta_image_viewer/insta_image_viewer.dart'; // Import the package
 
 class AttachmentImage extends StatelessWidget {
   final String relativeImagePath;
@@ -17,41 +17,44 @@ class AttachmentImage extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
           // When the future completes with data
           final File imageFile = snapshot.data!;
-          return Container(
-            margin: const EdgeInsets.all(4), // Adjust spacing as needed
-            width: 100, // Adjust size as needed
-            height: 100, // Adjust size as needed
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: FileImage(imageFile),
-                fit: BoxFit.cover,
+          return InstaImageViewer(
+            // Wrap the image with InstaImageViewer
+            child: Container(
+              margin: const EdgeInsets.all(4),
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: FileImage(imageFile),
+                  fit: BoxFit.cover,
+                ),
+                borderRadius: BorderRadius.circular(8),
               ),
-              borderRadius: BorderRadius.circular(8), // Optional: if you want rounded corners
             ),
           );
         } else if (snapshot.hasError) {
-          // When the future completes with an error
+          // Handle the error state
           return Container(
             margin: const EdgeInsets.all(4),
             width: 100,
             height: 100,
             decoration: BoxDecoration(
-              color: Colors.grey[200], // Show a placeholder color
+              color: Colors.grey[200],
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(Icons.error, color: Colors.red), // Indicate an error
+            child: Icon(Icons.error, color: Colors.red),
           );
         } else {
-          // While the future is still loading
+          // Handle the loading state
           return Container(
             margin: const EdgeInsets.all(4),
             width: 100,
             height: 100,
             decoration: BoxDecoration(
-              color: Colors.grey[200], // Show a placeholder color
+              color: Colors.grey[200],
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const CircularProgressIndicator(), // Show a loading indicator
+            child: const CircularProgressIndicator(),
           );
         }
       },

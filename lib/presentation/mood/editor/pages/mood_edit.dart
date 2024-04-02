@@ -105,6 +105,7 @@ class MoodEditPageState extends State<MoodEditPage> {
                           // Finish page, the last page
                           return FinishScreen(
                             onFinish: () {
+                              _store.dispatch(const ClearMoodEditorFormAction());
                               goRouter.pushNamed(RootPath.home);
                             },
                           );

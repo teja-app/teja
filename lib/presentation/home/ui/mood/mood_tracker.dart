@@ -1,5 +1,6 @@
 // lib/presentation/home/ui/mood/mood_tracker.dart
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -11,6 +12,7 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:teja/domain/redux/mood/logs/mood_logs_actions.dart';
 import 'package:teja/domain/redux/mood/logs/mood_logs_state.dart';
+import 'package:teja/presentation/home/ui/journal_prompt/track_mood_button.dart';
 import 'package:teja/presentation/mood/ui/mood_detail_card.dart';
 import 'package:teja/presentation/mood/ui/mood_selection_component.dart';
 import 'package:teja/router.dart';
@@ -90,7 +92,7 @@ class MoodTrackerWidgetState extends State<MoodTrackerWidget> {
                 "Mood",
                 style: textTheme.titleMedium,
               ),
-              _moodLogsLayout(moodLogsForSelectedDate),
+              _moodLogsLayout(moodLogsForSelectedDate, context),
             ]
             // Show the mood tracker layout
             // _moodTrackerLayout(context, combinedModel.selectedDate!),
@@ -100,17 +102,38 @@ class MoodTrackerWidgetState extends State<MoodTrackerWidget> {
     );
   }
 
-  Widget _moodLogsLayout(List<MoodLogEntity> moodLogs) {
+  Widget _moodLogsLayout(List<MoodLogEntity> moodLogs, BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: moodLogs.map((moodLog) {
-          // Wrap each mood log item with a widget that provides margin or padding if necessary
-          return Padding(
-            padding: const EdgeInsets.only(right: 8.0), // Adjust spacing as needed
-            child: moodLogLayout(moodLog, context),
-          );
-        }).toList(),
+        children: [
+          ...moodLogs.map((moodLog) {
+            // Wrap each mood log item with a widget that provides margin or padding if necessary
+            return Padding(
+              padding: const EdgeInsets.only(right: 8.0), // Adjust spacing as needed
+              child: moodLogLayout(
+                moodLog,
+                context,
+                MoodLogLayoutConfig(
+                  gridWidth: 3.8,
+                ),
+              ),
+            );
+          }).toList(),
+          TrackMoodButton(
+            text: "+",
+            gridWidth: 1,
+            onTap: () {
+              // Handle the onTap action for TrackMoodButton, like navigating to a page
+              HapticFeedback.selectionClick();
+              // Assuming you have access to goRouter or similar navigation method in this context
+
+              final GoRouter goRouter = GoRouter.of(context);
+              goRouter.pushNamed(RootPath.moodEdit);
+            },
+          ),
+          // After all mood log widgets, add the TrackMoodButton
+        ],
       ),
     );
   }
