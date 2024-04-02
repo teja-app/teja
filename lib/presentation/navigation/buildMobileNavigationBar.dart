@@ -27,7 +27,7 @@ Widget buildMobileNavigationBar(BuildContext context) {
           AntDesign.book,
           weight: 100,
         ),
-        label: 'Journal',
+        label: 'Timeline',
       ),
       BottomNavigationBarItem(
         icon: Icon(
@@ -67,7 +67,7 @@ int _getSelectedIndex(String currentLocation) {
       return 0;
     case '/explore':
       return 1;
-    case '/mood_list':
+    case '/timeline':
       return 2;
     case '/settings':
       return 3;

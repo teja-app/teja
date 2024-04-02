@@ -58,7 +58,7 @@ int _getSelectedIndex(String currentLocation) {
       return 0;
     case '/explore':
       return 1;
-    case '/mood_list':
+    case '/timeline':
       return 2;
     case '/profile':
       return 3;
