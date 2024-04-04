@@ -21,7 +21,6 @@ import 'package:teja/presentation/onboarding/pages/sign_up_page.dart';
 import 'package:teja/presentation/quotes/random_quote.dart';
 import 'package:teja/presentation/settings/pages/advanced_settings_page.dart';
 import 'package:teja/presentation/settings/pages/basic_settings_page.dart';
-import 'package:teja/presentation/settings/pages/notification_settings_page.dart';
 import 'package:teja/presentation/settings/pages/perference_settings_page.dart';
 import 'package:teja/presentation/settings/pages/security_settings_page.dart';
 import 'package:teja/presentation/settings/pages/settings_page.dart';
@@ -226,13 +225,6 @@ final GoRouter router = GoRouter(
             name: SettingPath.sync,
             path: 'sync',
             builder: (context, state) => const SyncSettingsPage(),
-          ),
-          GoRoute(
-            name: SettingPath.notification,
-            path: 'notification',
-            builder: (context, state) => NotificationSettingsPage(
-              notificationService: notificationService,
-            ),
           ),
           GoRoute(
             name: SettingPath.perferences,

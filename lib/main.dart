@@ -28,10 +28,8 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/store.dart'; // Make sure to import this
 
 import 'package:teja/app.dart';
-import 'package:teja/infrastructure/utils/notification_service.dart'; // Import NotificationService
 
 // Initialize NotificationService
-final notificationService = NotificationService();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setPosthogContext();
@@ -42,16 +40,11 @@ Future<void> main() async {
   // Initialize the store here
   final store = await createStore(isarInstance);
 
-  await notificationService.initialize(); // Initialize notifications
   await Hive.initFlutter();
   Hive.registerAdapter(FeaturedJournalTemplateAdapter());
   Hive.registerAdapter(JournalCategoryAdapter());
   await Hive.openBox(FeaturedJournalTemplate.boxKey);
   await Hive.openBox(JournalCategory.boxKey);
-  if (Platform.isIOS) {
-    // Request notification permissions on iOS
-    await notificationService.requestIOSPermissions();
-  }
 
   await SentryFlutter.init(
     (options) {
