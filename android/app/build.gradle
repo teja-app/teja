@@ -22,10 +22,18 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+
 android {
     namespace "com.teja.app"
     compileSdkVersion 34
     ndkVersion "25.1.8937393"
+
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -51,11 +59,22 @@ android {
         versionName flutterVersionName
     }
 
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            // Remove the line below that sets the signingConfig to debug for release builds.
+            // signingConfig signingConfigs.debug
+            
+            // Keep this line to use the release signing configuration.
+            signingConfig signingConfigs.release
         }
     }
 }
