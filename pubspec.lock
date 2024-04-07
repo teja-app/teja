@@ -1135,6 +1135,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.2"
+  re_editor:
+    dependency: "direct main"
+    description:
+      name: re_editor
+      sha256: "5933029ab831ceb165b90e7daf475e3e92ffca8aeb784a3a30369b9677ba6a60"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
+  re_highlight:
+    dependency: transitive
+    description:
+      name: re_highlight
+      sha256: "6c4ac3f76f939fb7ca9df013df98526634e17d8f7460e028bd23a035870024f2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.3"
   redux:
     dependency: "direct main"
     description:

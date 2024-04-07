@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-
+import 'package:re_editor/re_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:image_picker/image_picker.dart';
@@ -11,8 +11,6 @@ import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:teja/infrastructure/utils/helpers.dart';
 import 'package:teja/infrastructure/utils/image_storage_helper.dart';
 import 'package:teja/shared/common/button.dart';
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
 
 class NotesScreen extends StatefulWidget {
   final PageController pageController;
@@ -25,28 +23,32 @@ class NotesScreen extends StatefulWidget {
 
 class NotesScreenState extends State<NotesScreen> {
   late FocusNode textFocusNode;
-  late TextEditingController textEditingController;
+  // late TextEditingController textEditingController;
+  late CodeLineEditingController codeEditingController;
+
   Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
     textFocusNode = FocusNode();
-    textEditingController = TextEditingController();
-    textEditingController.addListener(_onTextChanged);
+    codeEditingController = CodeLineEditingController.fromText(''); // Properly initialize with default text
     textFocusNode.addListener(() {
       if (!textFocusNode.hasFocus) {
         _saveComment();
       }
     });
+    codeEditingController.addListener(_onTextChanged); // Add listener
   }
 
   @override
   void dispose() {
     _debounce?.cancel(); // Cancel the active debounce timer if it exists
     textFocusNode.dispose(); // Dispose of the FocusNode
-    textEditingController.removeListener(_onTextChanged); // Remove the text change listener
-    textEditingController.dispose(); // Dispose of the TextEditingController
+    // textEditingController.removeListener(_onTextChanged); // Remove the text change listener
+    // textEditingController.dispose(); // Dispose of the TextEditingController
+    codeEditingController.removeListener(_onTextChanged);
+    codeEditingController.dispose();
     super.dispose();
   }
 
@@ -56,11 +58,16 @@ class NotesScreenState extends State<NotesScreen> {
   }
 
   void _saveComment() {
-    final store = StoreProvider.of<AppState>(context);
-    final currentMoodLogId = StoreProvider.of<AppState>(context).state.moodEditorState.currentMoodLog!.id;
-    final comment = textEditingController.text;
+    final String currentText = codeEditingController.text;
+    // Check if the text has actually changed to avoid unnecessary updates
+    final currentMoodLog = StoreProvider.of<AppState>(context).state.moodEditorState.currentMoodLog;
+    if (currentMoodLog?.comment != currentText) {
+      final store = StoreProvider.of<AppState>(context);
+      final currentMoodLogId = store.state.moodEditorState.currentMoodLog!.id;
 
-    store.dispatch(UpdateMoodLogCommentAction(currentMoodLogId, comment));
+      // Update the stored comment without disrupting the editing state
+      store.dispatch(UpdateMoodLogCommentAction(currentMoodLogId, currentText));
+    }
   }
 
   Widget _buildUploadButton(BuildContext context) {
@@ -110,11 +117,13 @@ class NotesScreenState extends State<NotesScreen> {
     return GestureDetector(
       child: StoreConnector<AppState, NotesScreenModel>(
         converter: (store) => NotesScreenModel.fromStore(store),
+        distinct: true,
         builder: (context, viewModel) {
-          if (textEditingController.text.isEmpty && viewModel.comment != null) {
-            textEditingController.text = viewModel.comment!;
+          if (codeEditingController.text.isEmpty && viewModel.comment != null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              codeEditingController.text = viewModel.comment!;
+            });
           }
-
           return Scaffold(
             body: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -128,28 +137,26 @@ class NotesScreenState extends State<NotesScreen> {
                         style: Theme.of(context).textTheme.headline6,
                       ),
                       const SizedBox(height: 10),
-                      TextField(
-                        controller: textEditingController,
-                        maxLines: null,
-                        focusNode: textFocusNode,
-                        keyboardType: TextInputType.multiline,
-                        decoration: const InputDecoration(
-                          hintText: 'Write your feelings or notes here...',
-                          border: InputBorder.none,
+                      SizedBox(
+                        key: const Key('codeEditorKey'),
+                        height: 300, // Specify the height explicitly
+                        child: CodeEditor(
+                          controller: codeEditingController,
+                          // Other configurations for CodeEditor
                         ),
                       ),
                       const SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Attachments',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                      ),
+                      _buildAttachmentsList(viewModel.moodLogId, context),
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'Attachments',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                ),
-                _buildAttachmentsList(viewModel.moodLogId, viewModel.attachments, context),
                 Container(
                   color: colorScheme.background,
                   padding: const EdgeInsets.all(10.0),
@@ -217,44 +224,50 @@ class NotesScreenState extends State<NotesScreen> {
     );
   }
 
-  Widget _buildAttachmentsList(String moodLogId, List<MoodLogAttachmentEntity> attachments, BuildContext context) {
-    return SizedBox(
-      height: 120, // Adjust the container height to fit the content
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: attachments.length + 1, // +1 for the upload button
-        itemBuilder: (BuildContext context, int index) {
-          if (index == attachments.length) {
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: _buildUploadButton(context),
-            );
-          }
-          MoodLogAttachmentEntity attachment = attachments[index];
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Stack(
-              children: [
-                _buildAttachmentImage(attachment.path), // Refactor to use FutureBuilder
-                Positioned(
-                  right: 0,
-                  top: 0,
-                  child: GestureDetector(
-                    onTap: () {
-                      final store = StoreProvider.of<AppState>(context);
-                      store.dispatch(RemoveAttachmentAction(
-                        moodLogId: moodLogId,
-                        attachmentId: attachment.id,
-                      ));
-                    },
-                    child: const Icon(Icons.remove_circle, color: Colors.red),
-                  ),
+  Widget _buildAttachmentsList(String moodLogId, BuildContext context) {
+    return StoreConnector<AppState, List<MoodLogAttachmentEntity>>(
+      converter: (store) => store.state.moodEditorState.currentMoodLog?.attachments ?? [],
+      distinct: true,
+      builder: (context, attachments) {
+        return SizedBox(
+          height: 120, // Adjust the container height to fit the content
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: attachments.length + 1, // +1 for the upload button
+            itemBuilder: (BuildContext context, int index) {
+              if (index == attachments.length) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: _buildUploadButton(context),
+                );
+              }
+              MoodLogAttachmentEntity attachment = attachments[index];
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Stack(
+                  children: [
+                    _buildAttachmentImage(attachment.path), // Refactor to use FutureBuilder
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      child: GestureDetector(
+                        onTap: () {
+                          final store = StoreProvider.of<AppState>(context);
+                          store.dispatch(RemoveAttachmentAction(
+                            moodLogId: moodLogId,
+                            attachmentId: attachment.id,
+                          ));
+                        },
+                        child: const Icon(Icons.remove_circle, color: Colors.red),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
-        },
-      ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

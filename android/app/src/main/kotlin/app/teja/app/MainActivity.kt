@@ -1,4 +1,4 @@
-package com.teja.app
+package app.teja.app
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

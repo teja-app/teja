@@ -6,6 +6,7 @@ import 'package:teja/domain/entities/journal_entry_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.dart';
 import 'package:teja/shared/common/button.dart';
+import 'package:re_editor/re_editor.dart'; // Import the re_editor package
 
 class JournalQuestionPage extends StatefulWidget {
   final int questionIndex;
@@ -21,22 +22,28 @@ class JournalQuestionPage extends StatefulWidget {
 
 class JournalQuestionPageState extends State<JournalQuestionPage> {
   late FocusNode textFocusNode;
-  late TextEditingController textEditingController;
+  late CodeLineEditingController codeEditingController; // Use CodeLineEditingController
   Timer? _debounce;
-  bool isUserInput = false; // Flag to track if the change is user-initiated
+  bool isUserInput = false;
 
   @override
   void initState() {
     super.initState();
     textFocusNode = FocusNode();
-    textEditingController = TextEditingController();
-    textEditingController.addListener(_onTextChanged);
+    codeEditingController = CodeLineEditingController.fromText(''); // Initialize with empty string
+    textFocusNode.addListener(() {
+      if (!textFocusNode.hasFocus) {
+        _saveAnswer();
+      }
+    });
+    codeEditingController.addListener(_onTextChanged); // Add listener to the controller
   }
 
   @override
   void dispose() {
     textFocusNode.dispose();
-    textEditingController.dispose();
+    codeEditingController.removeListener(_onTextChanged);
+    codeEditingController.dispose();
     _debounce?.cancel();
     super.dispose();
   }
@@ -54,7 +61,7 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
     store.dispatch(UpdateQuestionAnswer(
       journalEntryId: viewModel.journalEntry.id,
       questionId: viewModel.journalEntry.questions![widget.questionIndex].questionId!,
-      answerText: textEditingController.text,
+      answerText: codeEditingController.text, // Use text from codeEditingController
     ));
   }
 
@@ -65,9 +72,9 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
       builder: (context, viewModel) {
         final question = viewModel.journalEntry.questions![widget.questionIndex];
 
-        if (textEditingController.text != question.answerText) {
-          isUserInput = false; // Disable user input flag when programmatically updating
-          textEditingController.text = question.answerText ?? '';
+        if (codeEditingController.text != question.answerText) {
+          isUserInput = false;
+          codeEditingController.text = question.answerText ?? '';
         }
 
         final colorScheme = Theme.of(context).colorScheme;
@@ -86,22 +93,15 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: TextField(
-                      controller: textEditingController,
-                      focusNode: textFocusNode,
-                      maxLines: null,
-                      keyboardType: TextInputType.multiline,
-                      decoration: const InputDecoration(
-                        hintText: 'Write your response here...',
-                        border: InputBorder.none,
-                      ),
-                      onChanged: (text) {
-                        isUserInput = true; // Set the flag to true when the user types
-                      },
-                    ),
+                SizedBox(
+                  key: const Key('codeEditorKey'),
+                  height: 300, // Specify the height explicitly
+                  child: CodeEditor(
+                    controller: codeEditingController,
+                    onChanged: (text) {
+                      isUserInput = true;
+                    },
+                    // Other configurations for CodeEditor
                   ),
                 ),
                 Center(
