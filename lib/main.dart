@@ -21,6 +21,7 @@ import 'package:teja/infrastructure/database/isar_collections/master_feeling.dar
 import 'package:teja/infrastructure/database/isar_collections/mood_log.dart';
 import 'package:teja/infrastructure/database/isar_collections/quote.dart';
 import 'package:teja/infrastructure/database/isar_collections/vision.dart';
+import 'package:teja/infrastructure/utils/notification_service.dart';
 
 import 'shared/helpers/logger.dart';
 
@@ -29,7 +30,7 @@ import 'package:teja/domain/redux/store.dart'; // Make sure to import this
 
 import 'package:teja/app.dart';
 
-// Initialize NotificationService
+final notificationService = NotificationService();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setPosthogContext();
@@ -37,6 +38,14 @@ Future<void> main() async {
   final String? sentryDsnUrl = dotenv.env['SENTRY_DSN_URL'];
   // Initialize Isar
   final Isar isarInstance = await openIsar();
+
+  // Initialize NotificationService
+  await notificationService.initialize(); // Initialize notifications
+
+  if (Platform.isIOS) {
+    // Request notification permissions on iOS
+    await notificationService.requestIOSPermissions();
+  }
   // Initialize the store here
   final store = await createStore(isarInstance);
 

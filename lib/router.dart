@@ -12,6 +12,7 @@ import 'package:teja/presentation/journal/journal_categories/categories_page.dar
 import 'package:teja/presentation/journal/journal_editor/pages/journal_editor_page.dart';
 import 'package:teja/presentation/mood/detail/page/mood_detail.dart';
 import 'package:teja/presentation/mood/editor/pages/mood_edit.dart';
+import 'package:teja/presentation/settings/pages/notification_settings_page.dart';
 import 'package:teja/presentation/timeline/pages/timeline_list_page.dart';
 import 'package:teja/presentation/mood/share/pages/mood_share.dart';
 import 'package:teja/presentation/note_editor/note_editor_page.dart';
@@ -230,6 +231,13 @@ final GoRouter router = GoRouter(
             name: SettingPath.perferences,
             path: 'perferences',
             builder: (context, state) => const PreferencesSettingsPage(),
+          ),
+          GoRoute(
+            name: SettingPath.notification,
+            path: 'notification',
+            builder: (context, state) => NotificationSettingsPage(
+              notificationService: notificationService,
+            ),
           ),
           GoRoute(
             name: SettingPath.basic,

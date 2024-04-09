@@ -9,6 +9,7 @@ import 'package:teja/shared/common/button.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 import 'package:rive/rive.dart';
 import 'package:teja/theme/padding.dart';
+import 'package:in_app_review/in_app_review.dart';
 
 class FinishScreenModel {
   final int moodRating;
@@ -28,6 +29,12 @@ class FinishScreen extends StatelessWidget {
   final VoidCallback onFinish;
 
   const FinishScreen({Key? key, required this.onFinish}) : super(key: key); // Modify this line
+
+  void _triggerAppReview() async {
+    if (await InAppReview.instance.isAvailable()) {
+      InAppReview.instance.requestReview();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

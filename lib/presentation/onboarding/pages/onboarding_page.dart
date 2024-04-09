@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
 import 'package:rive/rive.dart';
-import 'package:teja/domain/redux/journal/featured_journal_template/actions.dart';
-import 'package:teja/domain/redux/journal/journal_category/actions.dart';
-import 'package:teja/domain/redux/journal/journal_template/actions.dart';
-import 'package:teja/domain/redux/mood/master_factor/actions.dart';
-import 'package:teja/domain/redux/mood/master_feeling/actions.dart';
-import 'package:teja/domain/redux/quotes/quote_action.dart';
+import 'package:teja/presentation/onboarding/actions/init_state_actions.dart';
+import 'package:teja/presentation/onboarding/ui/begin_button.dart';
+import 'package:teja/presentation/onboarding/ui/onboarding_description.dart';
+import 'package:teja/presentation/onboarding/ui/onboarding_header_image.dart';
+import 'package:teja/presentation/onboarding/ui/onboarding_title.dart';
+import 'package:teja/presentation/onboarding/ui/rive_animation_section.dart';
 import 'package:teja/presentation/onboarding/widgets/authenticate.dart';
-import 'package:teja/shared/common/button.dart';
 import 'package:teja/domain/redux/app_state.dart';
-import 'package:teja/shared/common/flexible_height_box.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -31,45 +28,40 @@ class _OnboardingPageState extends State<OnboardingPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final store = StoreProvider.of<AppState>(context);
-      store.dispatch(FetchMasterFeelingsActionFromApi());
-      store.dispatch(FetchMasterFactorsActionFromApi());
-      store.dispatch(FetchQuotesActionFromApi());
-      store.dispatch(FetchJournalTemplatesActionFromApi());
-      store.dispatch(FetchFeaturedJournalTemplatesActionFromApi());
-      store.dispatch(FetchJournalCategoriesActionFromApi());
-
-      // Cache Fetch
-      store.dispatch(FetchMasterFeelingsActionFromCache());
-      store.dispatch(FetchMasterFactorsActionFromCache());
-      store.dispatch(FetchQuotesActionFromCache());
-      store.dispatch(FetchJournalTemplatesActionFromCache());
-      store.dispatch(FetchFeaturedJournalTemplatesActionFromCache());
-      store.dispatch(FetchJournalCategoriesActionFromCache());
+      performInitStateActions(store);
       if (_isPressed != null) {
         _isPressed!.value = false;
       }
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final Brightness themeBrightness = Theme.of(context).brightness;
-    final textTheme = Theme.of(context).textTheme;
+  void _onButtonPressed() {
+    authenticate(context, () {
+      // This is the callback that gets called on successful authentication
+      if (_isPressed != null) {
+        _isPressed!.value = true; // Trigger the animation or perform additional actions
+      }
+      // Optionally, navigate to another page or perform additional logic post-authentication
+    });
+  }
 
-    void _onRiveInit(Artboard artboard) {
-      final controller = StateMachineController.fromArtboard(
-        artboard,
-        'unlock',
-      );
-      if (controller != null) {
-        artboard.addController(controller);
-        _isPressed = controller.findInput<bool>('isPressed');
-        // Optionally, you can also reset the animation state here if needed
-        _isPressed?.value = false; // Ensure this line is safe to run here as per your logic
+  void onRiveInit(Artboard artboard) {
+    // Attempt to find a state machine controller by name
+    final controller = StateMachineController.fromArtboard(artboard, 'unlock');
+    if (controller != null) {
+      artboard.addController(controller);
+      _isPressed = controller.findInput<bool>('isPressed');
+      if (_isPressed != null) {
+        _isPressed!.value = false; // Initialize the input value as needed
       }
       artboard.addController(controller!);
       _isPressed = controller.findInput<bool>('isPressed') as SMIBool;
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Brightness themeBrightness = Theme.of(context).brightness;
 
     return StoreConnector<AppState, Store<AppState>>(
       converter: (store) => store,
@@ -81,66 +73,16 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Image or SVG just above the title
-                  SvgPicture.asset(
-                    themeBrightness == Brightness.dark ? "assets/logo/White.svg" : "assets/logo/Color.svg",
-                    width: 80, // Adjust the size as needed
-                    height: 80,
-                  ),
+                  OnboardingHeaderImage(themeBrightness: themeBrightness),
                   const SizedBox(height: 60),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Text(
-                      "Personal way to bloom",
-                      style: textTheme.titleLarge,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
+                  const OnboardingTitle(), // Define this widget separately
                   const SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: Text(
-                      "Discover your journey towards a balanced life with personalized journaling, mood tracking, and self-improvement strategies.",
-                      style: textTheme.bodyMedium,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
+                  const OnboardingDescription(), // Define this widget separately
                   const SizedBox(height: 40),
-                  FlexibleHeightBox(
-                    gridWidth: 4,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          height: 75,
-                          width: 75, // Set a width for the Rive animation for consistent sizing
-                          child: RiveAnimation.asset('assets/welcome/safe_icon.riv', onInit: _onRiveInit),
-                        ),
-                        Expanded(
-                          // Use Expanded to ensure the text takes the remaining space
-                          child: Text(
-                            "All your data is securely stored locally on your mobile device, ensuring your information remains private and accessible only to you.",
-                            style: textTheme.bodySmall,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  RiveAnimationSection(onRiveInit: onRiveInit),
                   const SizedBox(height: 40),
-                  Button(
-                    key: const Key("homePage"),
-                    text: "Let's Begin",
-                    width: 300,
-                    onPressed: () => authenticate(context, () {
-                      // This is the callback that gets called on successful authentication
-                      if (_isPressed != null) {
-                        _isPressed!.value = true; // Trigger the animation
-                      }
-                    }),
-                  ),
-                  const SizedBox(height: 20), // Add spacing at the bottom for better layout
+                  BeginButton(onPressedCallback: _onButtonPressed),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),

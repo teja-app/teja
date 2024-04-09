@@ -26,7 +26,15 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
       context: context,
       initialTime: initialTime,
     );
-    if (picked != null && picked != initialTime) onTimeSelected(picked);
+    if (picked != null && picked != initialTime) {
+      onTimeSelected(picked);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Notification time for ${initialTime.format(context)} changed to ${picked.format(context)}."),
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
   }
 
   @override
