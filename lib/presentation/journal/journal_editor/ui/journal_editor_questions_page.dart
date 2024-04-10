@@ -78,13 +78,13 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
           child: Wrap(
             children: <Widget>[
               ListTile(
-                leading: Icon(Icons.lightbulb_outline),
-                title: Text('Idea'),
+                leading: const Icon(Icons.lightbulb_outline),
+                title: const Text('Idea'),
                 onTap: () => Navigator.of(context).pop('ideas'),
               ),
               ListTile(
-                leading: Icon(Icons.chair_alt_outlined),
-                title: Text('Challenge'),
+                leading: const Icon(Icons.chair_alt_outlined),
+                title: const Text('Challenge'),
                 onTap: () => Navigator.of(context).pop('challenge'),
               ),
               // Add more options as needed
@@ -142,6 +142,79 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
     }
   }
 
+  Widget _buildQuestionText(String questionText, TextTheme textTheme) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Text(
+        questionText,
+        style: textTheme.bodySmall,
+      ),
+    );
+  }
+
+  Widget _buildResponseField(TextTheme textTheme) {
+    return SizedBox(
+      height: 150,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: TextField(
+          focusNode: textFocusNode, // Make sure you have a FocusNode for your TextField
+          controller: textEditingController,
+          cursorOpacityAnimates: false,
+          maxLines: null,
+          keyboardType: TextInputType.multiline,
+          style: textTheme.bodyMedium,
+          decoration: const InputDecoration(
+            hintText: 'Write your response here...',
+            border: InputBorder.none,
+          ),
+          onChanged: (text) => setState(() => isUserInput = true),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButtons(BuildContext context, JournalQuestionViewModel viewModel) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        IconButton(
+          icon: const Icon(FlutterIcons.magic_faw),
+          onPressed: () => _showSuggestionOptions(context),
+        ),
+        const SizedBox(width: 20),
+        ElevatedButton(
+          onPressed: () => _nextPage(context, viewModel),
+          child: const Icon(Icons.check, color: Colors.black),
+        ),
+      ],
+    );
+  }
+
+  void _nextPage(BuildContext context, JournalQuestionViewModel viewModel) {
+    final store = StoreProvider.of<AppState>(context);
+    store.dispatch(ChangeJournalPageAction(viewModel.currentPageIndex + 1));
+  }
+
+  Widget _buildSuggestions(TextTheme textTheme) {
+    return Expanded(
+      child: ListView.builder(
+        itemCount: suggestions.length,
+        itemBuilder: (context, index) {
+          return FlexibleHeightBox(
+            gridWidth: 4,
+            child: Flexible(
+              child: SelectableText(
+                suggestions[index],
+                style: const TextStyle(fontSize: 10.0),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
@@ -150,92 +223,35 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
       builder: (context, viewModel) {
         final question = viewModel.journalEntry.questions![widget.questionIndex];
 
-        if (textEditingController.text != question.answerText) {
-          isUserInput = false; // Disable user input flag when programmatically updating
+        if (textEditingController.text != question.answerText && !isUserInput) {
           textEditingController.text = question.answerText ?? '';
         }
-        final colorScheme = Theme.of(context).colorScheme;
 
         return Scaffold(
-          body: GestureDetector(
-            onTap: () => FocusScope.of(context).unfocus(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text(
-                    question.questionText!,
-                    style: Theme.of(context).textTheme.bodySmall,
+          body: Stack(
+            children: [
+              Positioned.fill(
+                child: GestureDetector(
+                  onTap: () => textFocusNode.unfocus(),
+                  behavior: HitTestBehavior.translucent, // Make sure it registers taps without blocking them
+                  child: Container(), // This container catches taps but is invisible and non-blocking
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildQuestionText(question.questionText ?? '', textTheme),
+                  const SizedBox(height: 10),
+                  _buildResponseField(textTheme),
+                  _buildActionButtons(context, viewModel),
+                  const SizedBox(height: 10), // Adjusted spacing
+                  Visibility(
+                    visible: suggestions.isNotEmpty,
+                    child: _buildSuggestions(textTheme),
                   ),
-                ),
-                const SizedBox(height: 10),
-                SizedBox(
-                  height: 150, // Specify the height explicitly
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: TextField(
-                      controller: textEditingController,
-                      cursorOpacityAnimates: false, // Note: Important for performance.
-                      maxLines: null,
-                      keyboardType: TextInputType.multiline,
-                      style: textTheme.bodyMedium,
-                      decoration: const InputDecoration(
-                        hintText: 'Write your response here...',
-                        border: InputBorder.none,
-                      ),
-                      onChanged: (text) {
-                        isUserInput = true; // Set the flag to true when the user types
-                      },
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround, // Center the buttons horizontally
-                  children: [
-                    IconButton(
-                      icon: Icon(FlutterIcons.magic_faw),
-                      onPressed: () => _showSuggestionOptions(context),
-                    ),
-                    SizedBox(width: 20), // Provides some spacing between the buttons
-                    ElevatedButton(
-                      onPressed: () {
-                        final store = StoreProvider.of<AppState>(context);
-                        store.dispatch(ChangeJournalPageAction(viewModel.currentPageIndex + 1));
-                      },
-                      child: Icon(Icons.check, color: Colors.black), // Use a check icon for the "Next" action
-                    ),
-                  ],
-                ),
-                SizedBox(height: smallSpacer),
-                suggestions.isNotEmpty
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: SelectableText(
-                          "Suggestion",
-                          style: Theme.of(context).textTheme.headline6,
-                        ),
-                      )
-                    : Container(),
-                Expanded(
-                  child: ListView.separated(
-                    itemCount: suggestions.length,
-                    separatorBuilder: (context, index) => Divider(height: 1),
-                    itemBuilder: (context, index) {
-                      return FlexibleHeightBox(
-                        gridWidth: 4,
-                        child: Flexible(
-                          child: SelectableText(
-                            suggestions[index],
-                            style: TextStyle(fontSize: 10.0),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
+                ],
+              ),
+            ],
           ),
         );
       },
