@@ -9,8 +9,8 @@ import 'package:teja/domain/entities/journal_entry_entity.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.dart';
-import 'package:teja/shared/common/bento_box.dart';
-import 'package:re_editor/re_editor.dart'; // Import the re_editor package
+import 'package:teja/shared/common/flexible_height_box.dart';
+import 'package:teja/theme/padding.dart'; // Import the re_editor package
 
 class JournalQuestionPage extends StatefulWidget {
   final int questionIndex;
@@ -27,7 +27,7 @@ class JournalQuestionPage extends StatefulWidget {
 class JournalQuestionPageState extends State<JournalQuestionPage> {
   late FocusNode textFocusNode;
   List<String> suggestions = [];
-  late CodeLineEditingController codeEditingController; // Use CodeLineEditingController
+  late TextEditingController textEditingController;
   Timer? _debounce;
   bool isUserInput = false;
 
@@ -35,20 +35,20 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
   void initState() {
     super.initState();
     textFocusNode = FocusNode();
-    codeEditingController = CodeLineEditingController.fromText(''); // Initialize with empty string
     textFocusNode.addListener(() {
       if (!textFocusNode.hasFocus) {
         _saveAnswer();
       }
     });
-    codeEditingController.addListener(_onTextChanged); // Add listener to the controller
+    textEditingController = TextEditingController();
+    textEditingController.addListener(_onTextChanged);
   }
 
   @override
   void dispose() {
     textFocusNode.dispose();
-    codeEditingController.removeListener(_onTextChanged);
-    codeEditingController.dispose();
+    textEditingController.removeListener(_onTextChanged);
+    textEditingController.dispose();
     _debounce?.cancel();
     super.dispose();
   }
@@ -66,7 +66,7 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
     store.dispatch(UpdateQuestionAnswer(
       journalEntryId: viewModel.journalEntry.id,
       questionId: viewModel.journalEntry.questions![widget.questionIndex].questionId!,
-      answerText: codeEditingController.text, // Use text from codeEditingController
+      answerText: textEditingController.text,
     ));
   }
 
@@ -110,7 +110,7 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
     }
     final String journalPrompt =
         viewModel?.questions?[widget.questionIndex].questionText ?? "Default Description"; // Fallback description
-    final String userInput = codeEditingController.text ?? "No Input"; // Directly use the user's current input
+    final String userInput = textEditingController.text ?? "No Input"; // Directly use the user's current input
     try {
       final Dio dio = Dio();
       final response = await dio.post(
@@ -144,16 +144,16 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
 
   @override
   Widget build(BuildContext context) {
+    TextTheme textTheme = Theme.of(context).textTheme;
     return StoreConnector<AppState, JournalQuestionViewModel>(
       converter: (store) => JournalQuestionViewModel.fromStore(store, widget.questionIndex),
       builder: (context, viewModel) {
         final question = viewModel.journalEntry.questions![widget.questionIndex];
 
-        if (codeEditingController.text != question.answerText) {
-          isUserInput = false;
-          codeEditingController.text = question.answerText ?? '';
+        if (textEditingController.text != question.answerText) {
+          isUserInput = false; // Disable user input flag when programmatically updating
+          textEditingController.text = question.answerText ?? '';
         }
-
         final colorScheme = Theme.of(context).colorScheme;
 
         return Scaffold(
@@ -171,15 +171,23 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
                 ),
                 const SizedBox(height: 10),
                 SizedBox(
-                  key: const Key('codeEditorKey'),
                   height: 150, // Specify the height explicitly
-                  child: CodeEditor(
-                    controller: codeEditingController,
-                    showCursorWhenReadOnly: false,
-                    onChanged: (text) {
-                      isUserInput = true;
-                    },
-                    // Other configurations for CodeEditor
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: TextField(
+                      controller: textEditingController,
+                      cursorOpacityAnimates: false, // Note: Important for performance.
+                      maxLines: null,
+                      keyboardType: TextInputType.multiline,
+                      style: textTheme.bodyMedium,
+                      decoration: const InputDecoration(
+                        hintText: 'Write your response here...',
+                        border: InputBorder.none,
+                      ),
+                      onChanged: (text) {
+                        isUserInput = true; // Set the flag to true when the user types
+                      },
+                    ),
                   ),
                 ),
                 Row(
@@ -199,49 +207,27 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
                     ),
                   ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text(
-                    "Suggestion",
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ),
+                SizedBox(height: smallSpacer),
+                suggestions.isNotEmpty
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: SelectableText(
+                          "Suggestion",
+                          style: Theme.of(context).textTheme.headline6,
+                        ),
+                      )
+                    : Container(),
                 Expanded(
                   child: ListView.separated(
                     itemCount: suggestions.length,
                     separatorBuilder: (context, index) => Divider(height: 1),
                     itemBuilder: (context, index) {
-                      return InkWell(
-                        onTap: () {
-                          codeEditingController.text += suggestions[index];
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("Added to journal")),
-                          );
-                        },
-                        child: BentoBox(
-                          gridWidth: 4,
-                          gridHeight: 2,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  suggestions[index],
-                                  style: TextStyle(fontSize: 10.0),
-                                ),
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.content_copy, size: 20),
-                                onPressed: () {
-                                  Clipboard.setData(ClipboardData(text: suggestions[index]));
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text("Copied to clipboard")),
-                                  );
-                                },
-                                padding: EdgeInsets.zero,
-                                constraints: BoxConstraints(),
-                              ),
-                            ],
+                      return FlexibleHeightBox(
+                        gridWidth: 4,
+                        child: Flexible(
+                          child: SelectableText(
+                            suggestions[index],
+                            style: TextStyle(fontSize: 10.0),
                           ),
                         ),
                       );
