@@ -1,11 +1,15 @@
 import 'dart:async';
+import 'package:dio/dio.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:icons_flutter/icons_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
+import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.dart';
-import 'package:teja/shared/common/button.dart';
+import 'package:teja/shared/common/bento_box.dart';
 import 'package:re_editor/re_editor.dart'; // Import the re_editor package
 
 class JournalQuestionPage extends StatefulWidget {
@@ -22,6 +26,7 @@ class JournalQuestionPage extends StatefulWidget {
 
 class JournalQuestionPageState extends State<JournalQuestionPage> {
   late FocusNode textFocusNode;
+  List<String> suggestions = [];
   late CodeLineEditingController codeEditingController; // Use CodeLineEditingController
   Timer? _debounce;
   bool isUserInput = false;
@@ -65,6 +70,78 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
     ));
   }
 
+  Future<void> _showSuggestionOptions(BuildContext context) async {
+    final type = await showModalBottomSheet<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.lightbulb_outline),
+                title: Text('Idea'),
+                onTap: () => Navigator.of(context).pop('ideas'),
+              ),
+              ListTile(
+                leading: Icon(Icons.chair_alt_outlined),
+                title: Text('Challenge'),
+                onTap: () => Navigator.of(context).pop('challenge'),
+              ),
+              // Add more options as needed
+            ],
+          ),
+        );
+      },
+    );
+
+    if (type != null) {
+      _fetchAndDisplaySuggestions(type);
+    }
+  }
+
+  Future<void> _fetchAndDisplaySuggestions(String guidanceType) async {
+    // Access the viewModel for the current state.
+    final viewModel = StoreProvider.of<AppState>(context).state.journalEditorState.currentJournalEntry;
+    final templateModel = StoreProvider.of<AppState>(context).state.journalTemplateState;
+
+    String journalTitle = "Default Title";
+    if (viewModel?.templateId != null) {
+      journalTitle = templateModel.templatesById[viewModel?.templateId]!.title;
+    }
+    final String journalPrompt =
+        viewModel?.questions?[widget.questionIndex].questionText ?? "Default Description"; // Fallback description
+    final String userInput = codeEditingController.text ?? "No Input"; // Directly use the user's current input
+    try {
+      final Dio dio = Dio();
+      final response = await dio.post(
+        'https://lively-darkness-d1b6.ray-719.workers.dev',
+        data: {
+          "journalTitle": journalTitle,
+          "journalPrompt": journalPrompt,
+          "guidanceType": guidanceType,
+          "userInput": userInput,
+        },
+        options: Options(
+          headers: {"Content-Type": "application/json"},
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        print("response.data ${response.data}");
+        final List<String> fetchedSuggestions = [
+          response.data as String
+        ]; // Modify this line based on the actual data structure
+        setState(() {
+          suggestions = fetchedSuggestions;
+        });
+      } else {
+        print("Failed to fetch suggestions: ${response.statusMessage}");
+      }
+    } catch (e) {
+      print("Error making the request: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, JournalQuestionViewModel>(
@@ -89,34 +166,86 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Text(
                     question.questionText!,
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ),
                 const SizedBox(height: 10),
                 SizedBox(
                   key: const Key('codeEditorKey'),
-                  height: 300, // Specify the height explicitly
+                  height: 150, // Specify the height explicitly
                   child: CodeEditor(
                     controller: codeEditingController,
+                    showCursorWhenReadOnly: false,
                     onChanged: (text) {
                       isUserInput = true;
                     },
                     // Other configurations for CodeEditor
                   ),
                 ),
-                Center(
-                  child: Container(
-                    color: colorScheme.background,
-                    padding: const EdgeInsets.all(10.0),
-                    child: Button(
-                      text: "Next",
-                      width: 300,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround, // Center the buttons horizontally
+                  children: [
+                    IconButton(
+                      icon: Icon(FlutterIcons.magic_faw),
+                      onPressed: () => _showSuggestionOptions(context),
+                    ),
+                    SizedBox(width: 20), // Provides some spacing between the buttons
+                    ElevatedButton(
                       onPressed: () {
                         final store = StoreProvider.of<AppState>(context);
                         store.dispatch(ChangeJournalPageAction(viewModel.currentPageIndex + 1));
                       },
-                      buttonType: ButtonType.primary,
+                      child: Icon(Icons.check, color: Colors.black), // Use a check icon for the "Next" action
                     ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Text(
+                    "Suggestion",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+                Expanded(
+                  child: ListView.separated(
+                    itemCount: suggestions.length,
+                    separatorBuilder: (context, index) => Divider(height: 1),
+                    itemBuilder: (context, index) {
+                      return InkWell(
+                        onTap: () {
+                          codeEditingController.text += suggestions[index];
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("Added to journal")),
+                          );
+                        },
+                        child: BentoBox(
+                          gridWidth: 4,
+                          gridHeight: 2,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  suggestions[index],
+                                  style: TextStyle(fontSize: 10.0),
+                                ),
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.content_copy, size: 20),
+                                onPressed: () {
+                                  Clipboard.setData(ClipboardData(text: suggestions[index]));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text("Copied to clipboard")),
+                                  );
+                                },
+                                padding: EdgeInsets.zero,
+                                constraints: BoxConstraints(),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
@@ -132,18 +261,26 @@ class JournalQuestionViewModel {
   final JournalEntryEntity journalEntry;
   final int questionIndex;
   final int currentPageIndex;
+  JournalTemplateEntity? template;
 
   JournalQuestionViewModel({
     required this.journalEntry,
     required this.questionIndex,
     required this.currentPageIndex,
+    this.template,
   });
 
   static JournalQuestionViewModel fromStore(Store<AppState> store, int questionIndex) {
+    final currentJournalEntry = store.state.journalEditorState.currentJournalEntry!;
+    JournalTemplateEntity? template;
+    if (currentJournalEntry.templateId != null) {
+      template = store.state.journalTemplateState.templatesById[currentJournalEntry.templateId];
+    }
     return JournalQuestionViewModel(
-      journalEntry: store.state.journalEditorState.currentJournalEntry!,
+      journalEntry: currentJournalEntry,
       currentPageIndex: store.state.journalEditorState.currentPageIndex,
       questionIndex: questionIndex,
+      template: template,
     );
   }
 }
