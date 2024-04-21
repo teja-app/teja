@@ -53,8 +53,12 @@
 	<true/>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Face ID is required to open the application for secutiry</string>
+	<key>NSCameraUsageDescription</key>
+	<string>To enhance your journaling experience, this app needs to access your camera so you can record videos directly within your journal entries. This allows you to capture moments in real-time and add a personal touch to your memories.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>We require access to your photo library to allow you to select photos for your journal entries in Teja.</string>
+	<string>To make your journal entries more expressive and personal, this app requests access to your photo library. This enables you to select photos and videos from your gallery to include in your journal, helping you preserve and reflect on your experiences.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app requires access to your microphone to record audio when capturing videos for your journal entries. Audio recording enriches your video memories, allowing you to capture the full atmosphere of moments you wish to remember.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIDeviceFamily</key>

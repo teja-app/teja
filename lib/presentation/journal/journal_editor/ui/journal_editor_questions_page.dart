@@ -1,16 +1,14 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:icons_flutter/icons_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
-import 'package:teja/theme/padding.dart'; // Import the re_editor package
 
 class JournalQuestionPage extends StatefulWidget {
   final int questionIndex;
@@ -152,48 +150,94 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
     );
   }
 
-  Widget _buildResponseField(TextTheme textTheme) {
-    return SizedBox(
-      height: 150,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: TextField(
-          focusNode: textFocusNode, // Make sure you have a FocusNode for your TextField
-          controller: textEditingController,
-          cursorOpacityAnimates: false,
-          maxLines: null,
-          keyboardType: TextInputType.multiline,
-          style: textTheme.bodyMedium,
-          decoration: const InputDecoration(
-            hintText: 'Write your response here...',
-            border: InputBorder.none,
-          ),
-          onChanged: (text) => setState(() => isUserInput = true),
-        ),
-      ),
-    );
+  final ImagePicker _picker = ImagePicker();
+
+  // Function to handle image selection
+  Future<void> _selectImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      // Handle the image file
+      print("Image Path: ${image.path}");
+    }
   }
 
-  Widget _buildActionButtons(BuildContext context, JournalQuestionViewModel viewModel) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        IconButton(
-          icon: const Icon(FlutterIcons.magic_faw),
-          onPressed: () => _showSuggestionOptions(context),
-        ),
-        const SizedBox(width: 20),
-        ElevatedButton(
-          onPressed: () => _nextPage(context, viewModel),
-          child: const Icon(Icons.check, color: Colors.black),
-        ),
-      ],
+  // Function to handle video recording
+  Future<void> _recordVideo() async {
+    final XFile? video = await _picker.pickVideo(source: ImageSource.camera);
+    if (video != null) {
+      // Handle the video file
+      print("Video Path: ${video.path}");
+    }
+  }
+
+  Widget _buildResponseField(BuildContext context, TextTheme textTheme, JournalQuestionViewModel viewModel) {
+    return Expanded(
+      child: Stack(
+        children: [
+          TextField(
+            focusNode: textFocusNode,
+            controller: textEditingController,
+            cursorOpacityAnimates: false,
+            maxLines: null,
+            keyboardType: TextInputType.multiline,
+            expands: true,
+            style: textTheme.bodyMedium?.copyWith(color: Colors.white),
+            decoration: InputDecoration(
+              hintText: 'Write your response here...',
+              hintStyle: textTheme.bodyMedium?.copyWith(color: Colors.white54),
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(horizontal: 16),
+            ),
+            onChanged: (text) => setState(() => isUserInput = true),
+          ),
+          Positioned(
+            right: 16,
+            bottom: 16,
+            child: IconButton(
+              icon: Icon(Icons.mic, color: Colors.white),
+              onPressed: () {
+                // Implement video selection logic
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   void _nextPage(BuildContext context, JournalQuestionViewModel viewModel) {
     final store = StoreProvider.of<AppState>(context);
     store.dispatch(ChangeJournalPageAction(viewModel.currentPageIndex + 1));
+  }
+
+  Widget _buildBottomActionBar(BuildContext context, JournalQuestionViewModel viewModel) {
+    return Container(
+      color: Colors.black,
+      padding: EdgeInsets.only(left: 16, right: 16, bottom: MediaQuery.of(context).padding.bottom),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+            icon: Icon(Icons.photo, color: Colors.white),
+            onPressed: _selectImage,
+          ),
+          IconButton(
+            icon: Icon(Icons.video_call, color: Colors.white),
+            onPressed: _recordVideo,
+          ),
+          IconButton(
+            icon: Icon(Icons.add_circle_outline, color: Colors.white),
+            onPressed: () {
+              // Implement logic to expand input area
+            },
+          ),
+          ElevatedButton(
+            onPressed: () => _nextPage(context, viewModel),
+            child: const Icon(Icons.check, color: Colors.black),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildSuggestions(TextTheme textTheme) {
@@ -228,6 +272,7 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
         }
 
         return Scaffold(
+          bottomNavigationBar: _buildBottomActionBar(context, viewModel),
           body: Stack(
             children: [
               Positioned.fill(
@@ -242,8 +287,8 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
                 children: [
                   _buildQuestionText(question.questionText ?? '', textTheme),
                   const SizedBox(height: 10),
-                  _buildResponseField(textTheme),
-                  _buildActionButtons(context, viewModel),
+                  _buildResponseField(context, textTheme, viewModel),
+                  // _buildActionButtons(context, viewModel),
                   const SizedBox(height: 10), // Adjusted spacing
                   Visibility(
                     visible: suggestions.isNotEmpty,

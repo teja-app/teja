@@ -5,7 +5,7 @@ import 'package:archive/archive_io.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
-import 'package:path/path.dart' as p;
+import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:redux_saga/redux_saga.dart';
 import 'package:share_plus/share_plus.dart';
@@ -66,15 +66,33 @@ class SyncSaga {
         } else if (filename.contains("moodLogs")) {
           await _importMoodLogs(jsonData, isar);
         }
-        // Add more conditions for other collections
       } else {
         // Handle attachments
-        final documentsDirectory = await getApplicationDocumentsDirectory();
-        final outputPath = p.join(documentsDirectory.path, filename);
-        final outputFile = File(outputPath);
-        await outputFile.create(recursive: true);
-        await outputFile.writeAsBytes(data);
+        await saveFileToDocuments(data, filename);
       }
+    }
+  }
+
+  Future<void> saveFileToDocuments(List<int> data, String filename) async {
+    try {
+      final documentsDirectory = await getApplicationDocumentsDirectory();
+      if (filename.startsWith('/')) {
+        filename = filename.substring(1);
+      }
+      final filePath = path.join(documentsDirectory.path, filename);
+      final outputFile = File(filePath);
+
+      // Check if the file already exists
+      if (await outputFile.exists()) {
+        print('File already exists. Considering handling logic such as renaming or replacing.');
+      }
+
+      // Write data to the file
+      await outputFile.writeAsBytes(data, flush: true);
+      print('File saved successfully at $filePath');
+    } catch (e) {
+      print('Failed to save file: $e');
+      throw FileSystemException('Failed to save file', e.toString());
     }
   }
 
@@ -147,7 +165,10 @@ class SyncSaga {
 
     // Add attachments from the documents directory
     final documentsDirectory = await getApplicationDocumentsDirectory();
-    final files = documentsDirectory.listSync(); // List all files
+    final files = documentsDirectory.listSync().where((item) {
+      // Exclude files with extensions .isar and .hive
+      return !item.path.contains('.isar') && !item.path.contains('.hive') && !item.path.contains('.lock');
+    }).toList();
     for (var file in files) {
       if (file is File) {
         encoder.addFile(file, file.path.substring(documentsDirectory.path.length));

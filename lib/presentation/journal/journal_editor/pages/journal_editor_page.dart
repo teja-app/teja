@@ -43,6 +43,9 @@ class JournalEditorScreenState extends State<JournalEditorScreen> {
     return StoreConnector<AppState, JournalEditViewModel>(
       converter: JournalEditViewModel.fromStore,
       builder: (context, viewModel) {
+        // Correctly handle possibly null currentJournalEntry
+        int pageCount = viewModel.currentJournalEntry?.questions?.length ?? 0 + 1; // Correct the logic here
+
         // Schedule a post-frame callback to update the page controller
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (_pageController.hasClients && viewModel.currentPageIndex != _pageController.page?.round()) {
@@ -52,38 +55,44 @@ class JournalEditorScreenState extends State<JournalEditorScreen> {
 
         return Scaffold(
           appBar: AppBar(
-            title: SmoothPageIndicator(
-              controller: _pageController,
-              count: viewModel.currentJournalEntry.questions!.length + 1,
-              effect: const ExpandingDotsEffect(),
-              onDotClicked: (index) {
-                _pageController.animateToPage(
-                  index,
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                );
-              },
-            ),
+            title: viewModel.currentJournalEntry != null
+                ? SmoothPageIndicator(
+                    controller: _pageController,
+                    count: pageCount,
+                    effect: const ExpandingDotsEffect(),
+                    onDotClicked: (index) {
+                      _pageController.animateToPage(
+                        index,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      );
+                    },
+                  )
+                : const Text("Loading..."),
           ),
           body: PageView.builder(
             controller: _pageController,
-            itemCount: viewModel.currentJournalEntry.questions!.length + 1,
+            itemCount: pageCount,
             onPageChanged: (int page) {
               viewModel.changePage(page);
               FocusManager.instance.primaryFocus?.unfocus();
             },
             itemBuilder: (context, index) {
-              if (index < viewModel.currentJournalEntry.questions!.length) {
+              // Ensures both currentJournalEntry and questions are not null before accessing length
+              if (viewModel.currentJournalEntry?.questions != null &&
+                  index < viewModel.currentJournalEntry!.questions!.length) {
                 return JournalQuestionPage(
                   questionIndex: index,
                 );
               } else {
-                // FinishScreen as the last page
-                return JournalFinishScreen(
-                  onFinish: () {
-                    goRouter.goNamed(RootPath.home);
-                  },
-                );
+                // FinishScreen as the last page or a placeholder if journal entry or questions are null
+                return index == pageCount - 1
+                    ? JournalFinishScreen(
+                        onFinish: () {
+                          goRouter.goNamed(RootPath.home);
+                        },
+                      )
+                    : Center(child: Text("No data available"));
               }
             },
           ),
@@ -95,14 +104,14 @@ class JournalEditorScreenState extends State<JournalEditorScreen> {
 
 class JournalEditViewModel {
   final int currentPageIndex;
-  final JournalEntryEntity currentJournalEntry;
+  final JournalEntryEntity? currentJournalEntry; // Make this nullable
   final Function(int) changePage;
   final int pageCount;
   final Map<String, JournalTemplateEntity> templatesById;
 
   JournalEditViewModel({
     required this.currentPageIndex,
-    required this.currentJournalEntry,
+    this.currentJournalEntry, // Now nullable
     required this.changePage,
     required this.templatesById,
   }) : pageCount = 5; // +2 for initial and feeling pages
@@ -110,7 +119,7 @@ class JournalEditViewModel {
   static JournalEditViewModel fromStore(Store<AppState> store) {
     return JournalEditViewModel(
       currentPageIndex: store.state.journalEditorState.currentPageIndex,
-      currentJournalEntry: store.state.journalEditorState.currentJournalEntry!,
+      currentJournalEntry: store.state.journalEditorState.currentJournalEntry, // No longer using `!`
       templatesById: store.state.journalTemplateState.templatesById,
       changePage: (index) => store.dispatch(ChangeJournalPageAction(index)),
     );
