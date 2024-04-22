@@ -11,6 +11,7 @@ import 'package:teja/domain/redux/journal/detail/journal_detail_actions.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.dart';
 import 'package:teja/presentation/journal/journa_detail/ui/journal_setting_menu.dart';
 import 'package:teja/presentation/mood/ui/attachement_image.dart';
+import 'package:teja/presentation/mood/ui/attachment_video.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/bento_box.dart';
 
@@ -159,7 +160,7 @@ class JournalDetailPageState extends State<JournalDetailPage> {
                   question?.answerText ?? 'No answer',
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
-                _buildImagesForQuestion(journalEntry, index), // This function will handle image display
+                _buildMediaForQuestion(journalEntry, index), // This function will handle image display
               ],
             ),
           ),
@@ -168,28 +169,44 @@ class JournalDetailPageState extends State<JournalDetailPage> {
     );
   }
 
-  Widget _buildImagesForQuestion(JournalEntryEntity journalEntry, int questionIndex) {
+  Widget _buildMediaForQuestion(JournalEntryEntity journalEntry, int questionIndex) {
     final imageEntryIds = journalEntry.questions![questionIndex].imageEntryIds;
+    final videoEntryIds = journalEntry.questions![questionIndex].videoEntryIds;
+
     final imageEntries =
         journalEntry.imageEntries?.where((entry) => imageEntryIds?.contains(entry.id) ?? false).toList() ?? [];
+    final videoEntries =
+        journalEntry.videoEntries?.where((entry) => videoEntryIds?.contains(entry.id) ?? false).toList() ?? [];
 
-    if (imageEntries.isEmpty) return SizedBox.shrink();
+    if (imageEntries.isEmpty && videoEntries.isEmpty) return SizedBox.shrink();
 
     return Container(
       height: 60, // Adjust as necessary
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: imageEntries.length,
+        itemCount: imageEntries.length + videoEntries.length,
         itemBuilder: (context, index) {
-          final imagePath = imageEntries[index].filePath;
-          if (imagePath == null) {
-            return SizedBox.shrink(); // Handling null imagePath
+          if (index < imageEntries.length) {
+            final imagePath = imageEntries[index].filePath;
+            if (imagePath != null) {
+              return AttachmentImage(
+                relativeImagePath: imagePath,
+                width: 100, // Adjust as necessary
+                height: 60, // Adjust as necessary
+              );
+            }
+          } else {
+            final videoIndex = index - imageEntries.length;
+            final videoPath = videoEntries[videoIndex].filePath;
+            if (videoPath != null) {
+              return AttachmentVideo(
+                relativeVideoPath: videoPath,
+                width: 100, // Adjust as necessary
+                height: 60, // Adjust as necessary
+              );
+            }
           }
-          return AttachmentImage(
-            relativeImagePath: imagePath, // No longer nullable here
-            width: 100, // Adjust as necessary
-            height: 60, // Adjust as necessary
-          );
+          return SizedBox.shrink();
         },
       ),
     );

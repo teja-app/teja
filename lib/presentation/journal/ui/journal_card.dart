@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/presentation/mood/ui/attachement_image.dart';
+import 'package:teja/presentation/mood/ui/attachment_video.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 
@@ -17,10 +18,11 @@ Widget journalEntryLayout(
   final textTheme = Theme.of(context).textTheme;
   final firstQuestion = journalEntry.questions?.isNotEmpty == true ? journalEntry.questions!.first : null;
 
-  // Function to build a row of up to three images
-  Widget _buildImageRow() {
+  Widget _buildMediaRow() {
     final images = journalEntry.imageEntries?.take(3).toList() ?? [];
-    if (images.isEmpty) {
+    final videos = journalEntry.videoEntries?.take(3).toList() ?? [];
+
+    if (images.isEmpty && videos.isEmpty) {
       return SizedBox.shrink();
     }
 
@@ -28,18 +30,33 @@ Widget journalEntryLayout(
       height: 60, // Adjust height accordingly
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: images.length,
+        itemCount: images.length + videos.length,
         itemBuilder: (context, index) {
-          final imagePath = images[index].filePath;
-          if (imagePath != null) {
-            return Padding(
-              padding: EdgeInsets.only(right: 8), // Add some spacing between images
-              child: AttachmentImage(
-                relativeImagePath: imagePath,
-                width: 100, // Adjust width as needed
-                height: 50, // Adjust height as needed
-              ),
-            );
+          if (index < images.length) {
+            final imagePath = images[index].filePath;
+            if (imagePath != null) {
+              return Padding(
+                padding: EdgeInsets.only(right: 8),
+                child: AttachmentImage(
+                  relativeImagePath: imagePath,
+                  width: 100, // Adjust width as needed
+                  height: 50, // Adjust height as needed
+                ),
+              );
+            }
+          } else {
+            final videoIndex = index - images.length;
+            final videoPath = videos[videoIndex].filePath;
+            if (videoPath != null) {
+              return Padding(
+                padding: EdgeInsets.only(right: 8),
+                child: AttachmentVideo(
+                  relativeVideoPath: videoPath,
+                  width: 100, // Adjust width as needed
+                  height: 50, // Adjust height as needed
+                ),
+              );
+            }
           }
           return SizedBox.shrink();
         },
@@ -81,7 +98,7 @@ Widget journalEntryLayout(
                   style: textTheme.bodySmall,
                 ),
                 const SizedBox(height: 16),
-                _buildImageRow(), // Add the image row here
+                _buildMediaRow(), // Add the image row here
                 Align(
                   alignment: Alignment.bottomRight,
                   child: Text(

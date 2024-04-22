@@ -11,7 +11,9 @@ import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.
 import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart';
 import 'package:teja/infrastructure/utils/helpers.dart';
 import 'package:teja/infrastructure/utils/image_storage_helper.dart';
+import 'package:teja/infrastructure/utils/video_storage_helper.dart';
 import 'package:teja/presentation/mood/ui/attachement_image.dart';
+import 'package:teja/presentation/mood/ui/attachment_video.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 
 class JournalQuestionPage extends StatefulWidget {
@@ -196,18 +198,38 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
         viewModel.journalEntry.questions![viewModel.questionIndex].id,
         imageEntry,
       );
+    } else if (mediaPath.endsWith('.mp4') || mediaPath.endsWith('.mov') || mediaPath.endsWith('.avi')) {
+      print("Selected media is a video.");
+
+      // Save the video permanently and get the relative path
+      final String relativePath = await VideoStorageHelper.saveVideoPermanently(media.path);
+
+      var fileBytes = await media.readAsBytes();
+      // Create a VideoEntry object with the permanent path
+      VideoEntry videoEntry = VideoEntry()
+        ..id = Helpers.generateUniqueId()
+        ..filePath = relativePath // Use the relative path from permanent storage
+        ..duration = 0 // You can update this with the actual video duration if needed
+        ..hash = Helpers.generateHash(fileBytes);
+
+      // Dispatch the action to add the video
+      viewModel.addVideo(
+        viewModel.journalEntry.id,
+        viewModel.journalEntry.questions![viewModel.questionIndex].id,
+        videoEntry,
+      );
     } else {
       print("Unknown or unsupported media type: ${media.path}");
       // Optionally handle unknown types, show error, or log
     }
   }
 
-  // Function to handle video recording
-  Future<void> _recordVideo() async {
+  Future<void> _recordVideo(JournalQuestionViewModel viewModel) async {
     final XFile? video = await _picker.pickVideo(source: ImageSource.camera);
     if (video != null) {
       // Handle the video file
       print("Video Path: ${video.path}");
+      handleMediaType(video, viewModel);
     }
   }
 
@@ -242,7 +264,7 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
                     // Implement your recording logic here
                   },
                 ),
-                _buildSelectedImagesScrollable(viewModel),
+                _buildSelectedMediaScrollable(viewModel),
               ],
             ),
           ),
@@ -251,9 +273,9 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
     );
   }
 
-  Widget _buildSelectedImagesScrollable(JournalQuestionViewModel viewModel) {
-    // If the list of images is empty, return an empty widget
-    if (viewModel.imageEntries?.isEmpty ?? true) {
+  Widget _buildSelectedMediaScrollable(JournalQuestionViewModel viewModel) {
+    // If both lists of images and videos are empty or null, return an empty widget
+    if ((viewModel.imageEntries?.isEmpty ?? true) && (viewModel.videoEntries?.isEmpty ?? true)) {
       return SizedBox.shrink();
     }
 
@@ -265,13 +287,24 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
 
       child: ListView(
         scrollDirection: Axis.vertical,
-        children: viewModel.imageEntries!.map((imageEntry) {
-          return AttachmentImage(
-            relativeImagePath: imageEntry.filePath!,
-            width: 50,
-            height: 30,
-          );
-        }).toList(),
+        children: [
+          if (viewModel.imageEntries != null)
+            ...viewModel.imageEntries!.map((imageEntry) {
+              return AttachmentImage(
+                relativeImagePath: imageEntry.filePath!,
+                width: 50,
+                height: 30,
+              );
+            }).toList(),
+          if (viewModel.videoEntries != null)
+            ...viewModel.videoEntries!.map((videoEntry) {
+              return AttachmentVideo(
+                relativeVideoPath: videoEntry.filePath!,
+                width: 50,
+                height: 30,
+              );
+            }).toList(),
+        ],
       ),
     );
   }
@@ -294,7 +327,7 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
           ),
           IconButton(
             icon: const Icon(Icons.video_call, color: Colors.white),
-            onPressed: _recordVideo,
+            onPressed: () => _recordVideo(viewModel),
           ),
           IconButton(
             icon: const Icon(Icons.add_circle_outline, color: Colors.white),
@@ -380,16 +413,20 @@ class JournalQuestionViewModel {
   final int currentPageIndex;
   JournalTemplateEntity? template;
   final List<ImageEntryEntity>? imageEntries;
+  final List<VideoEntryEntity>? videoEntries;
 
   final Function(String journalEntryId, String questionAnswerPairId, ImageEntry imageEntry) addImage;
+  final Function(String journalEntryId, String questionAnswerPairId, VideoEntry videoEntry) addVideo;
 
   JournalQuestionViewModel({
     required this.journalEntry,
     required this.questionIndex,
     required this.currentPageIndex,
     required this.addImage,
+    required this.addVideo,
     this.imageEntries,
     this.template,
+    this.videoEntries,
   });
 
   static JournalQuestionViewModel fromStore(Store<AppState> store, int questionIndex) {
@@ -412,6 +449,19 @@ class JournalQuestionViewModel {
             ).map((entry) => (entry)),
           );
 
+    final videoEntryIds = currentJournalEntry.questions![questionIndex].videoEntryIds;
+
+    final videoEntries = currentJournalEntry.videoEntries == null
+        ? null
+        : List<VideoEntryEntity>.from(
+            currentJournalEntry.videoEntries!.where(
+              (entry) {
+                print("entry ${entry.id}");
+                return videoEntryIds?.contains(entry.id) ?? false;
+              },
+            ).map((entry) => (entry)),
+          );
+
     return JournalQuestionViewModel(
       journalEntry: currentJournalEntry,
       currentPageIndex: store.state.journalEditorState.currentPageIndex,
@@ -422,6 +472,12 @@ class JournalQuestionViewModel {
         journalEntryId: journalEntryId,
         questionAnswerPairId: questionAnswerPairId,
         imageEntry: imageEntry,
+      )),
+      videoEntries: videoEntries,
+      addVideo: (journalEntryId, questionAnswerPairId, videoEntry) => store.dispatch(AddVideoToQuestionAnswerPair(
+        journalEntryId: journalEntryId,
+        questionAnswerPairId: questionAnswerPairId,
+        videoEntry: videoEntry,
       )),
     );
   }

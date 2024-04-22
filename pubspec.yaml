@@ -85,6 +85,8 @@ dependencies:
   re_editor: ^0.1.0
   in_app_review: ^2.0.9
   flutter_timezone: ^1.0.8
+  video_player: ^2.8.6
+  video_thumbnail: ^0.5.3
 
 dev_dependencies:
   flutter_test:

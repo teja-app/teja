@@ -75,6 +75,46 @@ JournalEditorState _updateJournalEntryWithImages(JournalEditorState state, Updat
   return state.copyWith(currentJournalEntry: action.journalEntry);
 }
 
+JournalEditorState _addOrUpdateVideoSuccess(JournalEditorState state, AddOrUpdateVideoSuccessAction action) {
+  return state.copyWith(currentJournalEntry: state.currentJournalEntry);
+}
+
+JournalEditorState _addOrUpdateVideoFailure(JournalEditorState state, AddOrUpdateVideoFailureAction action) {
+  return state.copyWith(error: action.error);
+}
+
+JournalEditorState _removeVideoSuccess(JournalEditorState state, RemoveVideoSuccessAction action) {
+  return state.copyWith(currentJournalEntry: state.currentJournalEntry);
+}
+
+JournalEditorState _removeVideoFailure(JournalEditorState state, RemoveVideoFailureAction action) {
+  return state.copyWith(error: action.error);
+}
+
+JournalEditorState _addVideoToQuestionAnswerPairSuccess(
+    JournalEditorState state, AddVideoToQuestionAnswerPairSuccessAction action) {
+  return state.copyWith(currentJournalEntry: state.currentJournalEntry);
+}
+
+JournalEditorState _addVideoToQuestionAnswerPairFailure(
+    JournalEditorState state, AddVideoToQuestionAnswerPairFailureAction action) {
+  return state.copyWith(error: action.error);
+}
+
+JournalEditorState _removeVideoFromQuestionAnswerPairSuccess(
+    JournalEditorState state, RemoveVideoFromQuestionAnswerPairSuccessAction action) {
+  return state.copyWith(currentJournalEntry: state.currentJournalEntry);
+}
+
+JournalEditorState _removeVideoFromQuestionAnswerPairFailure(
+    JournalEditorState state, RemoveVideoFromQuestionAnswerPairFailureAction action) {
+  return state.copyWith(error: action.error);
+}
+
+JournalEditorState _updateJournalEntryWithVideos(JournalEditorState state, UpdateJournalEntryWithVideos action) {
+  return state.copyWith(currentJournalEntry: action.journalEntry);
+}
+
 final journalEditorReducer = combineReducers<JournalEditorState>([
   TypedReducer<JournalEditorState, SaveJournalEntry>(_updateJournalEntry),
   TypedReducer<JournalEditorState, UpdateQuestionAnswer>(_updateQuestionAnswer),
@@ -93,4 +133,15 @@ final journalEditorReducer = combineReducers<JournalEditorState>([
   TypedReducer<JournalEditorState, RemoveImageFromQuestionAnswerPairFailureAction>(
       _removeImageFromQuestionAnswerPairFailure),
   TypedReducer<JournalEditorState, UpdateJournalEntryWithImages>(_updateJournalEntryWithImages),
+  TypedReducer<JournalEditorState, AddOrUpdateVideoSuccessAction>(_addOrUpdateVideoSuccess),
+  TypedReducer<JournalEditorState, AddOrUpdateVideoFailureAction>(_addOrUpdateVideoFailure),
+  TypedReducer<JournalEditorState, RemoveVideoSuccessAction>(_removeVideoSuccess),
+  TypedReducer<JournalEditorState, RemoveVideoFailureAction>(_removeVideoFailure),
+  TypedReducer<JournalEditorState, AddVideoToQuestionAnswerPairSuccessAction>(_addVideoToQuestionAnswerPairSuccess),
+  TypedReducer<JournalEditorState, AddVideoToQuestionAnswerPairFailureAction>(_addVideoToQuestionAnswerPairFailure),
+  TypedReducer<JournalEditorState, RemoveVideoFromQuestionAnswerPairSuccessAction>(
+      _removeVideoFromQuestionAnswerPairSuccess),
+  TypedReducer<JournalEditorState, RemoveVideoFromQuestionAnswerPairFailureAction>(
+      _removeVideoFromQuestionAnswerPairFailure),
+  TypedReducer<JournalEditorState, UpdateJournalEntryWithVideos>(_updateJournalEntryWithVideos),
 ]);
