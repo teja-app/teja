@@ -5,8 +5,10 @@ import 'package:insta_image_viewer/insta_image_viewer.dart'; // Import the packa
 
 class AttachmentImage extends StatelessWidget {
   final String relativeImagePath;
+  double? width;
+  double? height;
 
-  const AttachmentImage({Key? key, required this.relativeImagePath}) : super(key: key);
+  AttachmentImage({super.key, required this.relativeImagePath, this.height = 100, this.width = 100});
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +23,8 @@ class AttachmentImage extends StatelessWidget {
             // Wrap the image with InstaImageViewer
             child: Container(
               margin: const EdgeInsets.all(4),
-              width: 100,
-              height: 100,
+              width: width,
+              height: height,
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: FileImage(imageFile),
@@ -36,8 +38,8 @@ class AttachmentImage extends StatelessWidget {
           // Handle the error state
           return Container(
             margin: const EdgeInsets.all(4),
-            width: 100,
-            height: 100,
+            width: width,
+            height: height,
             decoration: BoxDecoration(
               color: Colors.grey[200],
               borderRadius: BorderRadius.circular(8),
@@ -48,8 +50,8 @@ class AttachmentImage extends StatelessWidget {
           // Handle the loading state
           return Container(
             margin: const EdgeInsets.all(4),
-            width: 100,
-            height: 100,
+            width: width,
+            height: height,
             decoration: BoxDecoration(
               color: Colors.grey[200],
               borderRadius: BorderRadius.circular(8),

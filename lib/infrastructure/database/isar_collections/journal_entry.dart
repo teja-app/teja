@@ -9,6 +9,11 @@ class QuestionAnswerPair {
   String? questionId;
   String? questionText;
   String? answerText;
+
+  // Adding lists to handle multiple entries
+  List<String>? imageEntryIds; // IDs of linked ImageEntry objects
+  List<String>? videoEntryIds; // IDs of linked VideoEntry objects
+  List<String>? voiceEntryIds; // IDs of linked VoiceEntry objects
 }
 
 @Embedded()
@@ -19,29 +24,32 @@ class TextEntry {
 
 @Embedded()
 class ImageEntry {
-  String id = Helpers.generateUniqueId(); // Unique identifier for each image entry
+  String id = Helpers.generateUniqueId();
   String? filePath;
   String? caption;
+  String? hash; // Add hash field
+}
+
+@Embedded()
+class VideoEntry {
+  String id = Helpers.generateUniqueId();
+  String? filePath;
+  int? duration;
+  String? hash; // Add hash field
+}
+
+@Embedded()
+class VoiceEntry {
+  String id = Helpers.generateUniqueId();
+  String? filePath;
+  int? duration;
+  String? hash; // Add hash field
 }
 
 @Embedded()
 class BulletPointEntry {
   String id = Helpers.generateUniqueId(); // Unique identifier for each bullet point entry
   List<String>? points;
-}
-
-@Embedded()
-class VideoEntry {
-  String id = Helpers.generateUniqueId(); // Unique identifier for each video entry
-  String? filePath;
-  int? duration;
-}
-
-@Embedded()
-class VoiceEntry {
-  String id = Helpers.generateUniqueId(); // Unique identifier for each voice entry
-  String? filePath;
-  int? duration;
 }
 
 @Embedded()

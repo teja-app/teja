@@ -8,6 +8,10 @@ import 'package:teja/domain/entities/journal_entry_entity.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.dart';
+import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart';
+import 'package:teja/infrastructure/utils/helpers.dart';
+import 'package:teja/infrastructure/utils/image_storage_helper.dart';
+import 'package:teja/presentation/mood/ui/attachement_image.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 
 class JournalQuestionPage extends StatefulWidget {
@@ -152,12 +156,49 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
 
   final ImagePicker _picker = ImagePicker();
 
-  // Function to handle image selection
-  Future<void> _selectImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      // Handle the image file
-      print("Image Path: ${image.path}");
+  Future<void> selectMedia(JournalQuestionViewModel viewModel) async {
+    final List<XFile> mediaFiles = await _picker.pickMultipleMedia();
+
+    if (mediaFiles.isNotEmpty) {
+      for (XFile file in mediaFiles) {
+        print("Media Path: ${file.path}");
+        handleMediaType(file, viewModel);
+      }
+    } else {
+      print("No media selected.");
+    }
+  }
+
+  Future<void> handleMediaType(XFile media, JournalQuestionViewModel viewModel) async {
+    String mediaPath = media.path.toLowerCase(); // Case-insensitive matching
+
+    // Check file extension to determine media type
+    if (mediaPath.endsWith('.jpg') ||
+        mediaPath.endsWith('.png') ||
+        mediaPath.endsWith('.jpeg') ||
+        mediaPath.endsWith('.heic')) {
+      print("Selected media is an image.");
+
+      // Save the image permanently and get the relative path
+      final String relativePath = await ImageStorageHelper.saveImagePermanently(media.path);
+
+      var fileBytes = await media.readAsBytes();
+      // Create an ImageEntry object with the permanent path
+      ImageEntry imageEntry = ImageEntry()
+        ..id = Helpers.generateUniqueId()
+        ..filePath = relativePath // Use the relative path from permanent storage
+        ..caption = ''
+        ..hash = Helpers.generateHash(fileBytes);
+
+      // Dispatch the action to add the image
+      viewModel.addImage(
+        viewModel.journalEntry.id,
+        viewModel.journalEntry.questions![viewModel.questionIndex].id,
+        imageEntry,
+      );
+    } else {
+      print("Unknown or unsupported media type: ${media.path}");
+      // Optionally handle unknown types, show error, or log
     }
   }
 
@@ -186,21 +227,51 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
               hintText: 'Write your response here...',
               hintStyle: textTheme.bodyMedium?.copyWith(color: Colors.white54),
               border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(horizontal: 16),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16),
             ),
             onChanged: (text) => setState(() => isUserInput = true),
           ),
           Positioned(
-            right: 16,
-            bottom: 16,
-            child: IconButton(
-              icon: Icon(Icons.mic, color: Colors.white),
-              onPressed: () {
-                // Implement video selection logic
-              },
+            top: 0,
+            right: 0,
+            child: Column(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.mic, color: Colors.white),
+                  onPressed: () {
+                    // Implement your recording logic here
+                  },
+                ),
+                _buildSelectedImagesScrollable(viewModel),
+              ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSelectedImagesScrollable(JournalQuestionViewModel viewModel) {
+    // If the list of images is empty, return an empty widget
+    if (viewModel.imageEntries?.isEmpty ?? true) {
+      return SizedBox.shrink();
+    }
+
+    return Container(
+      // Define a fixed width or use MediaQuery to set it relative to the screen size
+      width: 50, // For example
+      // Define a fixed height, so the ListView knows its scrolling direction's constraints
+      height: MediaQuery.of(context).size.height - 200,
+
+      child: ListView(
+        scrollDirection: Axis.vertical,
+        children: viewModel.imageEntries!.map((imageEntry) {
+          return AttachmentImage(
+            relativeImagePath: imageEntry.filePath!,
+            width: 50,
+            height: 30,
+          );
+        }).toList(),
       ),
     );
   }
@@ -218,15 +289,15 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           IconButton(
-            icon: Icon(Icons.photo, color: Colors.white),
-            onPressed: _selectImage,
+            icon: const Icon(Icons.image, color: Colors.white),
+            onPressed: () => selectMedia(viewModel),
           ),
           IconButton(
-            icon: Icon(Icons.video_call, color: Colors.white),
+            icon: const Icon(Icons.video_call, color: Colors.white),
             onPressed: _recordVideo,
           ),
           IconButton(
-            icon: Icon(Icons.add_circle_outline, color: Colors.white),
+            icon: const Icon(Icons.add_circle_outline, color: Colors.white),
             onPressed: () {
               // Implement logic to expand input area
             },
@@ -287,9 +358,8 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
                 children: [
                   _buildQuestionText(question.questionText ?? '', textTheme),
                   const SizedBox(height: 10),
-                  _buildResponseField(context, textTheme, viewModel),
-                  // _buildActionButtons(context, viewModel),
-                  const SizedBox(height: 10), // Adjusted spacing
+                  _buildResponseField(context, Theme.of(context).textTheme, viewModel),
+                  const SizedBox(height: 10),
                   Visibility(
                     visible: suggestions.isNotEmpty,
                     child: _buildSuggestions(textTheme),
@@ -309,11 +379,16 @@ class JournalQuestionViewModel {
   final int questionIndex;
   final int currentPageIndex;
   JournalTemplateEntity? template;
+  final List<ImageEntryEntity>? imageEntries;
+
+  final Function(String journalEntryId, String questionAnswerPairId, ImageEntry imageEntry) addImage;
 
   JournalQuestionViewModel({
     required this.journalEntry,
     required this.questionIndex,
     required this.currentPageIndex,
+    required this.addImage,
+    this.imageEntries,
     this.template,
   });
 
@@ -323,11 +398,31 @@ class JournalQuestionViewModel {
     if (currentJournalEntry.templateId != null) {
       template = store.state.journalTemplateState.templatesById[currentJournalEntry.templateId];
     }
+
+    final imageEntryIds = currentJournalEntry.questions![questionIndex].imageEntryIds;
+
+    final imageEntries = currentJournalEntry.imageEntries == null
+        ? null
+        : List<ImageEntryEntity>.from(
+            currentJournalEntry.imageEntries!.where(
+              (entry) {
+                print("entry ${entry.id}");
+                return imageEntryIds?.contains(entry.id) ?? false;
+              },
+            ).map((entry) => (entry)),
+          );
+
     return JournalQuestionViewModel(
       journalEntry: currentJournalEntry,
       currentPageIndex: store.state.journalEditorState.currentPageIndex,
       questionIndex: questionIndex,
       template: template,
+      imageEntries: imageEntries,
+      addImage: (journalEntryId, questionAnswerPairId, imageEntry) => store.dispatch(AddImageToQuestionAnswerPair(
+        journalEntryId: journalEntryId,
+        questionAnswerPairId: questionAnswerPairId,
+        imageEntry: imageEntry,
+      )),
     );
   }
 }

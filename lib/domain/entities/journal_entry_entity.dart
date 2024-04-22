@@ -5,6 +5,13 @@ class JournalEntryEntity {
   final DateTime createdAt;
   final DateTime updatedAt;
   final List<QuestionAnswerPairEntity>? questions; // Nullable to allow entries without questions
+  final List<TextEntryEntity>? textEntries;
+  final List<VoiceEntryEntity>? voiceEntries;
+  final List<VideoEntryEntity>? videoEntries;
+  final List<ImageEntryEntity>? imageEntries;
+  final List<BulletPointEntryEntity>? bulletPointEntries;
+  final List<PainNoteEntryEntity>? painNoteEntries;
+  final JournalEntryMetadataEntity? metadata;
 
   JournalEntryEntity({
     required this.id,
@@ -13,6 +20,13 @@ class JournalEntryEntity {
     required this.createdAt,
     required this.updatedAt,
     this.questions,
+    this.textEntries,
+    this.voiceEntries,
+    this.videoEntries,
+    this.imageEntries,
+    this.bulletPointEntries,
+    this.painNoteEntries,
+    this.metadata,
   });
 
   JournalEntryEntity copyWith({
@@ -22,6 +36,13 @@ class JournalEntryEntity {
     DateTime? createdAt,
     DateTime? updatedAt,
     List<QuestionAnswerPairEntity>? questions,
+    List<TextEntryEntity>? textEntries,
+    List<VoiceEntryEntity>? voiceEntries,
+    List<VideoEntryEntity>? videoEntries,
+    List<ImageEntryEntity>? imageEntries,
+    List<BulletPointEntryEntity>? bulletPointEntries,
+    List<PainNoteEntryEntity>? painNoteEntries,
+    JournalEntryMetadataEntity? metadata,
   }) {
     return JournalEntryEntity(
       id: id ?? this.id,
@@ -30,30 +51,216 @@ class JournalEntryEntity {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       questions: questions ?? this.questions,
+      textEntries: textEntries ?? this.textEntries,
+      voiceEntries: voiceEntries ?? this.voiceEntries,
+      videoEntries: videoEntries ?? this.videoEntries,
+      imageEntries: imageEntries ?? this.imageEntries,
+      bulletPointEntries: bulletPointEntries ?? this.bulletPointEntries,
+      painNoteEntries: painNoteEntries ?? this.painNoteEntries,
+      metadata: metadata ?? this.metadata,
     );
   }
 }
 
 class QuestionAnswerPairEntity {
-  final String? questionId; // Nullable for flexibility
-  final String? questionText; // Nullable for flexibility
-  final String? answerText; // Nullable for flexibility
+  final String id;
+  final String? questionId;
+  final String? questionText;
+  final String? answerText;
+  List<String>? imageEntryIds;
+  List<String>? videoEntryIds;
+  List<String>? voiceEntryIds;
 
   QuestionAnswerPairEntity({
+    required this.id,
     this.questionId,
     this.questionText,
     this.answerText,
+    this.imageEntryIds,
+    this.videoEntryIds,
+    this.voiceEntryIds,
   });
 
   QuestionAnswerPairEntity copyWith({
     String? questionId,
     String? questionText,
     String? answerText,
+    List<String>? imageEntryIds,
+    List<String>? videoEntryIds,
+    List<String>? voiceEntryIds,
   }) {
     return QuestionAnswerPairEntity(
+      id: id,
       questionId: questionId ?? this.questionId,
       questionText: questionText ?? this.questionText,
       answerText: answerText ?? this.answerText,
+      imageEntryIds: imageEntryIds ?? this.imageEntryIds,
+      videoEntryIds: videoEntryIds ?? this.videoEntryIds,
+      voiceEntryIds: voiceEntryIds ?? this.voiceEntryIds,
+    );
+  }
+}
+
+class TextEntryEntity {
+  final String id;
+  final String? content;
+
+  TextEntryEntity({
+    required this.id,
+    this.content,
+  });
+
+  TextEntryEntity copyWith({
+    String? id,
+    String? content,
+  }) {
+    return TextEntryEntity(
+      id: id ?? this.id,
+      content: content ?? this.content,
+    );
+  }
+}
+
+class ImageEntryEntity {
+  final String id;
+  final String? filePath;
+  final String? caption;
+  final String? hash;
+
+  ImageEntryEntity({
+    required this.id,
+    this.filePath,
+    this.caption,
+    this.hash,
+  });
+
+  ImageEntryEntity copyWith({
+    String? id,
+    String? filePath,
+    String? caption,
+    String? hash,
+  }) {
+    return ImageEntryEntity(
+      id: id ?? this.id,
+      filePath: filePath ?? this.filePath,
+      caption: caption ?? this.caption,
+      hash: hash ?? this.hash,
+    );
+  }
+}
+
+class VideoEntryEntity {
+  final String id;
+  final String? filePath;
+  final int? duration;
+  final String? hash;
+
+  VideoEntryEntity({
+    required this.id,
+    this.filePath,
+    this.duration,
+    this.hash,
+  });
+
+  VideoEntryEntity copyWith({
+    String? id,
+    String? filePath,
+    int? duration,
+    String? hash,
+  }) {
+    return VideoEntryEntity(
+      id: id ?? this.id,
+      filePath: filePath ?? this.filePath,
+      duration: duration ?? this.duration,
+      hash: hash ?? this.hash,
+    );
+  }
+}
+
+class VoiceEntryEntity {
+  final String id;
+  final String? filePath;
+  final int? duration;
+  final String? hash;
+
+  VoiceEntryEntity({
+    required this.id,
+    this.filePath,
+    this.duration,
+    this.hash,
+  });
+
+  VoiceEntryEntity copyWith({
+    String? id,
+    String? filePath,
+    int? duration,
+    String? hash,
+  }) {
+    return VoiceEntryEntity(
+      id: id ?? this.id,
+      filePath: filePath ?? this.filePath,
+      duration: duration ?? this.duration,
+      hash: hash ?? this.hash,
+    );
+  }
+}
+
+class BulletPointEntryEntity {
+  final String id;
+  final List<String>? points;
+
+  BulletPointEntryEntity({
+    required this.id,
+    this.points,
+  });
+
+  BulletPointEntryEntity copyWith({
+    String? id,
+    List<String>? points,
+  }) {
+    return BulletPointEntryEntity(
+      id: id ?? this.id,
+      points: points ?? this.points,
+    );
+  }
+}
+
+class PainNoteEntryEntity {
+  final String id;
+  final int? painLevel;
+  final String? notes;
+
+  PainNoteEntryEntity({
+    required this.id,
+    this.painLevel,
+    this.notes,
+  });
+
+  PainNoteEntryEntity copyWith({
+    String? id,
+    int? painLevel,
+    String? notes,
+  }) {
+    return PainNoteEntryEntity(
+      id: id ?? this.id,
+      painLevel: painLevel ?? this.painLevel,
+      notes: notes ?? this.notes,
+    );
+  }
+}
+
+class JournalEntryMetadataEntity {
+  final List<String>? tags;
+
+  JournalEntryMetadataEntity({
+    this.tags,
+  });
+
+  JournalEntryMetadataEntity copyWith({
+    List<String>? tags,
+  }) {
+    return JournalEntryMetadataEntity(
+      tags: tags ?? this.tags,
     );
   }
 }
