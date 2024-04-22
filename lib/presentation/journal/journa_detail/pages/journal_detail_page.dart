@@ -137,41 +137,61 @@ class JournalDetailPageState extends State<JournalDetailPage> {
   }
 
   Widget _buildJournalEntryContent(JournalEntryEntity journalEntry) {
-    return Column(
-      children: [
-        Expanded(
-          // Use Expanded to fill the available space except for the image list
-          child: ListView(
-            padding: const EdgeInsets.all(16.0),
-            children: journalEntry.questions!
-                .map(
-                  (q) => Card(
-                    margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                    elevation: 0.5, // Adjust the elevation for shadow effect
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            q?.questionText ?? 'No question',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            q?.answerText ?? 'No answer',
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                )
-                .toList(),
+    return ListView.builder(
+      padding: const EdgeInsets.all(16.0),
+      itemCount: journalEntry.questions!.length,
+      itemBuilder: (context, index) {
+        final question = journalEntry.questions![index];
+        return Card(
+          margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          elevation: 0.5,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 10.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  question?.questionText ?? 'No question',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  question?.answerText ?? 'No answer',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                _buildImagesForQuestion(journalEntry, index), // This function will handle image display
+              ],
+            ),
           ),
-        ),
-        _buildImageList(journalEntry), // This will always be at the bottom
-      ],
+        );
+      },
+    );
+  }
+
+  Widget _buildImagesForQuestion(JournalEntryEntity journalEntry, int questionIndex) {
+    final imageEntryIds = journalEntry.questions![questionIndex].imageEntryIds;
+    final imageEntries =
+        journalEntry.imageEntries?.where((entry) => imageEntryIds?.contains(entry.id) ?? false).toList() ?? [];
+
+    if (imageEntries.isEmpty) return SizedBox.shrink();
+
+    return Container(
+      height: 60, // Adjust as necessary
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: imageEntries.length,
+        itemBuilder: (context, index) {
+          final imagePath = imageEntries[index].filePath;
+          if (imagePath == null) {
+            return SizedBox.shrink(); // Handling null imagePath
+          }
+          return AttachmentImage(
+            relativeImagePath: imagePath, // No longer nullable here
+            width: 100, // Adjust as necessary
+            height: 60, // Adjust as necessary
+          );
+        },
+      ),
     );
   }
 }
