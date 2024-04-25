@@ -57,10 +57,10 @@
 	<string>To enhance your journaling experience, this app needs to access your camera so you can record videos directly within your journal entries. This allows you to capture moments in real-time and add a personal touch to your memories.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>To make your journal entries more expressive and personal, this app requests access to your photo library. This enables you to select photos and videos from your gallery to include in your journal, helping you preserve and reflect on your experiences.</string>
-	<key>NSMicrophoneUsageDescription</key>
+	<!-- <key>NSMicrophoneUsageDescription</key>
 	<string>This app requires access to your microphone to record audio when capturing videos for your journal entries. Audio recording enriches your video memories, allowing you to capture the full atmosphere of moments you wish to remember.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>This app requires access to speech recognition to convert your spoken words into text. This feature enhances your journaling experience by allowing you to dictate your entries, making it easier and faster to capture your thoughts and memories as they happen.</string>
+	<string>This app requires access to speech recognition to convert your spoken words into text. This feature enhances your journaling experience by allowing you to dictate your entries, making it easier and faster to capture your thoughts and memories as they happen.</string> -->
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIDeviceFamily</key>
