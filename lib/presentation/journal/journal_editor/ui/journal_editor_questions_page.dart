@@ -253,21 +253,21 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
             ),
             onChanged: (text) => setState(() => isUserInput = true),
           ),
-          Positioned(
-            top: 0,
-            right: 0,
-            child: Column(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.mic, color: Colors.white),
-                  onPressed: () {
-                    // Implement your recording logic here
-                  },
-                ),
-                _buildSelectedMediaScrollable(viewModel),
-              ],
-            ),
-          ),
+          // Positioned(
+          //   top: 0,
+          //   right: 0,
+          //   child: Column(
+          //     children: [
+          //       IconButton(
+          //         icon: const Icon(Icons.mic, color: Colors.white),
+          //         onPressed: () {
+          //           // Implement your recording logic here
+          //         },
+          //       ),
+          //       _buildSelectedMediaScrollable(viewModel),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );
@@ -329,12 +329,12 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
             icon: const Icon(Icons.video_call, color: Colors.white),
             onPressed: () => _recordVideo(viewModel),
           ),
-          IconButton(
-            icon: const Icon(Icons.add_circle_outline, color: Colors.white),
-            onPressed: () {
-              // Implement logic to expand input area
-            },
-          ),
+          // IconButton(
+          //   icon: const Icon(Icons.add_circle_outline, color: Colors.white),
+          //   onPressed: () {
+          //     // Implement logic to expand input area
+          //   },
+          // ),
           ElevatedButton(
             onPressed: () => _nextPage(context, viewModel),
             child: const Icon(Icons.check, color: Colors.black),
