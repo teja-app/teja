@@ -5,13 +5,23 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:rive/rive.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
+import 'package:in_app_review/in_app_review.dart';
 
 class JournalFinishScreen extends StatelessWidget {
   final VoidCallback onFinish;
 
   const JournalFinishScreen({Key? key, required this.onFinish}) : super(key: key);
 
+  void _triggerAppReview() async {
+    if (await InAppReview.instance.isAvailable()) {
+      InAppReview.instance.requestReview();
+    }
+  }
+
   void _handleSurveyResponse(BuildContext context, String response) {
+    if (response == "Yes") {
+      _triggerAppReview();
+    }
     Posthog().capture(
       eventName: 'survey sent',
       properties: {"\$survey_id": "018cfeff-21d8-0000-3eae-0df53fb0043f", "\$survey_response": response},

@@ -44,7 +44,8 @@ class JournalEditorScreenState extends State<JournalEditorScreen> {
       converter: JournalEditViewModel.fromStore,
       builder: (context, viewModel) {
         // Correctly handle possibly null currentJournalEntry
-        int pageCount = viewModel.currentJournalEntry?.questions?.length ?? 0 + 1; // Correct the logic here
+        int questionLength = viewModel.currentJournalEntry?.questions?.length ?? 0;
+        int pageCount = questionLength + 1; // Correct the logic here
 
         // Schedule a post-frame callback to update the page controller
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -79,8 +80,7 @@ class JournalEditorScreenState extends State<JournalEditorScreen> {
             },
             itemBuilder: (context, index) {
               // Ensures both currentJournalEntry and questions are not null before accessing length
-              if (viewModel.currentJournalEntry?.questions != null &&
-                  index < viewModel.currentJournalEntry!.questions!.length) {
+              if (viewModel.currentJournalEntry?.questions != null && index < questionLength) {
                 return JournalQuestionPage(
                   questionIndex: index,
                 );
