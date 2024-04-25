@@ -62,12 +62,9 @@ class BentoBox extends StatelessWidget {
       effectiveGridHeight = tabletGridHeight ?? gridHeight;
     }
 
-    final double baseGridColumnWidth =
-        (screenWidth - ((columns + 1) * margin)) / columns;
-    final double containerWidth = baseGridColumnWidth * effectiveGridWidth +
-        margin * (effectiveGridWidth - 1);
-    final double containerHeight = baseGridColumnWidth * effectiveGridHeight +
-        margin * (effectiveGridHeight - 1);
+    final double baseGridColumnWidth = (screenWidth - ((columns + 1) * margin)) / columns;
+    final double containerWidth = baseGridColumnWidth * effectiveGridWidth + margin * (effectiveGridWidth - 1);
+    final double containerHeight = baseGridColumnWidth * effectiveGridHeight + margin * (effectiveGridHeight - 1);
 
     return Container(
       width: containerWidth,

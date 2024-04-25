@@ -47,11 +47,6 @@ class JournalCategoriesPage extends StatelessWidget {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(
-                      height: 150,
-                      child: RiveAnimation.asset('assets/journal/girl_and_dog.riv'),
-                    ),
-                    const SizedBox(height: smallSpacer),
                     Text(
                       "Unlock Your Journey",
                       style: textTheme.titleLarge,
@@ -80,15 +75,18 @@ class JournalCategoriesPage extends StatelessWidget {
                           gridWidth: 2,
                           gridHeight: 3,
                           margin: 16,
-                          padding: 4,
+                          padding: 0,
                           child: Stack(
                             children: [
                               // If featureImage is not null, display the image covering the stack
                               if (category.featureImage != null)
                                 Positioned.fill(
-                                  child: Image.network(
-                                    'https://f000.backblazeb2.com/file/swayam-dev-master/${category.featureImage?.sizes.thumbnail?.filename}',
-                                    fit: BoxFit.cover,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(12), // Adjust the border radius as needed
+                                    child: Image.network(
+                                      'https://f000.backblazeb2.com/file/swayam-dev-master/${category.featureImage?.sizes.thumbnail?.filename}',
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
                               // Positioned text at the bottom of the stack
