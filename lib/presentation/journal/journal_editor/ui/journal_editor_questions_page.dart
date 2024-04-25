@@ -253,21 +253,21 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
             ),
             onChanged: (text) => setState(() => isUserInput = true),
           ),
-          // Positioned(
-          //   top: 0,
-          //   right: 0,
-          //   child: Column(
-          //     children: [
-          //       IconButton(
-          //         icon: const Icon(Icons.mic, color: Colors.white),
-          //         onPressed: () {
-          //           // Implement your recording logic here
-          //         },
-          //       ),
-          //       _buildSelectedMediaScrollable(viewModel),
-          //     ],
-          //   ),
-          // ),
+          Positioned(
+            top: 0,
+            right: 0,
+            child: Column(
+              children: [
+                // IconButton(
+                //   icon: const Icon(Icons.mic, color: Colors.white),
+                //   onPressed: () {
+                //     // Implement your recording logic here
+                //   },
+                // ),
+                _buildSelectedMediaScrollable(viewModel),
+              ],
+            ),
+          ),
         ],
       ),
     );
