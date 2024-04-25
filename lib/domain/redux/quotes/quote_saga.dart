@@ -61,7 +61,7 @@ class QuoteSaga {
       if (quotesResult.value != null && quotesResult.value!.isNotEmpty) {
         yield Call(
           quoteRepo.deleteAllQuotes,
-          args: [quotesResult.value!],
+          args: [],
         );
         yield Call(
           quoteRepo.addOrUpdateQuotes,
