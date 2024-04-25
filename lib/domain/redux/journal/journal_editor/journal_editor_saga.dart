@@ -28,6 +28,11 @@ class JournalEditorSaga {
     yield TakeEvery(_handleAddVideoToQuestionAnswerPair, pattern: AddVideoToQuestionAnswerPair);
     yield TakeEvery(_handleRemoveVideoFromQuestionAnswerPair, pattern: RemoveVideoFromQuestionAnswerPair);
     yield TakeEvery(_handleRefreshVideos, pattern: RefreshVideosAction);
+    yield TakeEvery(_handleAddOrUpdateVoice, pattern: AddOrUpdateVoiceAction);
+    yield TakeEvery(_handleRemoveVoice, pattern: RemoveVoiceAction);
+    yield TakeEvery(_handleAddVoiceToQuestionAnswerPair, pattern: AddVoiceToQuestionAnswerPair);
+    yield TakeEvery(_handleRemoveVoiceFromQuestionAnswerPair, pattern: RemoveVoiceFromQuestionAnswerPair);
+    yield TakeEvery(_handleRefreshVoices, pattern: RefreshVoicesAction);
   }
 
   _handleClearJournalFormAction({required ClearJournalEditor action}) sync* {
@@ -210,7 +215,6 @@ class JournalEditorSaga {
       // Refresh or reset images logic after successful addition
       yield Put(RefreshImagesAction(action.journalEntryId));
     }, Catch: (e, s) sync* {
-      print("e $e $s");
       yield Put(AddImageToQuestionAnswerPairFailureAction(e.toString()));
     });
   }
@@ -353,6 +357,105 @@ class JournalEditorSaga {
         JournalEntryEntity updatedEntry = journalEntryRepository.toEntity(journalEntry);
         // Dispatch an action to update the state with this new entry
         yield Put(UpdateJournalEntryWithVideos(updatedEntry));
+      }
+    }, Catch: (e, s) sync* {
+      // Handle potential errors
+    });
+  }
+
+  _handleAddOrUpdateVoice({required AddOrUpdateVoiceAction action}) sync* {
+    var isarResult = Result<Isar>();
+    yield GetContext('isar', result: isarResult);
+    Isar isar = isarResult.value!;
+
+    var journalEntryRepository = JournalEntryRepository(isar);
+
+    yield Try(() sync* {
+      yield Call(journalEntryRepository.addOrUpdateVoice, args: [action.journalEntryId, action.voiceEntry]);
+      yield Put(const AddOrUpdateVoiceSuccessAction());
+    }, Catch: (e, s) sync* {
+      yield Put(AddOrUpdateVoiceFailureAction(e.toString()));
+    });
+  }
+
+  _handleRemoveVoice({required RemoveVoiceAction action}) sync* {
+    var isarResult = Result<Isar>();
+    yield GetContext('isar', result: isarResult);
+    Isar isar = isarResult.value!;
+
+    var journalEntryRepository = JournalEntryRepository(isar);
+
+    yield Try(() sync* {
+      yield Call(journalEntryRepository.removeVoice, args: [action.journalEntryId, action.voiceHash]);
+      yield Put(const RemoveVoiceSuccessAction());
+    }, Catch: (e, s) sync* {
+      yield Put(RemoveVoiceFailureAction(e.toString()));
+    });
+  }
+
+  _handleAddVoiceToQuestionAnswerPair({required AddVoiceToQuestionAnswerPair action}) sync* {
+    var isarResult = Result<Isar>();
+    yield GetContext('isar', result: isarResult);
+    Isar isar = isarResult.value!;
+
+    var journalEntryRepository = JournalEntryRepository(isar);
+
+    yield Try(() sync* {
+      // First, add or update the voice in the repository
+      yield Call(journalEntryRepository.addOrUpdateVoice, args: [action.journalEntryId, action.voiceEntry]);
+
+      // Then, link the voice to the question-answer pair
+      yield Call(journalEntryRepository.linkVoiceToQuestionAnswerPair,
+          args: [action.journalEntryId, action.questionAnswerPairId, action.voiceEntry.id]);
+
+      yield Put(const AddVoiceToQuestionAnswerPairSuccessAction());
+
+      // Refresh or reset voices logic after successful addition
+      yield Put(RefreshVoicesAction(action.journalEntryId));
+    }, Catch: (e, s) sync* {
+      yield Put(AddVoiceToQuestionAnswerPairFailureAction(e.toString()));
+    });
+  }
+
+  _handleRemoveVoiceFromQuestionAnswerPair({required RemoveVoiceFromQuestionAnswerPair action}) sync* {
+    var isarResult = Result<Isar>();
+    yield GetContext('isar', result: isarResult);
+    Isar isar = isarResult.value!;
+
+    var journalEntryRepository = JournalEntryRepository(isar);
+
+    yield Try(() sync* {
+      // First, unlink the voice from the question-answer pair
+      yield Call(journalEntryRepository.unlinkVoiceFromQuestionAnswerPair,
+          args: [action.journalEntryId, action.questionAnswerPairId, action.voiceId]);
+
+      // Then, remove the voice from the repository
+      yield Call(journalEntryRepository.removeVoice, args: [action.journalEntryId, action.voiceId]);
+
+      yield Put(const RemoveVoiceFromQuestionAnswerPairSuccessAction());
+    }, Catch: (e, s) sync* {
+      yield Put(RemoveVoiceFromQuestionAnswerPairFailureAction(e.toString()));
+    });
+  }
+
+  _handleRefreshVoices({required RefreshVoicesAction action}) sync* {
+    var isarResult = Result<Isar>();
+    yield GetContext('isar', result: isarResult);
+    Isar isar = isarResult.value!;
+
+    var journalEntryRepository = JournalEntryRepository(isar);
+
+    yield Try(() sync* {
+      // Fetch the updated journal entry with the new voices
+      var journalEntryResult = Result<JournalEntry>();
+      yield Call(journalEntryRepository.getJournalEntryById, args: [action.journalEntryId], result: journalEntryResult);
+
+      if (journalEntryResult.value != null) {
+        JournalEntry journalEntry = journalEntryResult.value!;
+        // Convert the JournalEntry to JournalEntryEntity (or your specific entity model)
+        JournalEntryEntity updatedEntry = journalEntryRepository.toEntity(journalEntry);
+        // Dispatch an action to update the state with this new entry
+        yield Put(UpdateJournalEntryWithVoices(updatedEntry));
       }
     }, Catch: (e, s) sync* {
       // Handle potential errors
