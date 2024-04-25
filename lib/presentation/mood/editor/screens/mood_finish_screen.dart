@@ -41,6 +41,9 @@ class FinishScreen extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     void _handleSurveyResponse(BuildContext context, String response) {
+      if (response == "Yes") {
+        _triggerAppReview();
+      }
       Posthog().capture(
         eventName: 'survey sent',
         properties: {"\$survey_id": "018c81d5-a04a-0000-5b8d-a27f1aa8f6a8", "\$survey_response": response},
