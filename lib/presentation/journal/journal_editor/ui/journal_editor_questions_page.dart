@@ -246,40 +246,41 @@ class JournalQuestionPageState extends State<JournalQuestionPage> with WidgetsBi
   }
 
   Widget _buildResponseField(BuildContext context, TextTheme textTheme, JournalQuestionViewModel viewModel) {
+    bool hasMedia = (viewModel.imageEntries?.isNotEmpty ?? false) || (viewModel.videoEntries?.isNotEmpty ?? false);
+
     return Expanded(
-      child: Stack(
+      child: Row(
         children: [
-          ValueListenableBuilder<bool>(
-            valueListenable: isUserInputNotifier,
-            builder: (context, isUserInput, child) {
-              return TextField(
-                key: ValueKey(viewModel.journalEntry.questions![widget.questionIndex].id), // Use unique key
-                focusNode: textFocusNode,
-                controller: textEditingController,
-                cursorOpacityAnimates: false,
-                maxLines: null,
-                keyboardType: TextInputType.multiline,
-                expands: true,
-                style: textTheme.bodyMedium?.copyWith(color: Colors.white),
-                decoration: InputDecoration(
-                  hintText: 'Write your response here...',
-                  hintStyle: textTheme.bodyMedium?.copyWith(color: Colors.white54),
-                  border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                ),
-                // onChanged: (text) => setState(() => isUserInput = true),
-              );
-            },
-          ),
-          Positioned(
-            top: 0,
-            right: 0,
-            child: Column(
+          Expanded(
+            flex: hasMedia ? 3 : 1, // Flex more space to the text field when there's media
+            child: Stack(
               children: [
-                _buildSelectedMediaScrollable(viewModel),
+                ValueListenableBuilder<bool>(
+                  valueListenable: isUserInputNotifier,
+                  builder: (context, isUserInput, child) {
+                    return TextField(
+                      key: ValueKey(viewModel.journalEntry.questions![widget.questionIndex].id),
+                      focusNode: textFocusNode,
+                      controller: textEditingController,
+                      cursorOpacityAnimates: false,
+                      maxLines: null,
+                      keyboardType: TextInputType.multiline,
+                      expands: true,
+                      style: textTheme.bodyMedium?.copyWith(color: Colors.white),
+                      decoration: InputDecoration(
+                        hintText: 'Write your response here...',
+                        hintStyle: textTheme.bodyMedium?.copyWith(color: Colors.white54),
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
           ),
+          if (hasMedia) // Conditionally display the media scrollable
+            _buildSelectedMediaScrollable(viewModel),
         ],
       ),
     );
@@ -343,12 +344,6 @@ class JournalQuestionPageState extends State<JournalQuestionPage> with WidgetsBi
             icon: const Icon(Icons.video_call, color: Colors.white),
             onPressed: () => _recordVideo(viewModel),
           ),
-          // IconButton(
-          //   icon: const Icon(Icons.add_circle_outline, color: Colors.white),
-          //   onPressed: () {
-          //     // Implement logic to expand input area
-          //   },
-          // ),
           ElevatedButton(
             onPressed: () => _nextPage(context, viewModel),
             child: const Icon(Icons.check, color: Colors.black),
