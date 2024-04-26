@@ -16,6 +16,15 @@ import 'package:teja/presentation/mood/ui/attachement_image.dart';
 import 'package:teja/presentation/mood/ui/attachment_video.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 
+enum _MediaType { image, video }
+
+class _MediaEntry {
+  final _MediaType type;
+  final dynamic entry;
+
+  _MediaEntry({required this.type, required this.entry});
+}
+
 class JournalQuestionPage extends StatefulWidget {
   final int questionIndex;
 
@@ -28,16 +37,18 @@ class JournalQuestionPage extends StatefulWidget {
   JournalQuestionPageState createState() => JournalQuestionPageState();
 }
 
-class JournalQuestionPageState extends State<JournalQuestionPage> {
+class JournalQuestionPageState extends State<JournalQuestionPage> with WidgetsBindingObserver {
   late FocusNode textFocusNode;
   List<String> suggestions = [];
   late TextEditingController textEditingController;
   Timer? _debounce;
-  bool isUserInput = false;
+  late final Store<AppState> _store;
+  ValueNotifier<bool> isUserInputNotifier = ValueNotifier(false); // Using ValueNotifier for managing user input flag
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     textFocusNode = FocusNode();
     textFocusNode.addListener(() {
       if (!textFocusNode.hasFocus) {
@@ -45,29 +56,30 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
       }
     });
     textEditingController = TextEditingController();
-    textEditingController.addListener(_onTextChanged);
+    _store = StoreProvider.of<AppState>(context, listen: false);
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _saveAnswer();
     textFocusNode.dispose();
-    textEditingController.removeListener(_onTextChanged);
     textEditingController.dispose();
+    isUserInputNotifier.dispose(); // Dispose the ValueNotifier
     _debounce?.cancel();
     super.dispose();
   }
 
-  void _onTextChanged() {
-    if (isUserInput) {
-      if (_debounce?.isActive ?? false) _debounce!.cancel();
-      _debounce = Timer(const Duration(milliseconds: 300), _saveAnswer);
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      _saveAnswer(); // Save the text when the app is paused
     }
   }
 
   void _saveAnswer() {
-    final store = StoreProvider.of<AppState>(context);
-    final viewModel = JournalQuestionViewModel.fromStore(store, widget.questionIndex);
-    store.dispatch(UpdateQuestionAnswer(
+    final viewModel = JournalQuestionViewModel.fromStore(_store, widget.questionIndex);
+    _store.dispatch(UpdateQuestionAnswer(
       journalEntryId: viewModel.journalEntry.id,
       questionId: viewModel.journalEntry.questions![widget.questionIndex].questionId!,
       answerText: textEditingController.text,
@@ -237,33 +249,33 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
     return Expanded(
       child: Stack(
         children: [
-          TextField(
-            focusNode: textFocusNode,
-            controller: textEditingController,
-            cursorOpacityAnimates: false,
-            maxLines: null,
-            keyboardType: TextInputType.multiline,
-            expands: true,
-            style: textTheme.bodyMedium?.copyWith(color: Colors.white),
-            decoration: InputDecoration(
-              hintText: 'Write your response here...',
-              hintStyle: textTheme.bodyMedium?.copyWith(color: Colors.white54),
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-            ),
-            onChanged: (text) => setState(() => isUserInput = true),
+          ValueListenableBuilder<bool>(
+            valueListenable: isUserInputNotifier,
+            builder: (context, isUserInput, child) {
+              return TextField(
+                key: ValueKey(viewModel.journalEntry.questions![widget.questionIndex].id), // Use unique key
+                focusNode: textFocusNode,
+                controller: textEditingController,
+                cursorOpacityAnimates: false,
+                maxLines: null,
+                keyboardType: TextInputType.multiline,
+                expands: true,
+                style: textTheme.bodyMedium?.copyWith(color: Colors.white),
+                decoration: InputDecoration(
+                  hintText: 'Write your response here...',
+                  hintStyle: textTheme.bodyMedium?.copyWith(color: Colors.white54),
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                ),
+                // onChanged: (text) => setState(() => isUserInput = true),
+              );
+            },
           ),
           Positioned(
             top: 0,
             right: 0,
             child: Column(
               children: [
-                // IconButton(
-                //   icon: const Icon(Icons.mic, color: Colors.white),
-                //   onPressed: () {
-                //     // Implement your recording logic here
-                //   },
-                // ),
                 _buildSelectedMediaScrollable(viewModel),
               ],
             ),
@@ -274,44 +286,46 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
   }
 
   Widget _buildSelectedMediaScrollable(JournalQuestionViewModel viewModel) {
-    // If both lists of images and videos are empty or null, return an empty widget
-    if ((viewModel.imageEntries?.isEmpty ?? true) && (viewModel.videoEntries?.isEmpty ?? true)) {
-      return SizedBox.shrink();
-    }
+    final combinedEntries = [
+      if (viewModel.imageEntries != null)
+        ...viewModel.imageEntries!.map((entry) => _MediaEntry(type: _MediaType.image, entry: entry)),
+      if (viewModel.videoEntries != null)
+        ...viewModel.videoEntries!.map((entry) => _MediaEntry(type: _MediaType.video, entry: entry)),
+    ];
 
     return Container(
-      // Define a fixed width or use MediaQuery to set it relative to the screen size
-      width: 50, // For example
-      // Define a fixed height, so the ListView knows its scrolling direction's constraints
+      width: 50,
       height: MediaQuery.of(context).size.height - 200,
-
-      child: ListView(
+      child: ListView.builder(
         scrollDirection: Axis.vertical,
-        children: [
-          if (viewModel.imageEntries != null)
-            ...viewModel.imageEntries!.map((imageEntry) {
-              return AttachmentImage(
-                relativeImagePath: imageEntry.filePath!,
-                width: 50,
-                height: 30,
-              );
-            }).toList(),
-          if (viewModel.videoEntries != null)
-            ...viewModel.videoEntries!.map((videoEntry) {
-              return AttachmentVideo(
-                relativeVideoPath: videoEntry.filePath!,
-                width: 50,
-                height: 30,
-              );
-            }).toList(),
-        ],
+        itemCount: combinedEntries.length,
+        itemBuilder: (context, index) {
+          final mediaEntry = combinedEntries[index];
+          if (mediaEntry.type == _MediaType.image) {
+            final imageEntry = mediaEntry.entry as ImageEntryEntity;
+            return AttachmentImage(
+              key: ValueKey(imageEntry.id),
+              relativeImagePath: imageEntry.filePath!,
+              width: 50,
+              height: 30,
+            );
+          } else {
+            final videoEntry = mediaEntry.entry as VideoEntryEntity;
+            return AttachmentVideo(
+              key: ValueKey(videoEntry.id),
+              relativeVideoPath: videoEntry.filePath!,
+              width: 50,
+              height: 30,
+            );
+          }
+        },
       ),
     );
   }
 
   void _nextPage(BuildContext context, JournalQuestionViewModel viewModel) {
-    final store = StoreProvider.of<AppState>(context);
-    store.dispatch(ChangeJournalPageAction(viewModel.currentPageIndex + 1));
+    _saveAnswer();
+    _store.dispatch(ChangeJournalPageAction(viewModel.currentPageIndex + 1));
   }
 
   Widget _buildBottomActionBar(BuildContext context, JournalQuestionViewModel viewModel) {
@@ -371,7 +385,7 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
       builder: (context, viewModel) {
         final question = viewModel.journalEntry.questions![widget.questionIndex];
 
-        if (textEditingController.text != question.answerText && !isUserInput) {
+        if (textEditingController.text != question.answerText && !isUserInputNotifier.value) {
           textEditingController.text = question.answerText ?? '';
         }
 
@@ -382,7 +396,7 @@ class JournalQuestionPageState extends State<JournalQuestionPage> {
               Positioned.fill(
                 child: GestureDetector(
                   onTap: () => textFocusNode.unfocus(),
-                  behavior: HitTestBehavior.translucent, // Make sure it registers taps without blocking them
+                  behavior: HitTestBehavior.translucent,
                   child: Container(), // This container catches taps but is invisible and non-blocking
                 ),
               ),
@@ -443,7 +457,6 @@ class JournalQuestionViewModel {
         : List<ImageEntryEntity>.from(
             currentJournalEntry.imageEntries!.where(
               (entry) {
-                print("entry ${entry.id}");
                 return imageEntryIds?.contains(entry.id) ?? false;
               },
             ).map((entry) => (entry)),
@@ -456,7 +469,6 @@ class JournalQuestionViewModel {
         : List<VideoEntryEntity>.from(
             currentJournalEntry.videoEntries!.where(
               (entry) {
-                print("entry ${entry.id}");
                 return videoEntryIds?.contains(entry.id) ?? false;
               },
             ).map((entry) => (entry)),
