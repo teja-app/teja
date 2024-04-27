@@ -92,6 +92,7 @@ dependencies:
   speech_to_text: ^6.6.0
   just_audio: ^0.9.37
   audio_video_progress_bar: ^2.0.2
+  timezone: ^0.9.3
 
 dev_dependencies:
   flutter_test:
