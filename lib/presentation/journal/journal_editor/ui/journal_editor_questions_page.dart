@@ -14,6 +14,7 @@ import 'package:teja/infrastructure/utils/image_storage_helper.dart';
 import 'package:teja/infrastructure/utils/video_storage_helper.dart';
 import 'package:teja/presentation/mood/ui/attachement_image.dart';
 import 'package:teja/presentation/mood/ui/attachment_video.dart';
+import 'package:teja/shared/common/button.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 
 enum _MediaType { image, video }
@@ -163,7 +164,7 @@ class JournalQuestionPageState extends State<JournalQuestionPage> with WidgetsBi
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Text(
         questionText,
-        style: textTheme.bodySmall,
+        style: textTheme.bodyMedium,
       ),
     );
   }
@@ -266,10 +267,10 @@ class JournalQuestionPageState extends State<JournalQuestionPage> with WidgetsBi
                       maxLines: null,
                       keyboardType: TextInputType.multiline,
                       expands: true,
-                      style: textTheme.bodyMedium?.copyWith(color: Colors.white),
+                      style: textTheme.bodyMedium,
                       decoration: InputDecoration(
                         hintText: 'Write your response here...',
-                        hintStyle: textTheme.bodyMedium?.copyWith(color: Colors.white54),
+                        hintStyle: textTheme.bodyMedium,
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                       ),
@@ -344,9 +345,10 @@ class JournalQuestionPageState extends State<JournalQuestionPage> with WidgetsBi
             icon: const Icon(Icons.video_call, color: Colors.white),
             onPressed: () => _recordVideo(viewModel),
           ),
-          ElevatedButton(
+          Button(
+            text: "Next",
+            icon: Icons.check,
             onPressed: () => _nextPage(context, viewModel),
-            child: const Icon(Icons.check, color: Colors.black),
           ),
         ],
       ),
@@ -399,13 +401,24 @@ class JournalQuestionPageState extends State<JournalQuestionPage> with WidgetsBi
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildQuestionText(question.questionText ?? '', textTheme),
-                  const SizedBox(height: 10),
-                  _buildResponseField(context, Theme.of(context).textTheme, viewModel),
-                  const SizedBox(height: 10),
-                  Visibility(
-                    visible: suggestions.isNotEmpty,
-                    child: _buildSuggestions(textTheme),
+                  Divider(
+                    color: Colors.grey[800], // You can adjust color here
+                    thickness: 0.25, // You can adjust thickness here
+                    indent: 20,
+                    endIndent: 20,
                   ),
+                  _buildResponseField(context, Theme.of(context).textTheme, viewModel),
+                  Divider(
+                    color: Colors.grey[800], // You can adjust color here
+                    thickness: 0.25, // You can adjust thickness here
+                    indent: 20,
+                    endIndent: 20,
+                  ),
+                  const SizedBox(height: 10),
+                  // Visibility(
+                  //   visible: suggestions.isNotEmpty,
+                  //   child: _buildSuggestions(textTheme),
+                  // ),
                 ],
               ),
             ],

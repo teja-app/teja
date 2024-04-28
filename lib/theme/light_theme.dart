@@ -14,13 +14,23 @@ final ThemeData lightTheme = ThemeData(
       textStyle: const TextTheme().bodySmall,
     ),
   ),
+  timePickerTheme: TimePickerThemeData(
+    dialBackgroundColor: Colors.white,
+    dialTextColor: Colors.black,
+    dayPeriodTextColor: Colors.black,
+    hourMinuteTextColor: Colors.black,
+    entryModeIconColor: Colors.black,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10),
+    ),
+  ),
   cardTheme: const CardTheme(color: Colors.white),
   popupMenuTheme: const PopupMenuThemeData(
     color: Colors.white, // Set your desired color here
   ),
   colorScheme: ColorScheme.fromSeed(
     seedColor: Colors.black,
-    primary: Colors.lightBlueAccent,
+    primary: Colors.black,
     secondary: Colors.black,
     surface: Colors.black,
     background: Colors.grey.shade100,

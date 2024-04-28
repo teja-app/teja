@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:teja/infrastructure/utils/notification_service.dart';
 import 'package:teja/infrastructure/utils/time_storage_helper.dart';
+import 'package:teja/shared/common/button.dart';
 
 class NotificationSettingsPage extends StatefulWidget {
   final NotificationService notificationService;
 
-  const NotificationSettingsPage(
-      {super.key, required this.notificationService});
+  const NotificationSettingsPage({super.key, required this.notificationService});
 
   @override
-  NotificationSettingsPageState createState() =>
-      NotificationSettingsPageState();
+  NotificationSettingsPageState createState() => NotificationSettingsPageState();
 }
 
 class NotificationSettingsPageState extends State<NotificationSettingsPage> {
@@ -31,8 +30,8 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
   bool dailyFocusEnabled = true;
   bool dailyJournalingPromptEnabled = true;
 
-  Future<void> _selectTime(BuildContext context, TimeOfDay initialTime,
-      Function(TimeOfDay) onTimeSelected, String title, bool isEnabled) async {
+  Future<void> _selectTime(BuildContext context, TimeOfDay initialTime, Function(TimeOfDay) onTimeSelected,
+      String title, bool isEnabled) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: initialTime,
@@ -42,8 +41,7 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
       onTimeSelected(picked);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-              "Notification time for ${initialTime.format(context)} changed to ${picked.format(context)}."),
+          content: Text("Notification time for ${initialTime.format(context)} changed to ${picked.format(context)}."),
           duration: Duration(seconds: 3),
         ),
       );
@@ -61,8 +59,7 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
   Future<void> _retrieveSavedTimes() async {
     try {
       final TimeStorage timeStorage = TimeStorage();
-      final Map<String, TimeOfDay> savedTimes =
-          await timeStorage.getTimeSlots();
+      final Map<String, TimeOfDay> savedTimes = await timeStorage.getTimeSlots();
       print('Saved times: $savedTimes');
       setState(() {
         if (savedTimes.containsKey('Morning Kickstart')) {
@@ -86,9 +83,7 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double contentWidth = (screenWidth > 500)
-        ? 500
-        : screenWidth; // Assuming 500 is the max width for content
+    final double contentWidth = (screenWidth > 500) ? 500 : screenWidth; // Assuming 500 is the max width for content
 
     return Scaffold(
       appBar: AppBar(
@@ -124,8 +119,7 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
               ),
               _buildNotificationTile(
                 title: 'Evening Wind-down',
-                subtitle:
-                    'Reflect on your day and set the tone for a restful evening.',
+                subtitle: 'Reflect on your day and set the tone for a restful evening.',
                 time: eveningReflectionTime,
                 onTimeSelected: (TimeOfDay time) {
                   setState(() {
@@ -186,12 +180,10 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
     );
   }
 
-  Future<void> _handleToggle(
-      String title, TimeOfDay time, bool isEnabled) async {
+  Future<void> _handleToggle(String title, TimeOfDay time, bool isEnabled) async {
     final int hour = time.hour;
     final int minute = time.minute;
-    final int notificationId = _getNotificationId(
-        title); // A method to map titles to unique notification IDs
+    final int notificationId = _getNotificationId(title); // A method to map titles to unique notification IDs
 
     if (isEnabled) {
       await widget.notificationService.scheduleNotification(
@@ -236,9 +228,7 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title,
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold)),
+                Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 Text(subtitle),
               ],
             ),
@@ -252,10 +242,9 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
                   await _handleToggle(title, time, value);
                 },
               ),
-              ElevatedButton(
-                onPressed: () => _selectTime(
-                    context, time, onTimeSelected, title, notificationEnabled),
-                child: Text(time.format(context)),
+              Button(
+                onPressed: () => _selectTime(context, time, onTimeSelected, title, notificationEnabled),
+                text: time.format(context),
               ),
             ],
           ),
