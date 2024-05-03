@@ -15,13 +15,66 @@ final ThemeData lightTheme = ThemeData(
     ),
   ),
   timePickerTheme: TimePickerThemeData(
-    dialBackgroundColor: Colors.white,
-    dialTextColor: Colors.black,
-    dayPeriodTextColor: Colors.black,
-    hourMinuteTextColor: Colors.black,
-    entryModeIconColor: Colors.black,
-    shape: RoundedRectangleBorder(
+    backgroundColor: Colors
+        .blueGrey, // This will be the background color for the time picker dialog.
+    dialHandColor: Colors.black, // The color for the clock hand.
+    dialBackgroundColor:
+        Colors.black, // The background color for the clock dial.
+    dialTextColor: Colors.white, // The color for the text on the clock dial.
+    dayPeriodTextColor: Colors.white, // The color for the text "AM" and "PM".
+
+    hourMinuteTextColor:
+        Colors.white, // The color for the text of the selected hour and minute.
+    dayPeriodColor:
+        Colors.black, // The background color for the "AM" and "PM" toggle.
+    confirmButtonStyle: ButtonStyle(
+      // Define background color for the button
+      backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+      // Define text style for the button
+      textStyle: MaterialStateProperty.all<TextStyle>(
+        const TextStyle(
+          color: Colors.black, // Text color
+          fontWeight: FontWeight.normal,
+        ),
+      ),
+      // Define shape for the button
+      shape: MaterialStateProperty.all<OutlinedBorder>(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+      ),
+    ),
+    cancelButtonStyle: ButtonStyle(
+      // Define background color for the button
+      backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+      // Define text style for the button
+      textStyle: MaterialStateProperty.all<TextStyle>(
+        const TextStyle(
+          color: Colors.white70, // Text color
+          fontWeight: FontWeight.normal,
+        ),
+      ),
+      // Define shape for the button
+      shape: MaterialStateProperty.all<OutlinedBorder>(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+      ),
+    ),
+    hourMinuteShape: RoundedRectangleBorder(
+      // The shape for the hour and minute boxes.
       borderRadius: BorderRadius.circular(10),
+    ),
+    hourMinuteColor:
+        Colors.black, // The background color for the selected hour and minute.
+    dayPeriodShape: RoundedRectangleBorder(
+      // The shape for the "AM" and "PM" toggle boxes.
+      borderRadius: BorderRadius.circular(10),
+    ),
+    entryModeIconColor: Colors.black, // The color for the entry mode icon.
+    helpTextStyle: const TextStyle(
+      color: Colors.white,
+      fontSize: 16,
     ),
   ),
   cardTheme: const CardTheme(color: Colors.white),
