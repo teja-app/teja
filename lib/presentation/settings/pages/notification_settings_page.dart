@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teja/infrastructure/utils/notification_service.dart';
 import 'package:teja/infrastructure/utils/time_storage_helper.dart';
+import 'package:teja/shared/common/button.dart';
 
 class NotificationSettingsPage extends StatefulWidget {
   final NotificationService notificationService;
@@ -36,6 +37,43 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: initialTime,
+      builder: (BuildContext context, Widget? child) {
+        // Apply your custom theme here
+        final theme = Theme.of(context).timePickerTheme; // Get default theme
+
+        return Theme(
+          data: ThemeData.from(
+            textTheme: Theme.of(context).textTheme,
+            colorScheme: Theme.of(context).colorScheme,
+          ).copyWith(
+            timePickerTheme: theme.copyWith(
+              backgroundColor: theme.backgroundColor,
+              dialHandColor: theme.dialHandColor,
+              dialBackgroundColor: theme.backgroundColor,
+              dialTextColor: theme.dialTextColor,
+              dayPeriodTextColor: theme.dayPeriodTextColor,
+              hourMinuteTextColor: theme.hourMinuteTextColor,
+              dayPeriodColor: theme.dayPeriodColor,
+              confirmButtonStyle: theme.confirmButtonStyle!.copyWith(
+                backgroundColor: theme.confirmButtonStyle!.backgroundColor,
+                textStyle: theme.confirmButtonStyle!.textStyle,
+                shape: theme.confirmButtonStyle!.shape,
+              ),
+              cancelButtonStyle: theme.cancelButtonStyle!.copyWith(
+                backgroundColor: theme.cancelButtonStyle!.backgroundColor,
+                textStyle: theme.cancelButtonStyle!.textStyle,
+                shape: theme.cancelButtonStyle!.shape,
+              ),
+              hourMinuteShape: theme.hourMinuteShape,
+              hourMinuteColor: theme.hourMinuteColor,
+              dayPeriodShape: theme.dayPeriodShape,
+              entryModeIconColor: theme.entryModeIconColor,
+              helpTextStyle: theme.helpTextStyle,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     final TimeStorage timeStorage = TimeStorage();
     if (picked != null && picked != initialTime) {
@@ -252,10 +290,10 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
                   await _handleToggle(title, time, value);
                 },
               ),
-              ElevatedButton(
+              Button(
                 onPressed: () => _selectTime(
                     context, time, onTimeSelected, title, notificationEnabled),
-                child: Text(time.format(context)),
+                text: time.format(context),
               ),
             ],
           ),
