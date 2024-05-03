@@ -15,42 +15,30 @@ final ThemeData lightTheme = ThemeData(
     ),
   ),
   timePickerTheme: TimePickerThemeData(
-    backgroundColor: Colors
-        .blueGrey, // This will be the background color for the time picker dialog.
-    dialHandColor: Colors.black, // The color for the clock hand.
-    dialBackgroundColor:
-        Colors.black, // The background color for the clock dial.
-    dialTextColor: Colors.white, // The color for the text on the clock dial.
-    dayPeriodTextColor: Colors.white, // The color for the text "AM" and "PM".
-
-    hourMinuteTextColor:
-        Colors.white, // The color for the text of the selected hour and minute.
-    dayPeriodColor:
-        Colors.black, // The background color for the "AM" and "PM" toggle.
+    backgroundColor: Colors.white, // Background color for the time picker dialog
+    dialHandColor: Colors.black, // Color for the clock hand
+    dialBackgroundColor: Colors.white, // Background color for the clock dial
+    dialTextColor: Colors.black, // Color for the text on the clock dial
+    dayPeriodTextColor: Colors.black, // Color for the text "AM" and "PM"
+    hourMinuteTextColor: Colors.black, // Color for the text of the selected hour and minute
+    dayPeriodColor: Colors.white, // Background color for the "AM" and "PM" toggle
     confirmButtonStyle: ButtonStyle(
-      // Define background color for the button
-      backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-      // Define text style for the button
+      backgroundColor: MaterialStateProperty.all<Color>(Colors.black), // Background color for the confirm button
+      foregroundColor: MaterialStateProperty.all<Color>(Colors.white), // Text color for the confirm button
       textStyle: MaterialStateProperty.all<TextStyle>(
         const TextStyle(
-          color: Colors.black, // Text color
+          color: Colors.white, // Text color
           fontWeight: FontWeight.normal,
-        ),
-      ),
-      // Define shape for the button
-      shape: MaterialStateProperty.all<OutlinedBorder>(
-        RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
         ),
       ),
     ),
     cancelButtonStyle: ButtonStyle(
-      // Define background color for the button
-      backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+      backgroundColor: MaterialStateProperty.all<Color>(Colors.black), // Background color for the cancel button
+      foregroundColor: MaterialStateProperty.all<Color>(Colors.white), // Text color for the cancel button
       // Define text style for the button
       textStyle: MaterialStateProperty.all<TextStyle>(
         const TextStyle(
-          color: Colors.white70, // Text color
+          color: Colors.white, // Text color
           fontWeight: FontWeight.normal,
         ),
       ),
@@ -62,18 +50,16 @@ final ThemeData lightTheme = ThemeData(
       ),
     ),
     hourMinuteShape: RoundedRectangleBorder(
-      // The shape for the hour and minute boxes.
       borderRadius: BorderRadius.circular(10),
+      side: const BorderSide(color: Colors.black), // Border color for the hour and minute boxes
     ),
-    hourMinuteColor:
-        Colors.black, // The background color for the selected hour and minute.
     dayPeriodShape: RoundedRectangleBorder(
-      // The shape for the "AM" and "PM" toggle boxes.
       borderRadius: BorderRadius.circular(10),
+      side: const BorderSide(color: Colors.black), // Border color for the "AM" and "PM" toggle boxes
     ),
-    entryModeIconColor: Colors.black, // The color for the entry mode icon.
+    entryModeIconColor: Colors.black, // Color for the entry mode icon
     helpTextStyle: const TextStyle(
-      color: Colors.white,
+      color: Colors.black, // Color for the help text
       fontSize: 16,
     ),
   ),
