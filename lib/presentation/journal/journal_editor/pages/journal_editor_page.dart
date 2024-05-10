@@ -7,7 +7,7 @@ import 'package:teja/domain/entities/journal_entry_entity.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/presentation/journal/journal_editor/ui/journal_editor_finish_page.dart';
-import 'package:teja/presentation/journal/journal_editor/ui/journal_editor_questions_page.dart';
+import 'package:teja/presentation/journal/journal_editor/ui/question_page/question_page.view.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.dart';
 import 'package:teja/router.dart';
 

@@ -27,9 +27,7 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final GoRouter goRouter = GoRouter.of(context);
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double contentWidth = (screenWidth > 500)
-        ? 500
-        : screenWidth; // Assuming 500 is the max width for content
+    final double contentWidth = (screenWidth > 500) ? 500 : screenWidth; // Assuming 500 is the max width for content
 
     Widget _logout(BuildContext context) {
       return StoreConnector<AppState, Store<AppState>>(
@@ -49,8 +47,7 @@ class SettingsPage extends StatelessWidget {
       converter: ViewModel.fromStore,
       builder: (context, store) {
         return Scaffold(
-          bottomNavigationBar:
-              isDesktop(context) ? null : buildMobileNavigationBar(context),
+          bottomNavigationBar: isDesktop(context) ? null : buildMobileNavigationBar(context),
           appBar: AppBar(
             title: const Text('Settings'),
           ),
@@ -79,27 +76,23 @@ class SettingsPage extends StatelessWidget {
                       gridHeight: 1.5,
                       child: FetchMasterView(),
                     ),
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text('Personalize',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold)),
-                  ),
+                  // const Padding(
+                  //   padding: EdgeInsets.all(8.0),
+                  //   child: Text('Personalize', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  // ),
                   // ListTile(
                   //   title: const Text('Preferences'),
                   //   onTap: () => GoRouter.of(context).push('/settings/perferences'),
                   // ),
-                  ListTile(
-                    title: const Text('Notification Settings'),
-                    onTap: () =>
-                        GoRouter.of(context).push('/settings/notification'),
-                  ),
+                  // ListTile(
+                  //   title: const Text('Notification Settings'),
+                  //   onTap: () =>
+                  //       GoRouter.of(context).push('/settings/notification'),
+                  // ),
                   const Divider(),
                   const Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: Text('Data',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold)),
+                    child: Text('Data', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   ),
                   ListTile(
                     title: const Text('Data Sync - Export & Import'),
@@ -116,9 +109,7 @@ class SettingsPage extends StatelessWidget {
                   // Community Section
                   const Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: Text('Community',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold)),
+                    child: Text('Community', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   ),
                   ListTile(
                     title: const Text('Share Teja'),
@@ -136,29 +127,24 @@ class SettingsPage extends StatelessWidget {
                   // Help and Support Section
                   const Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: Text('Help and Support',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold)),
+                    child: Text('Help and Support', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   ),
                   ListTile(
                     title: const Text('Report a bug'),
                     onTap: () {
-                      _launchURL(
-                          'https://swayamapp.atlassian.net/servicedesk/customer/portal/1/group/1/create/11');
+                      _launchURL('https://swayamapp.atlassian.net/servicedesk/customer/portal/1/group/1/create/11');
                     },
                   ),
                   ListTile(
                     title: const Text('Suggest Imporvements'),
                     onTap: () {
-                      _launchURL(
-                          'https://swayamapp.atlassian.net/servicedesk/customer/portal/1/group/1/create/9');
+                      _launchURL('https://swayamapp.atlassian.net/servicedesk/customer/portal/1/group/1/create/9');
                     },
                   ),
                   ListTile(
                     title: const Text('Suggest New Feature'),
                     onTap: () {
-                      _launchURL(
-                          'https://swayamapp.atlassian.net/servicedesk/customer/portal/1/group/1/create/12');
+                      _launchURL('https://swayamapp.atlassian.net/servicedesk/customer/portal/1/group/1/create/12');
                     },
                   ),
                   const Divider(),
@@ -166,9 +152,7 @@ class SettingsPage extends StatelessWidget {
                   // Application Section
                   const Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: Text('Application',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold)),
+                    child: Text('Application', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   ),
                   ListTile(
                     title: const Text('Terms of Service'),

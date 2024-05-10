@@ -1,5 +1,7 @@
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.dart';
+import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.image.dart';
+import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.video.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_state.dart';
 
 JournalEditorState _updateJournalEntry(JournalEditorState state, SaveJournalEntry action) {
