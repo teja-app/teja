@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:redux/redux.dart';
-import 'package:teja/domain/redux/app_state.dart';
-import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.dart';
 import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart';
 import 'package:teja/infrastructure/utils/helpers.dart';
 import 'package:teja/infrastructure/utils/image_storage_helper.dart';
@@ -15,7 +12,6 @@ Future<void> selectMedia(JournalQuestionViewModel viewModel, ImagePicker picker)
 
   if (mediaFiles.isNotEmpty) {
     for (XFile file in mediaFiles) {
-      print("Media Path: ${file.path}");
       handleMediaType(file, viewModel);
     }
   } else {
@@ -26,8 +22,6 @@ Future<void> selectMedia(JournalQuestionViewModel viewModel, ImagePicker picker)
 Future<void> recordVideo(JournalQuestionViewModel viewModel, ImagePicker picker) async {
   final XFile? video = await picker.pickVideo(source: ImageSource.camera);
   if (video != null) {
-    // Handle the video file
-    print("Video Path: ${video.path}");
     handleMediaType(video, viewModel);
   }
 }
@@ -88,8 +82,6 @@ Future<void> handleMediaType(XFile media, JournalQuestionViewModel viewModel) as
       mediaPath.endsWith('.png') ||
       mediaPath.endsWith('.jpeg') ||
       mediaPath.endsWith('.heic')) {
-    print("Selected media is an image.");
-
     // Save the image permanently and get the relative path
     final String relativePath = await ImageStorageHelper.saveImagePermanently(media.path);
 
@@ -108,8 +100,6 @@ Future<void> handleMediaType(XFile media, JournalQuestionViewModel viewModel) as
       imageEntry,
     );
   } else if (mediaPath.endsWith('.mp4') || mediaPath.endsWith('.mov') || mediaPath.endsWith('.avi')) {
-    print("Selected media is a video.");
-
     // Save the video permanently and get the relative path
     final String relativePath = await VideoStorageHelper.saveVideoPermanently(media.path);
 
@@ -128,7 +118,6 @@ Future<void> handleMediaType(XFile media, JournalQuestionViewModel viewModel) as
       videoEntry,
     );
   } else {
-    print("Unknown or unsupported media type: ${media.path}");
     // Optionally handle unknown types, show error, or log
   }
 }

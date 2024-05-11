@@ -12,6 +12,7 @@ import 'package:teja/presentation/onboarding/ui/onboarding_title.dart';
 import 'package:teja/presentation/onboarding/ui/rive_animation_section.dart';
 import 'package:teja/presentation/onboarding/widgets/authenticate.dart';
 import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/router.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -45,6 +46,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
     });
   }
 
+  void _onMusicPress() {
+    GoRouter.of(context).pushNamed(RootPath.music);
+  }
+
   void onRiveInit(Artboard artboard) {
     // Attempt to find a state machine controller by name
     final controller = StateMachineController.fromArtboard(artboard, 'unlock');
@@ -67,6 +72,17 @@ class _OnboardingPageState extends State<OnboardingPage> {
       converter: (store) => store,
       builder: (context, store) {
         return Scaffold(
+          appBar: AppBar(
+            actions: [
+              IconButton(
+                onPressed: _onMusicPress,
+                icon: const Icon(
+                  Icons.music_note,
+                  size: 16,
+                ),
+              )
+            ],
+          ),
           body: Center(
             child: SingleChildScrollView(
               child: Column(
