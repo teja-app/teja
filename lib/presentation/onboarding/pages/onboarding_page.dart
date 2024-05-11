@@ -69,6 +69,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     });
   }
 
+<<<<<<< HEAD
   void _onRegisterPressed() {
     register(context, () {
       // This is the callback that gets called on successful registration
@@ -81,6 +82,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
     });
   }
 
+=======
+>>>>>>> 078141b (Simple music player added)
   void _onMusicPress() {
     GoRouter.of(context).pushNamed(RootPath.music);
   }
