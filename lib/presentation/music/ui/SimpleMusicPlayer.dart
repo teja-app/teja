@@ -40,7 +40,8 @@ class _SimplePlayerScreenState extends State<SimplePlayerScreen> {
   }
 
   Future<void> _loadAudio() async {
-    const audioUrl = 'https://cdn1.suno.ai/cee5fd25-223f-43d0-9a97-393f90042625.mp3';
+    const audioUrl =
+        'https://f000.backblazeb2.com/file/platfom-static/ElevenLabs_2024-05-12T09_39_24_Jameson+-+Guided+Meditation+%26+Narration_pvc_s50_sb100_t2.mp3';
     final audioSource = AudioSource.uri(Uri.parse(audioUrl));
     await _audioPlayer.setAudioSource(audioSource);
     final duration = _audioPlayer.duration;
