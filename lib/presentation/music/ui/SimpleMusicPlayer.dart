@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:rive/rive.dart';
 
 class SimplePlayerScreen extends StatefulWidget {
   const SimplePlayerScreen({super.key});
@@ -38,11 +39,11 @@ class _SimplePlayerScreenState extends State<SimplePlayerScreen> {
     if (state.processingState == ProcessingState.completed) {
       setState(() {
         _position = _duration;
-        _isPlaying = false; // Audio has completed, set _isPlaying to false
+        _isPlaying = false;
       });
     } else {
       setState(() {
-        _isPlaying = state.playing; // Update _isPlaying based on the playing state
+        _isPlaying = state.playing;
       });
     }
   }
@@ -67,40 +68,49 @@ class _SimplePlayerScreenState extends State<SimplePlayerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final durationText =
+        '${_position.inMinutes}:${(_position.inSeconds % 60).toString().padLeft(2, '0')} / ${_duration.inMinutes}:${(_duration.inSeconds % 60).toString().padLeft(2, '0')}';
+
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Simple Audio Player'),
+        title: Text(durationText),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (_duration.inMilliseconds > 0)
-              Slider(
-                value: _position.inMilliseconds.toDouble(),
-                min: 0,
-                max: _duration.inMilliseconds.toDouble(),
-                onChanged: (value) {
-                  _seekToPosition(Duration(milliseconds: value.toInt()));
-                },
-              ),
-            if (_duration.inMilliseconds > 0)
-              Text(
-                '${_position.inMinutes}:${(_position.inSeconds % 60).toString().padLeft(2, '0')} / ${_duration.inMinutes}:${(_duration.inSeconds % 60).toString().padLeft(2, '0')}',
-                style: const TextStyle(fontSize: 18),
-              ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  iconSize: 42,
-                  icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow),
-                  onPressed: _togglePlayPause,
+      body: Stack(
+        children: [
+          const RiveAnimation.asset(
+            'assets/music/cosmos_transparent.riv',
+            fit: BoxFit.cover,
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              if (_duration.inMilliseconds > 0)
+                Slider(
+                  value: _position.inMilliseconds.toDouble(),
+                  min: 0,
+                  max: _duration.inMilliseconds.toDouble(),
+                  onChanged: (value) {
+                    _seekToPosition(Duration(milliseconds: value.toInt()));
+                  },
                 ),
-              ],
-            ),
-          ],
-        ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    iconSize: 42,
+                    icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow),
+                    onPressed: _togglePlayPause,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 32),
+            ],
+          ),
+        ],
       ),
     );
   }
