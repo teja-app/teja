@@ -8,6 +8,7 @@ import 'package:teja/domain/redux/journal/journal_editor/journal_editor_reducer.
 import 'package:teja/domain/redux/journal/journal_logs/journal_logs_reducer.dart';
 import 'package:teja/domain/redux/journal/journal_template/reducer.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_reducer.dart';
+import 'package:teja/domain/redux/monthly_mood_report/monthly_mood_report_reducer.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_reducer.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_reducer.dart';
 import 'package:teja/domain/redux/mood/list/reducer.dart';
@@ -58,6 +59,12 @@ AppState _masterFactorReducer(AppState state, action) {
 AppState _weeklyMoodReportReducer(AppState state, action) {
   return state.copyWith(
     weeklyMoodReportState: weeklyMoodReportReducer(state.weeklyMoodReportState, action),
+  );
+}
+
+AppState _monthlyMoodReportReducer(AppState state, action) {
+  return state.copyWith(
+    monthlyMoodReportState: monthlyMoodReportReducer(state.monthlyMoodReportState, action),
   );
 }
 
@@ -125,6 +132,7 @@ Reducer<AppState> appReducer = combineReducers<AppState>([
   _masterFactorReducer,
   _moodLogListReducer,
   _weeklyMoodReportReducer,
+  _monthlyMoodReportReducer,
   _quoteReducer,
   _visionReducer,
   _journalTemplateReducer,

@@ -12,6 +12,7 @@ import 'package:teja/presentation/journal/journal_categories/categories_page.dar
 import 'package:teja/presentation/journal/journal_editor/pages/journal_editor_page.dart';
 import 'package:teja/presentation/mood/detail/page/mood_detail.dart';
 import 'package:teja/presentation/mood/editor/pages/mood_edit.dart';
+import 'package:teja/presentation/profile/page/profile_page.dart';
 import 'package:teja/presentation/settings/pages/notification_settings_page.dart';
 import 'package:teja/presentation/timeline/pages/timeline_list_page.dart';
 import 'package:teja/presentation/mood/share/pages/mood_share.dart';
@@ -189,7 +190,8 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
-      name: RootPath.journalCategoryDetail, // Make sure you have this constant defined
+      name: RootPath
+          .journalCategoryDetail, // Make sure you have this constant defined
       path: '/category_detail',
       builder: (context, state) {
         final String? categoryId = state.uri.queryParameters['id'];
@@ -197,7 +199,8 @@ final GoRouter router = GoRouter(
           return CategoryDetailPage(categoryId: categoryId);
         } else {
           // Handle the case where categoryId is null, maybe navigate back or show an error
-          return const Scaffold(body: Center(child: Text('Category not found')));
+          return const Scaffold(
+              body: Center(child: Text('Category not found')));
         }
       },
     ),
@@ -254,6 +257,12 @@ final GoRouter router = GoRouter(
             path: 'advanced',
             builder: (context, state) => const AdvancedSettingsPage(),
           ),
-        ])
+        ]),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RootPath.profile,
+      path: '/profile',
+      builder: (context, state) => const ProfilePage(),
+    ),
   ],
 );

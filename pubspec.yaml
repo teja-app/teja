@@ -93,6 +93,7 @@ dependencies:
   just_audio: ^0.9.37
   audio_video_progress_bar: ^2.0.2
   timezone: ^0.9.3
+  health: ^10.2.0
 
 dev_dependencies:
   flutter_test:
