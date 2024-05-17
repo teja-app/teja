@@ -53,7 +53,7 @@ class _MoodSleepChartScreenState extends State<MoodSleepChartScreen> {
                 ? viewModel.scatterData.map((spot) => spot.x).reduce(
                         (value, element) => value > element ? value : element) +
                     1
-                : 15,
+                : 20,
             // maxX: viewModel.scatterData.
           ),
         );
