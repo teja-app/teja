@@ -47,14 +47,6 @@ class MonthlyMoodReportSaga {
     });
   }
 
-  // DateTime _startOfMonth(DateTime date) {
-  //   return DateTime(date.year, date.month, 1);
-  // }
-
-  // DateTime _endOfMonth(DateTime date) {
-  //   var nextMonth = DateTime(date.year, date.month + 1, 1);
-  //   return nextMonth.subtract(const Duration(days: 30));
-  // }
   DateTime _startOfMonth(DateTime date) {
     return DateTime(date.year, date.month, 1);
   }
