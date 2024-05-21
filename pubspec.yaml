@@ -93,6 +93,10 @@ dependencies:
   just_audio: ^0.9.37
   audio_video_progress_bar: ^2.0.2
   timezone: ^0.9.3
+  bip39: ^1.0.6
+  shared_preferences: ^2.2.3
+  pointycastle: ^3.9.1
+  crypto: ^3.0.3
 
 dev_dependencies:
   flutter_test:

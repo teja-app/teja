@@ -59,7 +59,6 @@ class MasterFeelingSaga {
 
       // Fetch the access token
       final accessToken = Result<String?>();
-      yield Call(readSecureData, args: ['access_token'], result: accessToken);
 
       FeelingApi moodApi = FeelingApi();
       var feelingsResult = Result<List<MasterFeelingEntity>>();

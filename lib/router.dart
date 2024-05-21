@@ -13,6 +13,7 @@ import 'package:teja/presentation/journal/journal_editor/pages/journal_editor_pa
 import 'package:teja/presentation/mood/detail/page/mood_detail.dart';
 import 'package:teja/presentation/mood/editor/pages/mood_edit.dart';
 import 'package:teja/presentation/music/ui/SimpleMusicPlayer.dart';
+import 'package:teja/presentation/registration/page/RegistrationScreen.dart';
 import 'package:teja/presentation/settings/pages/notification_settings_page.dart';
 import 'package:teja/presentation/timeline/pages/timeline_list_page.dart';
 import 'package:teja/presentation/mood/share/pages/mood_share.dart';
@@ -56,7 +57,7 @@ class SettingPath {
 
 class RootPath {
   static const root = "root";
-  static const signUp = "signUp";
+  static const registration = "registration";
   static const signIn = "signIn";
   static const home = "home";
   static const music = "music";
@@ -105,9 +106,9 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
-      name: RootPath.signUp,
-      path: '/sign_up',
-      builder: (context, state) => SignUpPage(),
+      name: RootPath.registration,
+      path: '/registration',
+      builder: (context, state) => RegistrationScreen(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,

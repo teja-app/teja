@@ -8,6 +8,9 @@ class Button extends StatelessWidget {
   final void Function()? onPressed;
   final double? width;
   final IconData? icon;
+  final double margin;
+  final double spacing;
+  final double runSpacing;
   final ButtonType buttonType;
 
   const Button({
@@ -17,6 +20,9 @@ class Button extends StatelessWidget {
     this.onPressed,
     this.icon,
     this.width = 40,
+    this.margin = 8.0,
+    this.spacing = 8.0,
+    this.runSpacing = 4.0,
     this.buttonType = ButtonType.defaultButton,
   });
 
@@ -51,7 +57,7 @@ class Button extends StatelessWidget {
     }
 
     return Container(
-      margin: const EdgeInsets.all(8.0),
+      margin: EdgeInsets.all(margin),
       child: TextButton(
         onPressed: onPressed,
         style: TextButton.styleFrom(
@@ -68,8 +74,8 @@ class Button extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: 8.0, // space between parts horizontally
-            runSpacing: 4.0, // space between parts vertically when wrapping
+            spacing: spacing, // space between parts horizontally
+            runSpacing: runSpacing, // space between parts vertically when wrapping
             children: [
               if (icon != null)
                 Icon(

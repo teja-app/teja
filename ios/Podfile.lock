@@ -117,6 +117,9 @@ PODS:
   - SentryPrivate (8.15.2)
   - share_plus (0.0.1):
     - Flutter
+  - shared_preferences_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - social_share (0.0.1):
     - Flutter
   - speech_to_text (0.0.1):
@@ -157,6 +160,7 @@ DEPENDENCIES:
   - rive_common (from `.symlinks/plugins/rive_common/ios`)
   - sentry_flutter (from `.symlinks/plugins/sentry_flutter/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
+  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - social_share (from `.symlinks/plugins/social_share/ios`)
   - speech_to_text (from `.symlinks/plugins/speech_to_text/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
@@ -227,6 +231,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sentry_flutter/ios"
   share_plus:
     :path: ".symlinks/plugins/share_plus/ios"
+  shared_preferences_foundation:
+    :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   social_share:
     :path: ".symlinks/plugins/social_share/ios"
   speech_to_text:
@@ -274,6 +280,7 @@ SPEC CHECKSUMS:
   sentry_flutter: 2c309a1d4b45e59d02cfa15795705687f1e2081b
   SentryPrivate: b2f7996f37781080f04a946eb4e377ff63c64195
   share_plus: c3fef564749587fc939ef86ffb283ceac0baf9f5
+  shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
   social_share: 702a5e3842addd22db515aa9e1e00a4b80a0296d
   speech_to_text: b43a7d99aef037bd758ed8e45d79bbac035d2dfe
   SwiftyGif: 93a1cc87bf3a51916001cf8f3d63835fb64c819f
