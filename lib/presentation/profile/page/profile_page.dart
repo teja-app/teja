@@ -4,9 +4,7 @@ import 'package:teja/presentation/navigation/buildDesktopDrawer.dart';
 import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/presentation/navigation/leadingContainer.dart';
-import 'package:teja/presentation/profile/ui/mood_sleep_chart.dart';
 import 'package:teja/presentation/profile/ui/profile_mood_sleep_chart.dart';
-import 'package:teja/presentation/profile/ui/profile_weekly_mood_chart.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -17,9 +15,9 @@ class ProfilePage extends StatelessWidget {
       key: Key("profileContainer"),
       child: Column(
         children: <Widget>[
-          ProfileWeeklyMoodChart(),
+          // ProfileWeeklyMoodChart(),
           MoodSleepChartScreen(),
-         ],
+        ],
       ),
     );
     return Scaffold(
