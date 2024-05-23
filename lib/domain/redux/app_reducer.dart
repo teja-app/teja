@@ -1,5 +1,6 @@
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/auth/auth_reducer.dart';
 import 'package:teja/domain/redux/home/home_reducer.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_reducer.dart';
 import 'package:teja/domain/redux/journal/featured_journal_template/reducer.dart';
@@ -14,10 +15,15 @@ import 'package:teja/domain/redux/mood/list/reducer.dart';
 import 'package:teja/domain/redux/mood/logs/mood_logs_reducer.dart';
 import 'package:teja/domain/redux/mood/master_factor/reducer.dart';
 import 'package:teja/domain/redux/mood/master_feeling/reducer.dart';
-import 'package:teja/domain/redux/onboarding/reducers.dart';
 import 'package:teja/domain/redux/quotes/quote_reducer.dart';
 import 'package:teja/domain/redux/visions/vision_reducer.dart';
 import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_reducer.dart';
+
+AppState _authReducer(AppState state, action) {
+  return state.copyWith(
+    authState: authReducer(state.authState, action),
+  );
+}
 
 AppState _moodLogsReducer(AppState state, action) {
   return state.copyWith(
@@ -116,8 +122,8 @@ AppState _journalListReducer(AppState state, action) {
 }
 
 Reducer<AppState> appReducer = combineReducers<AppState>([
-  ...authReducer,
   ...moodDetailReducer,
+  _authReducer,
   _moodEditorReducer,
   _moodLogsReducer,
   _homeReducer,

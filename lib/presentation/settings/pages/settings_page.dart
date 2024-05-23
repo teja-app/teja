@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
-import 'package:teja/domain/redux/onboarding/actions.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/presentation/home/ui/master_fetch/fetch_master_view.dart';
 import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
@@ -28,20 +27,6 @@ class SettingsPage extends StatelessWidget {
     final GoRouter goRouter = GoRouter.of(context);
     final double screenWidth = MediaQuery.of(context).size.width;
     final double contentWidth = (screenWidth > 500) ? 500 : screenWidth; // Assuming 500 is the max width for content
-
-    Widget _logout(BuildContext context) {
-      return StoreConnector<AppState, Store<AppState>>(
-        converter: (store) => store,
-        builder: (context, store) {
-          return ListTile(
-            title: const Text('Logout'),
-            onTap: () {
-              store.dispatch(SignOutAction());
-            },
-          );
-        },
-      );
-    }
 
     return StoreConnector<AppState, ViewModel>(
       converter: ViewModel.fromStore,

@@ -21,17 +21,25 @@ class RegistrationScreen extends StatefulWidget {
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final PageController _pageController = PageController();
   String _mnemonic = '';
-  String _confirmedMnemonic = '';
   bool _isConfirmed = false;
   final ValueNotifier<int> _currentPageNotifier = ValueNotifier<int>(0);
   TextEditingController _textController = TextEditingController();
   String _errorMessage = '';
+  bool _isFetchMnemonicCalled = false;
 
   @override
   void initState() {
     super.initState();
-    _fetchMnemonic();
     _pageController.addListener(_onPageChanged);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isFetchMnemonicCalled) {
+      _fetchMnemonic();
+      _isFetchMnemonicCalled = true;
+    }
   }
 
   @override
@@ -53,17 +61,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   void _register() {
     if (_isConfirmed) {
-      final String hashedMnemonic = _hashMnemonic(_mnemonic);
-      StoreProvider.of<AppState>(context).dispatch(RegisterAction('userId', hashedMnemonic));
+      StoreProvider.of<AppState>(context).dispatch(RegisterAction(_mnemonic));
     } else {
       // Handle not confirmed
+      setState(() {
+        _errorMessage = 'Please confirm your recovery phrase first.';
+      });
     }
-  }
-
-  String _hashMnemonic(String mnemonic) {
-    var bytes = utf8.encode(mnemonic);
-    var digest = sha256.convert(bytes);
-    return digest.toString();
   }
 
   @override
@@ -88,8 +92,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         builder: (context, authState) {
           if (authState.isLoading) {
             return const Center(child: CircularProgressIndicator());
-          } else if (authState.errorMessage != null) {
-            return Center(child: Text('Error: ${authState.errorMessage}'));
           } else if (authState.mnemonic != null && _mnemonic.isEmpty) {
             _mnemonic = authState.mnemonic!;
           }
@@ -99,7 +101,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             physics: NeverScrollableScrollPhysics(),
             children: [
               _buildMnemonicPage(),
-              _buildConfirmationPage(context, _pageController, _mnemonic, _register),
+              _buildConfirmationPage(context, _pageController, _mnemonic, _confirmAndRegister),
             ],
           );
         },
@@ -211,7 +213,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   Widget _buildConfirmationPage(
-      BuildContext context, PageController _pageController, String _mnemonic, VoidCallback _register) {
+      BuildContext context, PageController _pageController, String _mnemonic, VoidCallback _confirmAndRegister) {
     List<String> mnemonicWords = _mnemonic.split(' ');
     int missingIndex = 0;
     String missingWord = '';
@@ -257,7 +259,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             width: 80,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
-                              color: Colors.grey[200], // Adjust the color as needed
+                              color: Colors.grey[200],
                             ),
                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             child: Text(
@@ -276,7 +278,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 controller: _textController,
                 decoration: InputDecoration(
                   labelText: 'Enter the missing word at position ${missingIndex + 1}',
-                  errorText: _errorMessage.isNotEmpty ? _errorMessage : null, // Show the error message if not empty
+                  errorText: _errorMessage.isNotEmpty ? _errorMessage : null,
                 ),
               ),
               const SizedBox(height: 16.0),
@@ -286,8 +288,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     setState(() {
                       mnemonicWords[missingIndex] = missingWord;
                       _errorMessage = ''; // Clear the error message
+                      _isConfirmed = true; // Update the confirmation status
                     });
-                    _register();
+                    _confirmAndRegister(); // Proceed with the registration
                   } else {
                     setState(() {
                       _errorMessage = 'Wrong word entered. Please try again.'; // Set the error message
@@ -302,5 +305,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         );
       },
     );
+  }
+
+  void _confirmAndRegister() {
+    if (_isConfirmed) {
+      _register();
+    }
   }
 }

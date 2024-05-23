@@ -4,6 +4,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
 import 'package:rive/rive.dart';
+import 'package:teja/domain/redux/auth/auth_action.dart';
 import 'package:teja/presentation/onboarding/actions/init_state_actions.dart';
 import 'package:teja/presentation/onboarding/ui/onboarding_description.dart';
 import 'package:teja/presentation/onboarding/ui/onboarding_header_image.dart';
@@ -38,6 +39,20 @@ class _OnboardingPageState extends State<OnboardingPage> {
       setState(() {
         _hasExistingMnemonic = mnemonic != null;
       });
+
+      // await SecureStorage().deleteRefreshToken();
+      // await SecureStorage().deleteAccessToken();
+      // await SecureStorage().deleteRecoveryCode();
+
+      // Check token expiration and refresh if necessary
+      final refreshToken = await SecureStorage().readRefreshToken();
+      print("refreshToken $refreshToken");
+      print("mnemonic $mnemonic");
+      if (refreshToken != null) {
+        store.dispatch(RefreshTokenAction(refreshToken));
+      } else if (mnemonic != null) {
+        store.dispatch(AuthenticateAction(mnemonic));
+      }
     });
   }
 
@@ -71,7 +86,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   Future<String?> _retrieveMnemonic() async {
-    return SecureStorage().readSecureData('mnemonic');
+    return SecureStorage().readRecoveryCode();
   }
 
   void onRiveInit(Artboard artboard) {
@@ -86,6 +101,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
       artboard.addController(controller!);
       _isPressed = controller.findInput<bool>('isPressed') as SMIBool;
     }
+  }
+
+  void _onRecoverAccountPressed() {
+    GoRouter.of(context).pushNamed(RootPath.recoveryAccount);
   }
 
   @override
@@ -141,7 +160,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     Button(
                       text: "Have a recovery code?",
                       width: 300,
-                      onPressed: _onRegisterPressed,
+                      onPressed: _onRecoverAccountPressed, // Updated to navigate to recover account screen
                       buttonType: ButtonType.disabled,
                     )
                   ]

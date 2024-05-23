@@ -33,7 +33,11 @@ AuthState _authenticateFailed(AuthState state, AuthenticateFailedAction action) 
 }
 
 AuthState _fetchRecoveryPhraseSuccess(AuthState state, FetchRecoveryPhraseSuccessAction action) {
-  return state.copyWith(isLoading: false, errorMessage: null);
+  return state.copyWith(
+    isLoading: false,
+    errorMessage: null,
+    mnemonic: action.mnemonic,
+  );
 }
 
 AuthState _fetchRecoveryPhraseFailed(AuthState state, FetchRecoveryPhraseFailedAction action) {

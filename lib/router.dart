@@ -13,14 +13,13 @@ import 'package:teja/presentation/journal/journal_editor/pages/journal_editor_pa
 import 'package:teja/presentation/mood/detail/page/mood_detail.dart';
 import 'package:teja/presentation/mood/editor/pages/mood_edit.dart';
 import 'package:teja/presentation/music/ui/SimpleMusicPlayer.dart';
+import 'package:teja/presentation/registration/page/RecoverAccountScreen.dart';
 import 'package:teja/presentation/registration/page/RegistrationScreen.dart';
 import 'package:teja/presentation/settings/pages/notification_settings_page.dart';
 import 'package:teja/presentation/timeline/pages/timeline_list_page.dart';
 import 'package:teja/presentation/mood/share/pages/mood_share.dart';
 import 'package:teja/presentation/note_editor/note_editor_page.dart';
 import 'package:teja/presentation/onboarding/pages/onboarding_page.dart';
-import 'package:teja/presentation/onboarding/pages/sign_in_page.dart';
-import 'package:teja/presentation/onboarding/pages/sign_up_page.dart';
 import 'package:teja/presentation/quotes/random_quote.dart';
 import 'package:teja/presentation/settings/pages/advanced_settings_page.dart';
 import 'package:teja/presentation/settings/pages/basic_settings_page.dart';
@@ -58,6 +57,7 @@ class SettingPath {
 class RootPath {
   static const root = "root";
   static const registration = "registration";
+  static const recoveryAccount = "recoveryAccount";
   static const signIn = "signIn";
   static const home = "home";
   static const music = "music";
@@ -111,6 +111,11 @@ final GoRouter router = GoRouter(
       builder: (context, state) => RegistrationScreen(),
     ),
     GoRoute(
+      path: '/recover-account',
+      name: RootPath.recoveryAccount,
+      builder: (context, state) => RecoverAccountScreen(),
+    ),
+    GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       name: RootPath.journalEditor, // Define a constant for this route
       path: '/journal_editor',
@@ -121,12 +126,6 @@ final GoRouter router = GoRouter(
       name: RootPath.journalCategory, // Define a constant for this route
       path: '/journal_categories',
       builder: (context, state) => const JournalCategoriesPage(),
-    ),
-    GoRoute(
-      parentNavigatorKey: _rootNavigatorKey,
-      name: RootPath.signIn,
-      path: '/sign_in',
-      builder: (context, state) => const SignInPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
