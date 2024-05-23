@@ -23,6 +23,7 @@ MonthlyMoodReportState _monthlyFetchedSuccess(MonthlyMoodReportState state,
     isLoading: false,
     currentMonthAverageMoodRatings: action.currentMonthAverageMoodRatings,
     errorMessage: null,
+    scatterSpots: action.scatterSpots,
   );
 }
 
