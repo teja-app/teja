@@ -69,10 +69,6 @@ class MoodSleepChartViewModel {
 
   factory MoodSleepChartViewModel.fromStore(Store<AppState> store) {
     final state = store.state.monthlyMoodReportState;
-
-    print('scatterData: ${state.scatterSpots}');
-    print('scatterData: ${state.scatterSpots.length}');
-
     return MoodSleepChartViewModel(
       isLoading: state.isLoading,
       scatterData: state.scatterSpots, // Initialize with an empty list
