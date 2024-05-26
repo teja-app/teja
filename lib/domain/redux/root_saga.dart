@@ -6,6 +6,7 @@ import 'package:teja/domain/redux/journal/journal_editor/journal_editor_saga.dar
 import 'package:teja/domain/redux/journal/journal_logs/journal_logs_saga.dart';
 import 'package:teja/domain/redux/journal/journal_template/saga.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_saga.dart';
+import 'package:teja/domain/redux/monthly_mood_report/monthly_mood_report_saga.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_saga.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_saga.dart';
 import 'package:teja/domain/redux/mood/list/saga.dart';
@@ -27,6 +28,7 @@ Iterable<void> rootSaga() sync* {
   yield Fork(MasterFeelingSaga().saga);
   yield Fork(MasterFactorSaga().saga);
   yield Fork(WeeklyMoodReportSaga().saga);
+  yield Fork(MonthlyMoodReportSaga().saga);
   yield Fork(QuoteSaga().saga);
   yield Fork(VisionSaga().saga);
   yield Fork(JournalTemplateSaga().saga);

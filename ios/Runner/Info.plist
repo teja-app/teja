@@ -83,5 +83,9 @@
 	<string>https://app.posthog.com</string>
 	<key>com.posthog.posthog.TRACK_APPLICATION_LIFECYCLE_EVENTS</key>
 	<false/>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Integrating your Apple Health data with $(APP_DISPLAY_NAME) will make it easy for you to track and manage all health goals!</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Integrating your Apple Health data with $(APP_DISPLAY_NAME) will make it easy for you to track and manage all health goals!</string>
 </dict>
 </plist>

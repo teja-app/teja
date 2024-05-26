@@ -7,6 +7,7 @@ import 'package:teja/domain/redux/journal/journal_editor/journal_editor_state.da
 import 'package:teja/domain/redux/journal/journal_logs/journal_logs_state.dart';
 import 'package:teja/domain/redux/journal/journal_template/state.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_state.dart';
+import 'package:teja/domain/redux/monthly_mood_report/monthly_mood_report_state.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_state.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_state.dart';
 import 'package:teja/domain/redux/mood/list/state.dart';
@@ -18,6 +19,7 @@ import 'package:teja/domain/redux/quotes/quote_state.dart';
 import 'package:teja/domain/redux/visions/vision_state.dart';
 import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_state.dart';
 
+
 @immutable
 class AppState {
   final AuthState authState; // Nested AuthState
@@ -25,6 +27,7 @@ class AppState {
   final MasterFeelingState masterFeelingState;
   final MasterFactorState masterFactorState;
   final WeeklyMoodReportState weeklyMoodReportState;
+  final MonthlyMoodReportState monthlyMoodReportState;
   final QuoteState quoteState;
   final VisionState visionState;
 
@@ -53,6 +56,7 @@ class AppState {
     required this.masterFeelingState,
     required this.masterFactorState,
     required this.weeklyMoodReportState,
+    required this.monthlyMoodReportState,
     required this.quoteState,
     required this.visionState,
     required this.journalTemplateState,
@@ -74,6 +78,7 @@ class AppState {
     MasterFactorState? masterFactorState,
     MoodLogListState? moodLogListState,
     WeeklyMoodReportState? weeklyMoodReportState,
+    MonthlyMoodReportState? monthlyMoodReportState,
     QuoteState? quoteState,
     VisionState? visionState,
     JournalTemplateState? journalTemplateState,
@@ -94,6 +99,7 @@ class AppState {
       masterFactorState: masterFactorState ?? this.masterFactorState,
       moodLogListState: moodLogListState ?? this.moodLogListState,
       weeklyMoodReportState: weeklyMoodReportState ?? this.weeklyMoodReportState,
+      monthlyMoodReportState: monthlyMoodReportState ?? this.monthlyMoodReportState,
       quoteState: quoteState ?? this.quoteState,
       visionState: visionState ?? this.visionState,
       journalTemplateState: journalTemplateState ?? this.journalTemplateState,
@@ -117,6 +123,7 @@ class AppState {
       masterFactorState: MasterFactorState.initial(),
       moodLogListState: MoodLogListState.initial(),
       weeklyMoodReportState: WeeklyMoodReportState.initial(),
+      monthlyMoodReportState: MonthlyMoodReportState.initial(),
       quoteState: QuoteState.initial(),
       visionState: VisionState.initial(),
       journalTemplateState: JournalTemplateState.initial(),
