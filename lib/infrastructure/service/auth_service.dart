@@ -5,10 +5,6 @@ import 'package:crypto/crypto.dart';
 import 'package:pointycastle/block/aes_fast.dart';
 import 'package:pointycastle/block/modes/cbc.dart';
 import 'package:pointycastle/export.dart';
-import 'package:pointycastle/padded_block_cipher/padded_block_cipher_impl.dart';
-import 'package:pointycastle/paddings/pkcs7.dart';
-import 'package:pointycastle/pointycastle.dart';
-import 'package:pointycastle/random/fortuna_random.dart';
 import 'package:teja/infrastructure/api/auth_api.dart';
 
 String encryptText(String keyHex, String text) {
@@ -73,14 +69,13 @@ class AuthService {
     final nonce = response.data['nonce'];
     final dynamicKey = response.data['dynamicKey'];
 
-    final hashedMnemonic = sha256.convert(utf8.encode(mnemonic)).toString();
-    final encryptedHashedMnemonic = encryptText(dynamicKey, hashedMnemonic);
+    final encryptedMnemonic = encryptText(dynamicKey, mnemonic);
 
     final hmac = Hmac(sha256, utf8.encode(dynamicKey));
     final signature = hmac.convert(utf8.encode(nonce)).toString();
 
     final payload = {
-      'encryptedHashedMnemonic': encryptedHashedMnemonic,
+      'encryptedMnemonic': encryptedMnemonic,
       'nonce': nonce,
       'signature': signature,
     };

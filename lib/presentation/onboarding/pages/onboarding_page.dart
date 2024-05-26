@@ -35,23 +35,23 @@ class _OnboardingPageState extends State<OnboardingPage> {
       if (_isPressed != null) {
         _isPressed!.value = false;
       }
-      final mnemonic = await _retrieveMnemonic();
-      setState(() {
-        _hasExistingMnemonic = mnemonic != null;
-      });
 
       // await SecureStorage().deleteRefreshToken();
       // await SecureStorage().deleteAccessToken();
       // await SecureStorage().deleteRecoveryCode();
 
+      final recoverCode = await SecureStorage().readRecoveryCode();
+      setState(() {
+        _hasExistingMnemonic = recoverCode != null;
+      });
       // Check token expiration and refresh if necessary
       final refreshToken = await SecureStorage().readRefreshToken();
       print("refreshToken $refreshToken");
-      print("mnemonic $mnemonic");
+      print("recoverCode $recoverCode");
       if (refreshToken != null) {
         store.dispatch(RefreshTokenAction(refreshToken));
-      } else if (mnemonic != null) {
-        store.dispatch(AuthenticateAction(mnemonic));
+      } else if (recoverCode != null) {
+        store.dispatch(AuthenticateAction(recoverCode));
       }
     });
   }
@@ -83,10 +83,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   void _onMusicPress() {
     GoRouter.of(context).pushNamed(RootPath.music);
-  }
-
-  Future<String?> _retrieveMnemonic() async {
-    return SecureStorage().readRecoveryCode();
   }
 
   void onRiveInit(Artboard artboard) {

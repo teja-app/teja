@@ -1,12 +1,12 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/auth/auth_action.dart';
 import 'package:teja/domain/redux/auth/auth_state.dart';
+import 'package:teja/router.dart';
 import 'package:teja/shared/common/button.dart';
+import 'package:go_router/go_router.dart';
 
 class RecoverAccountScreen extends StatefulWidget {
   @override
@@ -34,6 +34,12 @@ class _RecoverAccountScreenState extends State<RecoverAccountScreen> {
     }
   }
 
+  void _showSnackbar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,7 +61,8 @@ class _RecoverAccountScreenState extends State<RecoverAccountScreen> {
 
           if (authState.isAuthSuccessful) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              Navigator.pop(context); // Close the recovery screen on successful authentication
+              _showSnackbar(context, 'Authentication Successful!');
+              GoRouter.of(context).goNamed(RootPath.root);
             });
           }
 

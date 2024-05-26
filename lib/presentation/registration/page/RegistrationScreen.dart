@@ -2,10 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/auth/auth_action.dart';
 import 'package:teja/domain/redux/auth/auth_state.dart';
+import 'package:teja/router.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 import 'package:teja/shared/storage/secure_storage.dart';
@@ -70,6 +72,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     }
   }
 
+  void _showSnackbar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,6 +102,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             return const Center(child: CircularProgressIndicator());
           } else if (authState.mnemonic != null && _mnemonic.isEmpty) {
             _mnemonic = authState.mnemonic!;
+          }
+
+          if (authState.isAuthSuccessful) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _showSnackbar(context, 'Registration Successful!');
+              GoRouter.of(context).goNamed(RootPath.root);
+            });
           }
 
           return PageView(
