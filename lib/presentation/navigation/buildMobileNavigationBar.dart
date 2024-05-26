@@ -33,7 +33,7 @@ Widget buildMobileNavigationBar(BuildContext context) {
         icon: Icon(
           AntDesign.user,
         ),
-        label: 'Settings',
+        label: 'Profile',
       ),
     ],
     currentIndex: _selectedIndex,
@@ -52,7 +52,7 @@ Widget buildMobileNavigationBar(BuildContext context) {
           HapticFeedback.selectionClick();
           break;
         case 3:
-          goRouter.goNamed(RootPath.settings);
+          goRouter.goNamed(RootPath.profile);
           HapticFeedback.selectionClick();
           break;
         // Handle other indices as needed
@@ -69,7 +69,7 @@ int _getSelectedIndex(String currentLocation) {
       return 1;
     case '/timeline':
       return 2;
-    case '/settings':
+    case '/profile':
       return 3;
     default:
       return 0; // Default index if no match found

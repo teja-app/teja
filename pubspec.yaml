@@ -97,6 +97,7 @@ dependencies:
   shared_preferences: ^2.2.3
   pointycastle: ^3.9.1
   crypto: ^3.0.3
+  health: ^10.2.0
 
 dev_dependencies:
   flutter_test:
