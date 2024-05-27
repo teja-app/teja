@@ -94,6 +94,7 @@ dependencies:
   audio_video_progress_bar: ^2.0.2
   timezone: ^0.9.3
   health: ^10.2.0
+  flutter_heatmap_calendar: ^1.0.5
 
 dev_dependencies:
   flutter_test:
