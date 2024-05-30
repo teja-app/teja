@@ -29,8 +29,8 @@ class HeatMapComponent extends StatelessWidget {
             padding: 0,
             color: Theme.of(context).colorScheme.background,
             child: HeatMap(
-              startDate: DateTime(2024, 1, 1),
-              endDate: DateTime(2024, 12, 31),
+              startDate: DateTime(DateTime.now().year, 1, 1),
+              endDate: DateTime(DateTime.now().year, 12, 31),
               datasets: dataset,
               colorMode: ColorMode.opacity, // Use opacity for color mode
               colorsets: {
