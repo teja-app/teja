@@ -18,7 +18,7 @@ import 'package:teja/domain/redux/auth/auth_state.dart';
 import 'package:teja/domain/redux/quotes/quote_state.dart';
 import 'package:teja/domain/redux/visions/vision_state.dart';
 import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_state.dart';
-
+import 'package:teja/domain/redux/yearly_sleep_report/yearly_sleep_report_state.dart';
 
 @immutable
 class AppState {
@@ -28,6 +28,7 @@ class AppState {
   final MasterFactorState masterFactorState;
   final WeeklyMoodReportState weeklyMoodReportState;
   final MonthlyMoodReportState monthlyMoodReportState;
+  final YearlySleepReportState yearlySleepReportState;
   final QuoteState quoteState;
   final VisionState visionState;
 
@@ -57,6 +58,7 @@ class AppState {
     required this.masterFactorState,
     required this.weeklyMoodReportState,
     required this.monthlyMoodReportState,
+    required this.yearlySleepReportState,
     required this.quoteState,
     required this.visionState,
     required this.journalTemplateState,
@@ -79,6 +81,7 @@ class AppState {
     MoodLogListState? moodLogListState,
     WeeklyMoodReportState? weeklyMoodReportState,
     MonthlyMoodReportState? monthlyMoodReportState,
+    YearlySleepReportState? yearlySleepReportState,
     QuoteState? quoteState,
     VisionState? visionState,
     JournalTemplateState? journalTemplateState,
@@ -100,6 +103,7 @@ class AppState {
       moodLogListState: moodLogListState ?? this.moodLogListState,
       weeklyMoodReportState: weeklyMoodReportState ?? this.weeklyMoodReportState,
       monthlyMoodReportState: monthlyMoodReportState ?? this.monthlyMoodReportState,
+      yearlySleepReportState: yearlySleepReportState ?? this.yearlySleepReportState,
       quoteState: quoteState ?? this.quoteState,
       visionState: visionState ?? this.visionState,
       journalTemplateState: journalTemplateState ?? this.journalTemplateState,
@@ -124,6 +128,7 @@ class AppState {
       moodLogListState: MoodLogListState.initial(),
       weeklyMoodReportState: WeeklyMoodReportState.initial(),
       monthlyMoodReportState: MonthlyMoodReportState.initial(),
+      yearlySleepReportState: YearlySleepReportState.initial(),
       quoteState: QuoteState.initial(),
       visionState: VisionState.initial(),
       journalTemplateState: JournalTemplateState.initial(),

@@ -18,6 +18,7 @@ import 'package:teja/domain/redux/quotes/quote_saga.dart';
 import 'package:teja/domain/redux/sync/saga.dart';
 import 'package:teja/domain/redux/visions/vision_saga.dart';
 import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_saga.dart';
+import 'package:teja/domain/redux/yearly_sleep_report/yearly_sleep_report_saga.dart';
 
 Iterable<void> rootSaga() sync* {
   yield Fork(AuthSaga().saga);
@@ -29,6 +30,7 @@ Iterable<void> rootSaga() sync* {
   yield Fork(MasterFactorSaga().saga);
   yield Fork(WeeklyMoodReportSaga().saga);
   yield Fork(MonthlyMoodReportSaga().saga);
+  yield Fork(YearlySleepReportSaga().saga);
   yield Fork(QuoteSaga().saga);
   yield Fork(VisionSaga().saga);
   yield Fork(JournalTemplateSaga().saga);
