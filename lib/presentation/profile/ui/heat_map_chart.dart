@@ -10,6 +10,16 @@ class HeatMapComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final brightness = Theme.of(context).colorScheme.brightness;
+    var weekTextColor = Colors.black;
+    var defaultColor = Colors.grey[200];
+    var textColor = Colors.grey[100];
+    if (brightness == Brightness.dark) {
+      weekTextColor = Colors.white;
+      defaultColor = Colors.grey[800];
+      textColor = Colors.grey[800];
+    }
+
     return FlexibleHeightBox(
       gridWidth: 4,
       child: Column(
@@ -17,7 +27,7 @@ class HeatMapComponent extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 2.0),
             child: Text(
-              'Heat Map',
+              'Sleep Heatmap',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
@@ -28,20 +38,23 @@ class HeatMapComponent extends StatelessWidget {
             margin: 0,
             padding: 0,
             color: Theme.of(context).colorScheme.background,
-            child: HeatMap(
-              startDate: DateTime(DateTime.now().year, 1, 1),
-              endDate: DateTime(DateTime.now().year, 12, 31),
+            child: HeatMapCalendar(
+              initDate: DateTime.now(),
               datasets: dataset,
               colorMode: ColorMode.opacity, // Use opacity for color mode
               colorsets: {
                 0: Colors.blue[700]!,
                 // Add more colors as needed
               },
-              defaultColor: Colors.grey[200]!,
-              textColor: Colors.white,
+              defaultColor: defaultColor,
+              textColor: textColor,
               showColorTip: false,
-              scrollable: true,
               size: 30,
+              monthFontSize: 14, // Adjust the size of the month label
+              weekFontSize: 12, // Adjust the size of the week label
+              weekTextColor: weekTextColor,
+              borderRadius: 5,
+              margin: const EdgeInsets.all(2),
             ),
           ),
         ],
