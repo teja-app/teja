@@ -14,7 +14,7 @@ import 'package:teja/domain/redux/mood/list/state.dart';
 import 'package:teja/domain/redux/mood/logs/mood_logs_state.dart';
 import 'package:teja/domain/redux/mood/master_factor/state.dart';
 import 'package:teja/domain/redux/mood/master_feeling/state.dart';
-import 'package:teja/domain/redux/onboarding/auth_state.dart';
+import 'package:teja/domain/redux/auth/auth_state.dart';
 import 'package:teja/domain/redux/quotes/quote_state.dart';
 import 'package:teja/domain/redux/visions/vision_state.dart';
 import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_state.dart';
@@ -101,20 +101,16 @@ class AppState {
       masterFeelingState: masterFeelingState ?? this.masterFeelingState,
       masterFactorState: masterFactorState ?? this.masterFactorState,
       moodLogListState: moodLogListState ?? this.moodLogListState,
-      weeklyMoodReportState:
-          weeklyMoodReportState ?? this.weeklyMoodReportState,
-      monthlyMoodReportState:
-          monthlyMoodReportState ?? this.monthlyMoodReportState,
-      yearlySleepReportState:
-          yearlySleepReportState ?? this.yearlySleepReportState,
+      weeklyMoodReportState: weeklyMoodReportState ?? this.weeklyMoodReportState,
+      monthlyMoodReportState: monthlyMoodReportState ?? this.monthlyMoodReportState,
+      yearlySleepReportState: yearlySleepReportState ?? this.yearlySleepReportState,
       quoteState: quoteState ?? this.quoteState,
       visionState: visionState ?? this.visionState,
       journalTemplateState: journalTemplateState ?? this.journalTemplateState,
       journalEditorState: journalEditorState ?? this.journalEditorState,
       journalLogsState: journalLogsState ?? this.journalLogsState,
       journalDetailState: journalDetailState ?? this.journalDetailState,
-      featuredJournalTemplateState:
-          featuredJournalTemplateState ?? this.featuredJournalTemplateState,
+      featuredJournalTemplateState: featuredJournalTemplateState ?? this.featuredJournalTemplateState,
       journalCategoryState: journalCategoryState ?? this.journalCategoryState,
       journalListState: journalListState ?? this.journalListState,
     );
@@ -122,7 +118,7 @@ class AppState {
 
   static AppState initialState() {
     return AppState(
-      authState: AuthState.initialState(),
+      authState: AuthState.initial(),
       homeState: HomeState.initialState(),
       moodEditorState: MoodEditorState.initialState(),
       moodDetailPage: MoodDetailState.initialState(),

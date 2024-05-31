@@ -22,7 +22,7 @@ class RiveAnimationSection extends StatelessWidget {
           ),
           Expanded(
             child: Text(
-              "All your data is securely stored locally on your mobile device, ensuring your information remains private and accessible only to you.",
+              "All your data completely anonymous, decentralized and accessible only to you.",
               style: Theme.of(context).textTheme.bodySmall,
               textAlign: TextAlign.center,
             ),

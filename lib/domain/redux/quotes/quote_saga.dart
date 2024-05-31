@@ -47,7 +47,6 @@ class QuoteSaga {
       var quoteRepo = QuoteRepository(isar);
 
       final accessToken = Result<String?>();
-      yield Call(readSecureData, args: ['access_token'], result: accessToken);
 
       QuoteApi quoteApi = QuoteApi();
       var quotesResult = Result<List<QuoteEntity>>();

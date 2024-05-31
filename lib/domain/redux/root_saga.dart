@@ -1,4 +1,5 @@
 import 'package:redux_saga/redux_saga.dart';
+import 'package:teja/domain/redux/auth/auth_saga.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_saga.dart';
 import 'package:teja/domain/redux/journal/featured_journal_template/saga.dart';
 import 'package:teja/domain/redux/journal/journal_category/saga.dart';
@@ -13,7 +14,6 @@ import 'package:teja/domain/redux/mood/list/saga.dart';
 import 'package:teja/domain/redux/mood/logs/mood_logs_saga.dart';
 import 'package:teja/domain/redux/mood/master_feeling/saga.dart';
 import 'package:teja/domain/redux/mood/master_factor/saga.dart';
-import 'package:teja/domain/redux/onboarding/auth_effect.dart';
 import 'package:teja/domain/redux/quotes/quote_saga.dart';
 import 'package:teja/domain/redux/sync/saga.dart';
 import 'package:teja/domain/redux/visions/vision_saga.dart';

@@ -47,7 +47,6 @@ class MasterFactorSaga {
       var factorsResult = Result<List<MasterFactorEntity>>();
 
       final accessToken = Result<String?>();
-      yield Call(readSecureData, args: ['access_token'], result: accessToken);
 
       FactorApi factorApi = FactorApi();
       yield Call(

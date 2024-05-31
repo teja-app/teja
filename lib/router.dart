@@ -12,14 +12,17 @@ import 'package:teja/presentation/journal/journal_categories/categories_page.dar
 import 'package:teja/presentation/journal/journal_editor/pages/journal_editor_page.dart';
 import 'package:teja/presentation/mood/detail/page/mood_detail.dart';
 import 'package:teja/presentation/mood/editor/pages/mood_edit.dart';
+import 'package:teja/presentation/music/ui/SimpleMusicPlayer.dart';
+import 'package:teja/presentation/registration/page/RecoverAccountScreen.dart';
+import 'package:teja/presentation/registration/page/RegistrationScreen.dart';
+import 'package:teja/presentation/profile/page/profile_page.dart';
+import 'package:teja/presentation/music/ui/SimpleMusicPlayer.dart';
 import 'package:teja/presentation/profile/page/profile_page.dart';
 import 'package:teja/presentation/settings/pages/notification_settings_page.dart';
 import 'package:teja/presentation/timeline/pages/timeline_list_page.dart';
 import 'package:teja/presentation/mood/share/pages/mood_share.dart';
 import 'package:teja/presentation/note_editor/note_editor_page.dart';
 import 'package:teja/presentation/onboarding/pages/onboarding_page.dart';
-import 'package:teja/presentation/onboarding/pages/sign_in_page.dart';
-import 'package:teja/presentation/onboarding/pages/sign_up_page.dart';
 import 'package:teja/presentation/quotes/random_quote.dart';
 import 'package:teja/presentation/settings/pages/advanced_settings_page.dart';
 import 'package:teja/presentation/settings/pages/basic_settings_page.dart';
@@ -56,9 +59,11 @@ class SettingPath {
 
 class RootPath {
   static const root = "root";
-  static const signUp = "signUp";
+  static const registration = "registration";
+  static const recoveryAccount = "recoveryAccount";
   static const signIn = "signIn";
   static const home = "home";
+  static const music = "music";
   static const profile = "profile";
   static const explore = "explore";
   static const exploreSearch = "explore_search";
@@ -104,9 +109,14 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
-      name: RootPath.signUp,
-      path: '/sign_up',
-      builder: (context, state) => SignUpPage(),
+      name: RootPath.registration,
+      path: '/registration',
+      builder: (context, state) => RegistrationScreen(),
+    ),
+    GoRoute(
+      path: '/recover-account',
+      name: RootPath.recoveryAccount,
+      builder: (context, state) => RecoverAccountScreen(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
@@ -122,15 +132,15 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
-      name: RootPath.signIn,
-      path: '/sign_in',
-      builder: (context, state) => const SignInPage(),
-    ),
-    GoRoute(
-      parentNavigatorKey: _rootNavigatorKey,
       name: RootPath.home,
       path: '/home',
       builder: (context, state) => const HomePage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RootPath.music,
+      path: '/music',
+      builder: (context, state) => const SimplePlayerScreen(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
@@ -190,8 +200,7 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
-      name: RootPath
-          .journalCategoryDetail, // Make sure you have this constant defined
+      name: RootPath.journalCategoryDetail, // Make sure you have this constant defined
       path: '/category_detail',
       builder: (context, state) {
         final String? categoryId = state.uri.queryParameters['id'];
@@ -199,8 +208,7 @@ final GoRouter router = GoRouter(
           return CategoryDetailPage(categoryId: categoryId);
         } else {
           // Handle the case where categoryId is null, maybe navigate back or show an error
-          return const Scaffold(
-              body: Center(child: Text('Category not found')));
+          return const Scaffold(body: Center(child: Text('Category not found')));
         }
       },
     ),
@@ -220,49 +228,50 @@ final GoRouter router = GoRouter(
       },
     ),
     GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        name: RootPath.settings,
-        path: '/settings',
-        builder: (context, state) => const SettingsPage(),
-        routes: [
-          GoRoute(
-            name: SettingPath.sync,
-            path: 'sync',
-            builder: (context, state) => const SyncSettingsPage(),
-          ),
-          GoRoute(
-            name: SettingPath.perferences,
-            path: 'perferences',
-            builder: (context, state) => const PreferencesSettingsPage(),
-          ),
-          GoRoute(
-            name: SettingPath.notification,
-            path: 'notification',
-            builder: (context, state) => NotificationSettingsPage(
-              notificationService: notificationService,
-            ),
-          ),
-          GoRoute(
-            name: SettingPath.basic,
-            path: 'basic',
-            builder: (context, state) => const BasicSettingsPage(),
-          ),
-          GoRoute(
-            name: SettingPath.security,
-            path: 'security',
-            builder: (context, state) => const SecuritySettingsPage(),
-          ),
-          GoRoute(
-            name: SettingPath.advanced,
-            path: 'advanced',
-            builder: (context, state) => const AdvancedSettingsPage(),
-          ),
-        ]),
-    GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       name: RootPath.profile,
       path: '/profile',
       builder: (context, state) => const ProfilePage(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RootPath.settings,
+      path: '/settings',
+      builder: (context, state) => const SettingsPage(),
+      routes: [
+        GoRoute(
+          name: SettingPath.sync,
+          path: 'sync',
+          builder: (context, state) => const SyncSettingsPage(),
+        ),
+        GoRoute(
+          name: SettingPath.perferences,
+          path: 'perferences',
+          builder: (context, state) => const PreferencesSettingsPage(),
+        ),
+        GoRoute(
+          name: SettingPath.notification,
+          path: 'notification',
+          builder: (context, state) => NotificationSettingsPage(
+            notificationService: notificationService,
+          ),
+        ),
+        GoRoute(
+          name: SettingPath.basic,
+          path: 'basic',
+          builder: (context, state) => const BasicSettingsPage(),
+        ),
+        GoRoute(
+          name: SettingPath.security,
+          path: 'security',
+          builder: (context, state) => const SecuritySettingsPage(),
+        ),
+        GoRoute(
+          name: SettingPath.advanced,
+          path: 'advanced',
+          builder: (context, state) => const AdvancedSettingsPage(),
+        ),
+      ],
     ),
   ],
 );

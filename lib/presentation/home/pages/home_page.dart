@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:redux/redux.dart';
@@ -19,9 +16,7 @@ import 'package:teja/presentation/navigation/buildDesktopDrawer.dart';
 import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/presentation/navigation/leadingContainer.dart';
-import 'package:teja/router.dart';
 import 'package:teja/calendar_timeline/calendar_timeline.dart';
-import 'package:teja/shared/common/bento_box.dart';
 import 'package:teja/theme/padding.dart';
 
 class HomePage extends StatefulWidget {
