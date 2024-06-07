@@ -16,6 +16,7 @@ import 'package:teja/domain/redux/mood/master_factor/state.dart';
 import 'package:teja/domain/redux/mood/master_feeling/state.dart';
 import 'package:teja/domain/redux/auth/auth_state.dart';
 import 'package:teja/domain/redux/quotes/quote_state.dart';
+import 'package:teja/domain/redux/token/token_state.dart';
 import 'package:teja/domain/redux/visions/vision_state.dart';
 import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_state.dart';
 import 'package:teja/domain/redux/yearly_sleep_report/yearly_sleep_report_state.dart';
@@ -31,6 +32,7 @@ class AppState {
   final YearlySleepReportState yearlySleepReportState;
   final QuoteState quoteState;
   final VisionState visionState;
+  final TokenState tokenState;
 
   // Mood
   final MoodEditorState moodEditorState;
@@ -61,6 +63,7 @@ class AppState {
     required this.yearlySleepReportState,
     required this.quoteState,
     required this.visionState,
+    required this.tokenState,
     required this.journalTemplateState,
     required this.journalEditorState,
     required this.journalLogsState,
@@ -84,6 +87,7 @@ class AppState {
     YearlySleepReportState? yearlySleepReportState,
     QuoteState? quoteState,
     VisionState? visionState,
+    TokenState? tokenState,
     JournalTemplateState? journalTemplateState,
     JournalEditorState? journalEditorState,
     JournalLogsState? journalLogsState,
@@ -106,6 +110,7 @@ class AppState {
       yearlySleepReportState: yearlySleepReportState ?? this.yearlySleepReportState,
       quoteState: quoteState ?? this.quoteState,
       visionState: visionState ?? this.visionState,
+      tokenState: tokenState ?? this.tokenState,
       journalTemplateState: journalTemplateState ?? this.journalTemplateState,
       journalEditorState: journalEditorState ?? this.journalEditorState,
       journalLogsState: journalLogsState ?? this.journalLogsState,
@@ -131,6 +136,7 @@ class AppState {
       yearlySleepReportState: YearlySleepReportState.initial(),
       quoteState: QuoteState.initial(),
       visionState: VisionState.initial(),
+      tokenState: TokenState.initial(),
       journalTemplateState: JournalTemplateState.initial(),
       journalEditorState: JournalEditorState.initialState(),
       journalLogsState: JournalLogsState.initialState(),

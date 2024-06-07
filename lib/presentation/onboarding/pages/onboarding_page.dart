@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
 import 'package:rive/rive.dart';
 import 'package:teja/domain/redux/auth/auth_action.dart';
+import 'package:teja/infrastructure/service/auth_service.dart';
 import 'package:teja/presentation/onboarding/actions/init_state_actions.dart';
 import 'package:teja/presentation/onboarding/ui/onboarding_description.dart';
 import 'package:teja/presentation/onboarding/ui/onboarding_header_image.dart';
@@ -44,15 +45,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
       setState(() {
         _hasExistingMnemonic = recoverCode != null;
       });
-      // Check token expiration and refresh if necessary
-      final refreshToken = await SecureStorage().readRefreshToken();
-      print("refreshToken $refreshToken");
-      print("recoverCode $recoverCode");
-      if (refreshToken != null) {
-        store.dispatch(RefreshTokenAction(refreshToken));
-      } else if (recoverCode != null) {
-        store.dispatch(AuthenticateAction(recoverCode));
-      }
+      final authSevice = AuthService();
+      await authSevice.validateAndAuthenticate(store);
     });
   }
 
