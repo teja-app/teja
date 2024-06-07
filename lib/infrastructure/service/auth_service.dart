@@ -5,7 +5,12 @@ import 'package:crypto/crypto.dart';
 import 'package:pointycastle/block/aes_fast.dart';
 import 'package:pointycastle/block/modes/cbc.dart';
 import 'package:pointycastle/export.dart';
+import 'package:redux/redux.dart';
+import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/auth/auth_action.dart';
 import 'package:teja/infrastructure/api/auth_api.dart';
+import 'package:teja/shared/storage/secure_storage.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 String encryptText(String keyHex, String text) {
   final key = Uint8List.fromList(hex.decode(keyHex));
@@ -40,6 +45,7 @@ Uint8List _generateRandomBytes(int length) {
 class AuthService {
   final AuthApi _authApi;
 
+  final SecureStorage _secureStorage = SecureStorage();
   AuthService() : _authApi = AuthApi();
 
   Future<String> fetchRecoveryPhrase() async {
@@ -90,5 +96,29 @@ class AuthService {
   Future<String> refreshToken(String refreshToken) async {
     final response = await _authApi.refreshToken(refreshToken);
     return response.data['accessToken'];
+  }
+
+  Future<void> validateAndAuthenticate(Store<AppState> store) async {
+    final refreshToken = await _secureStorage.readRefreshToken();
+    final accessToken = await _secureStorage.readAccessToken();
+    final recoverCode = await _secureStorage.readRecoveryCode();
+
+    if (accessToken != null && !JwtDecoder.isExpired(accessToken)) {
+      // store.dispatch(RefreshTokenAction(refreshToken));
+      return;
+    }
+    print(
+      "accessToken ${accessToken} ${JwtDecoder.isExpired(accessToken!)}",
+    );
+
+    print(
+      "refreshToken ${refreshToken} ${JwtDecoder.isExpired(refreshToken!)}",
+    );
+
+    if (refreshToken != null && !JwtDecoder.isExpired(refreshToken)) {
+      store.dispatch(RefreshTokenAction(refreshToken));
+    } else if (recoverCode != null) {
+      store.dispatch(AuthenticateAction(recoverCode));
+    } else {}
   }
 }
