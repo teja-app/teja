@@ -32,8 +32,7 @@ class MonthlyMoodReportState {
   }) {
     return MonthlyMoodReportState(
       isLoading: isLoading ?? this.isLoading,
-      currentMonthAverageMoodRatings:
-          currentMonthAverageMoodRatings ?? this.currentMonthAverageMoodRatings,
+      currentMonthAverageMoodRatings: currentMonthAverageMoodRatings ?? this.currentMonthAverageMoodRatings,
       errorMessage: errorMessage ?? this.errorMessage,
       scatterSpots: scatterSpots ?? this.scatterSpots,
     );

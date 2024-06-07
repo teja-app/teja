@@ -5,7 +5,7 @@ import 'package:teja/infrastructure/repositories/mood_log_repository.dart';
 import 'package:health/health.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:teja/presentation/profile/ui/sleep_service.dart';
+import 'package:teja/infrastructure/service/sleep_service.dart';
 
 class MonthlyMoodReportSaga {
   Iterable<void> saga() sync* {
@@ -15,8 +15,7 @@ class MonthlyMoodReportSaga {
     );
   }
 
-  _fetchMonthlyMoodReport(
-      {required FetchMonthlyMoodReportAction action}) sync* {
+  _fetchMonthlyMoodReport({required FetchMonthlyMoodReportAction action}) sync* {
     yield Try(() sync* {
       var isarResult = Result<Isar>();
       yield GetContext('isar', result: isarResult);
@@ -28,32 +27,30 @@ class MonthlyMoodReportSaga {
 
       final moodLogRepository = MoodLogRepository(isar);
 
-      // Calculate the start and end dates for the current month
-      final currentMonthStart = _startOfMonth(action.referenceDate);
-      final currentMonthEnd = _endOfMonth(action.referenceDate);
+      // Calculate the start and end dates for the past 30 days
+      final startDate = _startOfLast30Days(action.referenceDate);
+      final endDate = action.referenceDate;
 
-      // Fetch average mood ratings for the current month
-      var currentMonthAverageMoodRatingsResult =
-          Result<Map<DateTime, double>>();
+      // Fetch average mood ratings for the past 30 days
+      var averageMoodRatingsResult = Result<Map<DateTime, double>>();
       yield Call(
         moodLogRepository.getAverageMoodLogsForWeek,
-        args: [currentMonthStart, currentMonthEnd],
-        result: currentMonthAverageMoodRatingsResult,
+        args: [startDate, endDate],
+        result: averageMoodRatingsResult,
       );
 
-      if (currentMonthAverageMoodRatingsResult.value == null) {
+      if (averageMoodRatingsResult.value == null) {
         throw Exception("Failed to fetch mood data");
       }
 
-      final moodData = currentMonthAverageMoodRatingsResult.value!;
+      final moodData = averageMoodRatingsResult.value!;
 
       // Dispatch an intermediate action if necessary to indicate fetching of scatter spots
       yield Put(FetchingScatterSpotsAction());
 
       // Call the asynchronous function to calculate scatter spots
       var scatterSpotsResult = Result<List<ScatterSpot>>();
-      yield Call(_fetchScatterSpots,
-          args: [moodData], result: scatterSpotsResult);
+      yield Call(_fetchScatterSpots, args: [moodData], result: scatterSpotsResult);
 
       final scatterSpots = scatterSpotsResult.value;
 
@@ -70,24 +67,20 @@ class MonthlyMoodReportSaga {
     });
   }
 
-  static Future<List<ScatterSpot>> _fetchScatterSpots(
-      Map<DateTime, double> moodData) async {
+  static Future<List<ScatterSpot>> _fetchScatterSpots(Map<DateTime, double> moodData) async {
     return await _calculateScatterSpots(moodData);
   }
 
-  static Future<List<ScatterSpot>> _calculateScatterSpots(
-      Map<DateTime, double> moodData) async {
+  static Future<List<ScatterSpot>> _calculateScatterSpots(Map<DateTime, double> moodData) async {
     List<DateTime> dates = moodData.keys.toList();
     final sleepData = await HealthDataFetcher.fetchHealthData(dates);
     return _mapToScatterSpots(moodData, sleepData);
   }
 
-  static List<ScatterSpot> _mapToScatterSpots(
-      Map<DateTime, double> moodData, List<HealthDataPoint> sleepData) {
+  static List<ScatterSpot> _mapToScatterSpots(Map<DateTime, double> moodData, List<HealthDataPoint> sleepData) {
     final Map<DateTime, double> sleepMap = {};
     for (final dataPoint in sleepData) {
-      final date = DateTime(dataPoint.dateFrom.year, dataPoint.dateFrom.month,
-          dataPoint.dateFrom.day);
+      final date = DateTime(dataPoint.dateFrom.year, dataPoint.dateFrom.month, dataPoint.dateFrom.day);
       final value = dataPoint.value;
       double duration;
 
@@ -98,10 +91,7 @@ class MonthlyMoodReportSaga {
       } else if (valueString.contains('instantValue')) {
         final instantValueString = valueString.split('instantValue:')[1].trim();
         final instantValue = DateTime.parse(instantValueString);
-        duration = instantValue
-            .difference(DateTime.fromMillisecondsSinceEpoch(0))
-            .inHours
-            .toDouble();
+        duration = instantValue.difference(DateTime.fromMillisecondsSinceEpoch(0)).inHours.toDouble();
       } else {
         continue;
       }
@@ -116,15 +106,14 @@ class MonthlyMoodReportSaga {
     final List<ScatterSpot> scatterSpots = [];
     moodData.forEach((moodDate, moodValue) {
       final sleepDate = moodDate.subtract(const Duration(days: 1));
-      final sleepDateOnly =
-          DateTime(sleepDate.year, sleepDate.month, sleepDate.day);
+      final sleepDateOnly = DateTime(sleepDate.year, sleepDate.month, sleepDate.day);
       if (sleepMap.containsKey(sleepDateOnly)) {
         final sleepValue = sleepMap[sleepDateOnly]!;
         scatterSpots.add(ScatterSpot(
           sleepValue,
           moodValue,
-          radius: calculateRadius(moodValue),
-          color: Colors.blue.withOpacity(0.1 * moodValue),
+          radius: calculateRadius(3),
+          color: Colors.blue.withOpacity(0.3),
         ));
       }
     });
@@ -132,13 +121,8 @@ class MonthlyMoodReportSaga {
     return scatterSpots;
   }
 
-  static DateTime _startOfMonth(DateTime date) {
-    return DateTime(date.year, date.month, 1);
-  }
-
-  static DateTime _endOfMonth(DateTime date) {
-    var nextMonth = DateTime(date.year, date.month + 1, 1);
-    return nextMonth.subtract(const Duration(days: 1));
+  static DateTime _startOfLast30Days(DateTime date) {
+    return date.subtract(const Duration(days: 30));
   }
 }
 
