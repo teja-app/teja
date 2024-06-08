@@ -7,16 +7,19 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/home/home_actions.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
 import 'package:teja/domain/redux/mood/list/actions.dart';
+import 'package:teja/domain/redux/token/token_actions.dart';
 import 'package:teja/presentation/home/ui/count_down_timer.dart';
 import 'package:teja/presentation/home/ui/journal/journal_entries_widget.dart';
 import 'package:teja/presentation/home/ui/journal/last_used_template.dart';
 import 'package:teja/presentation/home/ui/journal_prompt/journal_prompt.dart';
 import 'package:teja/presentation/home/ui/mood/mood_tracker.dart';
+import 'package:teja/presentation/home/ui/token_widget.dart';
 import 'package:teja/presentation/navigation/buildDesktopDrawer.dart';
 import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/presentation/navigation/leadingContainer.dart';
 import 'package:teja/calendar_timeline/calendar_timeline.dart';
+import 'package:teja/shared/storage/secure_storage.dart';
 import 'package:teja/theme/padding.dart';
 
 class HomePage extends StatefulWidget {
@@ -74,7 +77,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     // itemPositionsListener.itemPositions.addListener(_loadMoreDataIfNeeded);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final store = StoreProvider.of<AppState>(context);
       store.dispatch(ResetMoodLogsListAction());
       store.dispatch(ResetJournalEntriesListAction());
@@ -152,17 +155,7 @@ class _HomePageState extends State<HomePage> {
         elevation: 0.0,
         leading: leadingNavBar(context),
         leadingWidth: 72,
-        actions: const [
-          // Container(
-          //   margin: const EdgeInsets.only(right: 20),
-          //   child: IconButton(
-          //       icon: const Icon(Icons.person),
-          //       onPressed: () {
-          //         GoRouter.of(context).pushNamed(RootPath.settings);
-          //         HapticFeedback.selectionClick();
-          //       }),
-          // ),
-        ],
+        actions: const [TokenWidget()],
       ),
       body: isDesktop(context)
           ? Row(

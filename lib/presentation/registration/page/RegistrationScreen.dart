@@ -126,6 +126,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   Widget _buildMnemonicPage() {
     final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -175,7 +176,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           width: 80,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
-                            color: Colors.grey[200], // Adjust the color as needed
+                            color: colorScheme.background,
                           ),
                           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           child: Text(
@@ -233,6 +234,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     int missingIndex = 0;
     String missingWord = '';
 
+    final colorScheme = Theme.of(context).colorScheme;
     // Initialize the mnemonic words and select a random missing word
     void initializeMnemonic() {
       missingIndex = 3 + (mnemonicWords.length - 7) * (DateTime.now().millisecondsSinceEpoch % 1000) ~/ 1000;
@@ -274,7 +276,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             width: 80,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
-                              color: Colors.grey[200],
+                              color: colorScheme.background,
                             ),
                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             child: Text(
