@@ -15,6 +15,9 @@ class YearlySleepReportSaga {
       {required FetchYearlySleepReportAction action}) sync* {
     yield Try(() sync* {
       yield Put(YearlySleepReportFetchInProgressAction());
+      List<Map<String, bool>> checklist = [
+        {"Sleep data exists": false},
+      ];
 
       final startOfYear = DateTime(action.referenceDate.year, 1, 1);
       final endOfYear = DateTime(action.referenceDate.year, 12, 31);
@@ -29,10 +32,12 @@ class YearlySleepReportSaga {
       if (sleepData == null) {
         throw Exception("Failed to fetch sleep data");
       }
+      checklist[0]["Sleep data exists"] = sleepData.isNotEmpty;
 
       final cumulativeSleepData = _calculateCumulativeSleepData(sleepData);
 
-      yield Put(YearlySleepReportFetchedSuccessAction(cumulativeSleepData));
+      yield Put(YearlySleepReportFetchedSuccessAction(
+          cumulativeSleepData, checklist));
     }, Catch: (e, s) sync* {
       yield Put(YearlySleepReportFetchFailedAction(e.toString()));
     });

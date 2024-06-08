@@ -3,13 +3,15 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/yearly_sleep_report/yearly_sleep_report_actions.dart';
+import 'package:teja/presentation/profile/ui/data_check_overlay.dart';
 import 'package:teja/presentation/profile/ui/heat_map_chart.dart';
 
 class ProfileSleepHeatMapScreen extends StatefulWidget {
   const ProfileSleepHeatMapScreen({super.key});
 
   @override
-  State<ProfileSleepHeatMapScreen> createState() => _ProfileSleepHeatMapScreenState();
+  State<ProfileSleepHeatMapScreen> createState() =>
+      _ProfileSleepHeatMapScreenState();
 }
 
 class _ProfileSleepHeatMapScreenState extends State<ProfileSleepHeatMapScreen> {
@@ -18,8 +20,10 @@ class _ProfileSleepHeatMapScreenState extends State<ProfileSleepHeatMapScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final DateTime now = DateTime.now();
-      final DateTime today = DateTime(now.year, now.month, now.day); // Reset time to midnight
-      StoreProvider.of<AppState>(context).dispatch(FetchYearlySleepReportAction(today));
+      final DateTime today =
+          DateTime(now.year, now.month, now.day); // Reset time to midnight
+      StoreProvider.of<AppState>(context)
+          .dispatch(FetchYearlySleepReportAction(today));
     });
   }
 
@@ -34,12 +38,27 @@ class _ProfileSleepHeatMapScreenState extends State<ProfileSleepHeatMapScreen> {
         if (viewModel.isLoading) {
           return const Center(child: CircularProgressIndicator());
         }
-        return ConstrainedBox(
-          constraints: const BoxConstraints(maxHeight: 400),
-          child: HeatMapComponent(
-            key: const Key('heatMapComponent'),
-            dataset: viewModel.dataset,
-          ),
+        // return ConstrainedBox(
+        //   constraints: const BoxConstraints(maxHeight: 400),
+        //   child: HeatMapComponent(
+        //     key: const Key('heatMapComponent'),
+        //     dataset: viewModel.dataset,
+        //   ),
+        // );
+        return Stack(
+          children: [
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 400),
+              child: HeatMapComponent(
+                key: const Key('heatMapComponent'),
+                dataset: viewModel.dataset,
+              ),
+            ),
+            if (viewModel.checklist.any((item) => item.containsValue(false)))
+              Positioned.fill(
+                child: DataCheckOverlay(checklist: viewModel.checklist),
+              ),
+          ],
         );
       },
     );
@@ -49,10 +68,12 @@ class _ProfileSleepHeatMapScreenState extends State<ProfileSleepHeatMapScreen> {
 class SleepHeatMapViewModel {
   final bool isLoading;
   final Map<DateTime, int> dataset;
+  final List<Map<String, bool>> checklist;
 
   SleepHeatMapViewModel({
     required this.isLoading,
     required this.dataset,
+    required this.checklist,
   });
 
   factory SleepHeatMapViewModel.fromStore(Store<AppState> store) {
@@ -60,6 +81,7 @@ class SleepHeatMapViewModel {
     return SleepHeatMapViewModel(
       isLoading: state.isLoading,
       dataset: state.yearlySleepData,
+      checklist: state.checklist,
     );
   }
 }

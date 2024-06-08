@@ -16,8 +16,10 @@ class YearlySleepReportFetchInProgressAction {}
 @immutable
 class YearlySleepReportFetchedSuccessAction {
   final Map<DateTime, int> yearlySleepData;
+  final List<Map<String, bool>> checklist;
 
-  const YearlySleepReportFetchedSuccessAction(this.yearlySleepData);
+  const YearlySleepReportFetchedSuccessAction(
+      this.yearlySleepData, this.checklist);
 }
 
 @immutable

@@ -22,6 +22,7 @@ YearlySleepReportState _yearlyFetchedSuccess(YearlySleepReportState state,
   return state.copyWith(
     isLoading: false,
     yearlySleepData: action.yearlySleepData,
+    checklist: action.checklist,
     errorMessage: null,
   );
 }
