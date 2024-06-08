@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:teja/domain/redux/constants/checklist_strings.dart';
 
 class DataCheckOverlay extends StatelessWidget {
   final List<Map<String, bool>> checklist;
 
   static List<Map<String, String>> labels = [
     {
-      'Sleep data exists': 'Enable sleep tracking to view sleep data.',
+      SLEEP_DATA: 'Enable sleep tracking to view sleep data.',
     },
     {
-      'Mood data exists': 'Add mood data to view mood data.',
+      MOOD_DATA: 'Add mood data to view mood data.',
     },
   ];
 
   const DataCheckOverlay({Key? key, required this.checklist}) : super(key: key);
 
   void _handleIconTap(BuildContext context, String key) {
-    if (key == 'Sleep data exists') {
+    if (key == SLEEP_DATA) {
       if (!checklist
           .firstWhere((item) => item.containsKey('Sleep data exists'))
           .values
@@ -28,7 +29,7 @@ class DataCheckOverlay extends StatelessWidget {
           ),
         );
       }
-    } else if (key == 'Mood data exists') {
+    } else if (key == MOOD_DATA) {
       GoRouter.of(context).push("/mood_edit");
     }
   }

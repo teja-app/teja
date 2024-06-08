@@ -1,5 +1,6 @@
 import 'package:isar/isar.dart';
 import 'package:redux_saga/redux_saga.dart';
+import 'package:teja/domain/redux/constants/checklist_strings.dart';
 import 'package:teja/domain/redux/monthly_mood_report/monthly_mood_report_actions.dart';
 import 'package:teja/infrastructure/repositories/mood_log_repository.dart';
 import 'package:health/health.dart';
@@ -15,12 +16,13 @@ class MonthlyMoodReportSaga {
     );
   }
 
-  _fetchMonthlyMoodReport({required FetchMonthlyMoodReportAction action}) sync* {
+  _fetchMonthlyMoodReport(
+      {required FetchMonthlyMoodReportAction action}) sync* {
     yield Try(() sync* {
       yield Put(MonthlyMoodReportFetchInProgressAction());
       List<Map<String, bool>> checklist = [
-        {"Sleep data exists": false},
-        {"Mood data exists": false},
+        {SLEEP_DATA: false},
+        {MOOD_DATA: false},
       ];
 
       var isarResult = Result<Isar>();
@@ -49,8 +51,8 @@ class MonthlyMoodReportSaga {
         throw Exception("Failed to fetch mood data");
       }
 
-      final moodData = currentMonthAverageMoodRatingsResult.value!;
-      checklist[2]["Mood data exists"] = moodData.isNotEmpty;
+      final moodData = averageMoodRatingsResult.value!;
+      checklist[1][MOOD_DATA] = moodData.isNotEmpty;
 
       // Dispatch an intermediate action if necessary to indicate fetching of scatter spots
       yield Put(FetchingScatterSpotsAction());
@@ -58,7 +60,7 @@ class MonthlyMoodReportSaga {
       // Call the asynchronous function to calculate scatter spots
       var scatterSpotsResult = Result<List<ScatterSpot>>();
       yield Call(_fetchScatterSpots,
-          args: [moodData, checklist], result: scatterSpotsResult);
+          args: [moodData], result: scatterSpotsResult);
 
       final scatterSpots = scatterSpotsResult.value;
 
@@ -66,7 +68,7 @@ class MonthlyMoodReportSaga {
       if (scatterSpots == null) {
         throw Exception("Failed to calculate scatter spots");
       }
-      checklist[1]["Sleep data exists"] = scatterSpots.isNotEmpty;
+      checklist[0][SLEEP_DATA] = scatterSpots.isNotEmpty;
 
       // Dispatch success action with the calculated scatter spots
       yield Put(MonthlyMoodReportFetchedSuccessAction(
@@ -77,20 +79,24 @@ class MonthlyMoodReportSaga {
     });
   }
 
-  static Future<List<ScatterSpot>> _fetchScatterSpots(Map<DateTime, double> moodData) async {
+  static Future<List<ScatterSpot>> _fetchScatterSpots(
+      Map<DateTime, double> moodData) async {
     return await _calculateScatterSpots(moodData);
   }
 
-  static Future<List<ScatterSpot>> _calculateScatterSpots(Map<DateTime, double> moodData) async {
+  static Future<List<ScatterSpot>> _calculateScatterSpots(
+      Map<DateTime, double> moodData) async {
     List<DateTime> dates = moodData.keys.toList();
     final sleepData = await HealthDataFetcher.fetchHealthData(dates);
     return _mapToScatterSpots(moodData, sleepData);
   }
 
-  static List<ScatterSpot> _mapToScatterSpots(Map<DateTime, double> moodData, List<HealthDataPoint> sleepData) {
+  static List<ScatterSpot> _mapToScatterSpots(
+      Map<DateTime, double> moodData, List<HealthDataPoint> sleepData) {
     final Map<DateTime, double> sleepMap = {};
     for (final dataPoint in sleepData) {
-      final date = DateTime(dataPoint.dateFrom.year, dataPoint.dateFrom.month, dataPoint.dateFrom.day);
+      final date = DateTime(dataPoint.dateFrom.year, dataPoint.dateFrom.month,
+          dataPoint.dateFrom.day);
       final value = dataPoint.value;
       double duration;
 
@@ -101,7 +107,10 @@ class MonthlyMoodReportSaga {
       } else if (valueString.contains('instantValue')) {
         final instantValueString = valueString.split('instantValue:')[1].trim();
         final instantValue = DateTime.parse(instantValueString);
-        duration = instantValue.difference(DateTime.fromMillisecondsSinceEpoch(0)).inHours.toDouble();
+        duration = instantValue
+            .difference(DateTime.fromMillisecondsSinceEpoch(0))
+            .inHours
+            .toDouble();
       } else {
         continue;
       }
@@ -116,7 +125,8 @@ class MonthlyMoodReportSaga {
     final List<ScatterSpot> scatterSpots = [];
     moodData.forEach((moodDate, moodValue) {
       final sleepDate = moodDate.subtract(const Duration(days: 1));
-      final sleepDateOnly = DateTime(sleepDate.year, sleepDate.month, sleepDate.day);
+      final sleepDateOnly =
+          DateTime(sleepDate.year, sleepDate.month, sleepDate.day);
       if (sleepMap.containsKey(sleepDateOnly)) {
         final sleepValue = sleepMap[sleepDateOnly]!;
         scatterSpots.add(ScatterSpot(

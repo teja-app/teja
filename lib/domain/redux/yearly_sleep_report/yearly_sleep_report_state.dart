@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teja/domain/redux/constants/checklist_strings.dart';
 
 @immutable
 class YearlySleepReportState {
@@ -12,7 +13,7 @@ class YearlySleepReportState {
     this.yearlySleepData = const {},
     this.errorMessage,
     this.checklist = const [
-      {"Sleep data exists": false},
+      {SLEEP_DATA: false},
     ],
   });
 
@@ -21,6 +22,9 @@ class YearlySleepReportState {
       isLoading: false,
       yearlySleepData: {},
       errorMessage: null,
+      checklist: [
+        {SLEEP_DATA: false},
+      ],
     );
   }
 
