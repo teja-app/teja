@@ -30,30 +30,23 @@ class FeelingsListWidget extends StatelessWidget {
               style: textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
-            if (viewModel.feelingWithSubCategories.isNotEmpty)
-              ...viewModel.feelingWithSubCategories.map(
-                (feelingWithSub) {
-                  return FlexibleHeightBox(
-                    gridWidth: 4,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
+            FlexibleHeightBox(
+              gridWidth: 4,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (viewModel.feelingWithSubCategories.isNotEmpty)
+                    ...viewModel.feelingWithSubCategories.map(
+                      (feelingWithSub) {
+                        return Text(
                           feelingWithSub.masterFeeling!.name,
-                          style: textTheme.titleLarge,
-                        ),
-                        ...feelingWithSub.subCategories.map((subCategory) => Padding(
-                              padding: const EdgeInsets.only(top: 4.0),
-                              child: Text(
-                                subCategory.title,
-                                style: textTheme.subtitle1,
-                              ),
-                            )),
-                      ],
+                          style: textTheme.titleSmall,
+                        );
+                      },
                     ),
-                  );
-                },
+                ],
               ),
+            ),
           ],
         );
       },

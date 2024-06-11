@@ -9,6 +9,7 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_actions.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_state.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
+import 'package:teja/presentation/mood/detail/ui/buttons/ai_suggestion_button.dart';
 import 'package:teja/presentation/mood/ui/attachement_image.dart';
 import 'package:teja/presentation/mood/detail/ui/feeling_list.dart';
 import 'package:teja/presentation/mood/detail/ui/mood_rating_widget.dart';
@@ -177,13 +178,12 @@ class MoodDetailPageState extends State<MoodDetailPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            ...factors.map((subCategory) => Padding(
-                                  padding: const EdgeInsets.only(top: 4.0),
-                                  child: Text(
-                                    subCategory.title,
-                                    style: textTheme.titleSmall,
-                                  ),
-                                )),
+                            ...factors.map(
+                              (subCategory) => Text(
+                                subCategory.title,
+                                style: textTheme.titleSmall,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -195,6 +195,10 @@ class MoodDetailPageState extends State<MoodDetailPage> {
                     padding: const EdgeInsets.only(top: 24.0),
                     child: FeelingsListWidget(feelings: moodDetailPage.selectedMoodLog!.feelings!),
                   ),
+                const SizedBox(height: 16), // Add some spacing
+                AISuggestionButton(
+                  selectedMoodLog: viewModel.moodDetailPage.selectedMoodLog!,
+                ), // Add the suggestion button here
               ],
             ),
           );
