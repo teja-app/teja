@@ -1,4 +1,3 @@
-// lib/domain/entities/mood_log.dart
 import 'package:teja/domain/entities/feeling.dart';
 
 class MoodLogAttachmentEntity {
@@ -13,14 +12,23 @@ class MoodLogAttachmentEntity {
   });
 }
 
+class MoodLogAIEntity {
+  final String? suggestion;
+
+  MoodLogAIEntity({
+    this.suggestion,
+  });
+}
+
 class MoodLogEntity {
   final String id;
   final DateTime timestamp;
   final int moodRating;
   String? comment;
   final List<FeelingEntity>? feelings;
-  final List<String>? factors; // New field for broad factors
-  final List<MoodLogAttachmentEntity>? attachments; // Updated for multiple attachments
+  final List<String>? factors;
+  final List<MoodLogAttachmentEntity>? attachments;
+  final MoodLogAIEntity? ai;
 
   MoodLogEntity({
     required this.id,
@@ -28,8 +36,9 @@ class MoodLogEntity {
     required this.moodRating,
     this.feelings,
     this.comment,
-    this.factors, // Initialize the new field
+    this.factors,
     this.attachments, // Initialize the new field
+    this.ai,
   });
 
   // CopyWith method for immutability
@@ -41,6 +50,7 @@ class MoodLogEntity {
     List<FeelingEntity>? feelings,
     List<String>? factors,
     List<MoodLogAttachmentEntity>? attachments,
+    MoodLogAIEntity? ai,
   }) {
     return MoodLogEntity(
       id: id ?? this.id,
@@ -50,6 +60,7 @@ class MoodLogEntity {
       feelings: feelings ?? this.feelings,
       factors: factors ?? this.factors,
       attachments: attachments ?? this.attachments,
+      ai: ai ?? this.ai,
     );
   }
 }

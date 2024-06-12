@@ -1,98 +1,76 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/mood_log.dart';
+import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/mood/ai_suggestion/ai_suggestion_actions.dart';
 import 'package:teja/shared/common/button.dart';
-import 'package:teja/infrastructure/api/mood_suggestion_api.dart';
-import 'package:teja/shared/storage/secure_storage.dart';
 
-class AISuggestionButton extends StatefulWidget {
+class AISuggestionButton extends StatelessWidget {
   final MoodLogEntity selectedMoodLog;
 
   const AISuggestionButton({Key? key, required this.selectedMoodLog}) : super(key: key);
 
   @override
-  _AISuggestionButtonState createState() => _AISuggestionButtonState();
+  Widget build(BuildContext context) {
+    return StoreConnector<AppState, _AISuggestionButtonViewModel>(
+      converter: (store) => _AISuggestionButtonViewModel.fromStore(store, selectedMoodLog),
+      builder: (context, viewModel) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (viewModel.suggestions != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: MarkdownBody(
+                  data: viewModel.suggestions!,
+                ),
+              )
+            else ...[
+              Button(
+                text: "Fetch AI Suggestion",
+                icon: Icons.favorite,
+                onPressed: viewModel.getSuggestions,
+              ),
+              if (viewModel.isLoading) const Center(child: CircularProgressIndicator()),
+              if (viewModel.errorMessage != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Text(
+                    viewModel.errorMessage!,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
+            ]
+          ],
+        );
+      },
+    );
+  }
 }
 
-class _AISuggestionButtonState extends State<AISuggestionButton> {
-  String? suggestions;
-  bool isLoading = false;
-  String? errorMessage;
+class _AISuggestionButtonViewModel {
+  final String? suggestions;
+  final bool isLoading;
+  final String? errorMessage;
+  final VoidCallback getSuggestions;
 
-  Future<void> getSuggestions() async {
-    setState(() {
-      isLoading = true;
-      suggestions = null;
-      errorMessage = null;
-    });
+  _AISuggestionButtonViewModel({
+    required this.suggestions,
+    required this.isLoading,
+    required this.errorMessage,
+    required this.getSuggestions,
+  });
 
-    try {
-      final authToken = await SecureStorage().readAccessToken();
-      if (authToken == null) {
-        setState(() {
-          errorMessage = 'Authorization token not found';
-          isLoading = false;
-        });
-        return;
-      }
+  static _AISuggestionButtonViewModel fromStore(Store<AppState> store, MoodLogEntity selectedMoodLog) {
+    final aiSuggestionState = store.state.aiSuggestionState;
 
-      final moodData = {
-        'moodDetail': (
-          "Rating: ${widget.selectedMoodLog.moodRating}/5 \n"
-              "Description: ${widget.selectedMoodLog.comment} \n"
-              "Timestamp: ${widget.selectedMoodLog.timestamp} \n"
-              "Factors: ${widget.selectedMoodLog.factors} \n"
-              "Feelings: ${widget.selectedMoodLog.feelings?.map((f) => f.feeling).toList()} \n",
-        ).toString(),
-      };
-
-      final response = await MoodSuggestionAPI().fetchAISuggestions(authToken, moodData);
-      if (response.statusCode == 201) {
-        setState(() {
-          suggestions = response.data['suggestions'];
-          isLoading = false;
-        });
-      } else {
-        setState(() {
-          errorMessage = 'Failed to get suggestions';
-          isLoading = false;
-        });
-      }
-    } catch (err) {
-      setState(() {
-        errorMessage = 'An error occurred';
-        isLoading = false;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Button(
-          text: "Suggestion",
-          icon: Icons.favorite,
-          onPressed: getSuggestions,
-        ),
-        if (isLoading) const Center(child: CircularProgressIndicator()),
-        if (errorMessage != null)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Text(
-              errorMessage!,
-              style: TextStyle(color: Colors.red),
-            ),
-          ),
-        if (suggestions != null)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: MarkdownBody(
-              data: suggestions!,
-            ),
-          ),
-      ],
+    return _AISuggestionButtonViewModel(
+      suggestions: selectedMoodLog.ai?.suggestion,
+      isLoading: aiSuggestionState.isLoading,
+      errorMessage: aiSuggestionState.errorMessage,
+      getSuggestions: () => store.dispatch(FetchAISuggestionAction(selectedMoodLog)),
     );
   }
 }

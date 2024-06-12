@@ -17,55 +17,61 @@ const MoodLogSchema = CollectionSchema(
   name: r'MoodLog',
   id: 2805799627561539018,
   properties: {
-    r'attachments': PropertySchema(
+    r'ai': PropertySchema(
       id: 0,
+      name: r'ai',
+      type: IsarType.object,
+      target: r'MoodLogAI',
+    ),
+    r'attachments': PropertySchema(
+      id: 1,
       name: r'attachments',
       type: IsarType.objectList,
       target: r'MoodLogAttachment',
     ),
     r'comment': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'comment',
       type: IsarType.string,
     ),
     r'createdAt': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'createdAt',
       type: IsarType.dateTime,
     ),
     r'factors': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'factors',
       type: IsarType.stringList,
     ),
     r'feelings': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'feelings',
       type: IsarType.objectList,
       target: r'MoodLogFeeling',
     ),
     r'id': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'id',
       type: IsarType.string,
     ),
     r'moodRating': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'moodRating',
       type: IsarType.long,
     ),
     r'senderId': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'senderId',
       type: IsarType.string,
     ),
     r'timestamp': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'timestamp',
       type: IsarType.dateTime,
     ),
     r'updatedAt': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'updatedAt',
       type: IsarType.dateTime,
     )
@@ -92,6 +98,7 @@ const MoodLogSchema = CollectionSchema(
   },
   links: {},
   embeddedSchemas: {
+    r'MoodLogAI': MoodLogAISchema,
     r'MoodLogFeeling': MoodLogFeelingSchema,
     r'MoodLogAttachment': MoodLogAttachmentSchema
   },
@@ -107,6 +114,14 @@ int _moodLogEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  {
+    final value = object.ai;
+    if (value != null) {
+      bytesCount += 3 +
+          MoodLogAISchema.estimateSize(
+              value, allOffsets[MoodLogAI]!, allOffsets);
+    }
+  }
   {
     final list = object.attachments;
     if (list != null) {
@@ -169,26 +184,32 @@ void _moodLogSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeObjectList<MoodLogAttachment>(
+  writer.writeObject<MoodLogAI>(
     offsets[0],
+    allOffsets,
+    MoodLogAISchema.serialize,
+    object.ai,
+  );
+  writer.writeObjectList<MoodLogAttachment>(
+    offsets[1],
     allOffsets,
     MoodLogAttachmentSchema.serialize,
     object.attachments,
   );
-  writer.writeString(offsets[1], object.comment);
-  writer.writeDateTime(offsets[2], object.createdAt);
-  writer.writeStringList(offsets[3], object.factors);
+  writer.writeString(offsets[2], object.comment);
+  writer.writeDateTime(offsets[3], object.createdAt);
+  writer.writeStringList(offsets[4], object.factors);
   writer.writeObjectList<MoodLogFeeling>(
-    offsets[4],
+    offsets[5],
     allOffsets,
     MoodLogFeelingSchema.serialize,
     object.feelings,
   );
-  writer.writeString(offsets[5], object.id);
-  writer.writeLong(offsets[6], object.moodRating);
-  writer.writeString(offsets[7], object.senderId);
-  writer.writeDateTime(offsets[8], object.timestamp);
-  writer.writeDateTime(offsets[9], object.updatedAt);
+  writer.writeString(offsets[6], object.id);
+  writer.writeLong(offsets[7], object.moodRating);
+  writer.writeString(offsets[8], object.senderId);
+  writer.writeDateTime(offsets[9], object.timestamp);
+  writer.writeDateTime(offsets[10], object.updatedAt);
 }
 
 MoodLog _moodLogDeserialize(
@@ -198,27 +219,32 @@ MoodLog _moodLogDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = MoodLog();
-  object.attachments = reader.readObjectList<MoodLogAttachment>(
+  object.ai = reader.readObjectOrNull<MoodLogAI>(
     offsets[0],
+    MoodLogAISchema.deserialize,
+    allOffsets,
+  );
+  object.attachments = reader.readObjectList<MoodLogAttachment>(
+    offsets[1],
     MoodLogAttachmentSchema.deserialize,
     allOffsets,
     MoodLogAttachment(),
   );
-  object.comment = reader.readStringOrNull(offsets[1]);
-  object.createdAt = reader.readDateTime(offsets[2]);
-  object.factors = reader.readStringList(offsets[3]);
+  object.comment = reader.readStringOrNull(offsets[2]);
+  object.createdAt = reader.readDateTime(offsets[3]);
+  object.factors = reader.readStringList(offsets[4]);
   object.feelings = reader.readObjectList<MoodLogFeeling>(
-    offsets[4],
+    offsets[5],
     MoodLogFeelingSchema.deserialize,
     allOffsets,
     MoodLogFeeling(),
   );
-  object.id = reader.readString(offsets[5]);
+  object.id = reader.readString(offsets[6]);
   object.isarId = id;
-  object.moodRating = reader.readLong(offsets[6]);
-  object.senderId = reader.readStringOrNull(offsets[7]);
-  object.timestamp = reader.readDateTime(offsets[8]);
-  object.updatedAt = reader.readDateTime(offsets[9]);
+  object.moodRating = reader.readLong(offsets[7]);
+  object.senderId = reader.readStringOrNull(offsets[8]);
+  object.timestamp = reader.readDateTime(offsets[9]);
+  object.updatedAt = reader.readDateTime(offsets[10]);
   return object;
 }
 
@@ -230,34 +256,40 @@ P _moodLogDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
+      return (reader.readObjectOrNull<MoodLogAI>(
+        offset,
+        MoodLogAISchema.deserialize,
+        allOffsets,
+      )) as P;
+    case 1:
       return (reader.readObjectList<MoodLogAttachment>(
         offset,
         MoodLogAttachmentSchema.deserialize,
         allOffsets,
         MoodLogAttachment(),
       )) as P;
-    case 1:
-      return (reader.readStringOrNull(offset)) as P;
     case 2:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 3:
-      return (reader.readStringList(offset)) as P;
+      return (reader.readDateTime(offset)) as P;
     case 4:
+      return (reader.readStringList(offset)) as P;
+    case 5:
       return (reader.readObjectList<MoodLogFeeling>(
         offset,
         MoodLogFeelingSchema.deserialize,
         allOffsets,
         MoodLogFeeling(),
       )) as P;
-    case 5:
-      return (reader.readString(offset)) as P;
     case 6:
-      return (reader.readLong(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 7:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 8:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 9:
+      return (reader.readDateTime(offset)) as P;
+    case 10:
       return (reader.readDateTime(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -451,6 +483,22 @@ extension MoodLogQueryWhere on QueryBuilder<MoodLog, MoodLog, QWhereClause> {
 
 extension MoodLogQueryFilter
     on QueryBuilder<MoodLog, MoodLog, QFilterCondition> {
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> aiIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'ai',
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> aiIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'ai',
+      ));
+    });
+  }
+
   QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> attachmentsIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -1580,6 +1628,13 @@ extension MoodLogQueryFilter
 
 extension MoodLogQueryObject
     on QueryBuilder<MoodLog, MoodLog, QFilterCondition> {
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> ai(
+      FilterQuery<MoodLogAI> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'ai');
+    });
+  }
+
   QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> attachmentsElement(
       FilterQuery<MoodLogAttachment> q) {
     return QueryBuilder.apply(this, (query) {
@@ -1845,6 +1900,12 @@ extension MoodLogQueryProperty
     });
   }
 
+  QueryBuilder<MoodLog, MoodLogAI?, QQueryOperations> aiProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'ai');
+    });
+  }
+
   QueryBuilder<MoodLog, List<MoodLogAttachment>?, QQueryOperations>
       attachmentsProperty() {
     return QueryBuilder.apply(this, (query) {
@@ -1911,6 +1972,231 @@ extension MoodLogQueryProperty
 // **************************************************************************
 // IsarEmbeddedGenerator
 // **************************************************************************
+
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+
+const MoodLogAISchema = Schema(
+  name: r'MoodLogAI',
+  id: -4043869038468253104,
+  properties: {
+    r'suggestion': PropertySchema(
+      id: 0,
+      name: r'suggestion',
+      type: IsarType.string,
+    )
+  },
+  estimateSize: _moodLogAIEstimateSize,
+  serialize: _moodLogAISerialize,
+  deserialize: _moodLogAIDeserialize,
+  deserializeProp: _moodLogAIDeserializeProp,
+);
+
+int _moodLogAIEstimateSize(
+  MoodLogAI object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  {
+    final value = object.suggestion;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  return bytesCount;
+}
+
+void _moodLogAISerialize(
+  MoodLogAI object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeString(offsets[0], object.suggestion);
+}
+
+MoodLogAI _moodLogAIDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  final object = MoodLogAI();
+  object.suggestion = reader.readStringOrNull(offsets[0]);
+  return object;
+}
+
+P _moodLogAIDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
+    case 0:
+      return (reader.readStringOrNull(offset)) as P;
+    default:
+      throw IsarError('Unknown property with id $propertyId');
+  }
+}
+
+extension MoodLogAIQueryFilter
+    on QueryBuilder<MoodLogAI, MoodLogAI, QFilterCondition> {
+  QueryBuilder<MoodLogAI, MoodLogAI, QAfterFilterCondition> suggestionIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'suggestion',
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAI, MoodLogAI, QAfterFilterCondition>
+      suggestionIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'suggestion',
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAI, MoodLogAI, QAfterFilterCondition> suggestionEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'suggestion',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAI, MoodLogAI, QAfterFilterCondition>
+      suggestionGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'suggestion',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAI, MoodLogAI, QAfterFilterCondition> suggestionLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'suggestion',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAI, MoodLogAI, QAfterFilterCondition> suggestionBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'suggestion',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAI, MoodLogAI, QAfterFilterCondition>
+      suggestionStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'suggestion',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAI, MoodLogAI, QAfterFilterCondition> suggestionEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'suggestion',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAI, MoodLogAI, QAfterFilterCondition> suggestionContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'suggestion',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAI, MoodLogAI, QAfterFilterCondition> suggestionMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'suggestion',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAI, MoodLogAI, QAfterFilterCondition>
+      suggestionIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'suggestion',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLogAI, MoodLogAI, QAfterFilterCondition>
+      suggestionIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'suggestion',
+        value: '',
+      ));
+    });
+  }
+}
+
+extension MoodLogAIQueryObject
+    on QueryBuilder<MoodLogAI, MoodLogAI, QFilterCondition> {}
 
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
