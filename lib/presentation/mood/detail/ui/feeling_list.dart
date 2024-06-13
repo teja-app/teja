@@ -27,22 +27,21 @@ class FeelingsListWidget extends StatelessWidget {
           children: [
             Text(
               'Feelings',
-              style: textTheme.titleLarge,
+              style: textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
             FlexibleHeightBox(
+              padding: 12,
               gridWidth: 4,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (viewModel.feelingWithSubCategories.isNotEmpty)
-                    ...viewModel.feelingWithSubCategories.map(
-                      (feelingWithSub) {
-                        return Text(
-                          feelingWithSub.masterFeeling!.name,
-                          style: textTheme.titleSmall,
-                        );
-                      },
+                    Text(
+                      viewModel.feelingWithSubCategories
+                          .map((feelingWithSub) => feelingWithSub.masterFeeling!.name)
+                          .join(', '),
+                      style: textTheme.titleSmall,
                     ),
                 ],
               ),

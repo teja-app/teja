@@ -36,23 +36,30 @@ class AISuggestionSaga {
               "Feelings: ${action.moodLogEntity.feelings?.map((f) => f.feeling).toList()} \n",
         ).toString(),
       };
-      print("moodData ${moodData}");
       final response = Result();
       yield Call(MoodSuggestionAPI().fetchAISuggestions, args: [authToken, moodData], result: response);
 
       if (response.value.statusCode == 201) {
-        yield Put(FetchAISuggestionSuccessAction(action.moodLogEntity.id, response.value.data['suggestions']));
-        yield Call(moodLogRepository.updateAISuggestion,
-            args: [action.moodLogEntity.id, response.value.data['suggestions']]);
-        yield Put(UpdateAISuggestionAction(action.moodLogEntity.id, response.value.data['suggestions']));
-        yield Put(
-          LoadMoodDetailAction(action.moodLogEntity.id),
-        );
+        if (response.value.data["success"] == false) {
+          String failureMessage = "Failed to fetch suggestion for this. "
+              "This can be due to various reasons: "
+              "The response can be blocked because the input or response may contain descriptions of violence, sexual themes, or otherwise derogatory content.";
+          yield Put(FetchAISuggestionFailureAction(failureMessage));
+        } else {
+          yield Put(FetchAISuggestionSuccessAction(action.moodLogEntity.id, response.value.data['suggestions']));
+          yield Call(moodLogRepository.updateAISuggestion,
+              args: [action.moodLogEntity.id, response.value.data['suggestions']]);
+          yield Put(UpdateAISuggestionAction(action.moodLogEntity.id, response.value.data['suggestions']));
+          yield Put(
+            LoadMoodDetailAction(action.moodLogEntity.id),
+          );
+        }
       } else {
+        print("response ${response.value}");
         yield Put(const FetchAISuggestionFailureAction('Failed to get suggestions'));
       }
     }, Catch: (e, s) sync* {
-      yield Put(FetchAISuggestionFailureAction('An error occurred: $e'));
+      yield Put(const FetchAISuggestionFailureAction('Failed to get suggestions'));
     });
   }
 }

@@ -12,8 +12,7 @@ class MoodRatingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Determine the icon based on the mood rating
-    String moodIconPath =
-        'assets/icons/mood_${moodRating}_inactive.svg'; // Adjust the path as necessary
+    String moodIconPath = 'assets/icons/mood_${moodRating}_inactive.svg'; // Adjust the path as necessary
 
     final brightness = Theme.of(context).colorScheme.brightness;
     final textTheme = Theme.of(context).textTheme;
@@ -24,10 +23,6 @@ class MoodRatingWidget extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Mood',
-              style: textTheme.titleSmall,
-            ),
             const SizedBox(height: 4),
             Text(
               '$moodRating/5',
