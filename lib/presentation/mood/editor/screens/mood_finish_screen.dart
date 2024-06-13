@@ -3,8 +3,9 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:icons_flutter/icons_flutter.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:redux/redux.dart';
+import 'package:teja/domain/entities/mood_log.dart';
 import 'package:teja/domain/redux/app_state.dart';
-import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
+import 'package:teja/presentation/mood/detail/ui/buttons/ai_suggestion_button.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 import 'package:rive/rive.dart';
@@ -13,13 +14,16 @@ import 'package:in_app_review/in_app_review.dart';
 
 class FinishScreenModel {
   final int moodRating;
+  final MoodLogEntity? currentMoodLog;
 
   FinishScreenModel({
     required this.moodRating,
+    this.currentMoodLog,
   }); // +2 for initial and feeling pages
 
   static FinishScreenModel fromStore(Store<AppState> store) {
     return FinishScreenModel(
+      currentMoodLog: store.state.moodEditorState.currentMoodLog,
       moodRating: store.state.moodEditorState.currentMoodLog!.moodRating,
     );
   }
@@ -84,6 +88,7 @@ class FinishScreen extends StatelessWidget {
                   ],
                 ),
               ),
+              AISuggestionButton(selectedMoodLog: viewModel.currentMoodLog!),
               if (viewModel.moodRating >= 4) // Conditional Rendering based on moodRating
                 FlexibleHeightBox(
                   gridWidth: 4,

@@ -32,6 +32,7 @@ class MoodEntryWidget extends StatelessWidget {
     return Text(
       DateFormat('dd-MMM-yyyy, h:mm a').format(timestamp),
       style: textTheme.labelMedium,
+      textAlign: TextAlign.center,
     );
   }
 }
@@ -110,22 +111,15 @@ class MoodDetailPageState extends State<MoodDetailPage> {
               children: <Widget>[
                 BentoBox(
                   gridWidth: 4,
-                  gridHeight: 2,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0), // Add some vertical padding
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center, // Center the content vertically
-                      crossAxisAlignment: CrossAxisAlignment.start, // Align content to start horizontally
-                      children: [
-                        MoodRatingWidget(
-                          moodRating: moodDetailPage.selectedMoodLog?.moodRating ?? 0,
-                        ),
-                        const SizedBox(height: 8),
-                        MoodEntryWidget(
-                          timestamp: moodDetailPage.selectedMoodLog!.timestamp,
-                        ),
-                      ],
-                    ),
+                  gridHeight: 1,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center, // Center the content vertically
+                    crossAxisAlignment: CrossAxisAlignment.start, // Align content to start horizontally
+                    children: [
+                      MoodRatingWidget(
+                        moodRating: moodDetailPage.selectedMoodLog?.moodRating ?? 0,
+                      ),
+                    ],
                   ),
                 ),
                 if (moodLog?.attachments != null && moodLog!.attachments!.isNotEmpty)
@@ -170,35 +164,32 @@ class MoodDetailPageState extends State<MoodDetailPage> {
                       const SizedBox(height: 32),
                       Text(
                         'Factors',
-                        style: textTheme.titleLarge,
+                        style: textTheme.titleMedium,
                       ),
                       const SizedBox(height: 8),
                       FlexibleHeightBox(
                         gridWidth: 4,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ...factors.map(
-                              (subCategory) => Text(
-                                subCategory.title,
-                                style: textTheme.titleSmall,
-                              ),
-                            ),
-                          ],
+                        padding: 12,
+                        child: Text(
+                          factors.map((subCategory) => subCategory.title).join(', '),
+                          style: textTheme.titleSmall,
                         ),
                       ),
                     ],
                   ),
+
                 if (moodDetailPage.selectedMoodLog!.feelings != null &&
                     moodDetailPage.selectedMoodLog!.feelings!.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 24.0),
-                    child: FeelingsListWidget(feelings: moodDetailPage.selectedMoodLog!.feelings!),
-                  ),
+                  FeelingsListWidget(feelings: moodDetailPage.selectedMoodLog!.feelings!),
                 const SizedBox(height: 16), // Add some spacing
+                Text(
+                  'Suggestion',
+                  style: textTheme.titleLarge,
+                ),
                 AISuggestionButton(
                   selectedMoodLog: viewModel.moodDetailPage.selectedMoodLog!,
-                ), // Add the suggestion button here
+                ),
+                const SizedBox(height: 8),
               ],
             ),
           );
@@ -210,7 +201,9 @@ class MoodDetailPageState extends State<MoodDetailPage> {
         return Scaffold(
           appBar: AppBar(
             elevation: 0,
-            title: const Text("mood entry"),
+            title: MoodEntryWidget(
+              timestamp: moodDetailPage.selectedMoodLog!.timestamp,
+            ),
             actions: [
               SettingsPopupMenu(
                 moodId: widget.moodId,

@@ -6,6 +6,7 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:teja/domain/entities/feeling.dart';
+import 'package:teja/domain/entities/mood_log.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:teja/presentation/mood/editor/screens/mood_broad_factors_screen.dart';
@@ -105,8 +106,19 @@ class MoodEditPageState extends State<MoodEditPage> {
                           // Finish page, the last page
                           return FinishScreen(
                             onFinish: () {
-                              _store.dispatch(const ClearMoodEditorFormAction());
-                              goRouter.pushNamed(RootPath.home);
+                              var moodId = null;
+                              if (viewModel.currentMoodLog!.id.isNotEmpty) {
+                                moodId = viewModel.currentMoodLog!.id;
+                              }
+                              if (moodId != null) {
+                                goRouter.pop();
+                                // goRouter.replaceNamed(
+                                //   RootPath.moodDetail,
+                                //   queryParameters: {"id": moodId},
+                                // );
+                              } else {
+                                goRouter.pushNamed(RootPath.home);
+                              }
                             },
                           );
                         }
@@ -123,6 +135,7 @@ class MoodEditPageState extends State<MoodEditPage> {
 
 class MoodEditViewModel {
   final int currentPageIndex;
+  final MoodLogEntity? currentMoodLog;
   final List<FeelingEntity> feelings;
   final Function(int) changePage;
   final int pageCount;
@@ -132,11 +145,13 @@ class MoodEditViewModel {
     required this.currentPageIndex,
     required this.feelings,
     required this.changePage,
+    this.currentMoodLog,
     this.moodRating,
   }) : pageCount = 5; // +2 for initial and feeling pages
 
   static MoodEditViewModel fromStore(Store<AppState> store) {
     return MoodEditViewModel(
+      currentMoodLog: store.state.moodEditorState.currentMoodLog,
       moodRating: store.state.moodEditorState.currentMoodLog?.moodRating,
       currentPageIndex: store.state.moodEditorState.currentPageIndex,
       feelings: store.state.moodEditorState.currentMoodLog?.feelings ?? [],
