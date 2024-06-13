@@ -99,6 +99,7 @@ dependencies:
   crypto: ^3.0.3
   health: ^10.2.0
   flutter_heatmap_calendar: ^1.0.5
+  flutter_markdown: ^0.7.2
 
 dev_dependencies:
   flutter_test:

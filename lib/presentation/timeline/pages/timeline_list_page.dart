@@ -42,12 +42,6 @@ class _TimelinePageState extends State<TimelinePage> {
   @override
   void initState() {
     super.initState();
-    // itemPositionsListener.itemPositions.addListener(_loadMoreDataIfNeeded);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final store = StoreProvider.of<AppState>(context);
-      store.dispatch(ResetMoodLogsListAction());
-      store.dispatch(ResetJournalEntriesListAction());
-    });
   }
 
   void _loadInitialData() {

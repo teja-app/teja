@@ -4,11 +4,16 @@ import 'package:teja/infrastructure/utils/helpers.dart';
 part 'mood_log.g.dart';
 
 @Embedded()
+class MoodLogAI {
+  String? suggestion;
+}
+
+@Embedded()
 class MoodLogFeeling {
   String? feeling;
   String? comment;
   List<String>? factors;
-  bool detailed = false; // Indicates if the user provided detailed information
+  bool detailed = false;
 }
 
 @Embedded()
@@ -32,6 +37,7 @@ class MoodLog {
   late int moodRating;
   String? comment;
   String? senderId;
+  MoodLogAI? ai;
 
   List<MoodLogFeeling>? feelings;
   List<String>? factors; // Broad level factors affecting mood
