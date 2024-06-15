@@ -1,6 +1,7 @@
 import 'package:isar/isar.dart';
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/redux/monthly_mood_report/monthly_mood_report_actions.dart';
+import 'package:teja/domain/redux/permission/permission_actions.dart';
 import 'package:teja/infrastructure/repositories/mood_log_repository.dart';
 import 'package:health/health.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -15,8 +16,11 @@ class MonthlyMoodReportSaga {
     );
   }
 
-  _fetchMonthlyMoodReport({required FetchMonthlyMoodReportAction action}) sync* {
+  _fetchMonthlyMoodReport(
+      {required FetchMonthlyMoodReportAction action}) sync* {
     yield Try(() sync* {
+      yield Put(MonthlyMoodReportFetchInProgressAction());
+
       var isarResult = Result<Isar>();
       yield GetContext('isar', result: isarResult);
       Isar? isar = isarResult.value;
@@ -44,19 +48,30 @@ class MonthlyMoodReportSaga {
       }
 
       final moodData = averageMoodRatingsResult.value!;
+      print("00000009ssdijdnskndksndmsnmdnmdsnmsd");
+      print("moodData: $moodData");
+
+      if (moodData.isNotEmpty) {
+        yield Put(AddPermissionAction("MOOD_MONTHLY"));
+      }
 
       // Dispatch an intermediate action if necessary to indicate fetching of scatter spots
       yield Put(FetchingScatterSpotsAction());
 
       // Call the asynchronous function to calculate scatter spots
       var scatterSpotsResult = Result<List<ScatterSpot>>();
-      yield Call(_fetchScatterSpots, args: [moodData], result: scatterSpotsResult);
+      yield Call(_fetchScatterSpots,
+          args: [moodData], result: scatterSpotsResult);
 
       final scatterSpots = scatterSpotsResult.value;
 
       print("scatterSpots: $scatterSpots");
       if (scatterSpots == null) {
         throw Exception("Failed to calculate scatter spots");
+      }
+
+      if (scatterSpots.isNotEmpty) {
+        yield Put(AddPermissionAction("SLEEP"));
       }
 
       // Dispatch success action with the calculated scatter spots
@@ -67,20 +82,24 @@ class MonthlyMoodReportSaga {
     });
   }
 
-  static Future<List<ScatterSpot>> _fetchScatterSpots(Map<DateTime, double> moodData) async {
+  static Future<List<ScatterSpot>> _fetchScatterSpots(
+      Map<DateTime, double> moodData) async {
     return await _calculateScatterSpots(moodData);
   }
 
-  static Future<List<ScatterSpot>> _calculateScatterSpots(Map<DateTime, double> moodData) async {
+  static Future<List<ScatterSpot>> _calculateScatterSpots(
+      Map<DateTime, double> moodData) async {
     List<DateTime> dates = moodData.keys.toList();
     final sleepData = await HealthDataFetcher.fetchHealthData(dates);
     return _mapToScatterSpots(moodData, sleepData);
   }
 
-  static List<ScatterSpot> _mapToScatterSpots(Map<DateTime, double> moodData, List<HealthDataPoint> sleepData) {
+  static List<ScatterSpot> _mapToScatterSpots(
+      Map<DateTime, double> moodData, List<HealthDataPoint> sleepData) {
     final Map<DateTime, double> sleepMap = {};
     for (final dataPoint in sleepData) {
-      final date = DateTime(dataPoint.dateFrom.year, dataPoint.dateFrom.month, dataPoint.dateFrom.day);
+      final date = DateTime(dataPoint.dateFrom.year, dataPoint.dateFrom.month,
+          dataPoint.dateFrom.day);
       final value = dataPoint.value;
       double duration;
 
@@ -91,7 +110,10 @@ class MonthlyMoodReportSaga {
       } else if (valueString.contains('instantValue')) {
         final instantValueString = valueString.split('instantValue:')[1].trim();
         final instantValue = DateTime.parse(instantValueString);
-        duration = instantValue.difference(DateTime.fromMillisecondsSinceEpoch(0)).inHours.toDouble();
+        duration = instantValue
+            .difference(DateTime.fromMillisecondsSinceEpoch(0))
+            .inHours
+            .toDouble();
       } else {
         continue;
       }
@@ -106,7 +128,8 @@ class MonthlyMoodReportSaga {
     final List<ScatterSpot> scatterSpots = [];
     moodData.forEach((moodDate, moodValue) {
       final sleepDate = moodDate.subtract(const Duration(days: 1));
-      final sleepDateOnly = DateTime(sleepDate.year, sleepDate.month, sleepDate.day);
+      final sleepDateOnly =
+          DateTime(sleepDate.year, sleepDate.month, sleepDate.day);
       if (sleepMap.containsKey(sleepDateOnly)) {
         final sleepValue = sleepMap[sleepDateOnly]!;
         scatterSpots.add(ScatterSpot(

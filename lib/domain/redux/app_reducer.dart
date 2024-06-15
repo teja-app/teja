@@ -17,6 +17,7 @@ import 'package:teja/domain/redux/mood/list/reducer.dart';
 import 'package:teja/domain/redux/mood/logs/mood_logs_reducer.dart';
 import 'package:teja/domain/redux/mood/master_factor/reducer.dart';
 import 'package:teja/domain/redux/mood/master_feeling/reducer.dart';
+import 'package:teja/domain/redux/permission/permission_reducer.dart';
 import 'package:teja/domain/redux/quotes/quote_reducer.dart';
 import 'package:teja/domain/redux/token/token_reducer.dart';
 import 'package:teja/domain/redux/visions/vision_reducer.dart';
@@ -150,6 +151,12 @@ AppState _journalListReducer(AppState state, action) {
   );
 }
 
+AppState _permissionReducer(AppState state, action) {
+  return state.copyWith(
+    permissionState: permissionReducer(state.permissionState, action),
+  );
+}
+
 AppState _aiSuggestionReducer(AppState state, action) {
   return state.copyWith(
     aiSuggestionState: aiSuggestionReducer(state.aiSuggestionState, action),
@@ -187,4 +194,5 @@ Reducer<AppState> appReducer = combineReducers<AppState>([
   _journalListReducer,
   _aiSuggestionReducer,
   _yearlyMoodReportReducer,
+  _permissionReducer,
 ]);

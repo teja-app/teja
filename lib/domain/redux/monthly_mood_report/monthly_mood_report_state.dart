@@ -29,10 +29,12 @@ class MonthlyMoodReportState {
     Map<DateTime, double>? currentMonthAverageMoodRatings,
     String? errorMessage,
     List<ScatterSpot>? scatterSpots,
+    List<Map<String, bool>>? checklist,
   }) {
     return MonthlyMoodReportState(
       isLoading: isLoading ?? this.isLoading,
-      currentMonthAverageMoodRatings: currentMonthAverageMoodRatings ?? this.currentMonthAverageMoodRatings,
+      currentMonthAverageMoodRatings:
+          currentMonthAverageMoodRatings ?? this.currentMonthAverageMoodRatings,
       errorMessage: errorMessage ?? this.errorMessage,
       scatterSpots: scatterSpots ?? this.scatterSpots,
     );
