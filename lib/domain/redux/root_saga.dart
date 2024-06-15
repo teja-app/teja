@@ -23,6 +23,7 @@ import 'package:teja/domain/redux/sync/saga.dart';
 import 'package:teja/domain/redux/token/token_saga.dart';
 import 'package:teja/domain/redux/visions/vision_saga.dart';
 import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_saga.dart';
+import 'package:teja/domain/redux/yearly_mood_report/yearly_mood_report_saga.dart';
 import 'package:teja/domain/redux/yearly_sleep_report/yearly_sleep_report_saga.dart';
 
 Iterable<void> rootSaga(Store<AppState> store) sync* {
@@ -49,4 +50,5 @@ Iterable<void> rootSaga(Store<AppState> store) sync* {
   yield Fork(JournalListSaga().saga);
   yield Fork(PermissionSaga(store).saga);
   yield Fork(AISuggestionSaga().saga);
+  yield Fork(YearlyMoodReportSaga().saga);
 }

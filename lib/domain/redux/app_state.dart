@@ -21,6 +21,7 @@ import 'package:teja/domain/redux/quotes/quote_state.dart';
 import 'package:teja/domain/redux/token/token_state.dart';
 import 'package:teja/domain/redux/visions/vision_state.dart';
 import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_state.dart';
+import 'package:teja/domain/redux/yearly_mood_report/yearly_mood_report_state.dart';
 import 'package:teja/domain/redux/yearly_sleep_report/yearly_sleep_report_state.dart';
 
 @immutable
@@ -32,6 +33,7 @@ class AppState {
   final WeeklyMoodReportState weeklyMoodReportState;
   final MonthlyMoodReportState monthlyMoodReportState;
   final YearlySleepReportState yearlySleepReportState;
+  final YearlyMoodReportState yearlyMoodReportState;
   final PermissionState permissionState;
   final QuoteState quoteState;
   final VisionState visionState;
@@ -76,6 +78,7 @@ class AppState {
     required this.featuredJournalTemplateState,
     required this.journalCategoryState,
     required this.journalListState,
+    required this.yearlyMoodReportState,
     required this.permissionState,
   });
 
@@ -102,6 +105,7 @@ class AppState {
     JournalCategoryState? journalCategoryState,
     JournalListState? journalListState,
     AISuggestionState? aiSuggestionState,
+    YearlyMoodReportState? yearlyMoodReportState,
     PermissionState? permissionState,
   }) {
     return AppState(
@@ -132,6 +136,8 @@ class AppState {
       journalListState: journalListState ?? this.journalListState,
       permissionState: permissionState ?? this.permissionState,
       aiSuggestionState: aiSuggestionState ?? this.aiSuggestionState,
+      yearlyMoodReportState:
+          yearlyMoodReportState ?? this.yearlyMoodReportState,
     );
   }
 
@@ -160,6 +166,7 @@ class AppState {
       journalListState: JournalListState.initial(),
       permissionState: PermissionState.initial(),
       aiSuggestionState: AISuggestionState.initial(),
+      yearlyMoodReportState: YearlyMoodReportState.initial(),
     );
   }
 }

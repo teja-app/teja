@@ -39,6 +39,12 @@ class _ProfileSleepHeatMapScreenState extends State<ProfileSleepHeatMapScreen> {
         if (viewModel.isLoading) {
           return const Center(child: CircularProgressIndicator());
         }
+        return ConstrainedBox(
+          constraints: const BoxConstraints(maxHeight: 400),
+          child: HeatMapComponent(
+            key: const Key('heatMapComponent'),
+            title: "Sleep Heat Map",
+            dataset: viewModel.dataset,
         return Checklist(
           componentName: SLEEP_HEAT_MAP,
           child: ConstrainedBox(
