@@ -406,4 +406,31 @@ class MockMoodLogRepository extends _i1.Mock implements _i7.MoodLogRepository {
           ),
         ),
       ) as _i3.MoodLogEntity);
+
+  @override
+  _i5.Future<void> updateAISuggestion(
+    String? moodLogId,
+    String? suggestion,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateAISuggestion,
+          [
+            moodLogId,
+            suggestion,
+          ],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<String?> fetchAISuggestion(String? moodLogId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchAISuggestion,
+          [moodLogId],
+        ),
+        returnValue: _i5.Future<String?>.value(),
+      ) as _i5.Future<String?>);
 }

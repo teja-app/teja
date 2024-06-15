@@ -8,6 +8,7 @@ import 'package:teja/domain/redux/journal/journal_logs/journal_logs_state.dart';
 import 'package:teja/domain/redux/journal/journal_template/state.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_state.dart';
 import 'package:teja/domain/redux/monthly_mood_report/monthly_mood_report_state.dart';
+import 'package:teja/domain/redux/mood/ai_suggestion/ai_suggestion_state.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_state.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_state.dart';
 import 'package:teja/domain/redux/mood/list/state.dart';
@@ -50,11 +51,13 @@ class AppState {
   final JournalCategoryState journalCategoryState;
   final JournalListState journalListState;
   final FeaturedJournalTemplateState featuredJournalTemplateState;
+  final AISuggestionState aiSuggestionState;
 
   const AppState({
     required this.authState,
     required this.homeState,
     required this.moodEditorState,
+    required this.aiSuggestionState,
     required this.moodDetailPage,
     required this.moodLogsState,
     required this.moodLogListState,
@@ -98,6 +101,7 @@ class AppState {
     FeaturedJournalTemplateState? featuredJournalTemplateState,
     JournalCategoryState? journalCategoryState,
     JournalListState? journalListState,
+    AISuggestionState? aiSuggestionState,
     PermissionState? permissionState,
   }) {
     return AppState(
@@ -127,6 +131,7 @@ class AppState {
       journalCategoryState: journalCategoryState ?? this.journalCategoryState,
       journalListState: journalListState ?? this.journalListState,
       permissionState: permissionState ?? this.permissionState,
+      aiSuggestionState: aiSuggestionState ?? this.aiSuggestionState,
     );
   }
 
@@ -154,6 +159,7 @@ class AppState {
       journalCategoryState: JournalCategoryState.initial(),
       journalListState: JournalListState.initial(),
       permissionState: PermissionState.initial(),
+      aiSuggestionState: AISuggestionState.initial(),
     );
   }
 }
