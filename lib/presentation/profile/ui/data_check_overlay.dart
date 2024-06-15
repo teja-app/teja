@@ -1,36 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:teja/domain/redux/constants/checklist_strings.dart';
+import 'package:teja/domain/redux/permission/permissions_constants.dart';
 
 class DataCheckOverlay extends StatelessWidget {
-  final List<Map<String, bool>> checklist;
+  final List<String> hasPermissions;
+  final List<String> requiredPermissions;
 
-  static List<Map<String, String>> labels = [
-    {
-      SLEEP_DATA: 'Enable sleep tracking to view sleep data.',
-    },
-    {
-      MOOD_DATA: 'Add mood data to view mood data.',
-    },
-  ];
+  const DataCheckOverlay({
+    Key? key,
+    required this.hasPermissions,
+    required this.requiredPermissions,
+  }) : super(key: key);
 
-  const DataCheckOverlay({Key? key, required this.checklist}) : super(key: key);
-
-  void _handleIconTap(BuildContext context, String key) {
-    if (key == SLEEP_DATA) {
-      if (!checklist
-          .firstWhere((item) => item.containsKey('Sleep data exists'))
-          .values
-          .first) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-                'Either the sleep data is not enabled or data does not exist.'),
-          ),
-        );
-      }
-    } else if (key == MOOD_DATA) {
+  void _handleIconTap(BuildContext context, String permission) {
+    if (permission == SLEEP) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+              'Either the sleep data is not enabled or data does not exist.'),
+        ),
+      );
+    } else if (permission == MOOD_MONTHLY) {
       GoRouter.of(context).push("/mood_edit");
+    } else if (permission == PREMIUM) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content:
+              Text('You need to be a premium user to access this feature.'),
+        ),
+      );
     }
   }
 
@@ -51,27 +49,28 @@ class DataCheckOverlay extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-            ...checklist.map((item) {
-              final entry = item.entries.first;
+            ...requiredPermissions.map((permission) {
+              final hasPermission = hasPermissions.contains(permission);
+              final label = labels.firstWhere(
+                (element) => element.keys.first == permission,
+                orElse: () => {permission: ''},
+              );
+
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    labels
-                        .firstWhere(
-                            (element) => element.keys.first == entry.key)
-                        .values
-                        .first,
+                    label.values.first,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   GestureDetector(
-                    onTap: () => _handleIconTap(context, entry.key),
+                    onTap: () => _handleIconTap(context, permission),
                     child: Icon(
-                      entry.value ? Icons.check_circle : Icons.error,
-                      color: entry.value ? Colors.green : Colors.red,
+                      hasPermission ? Icons.check_circle : Icons.error,
+                      color: hasPermission ? Colors.green : Colors.red,
                     ),
                   ),
                 ],
@@ -81,6 +80,5 @@ class DataCheckOverlay extends StatelessWidget {
         ),
       ),
     );
-    // );
   }
 }

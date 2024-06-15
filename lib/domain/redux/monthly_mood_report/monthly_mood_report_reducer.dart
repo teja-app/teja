@@ -24,7 +24,6 @@ MonthlyMoodReportState _monthlyFetchedSuccess(MonthlyMoodReportState state,
     currentMonthAverageMoodRatings: action.currentMonthAverageMoodRatings,
     errorMessage: null,
     scatterSpots: action.scatterSpots,
-    checklist: action.checklist,
   );
 }
 

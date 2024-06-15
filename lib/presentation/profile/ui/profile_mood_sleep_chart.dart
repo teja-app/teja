@@ -4,6 +4,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/monthly_mood_report/monthly_mood_report_actions.dart';
+import 'package:teja/domain/redux/permission/permissions_constants.dart';
 import 'package:teja/presentation/profile/ui/mood_sleep_chart.dart';
 import 'package:teja/presentation/profile/ui/checklist.dart';
 
@@ -41,7 +42,7 @@ class _MoodSleepChartScreenState extends State<MoodSleepChartScreen> {
           return const Center(child: CircularProgressIndicator());
         }
         return Checklist(
-          checklist: viewModel.checklist,
+          componentName: MOOD_SLEEP_CHART,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxHeight: 400),
             child: MoodSleepChart(
@@ -64,22 +65,18 @@ class _MoodSleepChartScreenState extends State<MoodSleepChartScreen> {
 class MoodSleepChartViewModel {
   final bool isLoading;
   List<ScatterSpot> scatterData;
-  final List<Map<String, bool>> checklist;
 
   MoodSleepChartViewModel({
     required this.isLoading,
     required this.scatterData,
-    required this.checklist,
   });
 
   factory MoodSleepChartViewModel.fromStore(Store<AppState> store) {
     final state = store.state.monthlyMoodReportState;
-    print('checklist store: ${state.checklist}');
 
     return MoodSleepChartViewModel(
       isLoading: state.isLoading,
       scatterData: state.scatterSpots,
-      checklist: state.checklist,
     );
   }
 }

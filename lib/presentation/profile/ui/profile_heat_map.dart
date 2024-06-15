@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/permission/permissions_constants.dart';
 import 'package:teja/domain/redux/yearly_sleep_report/yearly_sleep_report_actions.dart';
 import 'package:teja/presentation/profile/ui/checklist.dart';
 import 'package:teja/presentation/profile/ui/heat_map_chart.dart';
@@ -39,7 +40,7 @@ class _ProfileSleepHeatMapScreenState extends State<ProfileSleepHeatMapScreen> {
           return const Center(child: CircularProgressIndicator());
         }
         return Checklist(
-          checklist: viewModel.checklist,
+          componentName: SLEEP_HEAT_MAP,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxHeight: 400),
             child: HeatMapComponent(
@@ -56,12 +57,10 @@ class _ProfileSleepHeatMapScreenState extends State<ProfileSleepHeatMapScreen> {
 class SleepHeatMapViewModel {
   final bool isLoading;
   final Map<DateTime, int> dataset;
-  final List<Map<String, bool>> checklist;
 
   SleepHeatMapViewModel({
     required this.isLoading,
     required this.dataset,
-    required this.checklist,
   });
 
   factory SleepHeatMapViewModel.fromStore(Store<AppState> store) {
@@ -69,7 +68,6 @@ class SleepHeatMapViewModel {
     return SleepHeatMapViewModel(
       isLoading: state.isLoading,
       dataset: state.yearlySleepData,
-      checklist: state.checklist,
     );
   }
 }

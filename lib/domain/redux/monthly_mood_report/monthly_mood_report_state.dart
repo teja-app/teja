@@ -1,6 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:teja/domain/redux/constants/checklist_strings.dart';
 
 @immutable
 class MonthlyMoodReportState {
@@ -8,17 +7,12 @@ class MonthlyMoodReportState {
   final Map<DateTime, double> currentMonthAverageMoodRatings;
   final String? errorMessage;
   final List<ScatterSpot> scatterSpots;
-  final List<Map<String, bool>> checklist;
 
   const MonthlyMoodReportState({
     this.isLoading = false,
     this.currentMonthAverageMoodRatings = const {},
     this.errorMessage,
     this.scatterSpots = const [],
-    this.checklist = const [
-      {SLEEP_DATA: false},
-      {MOOD_DATA: false},
-    ],
   });
 
   factory MonthlyMoodReportState.initial() {
@@ -27,10 +21,6 @@ class MonthlyMoodReportState {
       currentMonthAverageMoodRatings: {},
       errorMessage: null,
       scatterSpots: [],
-      checklist: [
-        {SLEEP_DATA: false},
-        {MOOD_DATA: false},
-      ],
     );
   }
 
@@ -47,7 +37,6 @@ class MonthlyMoodReportState {
           currentMonthAverageMoodRatings ?? this.currentMonthAverageMoodRatings,
       errorMessage: errorMessage ?? this.errorMessage,
       scatterSpots: scatterSpots ?? this.scatterSpots,
-      checklist: checklist ?? this.checklist,
     );
   }
 }

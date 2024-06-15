@@ -1,5 +1,4 @@
 import 'package:redux_saga/redux_saga.dart';
-import 'package:teja/domain/redux/constants/checklist_strings.dart';
 import 'package:teja/domain/redux/yearly_sleep_report/yearly_sleep_report_actions.dart';
 import 'package:teja/infrastructure/service/sleep_service.dart';
 import 'package:health/health.dart';
@@ -16,9 +15,6 @@ class YearlySleepReportSaga {
       {required FetchYearlySleepReportAction action}) sync* {
     yield Try(() sync* {
       yield Put(YearlySleepReportFetchInProgressAction());
-      List<Map<String, bool>> checklist = [
-        {SLEEP_DATA: false},
-      ];
 
       final startOfYear = DateTime(action.referenceDate.year, 1, 1);
       final endOfYear = DateTime(action.referenceDate.year, 12, 31);
@@ -33,12 +29,10 @@ class YearlySleepReportSaga {
       if (sleepData == null) {
         throw Exception("Failed to fetch sleep data");
       }
-      checklist[0][SLEEP_DATA] = sleepData.isNotEmpty;
 
       final cumulativeSleepData = _calculateCumulativeSleepData(sleepData);
 
-      yield Put(YearlySleepReportFetchedSuccessAction(
-          cumulativeSleepData, checklist));
+      yield Put(YearlySleepReportFetchedSuccessAction(cumulativeSleepData));
     }, Catch: (e, s) sync* {
       yield Put(YearlySleepReportFetchFailedAction(e.toString()));
     });

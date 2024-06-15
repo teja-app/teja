@@ -1,7 +1,7 @@
 import 'package:isar/isar.dart';
 import 'package:redux_saga/redux_saga.dart';
-import 'package:teja/domain/redux/constants/checklist_strings.dart';
 import 'package:teja/domain/redux/monthly_mood_report/monthly_mood_report_actions.dart';
+import 'package:teja/domain/redux/permission/permission_actions.dart';
 import 'package:teja/infrastructure/repositories/mood_log_repository.dart';
 import 'package:health/health.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -20,10 +20,6 @@ class MonthlyMoodReportSaga {
       {required FetchMonthlyMoodReportAction action}) sync* {
     yield Try(() sync* {
       yield Put(MonthlyMoodReportFetchInProgressAction());
-      List<Map<String, bool>> checklist = [
-        {SLEEP_DATA: false},
-        {MOOD_DATA: false},
-      ];
 
       var isarResult = Result<Isar>();
       yield GetContext('isar', result: isarResult);
@@ -52,7 +48,12 @@ class MonthlyMoodReportSaga {
       }
 
       final moodData = averageMoodRatingsResult.value!;
-      checklist[1][MOOD_DATA] = moodData.isNotEmpty;
+      print("00000009ssdijdnskndksndmsnmdnmdsnmsd");
+      print("moodData: $moodData");
+
+      if (moodData.isNotEmpty) {
+        yield Put(AddPermissionAction("MOOD_MONTHLY"));
+      }
 
       // Dispatch an intermediate action if necessary to indicate fetching of scatter spots
       yield Put(FetchingScatterSpotsAction());
@@ -68,11 +69,13 @@ class MonthlyMoodReportSaga {
       if (scatterSpots == null) {
         throw Exception("Failed to calculate scatter spots");
       }
-      checklist[0][SLEEP_DATA] = scatterSpots.isNotEmpty;
+
+      if (scatterSpots.isNotEmpty) {
+        yield Put(AddPermissionAction("SLEEP"));
+      }
 
       // Dispatch success action with the calculated scatter spots
-      yield Put(MonthlyMoodReportFetchedSuccessAction(
-          moodData, scatterSpots, checklist));
+      yield Put(MonthlyMoodReportFetchedSuccessAction(moodData, scatterSpots));
     }, Catch: (e, s) sync* {
       print("Error fetching monthly mood report: $e");
       yield Put(MonthlyMoodReportFetchFailedAction(e.toString()));
