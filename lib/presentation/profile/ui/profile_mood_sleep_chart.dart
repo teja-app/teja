@@ -4,7 +4,9 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/monthly_mood_report/monthly_mood_report_actions.dart';
+import 'package:teja/domain/redux/permission/permissions_constants.dart';
 import 'package:teja/presentation/profile/ui/mood_sleep_chart.dart';
+import 'package:teja/presentation/profile/ui/checklist.dart';
 
 class MoodSleepChartScreen extends StatefulWidget {
   const MoodSleepChartScreen({super.key});
@@ -39,18 +41,20 @@ class _MoodSleepChartScreenState extends State<MoodSleepChartScreen> {
         if (viewModel.isLoading) {
           return const Center(child: CircularProgressIndicator());
         }
-        return ConstrainedBox(
-          constraints: const BoxConstraints(maxHeight: 400),
-          child: MoodSleepChart(
-            key: const Key('moodSleepChart'),
-            scatterData: viewModel.scatterData,
-            // find max element in scatterData and set it as maxX using max
-            maxX: viewModel.scatterData.isNotEmpty
-                ? viewModel.scatterData.map((spot) => spot.x).reduce(
-                        (value, element) => value > element ? value : element) +
-                    1
-                : 20,
-            // maxX: viewModel.scatterData.
+        return Checklist(
+          componentName: MOOD_SLEEP_CHART,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxHeight: 400),
+            child: MoodSleepChart(
+              key: const Key('moodSleepChart'),
+              scatterData: viewModel.scatterData,
+              maxX: viewModel.scatterData.isNotEmpty
+                  ? viewModel.scatterData.map((spot) => spot.x).reduce(
+                          (value, element) =>
+                              value > element ? value : element) +
+                      1
+                  : 20,
+            ),
           ),
         );
       },
@@ -69,9 +73,10 @@ class MoodSleepChartViewModel {
 
   factory MoodSleepChartViewModel.fromStore(Store<AppState> store) {
     final state = store.state.monthlyMoodReportState;
+
     return MoodSleepChartViewModel(
       isLoading: state.isLoading,
-      scatterData: state.scatterSpots, // Initialize with an empty list
+      scatterData: state.scatterSpots,
     );
   }
 }

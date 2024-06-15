@@ -39,7 +39,7 @@ Future<Store<AppState>> createStore(Isar isarInstance) async {
     'isar': isarInstance,
     // Add other dependencies if needed
   });
-  sagaMiddleware.run(rootSaga);
+  sagaMiddleware.run(() => rootSaga(store));
 
   return store;
 }

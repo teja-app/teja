@@ -23,7 +23,8 @@ class ProfilePage extends StatelessWidget {
       ),
     );
     return Scaffold(
-      bottomNavigationBar: isDesktop(context) ? null : buildMobileNavigationBar(context),
+      bottomNavigationBar:
+          isDesktop(context) ? null : buildMobileNavigationBar(context),
       appBar: AppBar(
         title: const Text('Profile'),
         forceMaterialTransparency: true,
