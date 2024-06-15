@@ -4,9 +4,11 @@ import 'package:teja/shared/common/bento_box.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 
 class HeatMapComponent extends StatelessWidget {
+  final String title; // Define a field to hold the title
   final Map<DateTime, int> dataset;
 
-  const HeatMapComponent({Key? key, required this.dataset}) : super(key: key);
+  const HeatMapComponent({Key? key, required this.title, required this.dataset})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +26,11 @@ class HeatMapComponent extends StatelessWidget {
       gridWidth: 4,
       child: Column(
         children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 2.0),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2.0),
             child: Text(
-              'Sleep Heatmap',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              title, // Use the title passed from props
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
           const SizedBox(height: 5),

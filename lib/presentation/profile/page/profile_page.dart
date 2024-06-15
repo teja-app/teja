@@ -6,6 +6,7 @@ import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/presentation/navigation/leadingContainer.dart';
 import 'package:teja/presentation/profile/ui/profile_heat_map.dart';
 import 'package:teja/presentation/profile/ui/profile_mood_sleep_chart.dart';
+import 'package:teja/presentation/profile/ui/profile_mood_yearly_heatmap.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -19,11 +20,13 @@ class ProfilePage extends StatelessWidget {
           // ProfileWeeklyMoodChart(),
           MoodSleepChartScreen(),
           ProfileSleepHeatMapScreen(),
+          ProfileMoodYearlyHeatMapScreen()
         ],
       ),
     );
     return Scaffold(
-      bottomNavigationBar: isDesktop(context) ? null : buildMobileNavigationBar(context),
+      bottomNavigationBar:
+          isDesktop(context) ? null : buildMobileNavigationBar(context),
       appBar: AppBar(
         title: const Text('Profile'),
         forceMaterialTransparency: true,

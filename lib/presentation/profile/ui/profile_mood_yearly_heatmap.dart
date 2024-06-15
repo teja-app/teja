@@ -2,18 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
-import 'package:teja/domain/redux/yearly_sleep_report/yearly_sleep_report_actions.dart';
+import 'package:teja/domain/redux/yearly_mood_report/yearly_mood_report_actions.dart';
 import 'package:teja/presentation/profile/ui/heat_map_chart.dart';
 
-class ProfileSleepHeatMapScreen extends StatefulWidget {
-  const ProfileSleepHeatMapScreen({super.key});
+class ProfileMoodYearlyHeatMapScreen extends StatefulWidget {
+  const ProfileMoodYearlyHeatMapScreen({super.key});
 
   @override
-  State<ProfileSleepHeatMapScreen> createState() =>
-      _ProfileSleepHeatMapScreenState();
+  State<ProfileMoodYearlyHeatMapScreen> createState() =>
+      _ProfileMoodYearlyHeatMapScreenState();
 }
 
-class _ProfileSleepHeatMapScreenState extends State<ProfileSleepHeatMapScreen> {
+class _ProfileMoodYearlyHeatMapScreenState
+    extends State<ProfileMoodYearlyHeatMapScreen> {
   @override
   void initState() {
     super.initState();
@@ -22,15 +23,15 @@ class _ProfileSleepHeatMapScreenState extends State<ProfileSleepHeatMapScreen> {
       final DateTime today =
           DateTime(now.year, now.month, now.day); // Reset time to midnight
       StoreProvider.of<AppState>(context)
-          .dispatch(FetchYearlySleepReportAction(today));
+          .dispatch(FetchYearlyMoodReportAction(today));
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return StoreConnector<AppState, SleepHeatMapViewModel>(
+    return StoreConnector<AppState, MoodYearlyHeatMapViewModel>(
       converter: (store) {
-        final viewModel = SleepHeatMapViewModel.fromStore(store);
+        final viewModel = MoodYearlyHeatMapViewModel.fromStore(store);
         return viewModel;
       },
       builder: (context, viewModel) {
@@ -40,8 +41,8 @@ class _ProfileSleepHeatMapScreenState extends State<ProfileSleepHeatMapScreen> {
         return ConstrainedBox(
           constraints: const BoxConstraints(maxHeight: 400),
           child: HeatMapComponent(
+            title: "Mood Heat Map",
             key: const Key('heatMapComponent'),
-            title: "Sleep Heat Map",
             dataset: viewModel.dataset,
           ),
         );
@@ -50,20 +51,20 @@ class _ProfileSleepHeatMapScreenState extends State<ProfileSleepHeatMapScreen> {
   }
 }
 
-class SleepHeatMapViewModel {
+class MoodYearlyHeatMapViewModel {
   final bool isLoading;
   final Map<DateTime, int> dataset;
 
-  SleepHeatMapViewModel({
+  MoodYearlyHeatMapViewModel({
     required this.isLoading,
     required this.dataset,
   });
 
-  factory SleepHeatMapViewModel.fromStore(Store<AppState> store) {
-    final state = store.state.yearlySleepReportState;
-    return SleepHeatMapViewModel(
+  factory MoodYearlyHeatMapViewModel.fromStore(Store<AppState> store) {
+    final state = store.state.yearlyMoodReportState;
+    return MoodYearlyHeatMapViewModel(
       isLoading: state.isLoading,
-      dataset: state.yearlySleepData,
+      dataset: state.currentYearAverageMoodRatings,
     );
   }
 }
