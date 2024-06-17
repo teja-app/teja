@@ -201,6 +201,6 @@ Reducer<AppState> appReducer = combineReducers<AppState>([
   _journalListReducer,
   _aiSuggestionReducer,
   _yearlyMoodReportReducer,
-  _permissionReducer,,
+  _permissionReducer,
   _profilePageReducer,
 ]);
