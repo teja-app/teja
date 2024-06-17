@@ -15,4 +15,7 @@ class PermissionState {
     return PermissionState(
         hasPermissions: hasPermissions ?? this.hasPermissions);
   }
+
+  
+  
 }

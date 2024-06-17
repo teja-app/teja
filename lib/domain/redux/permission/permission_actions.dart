@@ -10,6 +10,12 @@ class AddPermissionAction extends PermissionAction {
   AddPermissionAction(this.permission);
 }
 
+class RemovePermissionAction extends PermissionAction {
+  final String permission;
+
+  RemovePermissionAction(this.permission);
+}
+
 @immutable
 class AddPermissionActionSuccess extends PermissionAction {
   final List<String> updatedPermissions;

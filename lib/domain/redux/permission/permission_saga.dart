@@ -18,15 +18,10 @@ class PermissionSaga {
     yield Try(() sync* {
       final currentPermissions =
           List<String>.from(store.state.permissionState.hasPermissions);
-
-      print('currentPermissions: $currentPermissions');
-
       // Check if the permission already exists
       if (!currentPermissions.contains(action.permission)) {
-        // currentPermissions.add(action.permission);
-        final permissions = currentPermissions + [action.permission];
-        print('permissions: $permissions');
-        yield Put(AddPermissionActionSuccess(permissions));
+        currentPermissions.add(action.permission);
+        yield Put(AddPermissionActionSuccess(currentPermissions));
       }
     }, Catch: (e, s) sync* {
       // Handle any errors that occurred during the saga

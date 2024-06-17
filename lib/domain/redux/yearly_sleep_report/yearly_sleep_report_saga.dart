@@ -1,4 +1,5 @@
 import 'package:redux_saga/redux_saga.dart';
+import 'package:teja/domain/redux/permission/permission_actions.dart';
 import 'package:teja/domain/redux/yearly_sleep_report/yearly_sleep_report_actions.dart';
 import 'package:teja/infrastructure/service/sleep_service.dart';
 import 'package:health/health.dart';
@@ -31,6 +32,11 @@ class YearlySleepReportSaga {
       }
 
       final cumulativeSleepData = _calculateCumulativeSleepData(sleepData);
+      if (cumulativeSleepData.isEmpty) {
+        yield Put(RemovePermissionAction("SLEEP_YEARLY"));
+      } else {
+        yield Put(AddPermissionAction("SLEEP_YEARLY"));
+      }
 
       yield Put(YearlySleepReportFetchedSuccessAction(cumulativeSleepData));
     }, Catch: (e, s) sync* {
