@@ -23,10 +23,13 @@ class Checklist extends StatelessWidget {
         return viewModel;
       },
       builder: (context, viewModel) {
+        final allPermissionsGranted = viewModel.requiredPermissions.every(
+            (permission) => viewModel.hasPermissions.contains(permission));
+
         return Stack(
           children: [
             child,
-            if (viewModel.requiredPermissions.isNotEmpty)
+            if (!allPermissionsGranted)
               Positioned.fill(
                 child: DataCheckOverlay(
                   hasPermissions: viewModel.hasPermissions,
@@ -53,6 +56,9 @@ class ChecklistViewModel {
       Store<AppState> store, String componentName) {
     final hasPermissions = store.state.permissionState.hasPermissions;
     final requiredPermissions = featureChecklist[componentName] ?? [];
+
+    print('hasPermissions: $hasPermissions');
+    print('requiredPermissions: $requiredPermissions');
 
     return ChecklistViewModel(
       hasPermissions: hasPermissions,
