@@ -11,7 +11,8 @@ class YearlySleepReportSaga {
     );
   }
 
-  _fetchYearlySleepReport({required FetchYearlySleepReportAction action}) sync* {
+  _fetchYearlySleepReport(
+      {required FetchYearlySleepReportAction action}) sync* {
     yield Try(() sync* {
       yield Put(YearlySleepReportFetchInProgressAction());
 
@@ -21,7 +22,8 @@ class YearlySleepReportSaga {
       final dates = _getDatesInRange(startOfYear, endOfYear);
 
       var healthDataResult = Result<List<HealthDataPoint>>();
-      yield Call(HealthDataFetcher.fetchHealthData, args: [dates], result: healthDataResult);
+      yield Call(HealthDataFetcher.fetchHealthData,
+          args: [dates], result: healthDataResult);
 
       final sleepData = healthDataResult.value;
       if (sleepData == null) {
@@ -46,10 +48,12 @@ class YearlySleepReportSaga {
     return dates;
   }
 
-  Map<DateTime, int> _calculateCumulativeSleepData(List<HealthDataPoint> sleepData) {
+  Map<DateTime, int> _calculateCumulativeSleepData(
+      List<HealthDataPoint> sleepData) {
     final Map<DateTime, int> cumulativeSleepMap = {};
     for (final dataPoint in sleepData) {
-      final date = DateTime(dataPoint.dateFrom.year, dataPoint.dateFrom.month, dataPoint.dateFrom.day);
+      final date = DateTime(dataPoint.dateFrom.year, dataPoint.dateFrom.month,
+          dataPoint.dateFrom.day);
       final value = dataPoint.value;
 
       int duration;
@@ -57,11 +61,15 @@ class YearlySleepReportSaga {
       final valueString = value.toString();
       if (valueString.contains('numericValue')) {
         final numericValueString = valueString.split('numericValue:')[1].trim();
-        duration = (double.parse(numericValueString) * 60).toInt(); // Convert to minutes
+        duration = (double.parse(numericValueString) * 60)
+            .toInt(); // Convert to minutes
       } else if (valueString.contains('instantValue')) {
         final instantValueString = valueString.split('instantValue:')[1].trim();
         final instantValue = DateTime.parse(instantValueString);
-        duration = instantValue.difference(DateTime.fromMillisecondsSinceEpoch(0)).inMinutes.toInt();
+        duration = instantValue
+            .difference(DateTime.fromMillisecondsSinceEpoch(0))
+            .inMinutes
+            .toInt();
       } else {
         continue;
       }

@@ -1,4 +1,6 @@
+import 'package:redux/redux.dart';
 import 'package:redux_saga/redux_saga.dart';
+import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/auth/auth_saga.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_saga.dart';
 import 'package:teja/domain/redux/journal/featured_journal_template/saga.dart';
@@ -15,15 +17,17 @@ import 'package:teja/domain/redux/mood/list/saga.dart';
 import 'package:teja/domain/redux/mood/logs/mood_logs_saga.dart';
 import 'package:teja/domain/redux/mood/master_feeling/saga.dart';
 import 'package:teja/domain/redux/mood/master_factor/saga.dart';
+import 'package:teja/domain/redux/permission/permission_saga.dart';
 import 'package:teja/domain/redux/profile_page_sequence/profile_page_saga.dart';
 import 'package:teja/domain/redux/quotes/quote_saga.dart';
 import 'package:teja/domain/redux/sync/saga.dart';
 import 'package:teja/domain/redux/token/token_saga.dart';
 import 'package:teja/domain/redux/visions/vision_saga.dart';
 import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_saga.dart';
+import 'package:teja/domain/redux/yearly_mood_report/yearly_mood_report_saga.dart';
 import 'package:teja/domain/redux/yearly_sleep_report/yearly_sleep_report_saga.dart';
 
-Iterable<void> rootSaga() sync* {
+Iterable<void> rootSaga(Store<AppState> store) sync* {
   yield Fork(AuthSaga().saga);
   yield Fork(MoodEditorSaga().saga);
   yield Fork(MoodDetailSaga().saga);
@@ -45,6 +49,8 @@ Iterable<void> rootSaga() sync* {
   yield Fork(FeaturedJournalTemplateSaga().saga);
   yield Fork(SyncSaga().saga);
   yield Fork(JournalListSaga().saga);
+  yield Fork(PermissionSaga(store).saga);
   yield Fork(AISuggestionSaga().saga);
+  yield Fork(YearlyMoodReportSaga().saga);
   yield Fork(ProfilePageSaga().saga);
 }

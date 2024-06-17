@@ -5,6 +5,7 @@ import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/presentation/navigation/leadingContainer.dart';
 import 'package:teja/presentation/profile/page/profile_main_body.dart';
+import 'package:teja/presentation/profile/ui/profile_mood_yearly_heatmap.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});

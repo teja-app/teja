@@ -24,6 +24,7 @@ class YearlySleepReportState {
     bool? isLoading,
     Map<DateTime, int>? yearlySleepData,
     String? errorMessage,
+    List<Map<String, bool>>? checklist,
   }) {
     return YearlySleepReportState(
       isLoading: isLoading ?? this.isLoading,

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/permission/permissions_constants.dart';
 import 'package:teja/domain/redux/yearly_sleep_report/yearly_sleep_report_actions.dart';
+import 'package:teja/presentation/profile/ui/checklist.dart';
 import 'package:teja/presentation/profile/ui/heat_map_chart.dart';
 
 class ProfileSleepHeatMapScreen extends StatefulWidget {
@@ -34,11 +36,15 @@ class _ProfileSleepHeatMapScreenState extends State<ProfileSleepHeatMapScreen> {
         if (viewModel.isLoading) {
           return const Center(child: CircularProgressIndicator());
         }
-        return ConstrainedBox(
-          constraints: const BoxConstraints(maxHeight: 400),
-          child: HeatMapComponent(
-            key: const Key('heatMapComponent'),
-            dataset: viewModel.dataset,
+        return Checklist(
+          componentName: SLEEP_HEAT_MAP,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxHeight: 400),
+            child: HeatMapComponent(
+              key: const Key('heatMapComponent'),
+              dataset: viewModel.dataset,
+              title: "Sleep Heat Map",
+            ),
           ),
         );
       },
