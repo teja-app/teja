@@ -4,26 +4,15 @@ import 'package:teja/presentation/navigation/buildDesktopDrawer.dart';
 import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/presentation/navigation/leadingContainer.dart';
-import 'package:teja/presentation/profile/ui/profile_heat_map.dart';
-import 'package:teja/presentation/profile/ui/profile_mood_sleep_chart.dart';
-import 'package:teja/presentation/profile/ui/profile_mood_yearly_heatmap.dart';
+import 'package:teja/presentation/profile/page/profile_main_body.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    const mainBody = SingleChildScrollView(
-      key: Key("profileContainer"),
-      child: Column(
-        children: <Widget>[
-          // ProfileWeeklyMoodChart(),
-          MoodSleepChartScreen(),
-          ProfileSleepHeatMapScreen(),
-          ProfileMoodYearlyHeatMapScreen()
-        ],
-      ),
-    );
+    const mainBody = MainBody();
+
     return Scaffold(
       bottomNavigationBar:
           isDesktop(context) ? null : buildMobileNavigationBar(context),

@@ -99,6 +99,8 @@ dependencies:
   health: ^10.2.0
   flutter_heatmap_calendar: ^1.0.5
   flutter_markdown: ^0.7.2
+  reorderables: ^0.4.0
+
 
 dev_dependencies:
   flutter_test:
