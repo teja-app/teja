@@ -1,4 +1,5 @@
 const String SLEEP = "SLEEP";
+const String SLEEP_YEARLY = "SLEEP_YEARLY";
 const String MOOD_MONTHLY = "MOOD_MONTHLY";
 const String PREMIUM = "PREMIUM";
 const String MOOD_SLEEP_CHART = "MOOD_SLEEP_CHART";
@@ -11,11 +12,12 @@ const allPermissions = [
   SLEEP,
   MOOD_MONTHLY,
   PREMIUM,
+  SLEEP_YEARLY,
 ];
 
 const featureChecklist = {
   MOOD_SLEEP_CHART: [SLEEP, MOOD_MONTHLY],
-  SLEEP_HEAT_MAP: [SLEEP],
+  SLEEP_HEAT_MAP: [SLEEP_YEARLY],
   // Add more mappings as needed
 };
 
@@ -28,5 +30,8 @@ const labels = [
   },
   {
     PREMIUM: UPGRADE_PREMIUM,
+  },
+  {
+    SLEEP_YEARLY: ENABLE_SLEEP,
   }
 ];

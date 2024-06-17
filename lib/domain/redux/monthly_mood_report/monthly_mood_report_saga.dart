@@ -54,6 +54,9 @@ class MonthlyMoodReportSaga {
       if (moodData.isNotEmpty) {
         yield Put(AddPermissionAction("MOOD_MONTHLY"));
       }
+      if (moodData.isEmpty) {
+        yield Put(RemovePermissionAction("MOOD_MONTHLY"));
+      }
 
       // Dispatch an intermediate action if necessary to indicate fetching of scatter spots
       yield Put(FetchingScatterSpotsAction());
@@ -67,6 +70,7 @@ class MonthlyMoodReportSaga {
 
       print("scatterSpots: $scatterSpots");
       if (scatterSpots == null) {
+        yield Put(RemovePermissionAction("SLEEP"));
         throw Exception("Failed to calculate scatter spots");
       }
 
