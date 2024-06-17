@@ -14,8 +14,8 @@ const allPermissions = [
 ];
 
 const featureChecklist = {
-  MOOD_SLEEP_CHART: [SLEEP, MOOD_MONTHLY, PREMIUM],
-  SLEEP_HEAT_MAP: [SLEEP, PREMIUM],
+  MOOD_SLEEP_CHART: [SLEEP, MOOD_MONTHLY],
+  SLEEP_HEAT_MAP: [SLEEP],
   // Add more mappings as needed
 };
 

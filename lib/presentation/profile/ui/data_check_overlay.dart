@@ -16,8 +16,7 @@ class DataCheckOverlay extends StatelessWidget {
     if (permission == SLEEP) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-              'Either the sleep data is not enabled or data does not exist.'),
+          content: Text('Either the sleep data is not enabled or data does not exist.'),
         ),
       );
     } else if (permission == MOOD_MONTHLY) {
@@ -25,8 +24,7 @@ class DataCheckOverlay extends StatelessWidget {
     } else if (permission == PREMIUM) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content:
-              Text('You need to be a premium user to access this feature.'),
+          content: Text('You need to be a premium user to access this feature.'),
         ),
       );
     }
@@ -56,24 +54,29 @@ class DataCheckOverlay extends StatelessWidget {
                 orElse: () => {permission: ''},
               );
 
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    label.values.first,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        label.values.first,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
-                  ),
-                  GestureDetector(
-                    onTap: () => _handleIconTap(context, permission),
-                    child: Icon(
-                      hasPermission ? Icons.check_circle : Icons.error,
-                      color: hasPermission ? Colors.green : Colors.red,
+                    GestureDetector(
+                      onTap: () => _handleIconTap(context, permission),
+                      child: Icon(
+                        hasPermission ? Icons.check_circle : Icons.error,
+                        color: hasPermission ? Colors.green : Colors.red,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               );
             }).toList(),
           ],
