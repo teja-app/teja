@@ -15,6 +15,7 @@ import 'package:teja/domain/redux/mood/list/saga.dart';
 import 'package:teja/domain/redux/mood/logs/mood_logs_saga.dart';
 import 'package:teja/domain/redux/mood/master_feeling/saga.dart';
 import 'package:teja/domain/redux/mood/master_factor/saga.dart';
+import 'package:teja/domain/redux/profile_page_sequence/profile_page_saga.dart';
 import 'package:teja/domain/redux/quotes/quote_saga.dart';
 import 'package:teja/domain/redux/sync/saga.dart';
 import 'package:teja/domain/redux/token/token_saga.dart';
@@ -45,4 +46,5 @@ Iterable<void> rootSaga() sync* {
   yield Fork(SyncSaga().saga);
   yield Fork(JournalListSaga().saga);
   yield Fork(AISuggestionSaga().saga);
+  yield Fork(ProfilePageSaga().saga);
 }

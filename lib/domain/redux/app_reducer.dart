@@ -17,6 +17,7 @@ import 'package:teja/domain/redux/mood/list/reducer.dart';
 import 'package:teja/domain/redux/mood/logs/mood_logs_reducer.dart';
 import 'package:teja/domain/redux/mood/master_factor/reducer.dart';
 import 'package:teja/domain/redux/mood/master_feeling/reducer.dart';
+import 'package:teja/domain/redux/profile_page_sequence/profile_page_reducer.dart';
 import 'package:teja/domain/redux/quotes/quote_reducer.dart';
 import 'package:teja/domain/redux/token/token_reducer.dart';
 import 'package:teja/domain/redux/visions/vision_reducer.dart';
@@ -149,6 +150,12 @@ AppState _aiSuggestionReducer(AppState state, action) {
   );
 }
 
+AppState _profilePageReducer(AppState state, action) {
+  return state.copyWith(
+    profilePageState: profilePageReducer(state.profilePageState, action),
+  );
+}
+
 Reducer<AppState> appReducer = combineReducers<AppState>([
   ...moodDetailReducer,
   _authReducer,
@@ -171,5 +178,6 @@ Reducer<AppState> appReducer = combineReducers<AppState>([
   _featuredJournalTemplateReducer,
   _journalCategoryReducer,
   _journalListReducer,
-  _aiSuggestionReducer
+  _aiSuggestionReducer,
+  _profilePageReducer,
 ]);

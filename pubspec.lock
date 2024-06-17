@@ -1415,6 +1415,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.0"
+  reorderables:
+    dependency: "direct main"
+    description:
+      name: reorderables
+      sha256: "92dd02c27b58f9fe9d467c24b49fafea458e4355fcea474abb17ba79a058275d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.4"
   rive:
     dependency: "direct main"
     description:
