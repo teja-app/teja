@@ -7,31 +7,24 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/mood/ai_suggestion/ai_suggestion_actions.dart';
 import 'package:teja/shared/common/button.dart';
 
-class AISuggestionButton extends StatelessWidget {
+class AITitleButton extends StatelessWidget {
   final MoodLogEntity selectedMoodLog;
 
-  const AISuggestionButton({Key? key, required this.selectedMoodLog}) : super(key: key);
+  const AITitleButton({Key? key, required this.selectedMoodLog}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return StoreConnector<AppState, _AISuggestionButtonViewModel>(
-      converter: (store) => _AISuggestionButtonViewModel.fromStore(store, selectedMoodLog),
+    return StoreConnector<AppState, _AITitleButtonViewModel>(
+      converter: (store) => _AITitleButtonViewModel.fromStore(store, selectedMoodLog),
       builder: (context, viewModel) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (viewModel.suggestions != null)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: MarkdownBody(
-                  data: viewModel.suggestions!,
-                ),
-              )
-            else ...[
+            if (viewModel.title == null) ...[
               Button(
-                text: "Fetch AI Suggestion",
-                icon: Icons.favorite,
-                onPressed: viewModel.getSuggestions,
+                text: "Fetch AI Title",
+                icon: Icons.title,
+                onPressed: viewModel.getTitle,
               ),
               if (viewModel.isLoading) const Center(child: CircularProgressIndicator()),
               if (viewModel.errorMessage != null)
@@ -50,28 +43,28 @@ class AISuggestionButton extends StatelessWidget {
   }
 }
 
-class _AISuggestionButtonViewModel {
-  final String? suggestions;
+class _AITitleButtonViewModel {
+  final String? title;
   final bool isLoading;
   final String? errorMessage;
-  final VoidCallback getSuggestions;
+  final VoidCallback getTitle;
 
-  _AISuggestionButtonViewModel({
-    required this.suggestions,
+  _AITitleButtonViewModel({
+    required this.title,
     required this.isLoading,
     required this.errorMessage,
-    required this.getSuggestions,
+    required this.getTitle,
   });
 
-  static _AISuggestionButtonViewModel fromStore(Store<AppState> store, MoodLogEntity selectedMoodLog) {
+  static _AITitleButtonViewModel fromStore(Store<AppState> store, MoodLogEntity selectedMoodLog) {
     final aiSuggestionState = store.state.aiSuggestionState;
 
-    return _AISuggestionButtonViewModel(
-      suggestions: selectedMoodLog.ai?.suggestion,
+    return _AITitleButtonViewModel(
+      title: selectedMoodLog.ai?.title,
       isLoading: aiSuggestionState.isLoading,
       errorMessage: aiSuggestionState.errorMessage,
-      getSuggestions: () {
-        store.dispatch(FetchAISuggestionAction(selectedMoodLog));
+      getTitle: () {
+        store.dispatch(FetchAITitleAction(selectedMoodLog));
       },
     );
   }

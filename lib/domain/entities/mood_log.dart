@@ -14,9 +14,13 @@ class MoodLogAttachmentEntity {
 
 class MoodLogAIEntity {
   final String? suggestion;
+  final String? title; // Add this field
+  final String? affirmation; // Add this field
 
   MoodLogAIEntity({
     this.suggestion,
+    this.title, // Add this field
+    this.affirmation, // Add this field
   });
 }
 

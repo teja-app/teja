@@ -249,6 +249,8 @@ class MoodLogRepository {
     MoodLogAIEntity? ai = moodLog.ai != null
         ? MoodLogAIEntity(
             suggestion: moodLog.ai!.suggestion,
+            title: moodLog.ai!.title,
+            affirmation: moodLog.ai!.affirmation,
           )
         : null;
 
@@ -267,7 +269,7 @@ class MoodLogRepository {
           .toList(),
       factors: moodLog.factors,
       attachments: attachments,
-      ai: ai, // Add the AI suggestion entity
+      ai: ai,
     );
   }
 
@@ -284,5 +286,37 @@ class MoodLogRepository {
   Future<String?> fetchAISuggestion(String moodLogId) async {
     MoodLog? moodLog = await isar.moodLogs.where().idEqualTo(moodLogId).findFirst();
     return moodLog?.ai?.suggestion;
+  }
+
+  // Add these methods to the repository
+
+  Future<void> updateAITitle(String moodLogId, String title) async {
+    await isar.writeTxn(() async {
+      MoodLog? moodLog = await isar.moodLogs.where().idEqualTo(moodLogId).findFirst();
+      if (moodLog != null) {
+        moodLog.ai = (moodLog.ai ?? MoodLogAI())..title = title;
+        await isar.moodLogs.put(moodLog);
+      }
+    });
+  }
+
+  Future<void> updateAIAffirmation(String moodLogId, String affirmation) async {
+    await isar.writeTxn(() async {
+      MoodLog? moodLog = await isar.moodLogs.where().idEqualTo(moodLogId).findFirst();
+      if (moodLog != null) {
+        moodLog.ai = (moodLog.ai ?? MoodLogAI())..affirmation = affirmation;
+        await isar.moodLogs.put(moodLog);
+      }
+    });
+  }
+
+  Future<String?> fetchAITitle(String moodLogId) async {
+    MoodLog? moodLog = await isar.moodLogs.where().idEqualTo(moodLogId).findFirst();
+    return moodLog?.ai?.title;
+  }
+
+  Future<String?> fetchAIAffirmation(String moodLogId) async {
+    MoodLog? moodLog = await isar.moodLogs.where().idEqualTo(moodLogId).findFirst();
+    return moodLog?.ai?.affirmation;
   }
 }

@@ -9,7 +9,9 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_actions.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_state.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
+import 'package:teja/presentation/mood/detail/ui/buttons/ai_affirmation_button.dart';
 import 'package:teja/presentation/mood/detail/ui/buttons/ai_suggestion_button.dart';
+import 'package:teja/presentation/mood/detail/ui/buttons/ai_title_button.dart';
 import 'package:teja/presentation/mood/ui/attachement_image.dart';
 import 'package:teja/presentation/mood/detail/ui/feeling_list.dart';
 import 'package:teja/presentation/mood/detail/ui/mood_rating_widget.dart';
@@ -184,9 +186,25 @@ class MoodDetailPageState extends State<MoodDetailPage> {
                 const SizedBox(height: 16), // Add some spacing
                 Text(
                   'Suggestion',
-                  style: textTheme.titleLarge,
+                  style: textTheme.titleMedium,
                 ),
-                AISuggestionButton(
+                FlexibleHeightBox(
+                  gridWidth: 4,
+                  child: AISuggestionButton(
+                    selectedMoodLog: viewModel.moodDetailPage.selectedMoodLog!,
+                  ),
+                ),
+                Text(
+                  'Affirmation',
+                  style: textTheme.titleMedium,
+                ),
+                FlexibleHeightBox(
+                  gridWidth: 4,
+                  child: AIAffirmationButton(
+                    selectedMoodLog: viewModel.moodDetailPage.selectedMoodLog!,
+                  ),
+                ),
+                AITitleButton(
                   selectedMoodLog: viewModel.moodDetailPage.selectedMoodLog!,
                 ),
                 const SizedBox(height: 8),
@@ -201,9 +219,11 @@ class MoodDetailPageState extends State<MoodDetailPage> {
         return Scaffold(
           appBar: AppBar(
             elevation: 0,
-            title: MoodEntryWidget(
-              timestamp: moodDetailPage.selectedMoodLog!.timestamp,
-            ),
+            title: moodDetailPage.selectedMoodLog?.ai!.title != null
+                ? Text(moodDetailPage.selectedMoodLog!.ai!.title ?? "")
+                : MoodEntryWidget(
+                    timestamp: moodDetailPage.selectedMoodLog!.timestamp,
+                  ),
             actions: [
               SettingsPopupMenu(
                 moodId: widget.moodId,

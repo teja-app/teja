@@ -48,9 +48,107 @@ AISuggestionState _updateAISuggestion(AISuggestionState state, UpdateAISuggestio
   );
 }
 
+AISuggestionState _fetchAITitle(AISuggestionState state, FetchAITitleAction action) {
+  return state.copyWith(
+    isLoading: true,
+    errorMessage: null,
+  );
+}
+
+AISuggestionState _fetchAITitleSuccess(AISuggestionState state, FetchAITitleSuccessAction action) {
+  final updatedMoodLogs = state.moodLogs.map((moodLog) {
+    if (moodLog.id == action.moodId) {
+      return moodLog.copyWith(
+        ai: MoodLogAIEntity(title: action.title),
+      );
+    }
+    return moodLog;
+  }).toList();
+
+  return state.copyWith(
+    isLoading: false,
+    moodLogs: updatedMoodLogs,
+  );
+}
+
+AISuggestionState _fetchAITitleFailure(AISuggestionState state, FetchAITitleFailureAction action) {
+  return state.copyWith(
+    isLoading: false,
+    errorMessage: action.errorMessage,
+  );
+}
+
+AISuggestionState _updateAITitle(AISuggestionState state, UpdateAITitleAction action) {
+  final updatedMoodLogs = state.moodLogs.map((moodLog) {
+    if (moodLog.id == action.moodId) {
+      return moodLog.copyWith(
+        ai: MoodLogAIEntity(title: action.title),
+      );
+    }
+    return moodLog;
+  }).toList();
+
+  return state.copyWith(
+    moodLogs: updatedMoodLogs,
+  );
+}
+
+AISuggestionState _fetchAIAffirmation(AISuggestionState state, FetchAIAffirmationAction action) {
+  return state.copyWith(
+    isLoading: true,
+    errorMessage: null,
+  );
+}
+
+AISuggestionState _fetchAIAffirmationSuccess(AISuggestionState state, FetchAIAffirmationSuccessAction action) {
+  final updatedMoodLogs = state.moodLogs.map((moodLog) {
+    if (moodLog.id == action.moodId) {
+      return moodLog.copyWith(
+        ai: MoodLogAIEntity(affirmation: action.affirmation),
+      );
+    }
+    return moodLog;
+  }).toList();
+
+  return state.copyWith(
+    isLoading: false,
+    moodLogs: updatedMoodLogs,
+  );
+}
+
+AISuggestionState _fetchAIAffirmationFailure(AISuggestionState state, FetchAIAffirmationFailureAction action) {
+  return state.copyWith(
+    isLoading: false,
+    errorMessage: action.errorMessage,
+  );
+}
+
+AISuggestionState _updateAIAffirmation(AISuggestionState state, UpdateAIAffirmationAction action) {
+  final updatedMoodLogs = state.moodLogs.map((moodLog) {
+    if (moodLog.id == action.moodId) {
+      return moodLog.copyWith(
+        ai: MoodLogAIEntity(affirmation: action.affirmation),
+      );
+    }
+    return moodLog;
+  }).toList();
+
+  return state.copyWith(
+    moodLogs: updatedMoodLogs,
+  );
+}
+
 Reducer<AISuggestionState> aiSuggestionReducer = combineReducers<AISuggestionState>([
   TypedReducer<AISuggestionState, FetchAISuggestionAction>(_fetchAISuggestion),
   TypedReducer<AISuggestionState, FetchAISuggestionSuccessAction>(_fetchAISuggestionSuccess),
   TypedReducer<AISuggestionState, FetchAISuggestionFailureAction>(_fetchAISuggestionFailure),
   TypedReducer<AISuggestionState, UpdateAISuggestionAction>(_updateAISuggestion),
+  TypedReducer<AISuggestionState, FetchAITitleAction>(_fetchAITitle),
+  TypedReducer<AISuggestionState, FetchAITitleSuccessAction>(_fetchAITitleSuccess),
+  TypedReducer<AISuggestionState, FetchAITitleFailureAction>(_fetchAITitleFailure),
+  TypedReducer<AISuggestionState, UpdateAITitleAction>(_updateAITitle),
+  TypedReducer<AISuggestionState, FetchAIAffirmationAction>(_fetchAIAffirmation),
+  TypedReducer<AISuggestionState, FetchAIAffirmationSuccessAction>(_fetchAIAffirmationSuccess),
+  TypedReducer<AISuggestionState, FetchAIAffirmationFailureAction>(_fetchAIAffirmationFailure),
+  TypedReducer<AISuggestionState, UpdateAIAffirmationAction>(_updateAIAffirmation),
 ]);

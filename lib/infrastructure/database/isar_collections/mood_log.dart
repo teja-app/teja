@@ -6,6 +6,8 @@ part 'mood_log.g.dart';
 @Embedded()
 class MoodLogAI {
   String? suggestion;
+  String? title;
+  String? affirmation;
 }
 
 @Embedded()

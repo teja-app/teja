@@ -433,4 +433,57 @@ class MockMoodLogRepository extends _i1.Mock implements _i7.MoodLogRepository {
         ),
         returnValue: _i5.Future<String?>.value(),
       ) as _i5.Future<String?>);
+
+  @override
+  _i5.Future<void> updateAITitle(
+    String? moodLogId,
+    String? title,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateAITitle,
+          [
+            moodLogId,
+            title,
+          ],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> updateAIAffirmation(
+    String? moodLogId,
+    String? affirmation,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateAIAffirmation,
+          [
+            moodLogId,
+            affirmation,
+          ],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<String?> fetchAITitle(String? moodLogId) => (super.noSuchMethod(
+        Invocation.method(
+          #fetchAITitle,
+          [moodLogId],
+        ),
+        returnValue: _i5.Future<String?>.value(),
+      ) as _i5.Future<String?>);
+
+  @override
+  _i5.Future<String?> fetchAIAffirmation(String? moodLogId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchAIAffirmation,
+          [moodLogId],
+        ),
+        returnValue: _i5.Future<String?>.value(),
+      ) as _i5.Future<String?>);
 }
