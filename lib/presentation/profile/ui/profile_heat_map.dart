@@ -11,7 +11,8 @@ class ProfileSleepHeatMapScreen extends StatefulWidget {
   const ProfileSleepHeatMapScreen({super.key});
 
   @override
-  State<ProfileSleepHeatMapScreen> createState() => _ProfileSleepHeatMapScreenState();
+  State<ProfileSleepHeatMapScreen> createState() =>
+      _ProfileSleepHeatMapScreenState();
 }
 
 class _ProfileSleepHeatMapScreenState extends State<ProfileSleepHeatMapScreen> {
@@ -20,8 +21,10 @@ class _ProfileSleepHeatMapScreenState extends State<ProfileSleepHeatMapScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final DateTime now = DateTime.now();
-      final DateTime today = DateTime(now.year, now.month, now.day); // Reset time to midnight
-      StoreProvider.of<AppState>(context).dispatch(FetchYearlySleepReportAction(today));
+      final DateTime today =
+          DateTime(now.year, now.month, now.day); // Reset time to midnight
+      StoreProvider.of<AppState>(context)
+          .dispatch(FetchYearlySleepReportAction(today));
     });
   }
 
@@ -41,7 +44,7 @@ class _ProfileSleepHeatMapScreenState extends State<ProfileSleepHeatMapScreen> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxHeight: 400),
             child: HeatMapComponent(
-              key: const Key('heatMapComponent'),
+              key: const Key('ProfileSleepHeatMapScreen'),
               dataset: viewModel.dataset,
               title: "Sleep Heat Map",
             ),

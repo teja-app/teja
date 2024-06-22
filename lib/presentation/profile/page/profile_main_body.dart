@@ -2,12 +2,14 @@ import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/profile_page_sequence/profile_page_actions.dart';
 import 'package:teja/presentation/profile/ui/profile_heat_map.dart';
+import 'package:teja/presentation/profile/ui/profile_mood_activity_screen.dart';
 import 'package:teja/presentation/profile/ui/profile_mood_sleep_chart.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter/material.dart';
+import 'package:teja/presentation/profile/ui/profile_mood_yearly_heatmap.dart';
 
 class MainBody extends StatelessWidget {
-  const MainBody({super.key});
+  const MainBody({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,22 +19,31 @@ class MainBody extends StatelessWidget {
       builder: (context, vm) => vm.isLoading
           ? const Center(child: CircularProgressIndicator())
           : ReorderableListView(
+              reverse: true,
+              scrollController: ScrollController(initialScrollOffset: 10),
               onReorder: (oldIndex, newIndex) {
                 vm.updateChartSequence(oldIndex, newIndex);
               },
-              children:
-                  vm.chartSequence.map((chart) => _buildChart(chart)).toList(),
+              children: vm.chartSequence
+                  .map((chart) => _buildChart(context, chart))
+                  .toList(),
             ),
     );
   }
 
-  Widget _buildChart(String chartName) {
+  Widget _buildChart(BuildContext context, String chartName) {
     switch (chartName) {
       case 'MoodSleepChartScreen':
         return const MoodSleepChartScreen(key: Key('MoodSleepChartScreen'));
       case 'ProfileSleepHeatMapScreen':
         return const ProfileSleepHeatMapScreen(
             key: Key('ProfileSleepHeatMapScreen'));
+      case 'ProfileMoodYearlyHeatMapScreen':
+        return const ProfileMoodYearlyHeatMapScreen(
+            key: Key('ProfileMoodYearlyHeatMapScreen'));
+      case 'ProfileMoodActivityScreen':
+        return const MoodActivityChartScreen(
+            key: Key('ProfileMoodActivityScreen'));
       default:
         return Container(
           key: const Key("test"),

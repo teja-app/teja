@@ -11,7 +11,8 @@ class ProfilePageState {
     this.chartSequence = const [
       'MoodSleepChartScreen',
       'ProfileSleepHeatMapScreen',
-      // 'ProfileMoodYearlyHeatMapScreen',
+      'ProfileMoodYearlyHeatMapScreen',
+      'ProfileMoodActivityScreen'
     ],
     this.errorMessage,
   });
@@ -22,7 +23,8 @@ class ProfilePageState {
       chartSequence: [
         'MoodSleepChartScreen',
         'ProfileSleepHeatMapScreen',
-        // 'ProfileMoodYearlyHeatMapScreen',
+        'ProfileMoodYearlyHeatMapScreen',
+        'ProfileMoodActivityScreen'
       ],
       errorMessage: null,
     );

@@ -7,9 +7,15 @@ import 'package:teja/shared/common/flexible_height_box.dart';
 class MoodSleepChart extends StatefulWidget {
   final List<ScatterSpot> scatterData;
   final double maxX;
+  final double minY;
+  final String title;
 
   const MoodSleepChart(
-      {Key? key, required this.scatterData, required this.maxX})
+      {Key? key,
+      required this.scatterData,
+      required this.maxX,
+      required this.minY,
+      required this.title})
       : super(key: key);
 
   @override
@@ -17,17 +23,41 @@ class MoodSleepChart extends StatefulWidget {
 }
 
 class _MoodSleepChartState extends State<MoodSleepChart> {
+  String _formatNumber(double value) {
+    if (value >= 1000 && value < 1000000) {
+      return value % 1000 == 0
+          ? '${(value / 1000).toStringAsFixed(0)}k'
+          : '${(value / 1000).toStringAsFixed(1)}k';
+    } else if (value >= 1000000) {
+      return value % 1000000 == 0
+          ? '${(value / 1000000).toStringAsFixed(0)}M'
+          : '${(value / 1000000).toStringAsFixed(1)}M';
+    }
+    return value.toInt().toString();
+  }
+
+  List<double> _generateDesiredValues() {
+    List<double> values = [];
+    double interval = widget.maxX / 5;
+    for (int i = 0; i <= 5; i++) {
+      values.add(i * interval);
+    }
+    return values;
+  }
+
   @override
   Widget build(BuildContext context) {
+    List<double> desiredValues = _generateDesiredValues();
+
     return FlexibleHeightBox(
       gridWidth: 4,
       child: Column(
         children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 8.0),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Text(
-              'Mood and Sleep',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              widget.title,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
           const SizedBox(height: 10),
@@ -45,6 +75,7 @@ class _MoodSleepChartState extends State<MoodSleepChart> {
                     show: true,
                     drawHorizontalLine: true,
                     drawVerticalLine: true,
+                    verticalInterval: widget.maxX / 5,
                     getDrawingHorizontalLine: (value) => FlLine(
                       color: Colors.grey.withOpacity(0.1),
                       strokeWidth: 0.5,
@@ -53,20 +84,27 @@ class _MoodSleepChartState extends State<MoodSleepChart> {
                       color: Colors.grey.withOpacity(0.1),
                       strokeWidth: 0.5,
                     ),
+                    checkToShowVerticalLine: (value) {
+                      return desiredValues.contains(value);
+                    },
                   ),
                   titlesData: FlTitlesData(
                     show: true,
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
+                        interval: widget.maxX /
+                            5, // Adjust interval to reduce overlapping
                         reservedSize: 46, // Adjusted size for better visibility
                         getTitlesWidget: (double value, TitleMeta meta) {
                           return Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
+                            padding:
+                                const EdgeInsets.only(top: 1.0, right: 2.0),
                             child: SideTitleWidget(
                               axisSide: meta.axisSide,
                               child: Text(
-                                value.toInt().toString(),
+                                // value.toInt().toString(),
+                                _formatNumber(value),
                                 style: const TextStyle(
                                   fontSize: 12,
                                 ),
@@ -90,7 +128,7 @@ class _MoodSleepChartState extends State<MoodSleepChart> {
                     rightTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        reservedSize: 36,
+                        reservedSize: 20,
                         getTitlesWidget: (double value, TitleMeta meta) {
                           return Padding(
                             padding: const EdgeInsets.only(top: 1.0),
