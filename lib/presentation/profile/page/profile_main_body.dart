@@ -9,7 +9,7 @@ import 'package:teja/presentation/profile/ui/profile_mood_sleep_chart.dart';
 import 'package:teja/presentation/profile/ui/profile_mood_yearly_heatmap.dart';
 
 class MainBody extends StatelessWidget {
-  const MainBody({super.key});
+  const MainBody();
 
   @override
   Widget build(BuildContext context) {
@@ -17,13 +17,19 @@ class MainBody extends StatelessWidget {
       converter: (store) => _ViewModel.fromStore(store),
       builder: (context, vm) => vm.isLoading
           ? const Center(child: CircularProgressIndicator())
-          : ReorderableListView(
-              scrollController: ScrollController(),
-              onReorder: vm.updateChartSequence,
-              children: vm.chartSequence
-                  .map((chart) => _buildChart(context, chart))
-                  .toList(),
-            ),
+          : _buildReorderableList(vm, context),
+    );
+  }
+
+  Widget _buildReorderableList(_ViewModel vm, BuildContext context) {
+    return ReorderableListView.builder(
+      scrollController: ScrollController(), // Adjust initialization as needed
+      onReorder: vm.updateChartSequence,
+      // children:
+      //     vm.chartSequence.map((chart) => _buildChart(context, chart)).toList(),
+      itemCount: vm.chartSequence.length,
+      itemBuilder: (context, index) =>
+          _buildChart(context, vm.chartSequence[index]),
     );
   }
 
@@ -42,8 +48,10 @@ class MainBody extends StatelessWidget {
             key: Key('ProfileMoodActivityScreen'));
       default:
         return Container(
-          key: const Key("test"),
-        ); // Default or error handling widget
+          key: Key('defaultChart'),
+          child:
+              const Text('Unknown Chart'), // Placeholder for unknown chart type
+        );
     }
   }
 }
