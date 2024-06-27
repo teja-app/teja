@@ -52,6 +52,7 @@ class MainBody extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
+      useSafeArea: true,
       builder: (BuildContext context) {
         return StoreConnector<AppState, List<String>>(
           converter: (store) => store.state.profilePageState.chartSequence,
