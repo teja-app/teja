@@ -9,6 +9,8 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:redux_saga/redux_saga.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
+import 'package:teja/domain/redux/mood/list/actions.dart';
 import 'package:teja/domain/redux/sync/actions.dart';
 import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart';
 import 'package:teja/infrastructure/database/isar_collections/mood_log.dart';
@@ -17,6 +19,63 @@ class SyncSaga {
   Iterable<void> saga() sync* {
     yield TakeEvery(_exportJSON, pattern: ExportJSONAction);
     yield TakeEvery(_importJSON, pattern: ImportJSONAction);
+    yield TakeEvery(_deleteAccount, pattern: DeleteAccountAction);
+  }
+
+  _deleteAccount({required DeleteAccountAction action}) sync* {
+    yield Try(() sync* {
+      var isarResult = Result<Isar>();
+      yield GetContext('isar', result: isarResult);
+      Isar isar = isarResult.value!;
+
+      // Simulate account deletion with an async operation
+      var deleteAccountResult = Result<bool>();
+      yield Call(_performAccountDeletion, args: [isar], result: deleteAccountResult);
+
+      if (deleteAccountResult.value == true) {
+        yield Put(const DeleteAccountActionSuccess());
+        yield Put(ResetMoodLogsListAction());
+        yield Put(ResetJournalEntriesListAction());
+      } else {
+        yield Put(const DeleteAccountActionFailed('Account deletion failed'));
+      }
+    }, Catch: (e, s) sync* {
+      yield Put(DeleteAccountActionFailed(e.toString()));
+    });
+  }
+
+  Future<bool> _performAccountDeletion(Isar isar) async {
+    try {
+      // Delete moods
+      await isar.writeTxn(() async {
+        await isar.moodLogs.clear();
+      });
+
+      // Delete journals
+      await isar.writeTxn(() async {
+        await isar.journalEntrys.clear();
+      });
+
+      // Delete files
+      final documentsDirectory = await getApplicationDocumentsDirectory();
+      final files = documentsDirectory.listSync().where((item) {
+        // Exclude directories and system files
+        return item is File &&
+            !item.path.contains('.isar') &&
+            !item.path.contains('.hive') &&
+            !item.path.contains('.lock');
+      }).toList();
+
+      for (var file in files) {
+        await file.delete();
+      }
+
+      // Return true if deletion was successful
+      return true;
+    } catch (e) {
+      // Handle any errors that occur during the deletion process
+      return false;
+    }
   }
 
   _exportJSON({required ExportJSONAction action}) sync* {

@@ -83,6 +83,10 @@ class SettingsPage extends StatelessWidget {
                     title: const Text('Data Sync - Export & Import'),
                     onTap: () => GoRouter.of(context).push('/settings/sync'),
                   ),
+                  ListTile(
+                    title: const Text('Advanced'),
+                    onTap: () => GoRouter.of(context).push('/settings/advanced'),
+                  ),
                   const Divider(),
                   ListTile(
                     title: const Text('Lock the app'),
