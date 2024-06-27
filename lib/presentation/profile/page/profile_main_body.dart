@@ -17,20 +17,88 @@ class MainBody extends StatelessWidget {
       converter: (store) => _ViewModel.fromStore(store),
       builder: (context, vm) => vm.isLoading
           ? const Center(child: CircularProgressIndicator())
-          : _buildReorderableList(vm, context),
+          : _buildBody(vm, context),
     );
   }
 
-  Widget _buildReorderableList(_ViewModel vm, BuildContext context) {
-    return ReorderableListView.builder(
-      scrollController: ScrollController(), // Adjust initialization as needed
-      onReorder: vm.updateChartSequence,
-      // children:
-      //     vm.chartSequence.map((chart) => _buildChart(context, chart)).toList(),
-      itemCount: vm.chartSequence.length,
-      itemBuilder: (context, index) =>
-          _buildChart(context, vm.chartSequence[index]),
+  Widget _buildBody(_ViewModel vm, BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          ...vm.chartSequence
+              .map((chart) => _buildChart(context, chart))
+              .toList(),
+          const SizedBox(height: 20), // Add some space before the button
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: TextButton(
+              onPressed: () => _showReorderBottomSheet(context, vm),
+              style: TextButton.styleFrom(
+                // primary: Theme.of(context).primaryColor,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+              ),
+              child: const Text('Personalise'),
+            ),
+          ),
+        ],
+      ),
     );
+  }
+
+  void _showReorderBottomSheet(BuildContext context, _ViewModel vm) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).colorScheme.background,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (BuildContext context) {
+        return StoreConnector<AppState, List<String>>(
+          converter: (store) => store.state.profilePageState.chartSequence,
+          builder: (context, chartSequence) {
+            return Theme(
+              data: Theme.of(context).copyWith(
+                textTheme: Theme.of(context).textTheme.apply(
+                      bodyColor: Theme.of(context).textTheme.bodyLarge?.color,
+                      displayColor:
+                          Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
+                iconTheme: IconThemeData(
+                  color: Theme.of(context).iconTheme.color,
+                ),
+              ),
+              child: ReorderableListView(
+                onReorder: (oldIndex, newIndex) {
+                  vm.updateChartSequence(oldIndex, newIndex);
+                },
+                children: chartSequence.map((chart) {
+                  return ListTile(
+                    key: Key(chart),
+                    title: Text(_getChartDisplayName(chart)),
+                    leading: const Icon(Icons.drag_handle),
+                  );
+                }).toList(),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  String _getChartDisplayName(String chartName) {
+    switch (chartName) {
+      case 'MoodSleepChartScreen':
+        return 'Mood Sleep Chart';
+      case 'ProfileSleepHeatMapScreen':
+        return 'Sleep Heat Map';
+      case 'ProfileMoodYearlyHeatMapScreen':
+        return 'Mood Yearly Heat Map';
+      case 'ProfileMoodActivityScreen':
+        return 'Mood Activity Chart';
+      default:
+        return 'Unknown Chart';
+    }
   }
 
   Widget _buildChart(BuildContext context, String chartName) {
@@ -49,8 +117,7 @@ class MainBody extends StatelessWidget {
       default:
         return Container(
           key: Key('defaultChart'),
-          child:
-              const Text('Unknown Chart'), // Placeholder for unknown chart type
+          child: const Text('Unknown Chart'),
         );
     }
   }
@@ -84,3 +151,5 @@ class _ViewModel {
     );
   }
 }
+
+// _ViewModel class remains the same
