@@ -38,4 +38,8 @@ class SecureStorage {
   Future<void> deleteRecoveryCode() async {
     await _storage.delete(key: 'recovery_code');
   }
+
+  Future<void> deleteAll() async {
+    await _storage.deleteAll();
+  }
 }
