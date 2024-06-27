@@ -219,9 +219,11 @@ class MoodDetailPageState extends State<MoodDetailPage> {
         return Scaffold(
           appBar: AppBar(
             elevation: 0,
-            title: MoodEntryWidget(
-              timestamp: moodDetailPage.selectedMoodLog!.timestamp,
-            ),
+            title: moodDetailPage.selectedMoodLog?.ai?.title != null
+                ? Text(moodDetailPage.selectedMoodLog?.ai?.title ?? "")
+                : MoodEntryWidget(
+                    timestamp: moodDetailPage.selectedMoodLog!.timestamp,
+                  ),
             actions: [
               SettingsPopupMenu(
                 moodId: widget.moodId,
