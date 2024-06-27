@@ -30,9 +30,14 @@ class Checklist extends StatelessWidget {
 
         return Stack(
           children: [
-            RepaintBoundary(
-              key: globalKey,
-              child: child,
+            ClipRect(
+              child: RepaintBoundary(
+                key: globalKey,
+                child: Container(
+                  color: Theme.of(context).colorScheme.background,
+                  child: child,
+                ),
+              ),
             ),
             Positioned(
               top: 8,
