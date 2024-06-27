@@ -8,15 +8,16 @@ import 'package:teja/domain/redux/permission/permissions_constants.dart';
 import 'package:teja/presentation/profile/ui/mood_sleep_chart.dart';
 import 'package:teja/presentation/profile/ui/checklist.dart';
 
-class MoodSleepChartScreen extends StatefulWidget {
-  const MoodSleepChartScreen({super.key});
+class MoodActivityChartScreen extends StatefulWidget {
+  const MoodActivityChartScreen({super.key});
 
   @override
-  State<MoodSleepChartScreen> createState() => _MoodSleepChartScreenState();
+  State<MoodActivityChartScreen> createState() =>
+      _MoodActivityChartScreenState();
 }
 
-class _MoodSleepChartScreenState extends State<MoodSleepChartScreen> {
-  late MoodSleepChartViewModel viewModel;
+class _MoodActivityChartScreenState extends State<MoodActivityChartScreen> {
+  late MoodActivityChartViewModel viewModel;
 
   @override
   void initState() {
@@ -32,9 +33,9 @@ class _MoodSleepChartScreenState extends State<MoodSleepChartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return StoreConnector<AppState, MoodSleepChartViewModel>(
+    return StoreConnector<AppState, MoodActivityChartViewModel>(
       converter: (store) {
-        final viewModel = MoodSleepChartViewModel.fromStore(store);
+        final viewModel = MoodActivityChartViewModel.fromStore(store);
         return viewModel;
       },
       builder: (context, viewModel) {
@@ -46,8 +47,8 @@ class _MoodSleepChartScreenState extends State<MoodSleepChartScreen> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxHeight: 400),
             child: MoodSleepChart(
-              key: const Key('MoodSleepChartScreen'),
-              title: "Mood & Sleep",
+              key: const Key('moodSleepChart'),
+              title: "Mood & Activity",
               scatterData: viewModel.scatterData,
               maxX: viewModel.scatterData.isNotEmpty
                   ? viewModel.scatterData.map((spot) => spot.x).reduce(
@@ -70,21 +71,21 @@ class _MoodSleepChartScreenState extends State<MoodSleepChartScreen> {
   }
 }
 
-class MoodSleepChartViewModel {
+class MoodActivityChartViewModel {
   final bool isLoading;
   List<ScatterSpot> scatterData;
 
-  MoodSleepChartViewModel({
+  MoodActivityChartViewModel({
     required this.isLoading,
     required this.scatterData,
   });
 
-  factory MoodSleepChartViewModel.fromStore(Store<AppState> store) {
+  factory MoodActivityChartViewModel.fromStore(Store<AppState> store) {
     final state = store.state.monthlyMoodReportState;
 
-    return MoodSleepChartViewModel(
+    return MoodActivityChartViewModel(
       isLoading: state.isLoading,
-      scatterData: state.scatterSpots,
+      scatterData: state.scatterStepSpots,
     );
   }
 }

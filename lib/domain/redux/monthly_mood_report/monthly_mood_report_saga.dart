@@ -2,6 +2,7 @@ import 'package:isar/isar.dart';
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/redux/monthly_mood_report/monthly_mood_report_actions.dart';
 import 'package:teja/domain/redux/permission/permission_actions.dart';
+import 'package:teja/domain/redux/permission/permissions_constants.dart';
 import 'package:teja/infrastructure/repositories/mood_log_repository.dart';
 import 'package:health/health.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -70,16 +71,33 @@ class MonthlyMoodReportSaga {
 
       print("scatterSpots: $scatterSpots");
       if (scatterSpots == null) {
-        yield Put(RemovePermissionAction("SLEEP"));
+        yield Put(RemovePermissionAction(SLEEP));
         throw Exception("Failed to calculate scatter spots");
       }
 
       if (scatterSpots.isNotEmpty) {
-        yield Put(AddPermissionAction("SLEEP"));
+        yield Put(AddPermissionAction(SLEEP));
+      }
+
+      var scatterStepSpotsResult = Result<List<ScatterSpot>>();
+      yield Call(_fetchStepsScatterSpots,
+          args: [moodData], result: scatterStepSpotsResult);
+
+      final scatterStepSpots = scatterStepSpotsResult.value;
+
+      print("scatterStepSpots: $scatterStepSpots");
+      if (scatterStepSpots == null) {
+        yield Put(RemovePermissionAction(ACTIVITY_MONTHLY));
+        throw Exception("Failed to calculate scatter spots");
+      }
+
+      if (scatterStepSpots.isNotEmpty) {
+        yield Put(AddPermissionAction(ACTIVITY_MONTHLY));
       }
 
       // Dispatch success action with the calculated scatter spots
-      yield Put(MonthlyMoodReportFetchedSuccessAction(moodData, scatterSpots));
+      yield Put(MonthlyMoodReportFetchedSuccessAction(
+          moodData, scatterSpots, scatterStepSpots));
     }, Catch: (e, s) sync* {
       print("Error fetching monthly mood report: $e");
       yield Put(MonthlyMoodReportFetchFailedAction(e.toString()));
@@ -91,11 +109,23 @@ class MonthlyMoodReportSaga {
     return await _calculateScatterSpots(moodData);
   }
 
+  static Future<List<ScatterSpot>> _fetchStepsScatterSpots(
+      Map<DateTime, double> moodData) async {
+    return await _calculateStepScatterSpots(moodData);
+  }
+
   static Future<List<ScatterSpot>> _calculateScatterSpots(
       Map<DateTime, double> moodData) async {
     List<DateTime> dates = moodData.keys.toList();
-    final sleepData = await HealthDataFetcher.fetchHealthData(dates);
+    final sleepData = await HealthDataFetcher.fetchSleepData(dates);
     return _mapToScatterSpots(moodData, sleepData);
+  }
+
+  static Future<List<ScatterSpot>> _calculateStepScatterSpots(
+      Map<DateTime, double> moodData) async {
+    List<DateTime> dates = moodData.keys.toList();
+    final stepData = await HealthDataFetcher.fetchStepsData(dates);
+    return _mapToStepScatterSpots(moodData, stepData);
   }
 
   static List<ScatterSpot> _mapToScatterSpots(
@@ -138,6 +168,46 @@ class MonthlyMoodReportSaga {
         final sleepValue = sleepMap[sleepDateOnly]!;
         scatterSpots.add(ScatterSpot(
           sleepValue,
+          moodValue,
+          radius: calculateRadius(3),
+          color: Colors.blue.withOpacity(0.3),
+        ));
+      }
+    });
+
+    return scatterSpots;
+  }
+
+  static List<ScatterSpot> _mapToStepScatterSpots(
+      Map<DateTime, double> moodData, List<HealthDataPoint> stepData) {
+    final Map<DateTime, double> stepMap = {};
+
+    for (final dataPoint in stepData) {
+      final date = DateTime(dataPoint.dateFrom.year, dataPoint.dateFrom.month,
+          dataPoint.dateFrom.day);
+      final value = dataPoint.value;
+      double stepsCount;
+
+      final valueString = value.toString();
+      if (valueString.contains('numericValue')) {
+        final numericValueString = valueString.split('numericValue:')[1].trim();
+        stepsCount = double.parse(numericValueString);
+      } else {
+        continue;
+      }
+
+      stepMap[date] = stepsCount;
+    }
+
+    final List<ScatterSpot> scatterSpots = [];
+    moodData.forEach((moodDate, moodValue) {
+      final stepsDate = moodDate.subtract(const Duration(days: 1));
+      final stepsDateOnly =
+          DateTime(stepsDate.year, stepsDate.month, stepsDate.day);
+      if (stepMap.containsKey(stepsDateOnly)) {
+        final stepsCount = stepMap[stepsDateOnly]!;
+        scatterSpots.add(ScatterSpot(
+          stepsCount,
           moodValue,
           radius: calculateRadius(3),
           color: Colors.blue.withOpacity(0.3),

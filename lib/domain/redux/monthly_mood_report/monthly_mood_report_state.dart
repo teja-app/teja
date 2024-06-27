@@ -7,12 +7,14 @@ class MonthlyMoodReportState {
   final Map<DateTime, double> currentMonthAverageMoodRatings;
   final String? errorMessage;
   final List<ScatterSpot> scatterSpots;
+  final List<ScatterSpot> scatterStepSpots;
 
   const MonthlyMoodReportState({
     this.isLoading = false,
     this.currentMonthAverageMoodRatings = const {},
     this.errorMessage,
     this.scatterSpots = const [],
+    this.scatterStepSpots = const [],
   });
 
   factory MonthlyMoodReportState.initial() {
@@ -21,6 +23,7 @@ class MonthlyMoodReportState {
       currentMonthAverageMoodRatings: {},
       errorMessage: null,
       scatterSpots: [],
+      scatterStepSpots: [],
     );
   }
 
@@ -29,7 +32,7 @@ class MonthlyMoodReportState {
     Map<DateTime, double>? currentMonthAverageMoodRatings,
     String? errorMessage,
     List<ScatterSpot>? scatterSpots,
-    List<Map<String, bool>>? checklist,
+    List<ScatterSpot>? scatterStepSpots,
   }) {
     return MonthlyMoodReportState(
       isLoading: isLoading ?? this.isLoading,
@@ -37,6 +40,7 @@ class MonthlyMoodReportState {
           currentMonthAverageMoodRatings ?? this.currentMonthAverageMoodRatings,
       errorMessage: errorMessage ?? this.errorMessage,
       scatterSpots: scatterSpots ?? this.scatterSpots,
+      scatterStepSpots: scatterStepSpots ?? this.scatterStepSpots,
     );
   }
 }

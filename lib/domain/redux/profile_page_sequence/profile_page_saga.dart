@@ -13,14 +13,15 @@ class ProfilePageSaga {
       final prefs = Result<SharedPreferences>();
       yield Call(SharedPreferences.getInstance, result: prefs);
 
+      const defaultSequence = [
+        'MoodSleepChartScreen',
+        'ProfileSleepHeatMapScreen',
+        'ProfileMoodYearlyHeatMapScreen',
+        'ProfileMoodActivityScreen'
+      ];
       final savedSequence = prefs.value?.getStringList('chartSequence');
-      if (savedSequence == null) {
+      if (savedSequence == null || savedSequence != defaultSequence) {
         // Default sequence if nothing is saved
-        const defaultSequence = [
-          'MoodSleepChartScreen',
-          'ProfileSleepHeatMapScreen',
-          // 'ProfileMoodYearlyHeatMapScreen',
-        ];
         yield Put(ChartSequenceFetchSuccessAction(defaultSequence));
       } else {
         yield Put(ChartSequenceFetchSuccessAction(savedSequence));

@@ -21,10 +21,12 @@ class MonthlyMoodReportFetchInProgressAction {}
 class MonthlyMoodReportFetchedSuccessAction {
   final Map<DateTime, double> currentMonthAverageMoodRatings;
   final List<ScatterSpot> scatterSpots;
+  final List<ScatterSpot> scatterStepSpots;
 
   const MonthlyMoodReportFetchedSuccessAction(
     this.currentMonthAverageMoodRatings,
     this.scatterSpots,
+    this.scatterStepSpots,
   );
 }
 
