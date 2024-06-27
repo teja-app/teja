@@ -3,13 +3,15 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/permission/permissions_constants.dart';
+import 'package:teja/presentation/mood/share/ui/Share_option_popup.dart';
 import 'package:teja/presentation/profile/ui/data_check_overlay.dart';
 
 class Checklist extends StatelessWidget {
   final Widget child;
   final String componentName;
+  final GlobalKey globalKey = GlobalKey();
 
-  const Checklist({
+  Checklist({
     Key? key,
     required this.child,
     required this.componentName,
@@ -28,7 +30,15 @@ class Checklist extends StatelessWidget {
 
         return Stack(
           children: [
-            child,
+            RepaintBoundary(
+              key: globalKey,
+              child: child,
+            ),
+            Positioned(
+              top: 8,
+              right: 8,
+              child: ShareOptionsPopup(globalKey: globalKey),
+            ),
             if (!allPermissionsGranted)
               Positioned.fill(
                 child: DataCheckOverlay(
@@ -43,6 +53,7 @@ class Checklist extends StatelessWidget {
   }
 }
 
+// // ChecklistViewModel remains the same
 class ChecklistViewModel {
   final List<String> hasPermissions;
   final List<String> requiredPermissions;
