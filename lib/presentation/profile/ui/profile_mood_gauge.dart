@@ -71,14 +71,13 @@ class MoodSemiCircleChartViewModel {
   factory MoodSemiCircleChartViewModel.fromStore(Store<AppState> store) {
     final state = store.state.monthlyMoodReportState;
 
-    double averageMood =
-        state.currentMonthAverageMoodRatings.values.reduce((a, b) => a + b) /
-            state.currentMonthAverageMoodRatings.length;
+    double averageMood = 0;
+    if (state.currentMonthAverageMoodRatings.isNotEmpty) {
+      averageMood =
+          state.currentMonthAverageMoodRatings.values.reduce((a, b) => a + b) /
+              state.currentMonthAverageMoodRatings.length;
+    }
 
-    // <Map<DateTime, double> moodCounts = {};
-    // for (final mood in state.currentMonthAverageMoodRatings.values) {
-    //   moodCounts[mood] = moodCounts[mood] == null ? 1 : moodCounts[mood]! + 1;
-    // }
     Map<int, int> moodCounts = {};
     for (final mood in state.currentMonthAverageMoodRatings.values) {
       moodCounts[mood.toInt()] =
