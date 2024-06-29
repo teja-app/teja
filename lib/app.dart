@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'package:flutter_redux/flutter_redux.dart';
 import 'package:teja/router.dart';
-import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/theme/dark_theme.dart';
 import 'package:teja/theme/light_theme.dart';
 

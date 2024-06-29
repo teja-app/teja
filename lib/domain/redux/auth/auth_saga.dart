@@ -18,7 +18,7 @@ class AuthSaga {
   Iterable<void> _register({required RegisterAction action}) sync* {
     yield Try(() sync* {
       yield Put(AuthInProgressAction());
-      RegisterAction registerAction = action as RegisterAction;
+      RegisterAction registerAction = action;
       yield Call(_authService.register, args: [registerAction.mnemonic]);
       yield Put(RegisterSuccessAction(registerAction.mnemonic)); // Pass mnemonic here
 

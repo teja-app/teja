@@ -2,13 +2,11 @@ import 'package:logger/logger.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class SentryLogger extends Logger {
-  final SentryClient _sentry = SentryClient(SentryOptions(dsn: 'YOUR_DSN'));
-
   @override
   void log(
     Level level,
-    message, {
-    error,
+    dynamic message, {
+    dynamic error,
     StackTrace? stackTrace,
     DateTime? time,
   }) {
@@ -24,7 +22,7 @@ class SentryLogger extends Logger {
     if (level == Level.info || level == Level.trace) {
       Sentry.addBreadcrumb(Breadcrumb(message: message.toString()));
     } else {
-      _sentry.captureMessage(
+      Sentry.captureMessage(
         message.toString(),
         level: _convertLogLevelToSentryLevel(level),
       );
@@ -34,7 +32,6 @@ class SentryLogger extends Logger {
   SentryLevel _convertLogLevelToSentryLevel(Level level) {
     switch (level) {
       case Level.trace:
-        return SentryLevel.debug;
       case Level.debug:
         return SentryLevel.debug;
       case Level.info:
@@ -42,6 +39,7 @@ class SentryLogger extends Logger {
       case Level.warning:
         return SentryLevel.warning;
       case Level.error:
+      case Level.fatal:
         return SentryLevel.error;
       default:
         return SentryLevel.info;

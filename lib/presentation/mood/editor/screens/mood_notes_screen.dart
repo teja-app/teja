@@ -134,7 +134,7 @@ class NotesScreenState extends State<NotesScreen> {
                     children: [
                       Text(
                         'Notes',
-                        style: Theme.of(context).textTheme.headline6,
+                        style: Theme.of(context).textTheme.headlineSmall,
                       ),
                       const SizedBox(height: 10),
                       SizedBox(

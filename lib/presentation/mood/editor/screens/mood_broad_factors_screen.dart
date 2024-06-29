@@ -46,7 +46,7 @@ class BroadFactorsScreenState extends State<BroadFactorsScreen> {
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Text(factor.title, style: textTheme.headline6),
+                          child: Text(factor.title, style: textTheme.headlineSmall),
                         ),
                         Wrap(
                           spacing: 1.0,
