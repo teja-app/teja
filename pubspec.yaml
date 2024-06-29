@@ -100,6 +100,7 @@ dependencies:
   flutter_heatmap_calendar: ^1.0.5
   flutter_markdown: ^0.7.2
   reorderables: ^0.4.0
+  syncfusion_flutter_gauges: ^20.2.47
 
 dev_dependencies:
   flutter_test:

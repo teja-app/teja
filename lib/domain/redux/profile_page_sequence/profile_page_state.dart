@@ -12,7 +12,8 @@ class ProfilePageState {
       'MoodSleepChartScreen',
       'ProfileSleepHeatMapScreen',
       'ProfileMoodYearlyHeatMapScreen',
-      'ProfileMoodActivityScreen'
+      'ProfileMoodActivityScreen',
+      'MoodSemiCircleChartScreen',
     ],
     this.errorMessage,
   });
@@ -24,7 +25,8 @@ class ProfilePageState {
         'MoodSleepChartScreen',
         'ProfileSleepHeatMapScreen',
         'ProfileMoodYearlyHeatMapScreen',
-        'ProfileMoodActivityScreen'
+        'ProfileMoodActivityScreen',
+        'MoodSemiCircleChartScreen',
       ],
       errorMessage: null,
     );

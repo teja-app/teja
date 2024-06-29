@@ -5,6 +5,7 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/profile_page_sequence/profile_page_actions.dart';
 import 'package:teja/presentation/profile/ui/profile_heat_map.dart';
 import 'package:teja/presentation/profile/ui/profile_mood_activity_screen.dart';
+import 'package:teja/presentation/profile/ui/profile_mood_gauge.dart';
 import 'package:teja/presentation/profile/ui/profile_mood_sleep_chart.dart';
 import 'package:teja/presentation/profile/ui/profile_mood_yearly_heatmap.dart';
 
@@ -94,9 +95,11 @@ class MainBody extends StatelessWidget {
       case 'ProfileSleepHeatMapScreen':
         return 'Sleep Heat Map';
       case 'ProfileMoodYearlyHeatMapScreen':
-        return 'Mood Yearly Heat Map';
+        return 'Mood Heat Map';
       case 'ProfileMoodActivityScreen':
         return 'Mood Activity Chart';
+      case 'MoodSemiCircleChartScreen':
+        return 'Mood Gauge Chart';
       default:
         return 'Unknown Chart';
     }
@@ -115,6 +118,9 @@ class MainBody extends StatelessWidget {
       case 'ProfileMoodActivityScreen':
         return const MoodActivityChartScreen(
             key: Key('ProfileMoodActivityScreen'));
+      case 'MoodSemiCircleChartScreen':
+        return const MoodSemiCircleChartScreen(
+            key: Key('MoodSemiCircleChartScreen'));
       default:
         return Container(
           key: Key('defaultChart'),
