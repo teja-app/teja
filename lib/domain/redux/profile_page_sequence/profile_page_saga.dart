@@ -17,7 +17,8 @@ class ProfilePageSaga {
         'MoodSleepChartScreen',
         'ProfileSleepHeatMapScreen',
         'ProfileMoodYearlyHeatMapScreen',
-        'ProfileMoodActivityScreen'
+        'ProfileMoodActivityScreen',
+        'MoodSemiCircleChartScreen',
       ];
       final savedSequence = prefs.value?.getStringList('chartSequence');
       if (savedSequence == null || savedSequence != defaultSequence) {
