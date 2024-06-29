@@ -1,7 +1,7 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
@@ -37,10 +37,13 @@ Future<void> main() async {
   await dotenv.load(fileName: '.env.dev');
   final String? sentryDsnUrl = dotenv.env['SENTRY_DSN_URL'];
   // Initialize Isar
+  print("Loaded the ENV files");
   final Isar isarInstance = await openIsar();
+  print("Database Instance is ready");
 
   // Initialize NotificationService
   await notificationService.initialize(); // Initialize notifications
+  print("Notification Service Connected");
 
   if (Platform.isIOS) {
     // Request notification permissions on iOS
@@ -48,6 +51,7 @@ Future<void> main() async {
   }
   // Initialize the store here
   final store = await createStore(isarInstance);
+  print("Connected to local data store");
 
   await Hive.initFlutter();
   Hive.registerAdapter(FeaturedJournalTemplateAdapter());
@@ -55,18 +59,29 @@ Future<void> main() async {
   await Hive.openBox(FeaturedJournalTemplate.boxKey);
   await Hive.openBox(JournalCategory.boxKey);
 
+  print("Connected Hive");
+  // await SentryFlutter.init(
+  //   (options) {
+  //     options.dsn = sentryDsnUrl;
+  //     options.tracesSampleRate = 1.0;
+  //     options.attachScreenshot = true;
+  //     options.attachViewHierarchy = true;
+  //   },
+  //   appRunner: () {
+  //     logger.i('SentryFlutter initialized successfully.');x
+  //     runApp(MyApp(store: store));
+  //   },
+  // );
   await SentryFlutter.init(
     (options) {
       options.dsn = sentryDsnUrl;
-      options.tracesSampleRate = 1.0;
-      options.attachScreenshot = true;
-      options.attachViewHierarchy = true;
     },
-    appRunner: () {
-      logger.i('SentryFlutter initialized successfully.');
-      runApp(MyApp(store: store));
-    },
+    // Init your App.
+    appRunner: () => runApp(MyApp(
+      store: store,
+    )),
   );
+  print("SentryFlutter Initialized");
 }
 
 Future<Isar> openIsar() async {
@@ -95,6 +110,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("Main App Build Opened");
     return StoreProvider(
       store: store,
       child: MaterialApp(

@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:logger/logger.dart';
 import 'package:teja/constants.dart';
 import 'package:teja/shared/helpers/logger.dart';
 
@@ -15,14 +14,12 @@ class ApiHelper {
   ) async {
     try {
       final response = await requestFunction();
-      logger.log(
-        Level.info,
+      logger.i(
         'Request succeeded',
       );
       return response;
     } catch (e) {
-      logger.log(
-        Level.error,
+      logger.e(
         'Request failed',
         error: e,
       );

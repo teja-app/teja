@@ -70,7 +70,7 @@ class CategoryDetailPage extends StatelessWidget {
                       bottom: 16.0,
                       child: Text(
                         vm.category!.name,
-                        style: Theme.of(context).textTheme.headline5?.copyWith(
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                               color: Colors.white,
                             ),
                       ),

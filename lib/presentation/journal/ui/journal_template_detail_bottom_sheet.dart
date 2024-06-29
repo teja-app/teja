@@ -63,7 +63,7 @@ class JournalTemplateDetailBottomSheet extends StatelessWidget {
           ),
           if (template.description.isNotEmpty) ...[
             const SizedBox(height: 10),
-            Text(template.description, style: textTheme.bodyText2),
+            Text(template.description, style: textTheme.bodyMedium),
           ],
           const SizedBox(height: 20),
           Expanded(

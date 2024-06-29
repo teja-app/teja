@@ -33,7 +33,7 @@ class MonthItem extends StatelessWidget {
       if (color != null) {
         baseColor = color!;
       } else {
-        baseColor = colorScheme.onBackground;
+        baseColor = colorScheme.onSurface;
       }
     }
 
