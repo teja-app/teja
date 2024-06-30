@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:icons_flutter/icons_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/profile_page_sequence/profile_page_actions.dart';
@@ -8,6 +9,7 @@ import 'package:teja/presentation/profile/ui/profile_mood_activity_screen.dart';
 import 'package:teja/presentation/profile/ui/profile_mood_gauge.dart';
 import 'package:teja/presentation/profile/ui/profile_mood_sleep_chart.dart';
 import 'package:teja/presentation/profile/ui/profile_mood_yearly_heatmap.dart';
+import 'package:teja/shared/common/button.dart';
 
 class MainBody extends StatelessWidget {
   const MainBody();
@@ -16,9 +18,8 @@ class MainBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return StoreConnector<AppState, _ViewModel>(
       converter: (store) => _ViewModel.fromStore(store),
-      builder: (context, vm) => vm.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _buildBody(vm, context),
+      builder: (context, vm) =>
+          vm.isLoading ? const Center(child: CircularProgressIndicator()) : _buildBody(vm, context),
     );
   }
 
@@ -26,19 +27,14 @@ class MainBody extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
-          ...vm.chartSequence
-              .map((chart) => _buildChart(context, chart))
-              .toList(),
+          ...vm.chartSequence.map((chart) => _buildChart(context, chart)).toList(),
           const SizedBox(height: 20), // Add some space before the button
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: TextButton(
+            child: Button(
               onPressed: () => _showReorderBottomSheet(context, vm),
-              style: TextButton.styleFrom(
-                // primary: Theme.of(context).primaryColor,
-                backgroundColor: Theme.of(context).colorScheme.secondary,
-              ),
-              child: const Text('Personalise'),
+              icon: AntDesign.setting,
+              text: 'Personalise',
             ),
           ),
         ],
@@ -62,8 +58,7 @@ class MainBody extends StatelessWidget {
               data: Theme.of(context).copyWith(
                 textTheme: Theme.of(context).textTheme.apply(
                       bodyColor: Theme.of(context).textTheme.bodyLarge?.color,
-                      displayColor:
-                          Theme.of(context).textTheme.bodyLarge?.color,
+                      displayColor: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                 iconTheme: IconThemeData(
                   color: Theme.of(context).iconTheme.color,
@@ -110,17 +105,13 @@ class MainBody extends StatelessWidget {
       case 'MoodSleepChartScreen':
         return const MoodSleepChartScreen(key: Key('MoodSleepChartScreen'));
       case 'ProfileSleepHeatMapScreen':
-        return const ProfileSleepHeatMapScreen(
-            key: Key('ProfileSleepHeatMapScreen'));
+        return const ProfileSleepHeatMapScreen(key: Key('ProfileSleepHeatMapScreen'));
       case 'ProfileMoodYearlyHeatMapScreen':
-        return const ProfileMoodYearlyHeatMapScreen(
-            key: Key('ProfileMoodYearlyHeatMapScreen'));
+        return const ProfileMoodYearlyHeatMapScreen(key: Key('ProfileMoodYearlyHeatMapScreen'));
       case 'ProfileMoodActivityScreen':
-        return const MoodActivityChartScreen(
-            key: Key('ProfileMoodActivityScreen'));
+        return const MoodActivityChartScreen(key: Key('ProfileMoodActivityScreen'));
       case 'MoodSemiCircleChartScreen':
-        return const MoodSemiCircleChartScreen(
-            key: Key('MoodSemiCircleChartScreen'));
+        return const MoodSemiCircleChartScreen(key: Key('MoodSemiCircleChartScreen'));
       default:
         return Container(
           key: Key('defaultChart'),
@@ -146,8 +137,7 @@ class _ViewModel {
       isLoading: store.state.profilePageState.isLoading,
       chartSequence: store.state.profilePageState.chartSequence,
       updateChartSequence: (oldIndex, newIndex) {
-        final updatedSequence =
-            List<String>.from(store.state.profilePageState.chartSequence);
+        final updatedSequence = List<String>.from(store.state.profilePageState.chartSequence);
         if (oldIndex < newIndex) {
           newIndex -= 1;
         }
