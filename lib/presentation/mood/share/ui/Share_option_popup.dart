@@ -18,10 +18,10 @@ class ShareOptionsPopup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<String>(
-      icon: const Icon(
+      icon: Icon(
         AntDesign.ellipsis1,
         size: 16,
-        color: Colors.white,
+        color: Theme.of(context).textTheme.bodySmall?.color,
       ),
       onSelected: (String result) {
         _shareMoodAsImage(result, globalKey, context);

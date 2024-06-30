@@ -20,6 +20,11 @@ class MoodGaugeChart extends StatelessWidget {
   Widget build(BuildContext context) {
     List<GaugeRange> dynamicRanges = _calculateDynamicRanges();
 
+    int totalMoodCount = moodCounts.values.fold(0, (sum, count) => sum + count);
+
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final markerColor = isDarkMode ? Colors.white : Colors.black;
+
     return FlexibleHeightBox(
       gridWidth: 6, // Increase chart width to 6 (adjust as needed)
       child: Column(
@@ -66,12 +71,32 @@ class MoodGaugeChart extends StatelessWidget {
                               colors: dynamicRanges
                                   .map((range) => range.color!)
                                   .toList(),
-                              stops: dynamicRanges
-                                  .map((range) => range.startValue / 5)
-                                  .toList(),
                             ),
                           ),
+                          pointers: [
+                            MarkerPointer(
+                              value: averageMood,
+                              markerType: MarkerType.invertedTriangle,
+                              color: markerColor,
+                              markerHeight: 20,
+                              markerWidth: 20,
+                              enableAnimation: true,
+                              markerOffset: -20,
+                            ),
+                          ],
                           annotations: [
+                            GaugeAnnotation(
+                              widget: Text(
+                                '$totalMoodCount',
+                                style: TextStyle(
+                                  fontSize: 36,
+                                  fontWeight: FontWeight.bold,
+                                  color: markerColor,
+                                ),
+                              ),
+                              angle: 90,
+                              positionFactor: 0.0,
+                            ),
                             GaugeAnnotation(
                               widget: Row(
                                 mainAxisAlignment:
@@ -105,6 +130,11 @@ class MoodGaugeChart extends StatelessWidget {
     // Calculate total count of moods
     int totalCount = moodCounts.values.fold(0, (sum, count) => sum + count);
 
+    // Avoid division by zero
+    if (totalCount == 0) {
+      return ranges;
+    }
+
     // Calculate percentages for each mood segment
     double percentage0to1 = (moodCounts[1] ?? 0) / totalCount;
     double percentage1to2 = (moodCounts[2] ?? 0) / totalCount;
@@ -120,42 +150,52 @@ class MoodGaugeChart extends StatelessWidget {
     double endValue3to4 = endValue2to3 + percentage3to4 * 5.0;
     double endValue4to5 = endValue3to4 + percentage4to5 * 5.0;
 
-    // Create ranges for each mood segment
-    ranges.add(
-      GaugeRange(
-        startValue: 0.0,
-        endValue: endValue0to1,
-        color: _getMoodColor(1.5), // Color for 1-2 (super good)
-      ),
-    );
-    ranges.add(
-      GaugeRange(
-        startValue: endValue0to1,
-        endValue: endValue1to2,
-        color: _getMoodColor(2.5), // Color for 2-3 (normal)
-      ),
-    );
-    ranges.add(
-      GaugeRange(
-        startValue: endValue1to2,
-        endValue: endValue2to3,
-        color: _getMoodColor(3.5), // Color for 3-4 (bad)
-      ),
-    );
-    ranges.add(
-      GaugeRange(
-        startValue: endValue2to3,
-        endValue: endValue3to4,
-        color: _getMoodColor(4.5), // Color for 4-5 (no feelings)
-      ),
-    );
-    ranges.add(
-      GaugeRange(
-        startValue: endValue3to4,
-        endValue: endValue4to5,
-        color: _getMoodColor(5.5), // New segment for 5-6 (Terrible)
-      ),
-    );
+    // Create ranges for each mood segment only if they have value
+    if (percentage0to1 > 0) {
+      ranges.add(
+        GaugeRange(
+          startValue: 1.0,
+          endValue: endValue0to1,
+          color: _getMoodColor(1.5), // Color for 1-2 (super good)
+        ),
+      );
+    }
+    if (percentage1to2 > 0) {
+      ranges.add(
+        GaugeRange(
+          startValue: endValue0to1,
+          endValue: endValue1to2,
+          color: _getMoodColor(2.5), // Color for 2-3 (normal)
+        ),
+      );
+    }
+    if (percentage2to3 > 0) {
+      ranges.add(
+        GaugeRange(
+          startValue: endValue1to2,
+          endValue: endValue2to3,
+          color: _getMoodColor(3.5), // Color for 3-4 (bad)
+        ),
+      );
+    }
+    if (percentage3to4 > 0) {
+      ranges.add(
+        GaugeRange(
+          startValue: endValue2to3,
+          endValue: endValue3to4,
+          color: _getMoodColor(4.5), // Color for 4-5 (no feelings)
+        ),
+      );
+    }
+    if (percentage4to5 > 0) {
+      ranges.add(
+        GaugeRange(
+          startValue: endValue3to4,
+          endValue: endValue4to5,
+          color: _getMoodColor(5.5), // Color for 5-6 (Terrible)
+        ),
+      );
+    }
 
     return ranges;
   }
