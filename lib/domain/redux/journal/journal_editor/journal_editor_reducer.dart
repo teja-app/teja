@@ -3,6 +3,7 @@ import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.image.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.video.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_state.dart';
+import 'package:teja/domain/redux/journal/journal_editor/quick_journal_editor_actions.dart';
 
 JournalEditorState _updateJournalEntry(JournalEditorState state, SaveJournalEntry action) {
   return state.copyWith(currentJournalEntry: action.journalEntry);
@@ -117,6 +118,16 @@ JournalEditorState _updateJournalEntryWithVideos(JournalEditorState state, Updat
   return state.copyWith(currentJournalEntry: action.journalEntry);
 }
 
+JournalEditorState _initializeQuickJournalEditorSuccess(
+    JournalEditorState state, InitializeQuickJournalEditorSuccessAction action) {
+  return state.copyWith(currentJournalEntry: action.journalEntry);
+}
+
+JournalEditorState _initializeQuickJournalEditorFailure(
+    JournalEditorState state, InitializeQuickJournalEditorFailureAction action) {
+  return state;
+}
+
 final journalEditorReducer = combineReducers<JournalEditorState>([
   TypedReducer<JournalEditorState, SaveJournalEntry>(_updateJournalEntry),
   TypedReducer<JournalEditorState, UpdateQuestionAnswer>(_updateQuestionAnswer),
@@ -146,4 +157,6 @@ final journalEditorReducer = combineReducers<JournalEditorState>([
   TypedReducer<JournalEditorState, RemoveVideoFromQuestionAnswerPairFailureAction>(
       _removeVideoFromQuestionAnswerPairFailure),
   TypedReducer<JournalEditorState, UpdateJournalEntryWithVideos>(_updateJournalEntryWithVideos),
+  TypedReducer<JournalEditorState, InitializeQuickJournalEditorSuccessAction>(_initializeQuickJournalEditorSuccess),
+  TypedReducer<JournalEditorState, InitializeQuickJournalEditorFailureAction>(_initializeQuickJournalEditorFailure),
 ]);

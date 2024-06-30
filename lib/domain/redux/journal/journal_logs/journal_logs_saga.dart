@@ -20,7 +20,7 @@ class JournalLogsSaga {
       final now = DateTime.now();
       final startOfMonth = DateTime(now.year, now.month - 5);
       final endOfMonth = DateTime(now.year, now.month + 1, 1);
-      var journalLogs = Result<List<JournalEntry>>();
+      var journalLogs = Result<List<JournalEntryEntity>>();
       yield Call(journalEntryRepository.getJournalEntriesInDateRange,
           args: [startOfMonth, endOfMonth], result: journalLogs);
 
@@ -33,11 +33,13 @@ class JournalLogsSaga {
       for (var journalLog in journalLogs.value!) {
         DateTime logDate = DateTime(journalLog.timestamp.year, journalLog.timestamp.month, journalLog.timestamp.day);
         if (!journalLogsMap.containsKey(logDate)) {
-          journalLogsMap[logDate] = [journalEntryRepository.toEntity(journalLog)];
+          journalLogsMap[logDate] = [journalLog];
         } else {
-          journalLogsMap[logDate]!.add(journalEntryRepository.toEntity(journalLog));
+          journalLogsMap[logDate]!.add(journalLog);
         }
       }
+
+      print("journalLogsMap ${journalLogsMap}");
 
       yield Put(FetchJournalLogsSuccessAction(journalLogsMap));
     }, Catch: (e, s) sync* {

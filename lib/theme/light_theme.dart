@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 final ThemeData lightTheme = ThemeData(
+  brightness: Brightness.light,
   cardColor: Colors.white,
   textTheme: GoogleFonts.notoSansTextTheme().copyWith(
     bodyMedium: GoogleFonts.wixMadeforText(
@@ -15,34 +16,32 @@ final ThemeData lightTheme = ThemeData(
     ),
   ),
   timePickerTheme: TimePickerThemeData(
-    backgroundColor: Colors.white, // Background color for the time picker dialog
-    dialHandColor: Colors.black, // Color for the clock hand
-    dialBackgroundColor: Colors.white, // Background color for the clock dial
-    dialTextColor: Colors.black, // Color for the text on the clock dial
-    dayPeriodTextColor: Colors.black, // Color for the text "AM" and "PM"
-    hourMinuteTextColor: Colors.black, // Color for the text of the selected hour and minute
-    dayPeriodColor: Colors.white, // Background color for the "AM" and "PM" toggle
+    backgroundColor: Colors.white,
+    dialHandColor: Colors.black,
+    dialBackgroundColor: Colors.white,
+    dialTextColor: Colors.black,
+    dayPeriodTextColor: Colors.black,
+    hourMinuteTextColor: Colors.black,
+    dayPeriodColor: Colors.white,
     confirmButtonStyle: ButtonStyle(
-      backgroundColor: MaterialStateProperty.all<Color>(Colors.black), // Background color for the confirm button
-      foregroundColor: MaterialStateProperty.all<Color>(Colors.white), // Text color for the confirm button
+      backgroundColor: MaterialStateProperty.all<Color>(Colors.black),
+      foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
       textStyle: MaterialStateProperty.all<TextStyle>(
         const TextStyle(
-          color: Colors.white, // Text color
+          color: Colors.white,
           fontWeight: FontWeight.normal,
         ),
       ),
     ),
     cancelButtonStyle: ButtonStyle(
-      backgroundColor: MaterialStateProperty.all<Color>(Colors.black), // Background color for the cancel button
-      foregroundColor: MaterialStateProperty.all<Color>(Colors.white), // Text color for the cancel button
-      // Define text style for the button
+      backgroundColor: MaterialStateProperty.all<Color>(Colors.black),
+      foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
       textStyle: MaterialStateProperty.all<TextStyle>(
         const TextStyle(
-          color: Colors.white, // Text color
+          color: Colors.white,
           fontWeight: FontWeight.normal,
         ),
       ),
-      // Define shape for the button
       shape: MaterialStateProperty.all<OutlinedBorder>(
         RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),
@@ -51,33 +50,39 @@ final ThemeData lightTheme = ThemeData(
     ),
     hourMinuteShape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10),
-      side: const BorderSide(color: Colors.black), // Border color for the hour and minute boxes
+      side: const BorderSide(color: Colors.black),
     ),
     dayPeriodShape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10),
-      side: const BorderSide(color: Colors.black), // Border color for the "AM" and "PM" toggle boxes
+      side: const BorderSide(color: Colors.black),
     ),
-    entryModeIconColor: Colors.black, // Color for the entry mode icon
+    entryModeIconColor: Colors.black,
     helpTextStyle: const TextStyle(
-      color: Colors.black, // Color for the help text
+      color: Colors.black,
       fontSize: 16,
     ),
   ),
   cardTheme: const CardTheme(color: Colors.white),
   popupMenuTheme: const PopupMenuThemeData(
-    color: Colors.white, // Set your desired color here
+    color: Colors.white,
   ),
   colorScheme: ColorScheme.fromSeed(
     seedColor: Colors.black,
+    brightness: Brightness.light,
     primary: Colors.black,
-    secondary: Colors.black,
+    secondary: Colors.white,
     surface: Colors.black,
     background: Colors.grey.shade100,
+    onPrimary: Colors.white,
+    onSecondary: Colors.black,
   ),
   scaffoldBackgroundColor: Colors.grey.shade100,
   appBarTheme: AppBarTheme(
-    // backgroundColor: Colors.grey.shade100,
     color: Colors.grey.shade100,
+  ),
+  floatingActionButtonTheme: const FloatingActionButtonThemeData(
+    backgroundColor: Colors.black,
+    foregroundColor: Colors.white,
   ),
   useMaterial3: true,
 );

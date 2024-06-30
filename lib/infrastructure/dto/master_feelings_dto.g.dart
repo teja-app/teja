@@ -12,8 +12,8 @@ MasterFeelingDto _$MasterFeelingDtoFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       type: json['type'] as String,
       parentSlug: json['parent_slug'] as String?,
-      energy: json['energy'] as int?,
-      pleasantness: json['pleasantness'] as int?,
+      energy: (json['energy'] as num?)?.toInt(),
+      pleasantness: (json['pleasantness'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$MasterFeelingDtoToJson(MasterFeelingDto instance) =>

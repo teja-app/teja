@@ -55,13 +55,19 @@ class _JournalEntriesWidgetState extends State<JournalEntriesWidget> {
                   children: [
                     ...List.generate(journalEntries.length, (index) {
                       var entry = journalEntries[index];
-                      // Generate journal entry layout widgets
+                      // Check if template exists before calling journalEntryLayout
+                      final template = entry.templateId != null ? viewModel.templatesById[entry.templateId] : null;
                       return Padding(
                         padding: const EdgeInsets.only(right: 8.0), // Adjust the spacing as needed
-                        child: journalEntryLayout(viewModel.templatesById[entry.templateId]!, entry, context,
-                            gridWidth: 3.8),
+                        child: journalEntryLayout(
+                          template,
+                          entry,
+                          context,
+                          gridWidth: 3.8,
+                        ),
                       );
                     }),
+
                     // After all journal entry widgets, add the PenDownButton
                     PenDownButton(
                       text: "+",
