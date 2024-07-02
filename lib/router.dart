@@ -10,6 +10,7 @@ import 'package:teja/presentation/journal/journa_detail/pages/journal_detail_pag
 import 'package:teja/presentation/journal/journal_categories/categories_detail_page.dart';
 import 'package:teja/presentation/journal/journal_categories/categories_page.dart';
 import 'package:teja/presentation/journal/journal_editor/pages/journal_editor_page.dart';
+import 'package:teja/presentation/journal/journal_editor/pages/journal_entry_page.dart';
 import 'package:teja/presentation/journal/journal_editor/pages/quick_journal_entry_page.dart';
 import 'package:teja/presentation/mood/detail/page/mood_detail.dart';
 import 'package:teja/presentation/mood/editor/pages/mood_edit.dart';
@@ -99,7 +100,7 @@ final GoRouter router = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       name: RootPath.root,
       path: '/',
-      builder: (context, state) => const OnboardingPage(),
+      builder: (context, state) => const JournalEntryPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
