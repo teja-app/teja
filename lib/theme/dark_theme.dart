@@ -4,7 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 final ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
   cardColor: Colors.black,
-  textTheme: GoogleFonts.notoSansTextTheme().copyWith(
+  textTheme: GoogleFonts.notoSansTextTheme(
+    ThemeData(brightness: Brightness.dark).textTheme,
+  ).copyWith(
     bodyMedium: GoogleFonts.wixMadeforText(
       textStyle: const TextTheme().bodyMedium,
     ),
@@ -62,7 +64,9 @@ final ThemeData darkTheme = ThemeData(
       fontSize: 16,
     ),
   ),
-  cardTheme: const CardTheme(color: Colors.black),
+  cardTheme: CardTheme(
+    color: Colors.grey.shade900,
+  ),
   popupMenuTheme: const PopupMenuThemeData(
     color: Colors.black,
   ),
@@ -70,7 +74,7 @@ final ThemeData darkTheme = ThemeData(
     seedColor: Colors.white,
     brightness: Brightness.dark,
     primary: Colors.white,
-    secondary: Colors.black,
+    secondary: Colors.grey.shade300,
     surface: Colors.white,
     background: Colors.black,
     onPrimary: Colors.black,
