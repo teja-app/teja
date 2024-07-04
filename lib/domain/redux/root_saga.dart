@@ -28,7 +28,7 @@ import 'package:teja/domain/redux/yearly_mood_report/yearly_mood_report_saga.dar
 import 'package:teja/domain/redux/yearly_sleep_report/yearly_sleep_report_saga.dart';
 
 Iterable<void> rootSaga(Store<AppState> store) sync* {
-  yield Fork(AuthSaga().saga);
+  yield Fork(AuthSaga(store).saga);
   yield Fork(MoodEditorSaga().saga);
   yield Fork(MoodDetailSaga().saga);
   yield Fork(MoodLogListSaga().saga);

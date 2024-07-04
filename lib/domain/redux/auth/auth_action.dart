@@ -86,3 +86,10 @@ class FetchRecoveryPhraseFailedAction {
 
   const FetchRecoveryPhraseFailedAction(this.error);
 }
+
+@immutable
+class SetBlankIndexAction {
+  final int blankIndex;
+
+  const SetBlankIndexAction(this.blankIndex);
+}

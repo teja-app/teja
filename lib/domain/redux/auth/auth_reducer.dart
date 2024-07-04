@@ -8,8 +8,11 @@ Reducer<AuthState> authReducer = combineReducers<AuthState>([
   TypedReducer<AuthState, RegisterFailedAction>(_registerFailed),
   TypedReducer<AuthState, AuthenticateSuccessAction>(_authenticateSuccess),
   TypedReducer<AuthState, AuthenticateFailedAction>(_authenticateFailed),
-  TypedReducer<AuthState, FetchRecoveryPhraseSuccessAction>(_fetchRecoveryPhraseSuccess),
-  TypedReducer<AuthState, FetchRecoveryPhraseFailedAction>(_fetchRecoveryPhraseFailed),
+  TypedReducer<AuthState, FetchRecoveryPhraseSuccessAction>(
+      _fetchRecoveryPhraseSuccess),
+  TypedReducer<AuthState, FetchRecoveryPhraseFailedAction>(
+      _fetchRecoveryPhraseFailed),
+  TypedReducer<AuthState, SetBlankIndexAction>(_setBlankIndex),
 ]);
 
 AuthState _authInProgress(AuthState state, AuthInProgressAction action) {
@@ -17,22 +20,29 @@ AuthState _authInProgress(AuthState state, AuthInProgressAction action) {
 }
 
 AuthState _registerSuccess(AuthState state, RegisterSuccessAction action) {
-  return state.copyWith(isLoading: false, isAuthSuccessful: true, errorMessage: null);
+  return state.copyWith(
+      isLoading: false, isAuthSuccessful: true, errorMessage: null);
 }
 
 AuthState _registerFailed(AuthState state, RegisterFailedAction action) {
-  return state.copyWith(isLoading: false, isAuthSuccessful: false, errorMessage: action.error);
+  return state.copyWith(
+      isLoading: false, isAuthSuccessful: false, errorMessage: action.error);
 }
 
-AuthState _authenticateSuccess(AuthState state, AuthenticateSuccessAction action) {
-  return state.copyWith(isLoading: false, isAuthSuccessful: true, errorMessage: null);
+AuthState _authenticateSuccess(
+    AuthState state, AuthenticateSuccessAction action) {
+  return state.copyWith(
+      isLoading: false, isAuthSuccessful: true, errorMessage: null);
 }
 
-AuthState _authenticateFailed(AuthState state, AuthenticateFailedAction action) {
-  return state.copyWith(isLoading: false, isAuthSuccessful: false, errorMessage: action.error);
+AuthState _authenticateFailed(
+    AuthState state, AuthenticateFailedAction action) {
+  return state.copyWith(
+      isLoading: false, isAuthSuccessful: false, errorMessage: action.error);
 }
 
-AuthState _fetchRecoveryPhraseSuccess(AuthState state, FetchRecoveryPhraseSuccessAction action) {
+AuthState _fetchRecoveryPhraseSuccess(
+    AuthState state, FetchRecoveryPhraseSuccessAction action) {
   return state.copyWith(
     isLoading: false,
     errorMessage: null,
@@ -40,6 +50,11 @@ AuthState _fetchRecoveryPhraseSuccess(AuthState state, FetchRecoveryPhraseSucces
   );
 }
 
-AuthState _fetchRecoveryPhraseFailed(AuthState state, FetchRecoveryPhraseFailedAction action) {
+AuthState _fetchRecoveryPhraseFailed(
+    AuthState state, FetchRecoveryPhraseFailedAction action) {
   return state.copyWith(isLoading: false, errorMessage: action.error);
+}
+
+AuthState _setBlankIndex(AuthState state, SetBlankIndexAction action) {
+  return state.copyWith(blankIndex: action.blankIndex);
 }

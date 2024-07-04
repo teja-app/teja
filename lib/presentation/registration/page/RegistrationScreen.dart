@@ -28,6 +28,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   TextEditingController _textController = TextEditingController();
   String _errorMessage = '';
   bool _isFetchMnemonicCalled = false;
+  int blankIndex = 0;
 
   @override
   void initState() {
@@ -102,6 +103,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             return const Center(child: CircularProgressIndicator());
           } else if (authState.mnemonic != null && _mnemonic.isEmpty) {
             _mnemonic = authState.mnemonic!;
+          } else if (authState.blankIndex != null) {
+            blankIndex = authState.blankIndex!;
           }
 
           if (authState.isAuthSuccessful) {
@@ -111,13 +114,28 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             });
           }
 
-          return PageView(
-            controller: _pageController,
-            physics: NeverScrollableScrollPhysics(),
-            children: [
-              _buildMnemonicPage(),
-              _buildConfirmationPage(context, _pageController, _mnemonic, _confirmAndRegister),
-            ],
+          return FutureBuilder<int>(
+            future:
+                Future.delayed(Duration.zero, () => authState.blankIndex ?? 0),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else {
+                blankIndex = snapshot.data ?? 0;
+
+                return PageView(
+                  controller: _pageController,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    _buildMnemonicPage(),
+                    _buildConfirmationPage(context, _pageController, _mnemonic,
+                        _confirmAndRegister, blankIndex),
+                  ],
+                );
+              }
+            },
           );
         },
       ),
@@ -170,7 +188,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         Container(
                           width: 15,
                           padding: EdgeInsets.symmetric(vertical: 4),
-                          child: Text('${index + 1}', style: textTheme.bodySmall),
+                          child:
+                              Text('${index + 1}', style: textTheme.bodySmall),
                         ),
                         Container(
                           width: 80,
@@ -178,7 +197,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             borderRadius: BorderRadius.circular(8),
                             color: colorScheme.background,
                           ),
-                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           child: Text(
                             words[index],
                             style: textTheme.bodySmall,
@@ -203,7 +223,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             Center(
               child: Button(
                 onPressed: () {
-                  _pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
+                  _pageController.nextPage(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeIn);
                 },
                 text: 'Yes, I have saved it securely',
                 buttonType: ButtonType.primary,
@@ -214,7 +236,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 onPressed: () {
                   Clipboard.setData(ClipboardData(text: _mnemonic));
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Mnemonic copied to clipboard')),
+                    const SnackBar(
+                        content: Text('Mnemonic copied to clipboard')),
                   );
                 },
                 icon: AntDesign.copy1,
@@ -229,17 +252,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   Widget _buildConfirmationPage(
-      BuildContext context, PageController _pageController, String _mnemonic, VoidCallback _confirmAndRegister) {
+      BuildContext context,
+      PageController _pageController,
+      String _mnemonic,
+      VoidCallback _confirmAndRegister,
+      int blankIndex) {
     List<String> mnemonicWords = _mnemonic.split(' ');
-    int missingIndex = 0;
     String missingWord = '';
 
     final colorScheme = Theme.of(context).colorScheme;
     // Initialize the mnemonic words and select a random missing word
     void initializeMnemonic() {
-      missingIndex = 3 + (mnemonicWords.length - 7) * (DateTime.now().millisecondsSinceEpoch % 1000) ~/ 1000;
-      missingWord = mnemonicWords[missingIndex];
-      mnemonicWords[missingIndex] = '____';
+      missingWord = mnemonicWords[blankIndex];
+      mnemonicWords[blankIndex] = '____';
     }
 
     initializeMnemonic();
@@ -270,7 +295,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           Container(
                             width: 15,
                             padding: EdgeInsets.symmetric(vertical: 4),
-                            child: Text('${index + 1}', style: textTheme.bodySmall),
+                            child: Text('${index + 1}',
+                                style: textTheme.bodySmall),
                           ),
                           Container(
                             width: 80,
@@ -278,7 +304,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               borderRadius: BorderRadius.circular(8),
                               color: colorScheme.background,
                             ),
-                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
                             child: Text(
                               mnemonicWords[index],
                               style: textTheme.bodySmall,
@@ -294,23 +321,26 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               TextField(
                 controller: _textController,
                 decoration: InputDecoration(
-                  labelText: 'Enter the missing word at position ${missingIndex + 1}',
+                  labelText:
+                      'Enter the missing word at position ${blankIndex + 1}',
                   errorText: _errorMessage.isNotEmpty ? _errorMessage : null,
                 ),
               ),
               const SizedBox(height: 16.0),
               Button(
                 onPressed: () {
-                  if (_textController.text.trim().toLowerCase() == missingWord.toLowerCase()) {
+                  if (_textController.text.trim().toLowerCase() ==
+                      missingWord.toLowerCase()) {
                     setState(() {
-                      mnemonicWords[missingIndex] = missingWord;
+                      mnemonicWords[blankIndex] = missingWord;
                       _errorMessage = ''; // Clear the error message
                       _isConfirmed = true; // Update the confirmation status
                     });
                     _confirmAndRegister(); // Proceed with the registration
                   } else {
                     setState(() {
-                      _errorMessage = 'Wrong word entered. Please try again.'; // Set the error message
+                      _errorMessage =
+                          'Wrong word entered. Please try again.'; // Set the error message
                     });
                   }
                 },

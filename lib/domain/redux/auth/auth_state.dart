@@ -6,12 +6,15 @@ class AuthState {
   final String? errorMessage;
   final bool isAuthSuccessful;
   final String? mnemonic;
+  final int? blankIndex; 
+
 
   const AuthState({
     this.isLoading = false,
     this.errorMessage,
     this.isAuthSuccessful = false,
     this.mnemonic,
+    this.blankIndex,
   });
 
   factory AuthState.initial() {
@@ -20,6 +23,7 @@ class AuthState {
       errorMessage: null,
       isAuthSuccessful: false,
       mnemonic: null,
+      blankIndex: null,
     );
   }
 
@@ -28,12 +32,14 @@ class AuthState {
     String? errorMessage,
     bool? isAuthSuccessful,
     String? mnemonic,
+    int? blankIndex,
   }) {
     return AuthState(
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage ?? this.errorMessage,
       isAuthSuccessful: isAuthSuccessful ?? this.isAuthSuccessful,
       mnemonic: mnemonic ?? this.mnemonic,
+      blankIndex: blankIndex ?? this.blankIndex,
     );
   }
 
