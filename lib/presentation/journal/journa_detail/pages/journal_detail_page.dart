@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
+import 'package:icons_flutter/icons_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
@@ -12,6 +13,7 @@ import 'package:teja/presentation/mood/ui/attachement_image.dart';
 import 'package:teja/presentation/mood/ui/attachment_video.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/bento_box.dart';
+import 'package:teja/shared/common/button.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 
 class JournalDetailPage extends StatefulWidget {
@@ -60,6 +62,12 @@ class JournalDetailPageState extends State<JournalDetailPage> {
         return Scaffold(
           appBar: AppBar(
             title: Text(title),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                GoRouter.of(context).goNamed(RootPath.home);
+              },
+            ),
             actions: [
               JournalMenuSettings(
                 journalId: viewModel.journalEntry!.id,
@@ -108,7 +116,12 @@ class JournalDetailPageState extends State<JournalDetailPage> {
 
   Widget _buildJournalEntryContent(JournalEntryEntity journalEntry) {
     final textTheme = Theme.of(context).textTheme;
-    late ListView questionBuilder = ListView();
+    late ListView questionBuilder = ListView.builder(
+      itemCount: 0,
+      itemBuilder: (BuildContext context, int index) {
+        return Container();
+      },
+    );
     if (journalEntry.questions!.isNotEmpty) {
       questionBuilder = ListView.builder(
         padding: const EdgeInsets.all(16.0),
@@ -154,24 +167,46 @@ class JournalDetailPageState extends State<JournalDetailPage> {
                 ),
               ),
             ],
-            // questionBuilder
+            Button(
+              text: "Delve deeper",
+              icon: Maki.swimming,
+              onPressed: () {
+                List<Map<String, String>> qaList = [];
+
+                if (journalEntry.body != null && journalEntry.body!.isNotEmpty) {
+                  qaList.add({'question': 'What\'s on your mind?', 'answer': journalEntry.body!});
+                }
+
+                for (var question in journalEntry.questions ?? []) {
+                  qaList.add({'question': question.questionText ?? '', 'answer': question.answerText ?? ''});
+                }
+                GoRouter.of(context).pushNamed(
+                  RootPath.journalEntryPage,
+                  extra: qaList,
+                );
+              },
+            ),
+            Expanded(
+              child: questionBuilder,
+            ),
           ],
         ),
-        Positioned(
-          top: 0,
-          right: 0,
-          child: IconButton(
-            icon: Icon(Icons.edit, size: 16),
-            onPressed: () {
-              GoRouter.of(context).pushNamed(
-                RootPath.quickJournalEntry,
-                queryParameters: {
-                  "id": journalEntry.id,
-                },
-              );
-            },
+        if (journalEntry.body != null)
+          Positioned(
+            top: 0,
+            right: 0,
+            child: IconButton(
+              icon: Icon(Icons.edit, size: 16),
+              onPressed: () {
+                GoRouter.of(context).pushNamed(
+                  RootPath.quickJournalEntry,
+                  queryParameters: {
+                    "id": journalEntry.id,
+                  },
+                );
+              },
+            ),
           ),
-        ),
       ],
     );
   }

@@ -70,6 +70,7 @@ class JournalQuestionPageState extends State<JournalQuestionPage> with WidgetsBi
     _store.dispatch(UpdateQuestionAnswer(
       journalEntryId: viewModel.journalEntry.id,
       questionId: viewModel.journalEntry.questions![widget.questionIndex].questionId!,
+      questionText: viewModel.journalEntry.questions![widget.questionIndex].questionText!,
       answerText: textEditingController.text,
     ));
   }

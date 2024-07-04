@@ -86,6 +86,7 @@ class RootPath {
   static const journalEditor = "journal_editor";
   static const quickJournalEntry = "quickJournalEntry";
   static const journalDetail = "journal_detail";
+  static const journalEntryPage = "journal_entry_page";
 }
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -124,6 +125,14 @@ final GoRouter router = GoRouter(
       name: RootPath.journalEditor, // Define a constant for this route
       path: '/journal_editor',
       builder: (context, state) => const JournalEditorScreen(),
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      name: RootPath.journalEntryPage,
+      path: '/journal_entry_page',
+      builder: (context, state) => JournalEntryPage(
+        initialQAList: state.extra as List<Map<String, String>>,
+      ),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,

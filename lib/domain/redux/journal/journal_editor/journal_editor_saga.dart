@@ -192,16 +192,38 @@ class JournalEditorSaga {
     yield Call(journalEntryRepository.getJournalEntryById, args: [action.journalEntryId], result: journalEntryResult);
 
     if (journalEntryResult.value != null) {
-      // Update the specific question-answer pair
-      JournalEntry journalEntry = journalEntryResult.value!;
-      journalEntry.questions?.firstWhere((q) => q.questionId == action.questionId).answerText = action.answerText;
-
       // Save the updated journal entry
       yield Try(() sync* {
+        // Get the existing journal entry
+        JournalEntry journalEntry = journalEntryResult.value!;
+
+        // Convert the fixed-length list to a growable list
+        var questions = List<QuestionAnswerPair>.from(journalEntry.questions ?? []);
+
+        // Check if the question exists
+        var question = questions.firstWhere(
+          (q) => q.questionId == action.questionId,
+          orElse: () => QuestionAnswerPair()
+            ..questionId = action.questionId
+            ..questionText = action.questionText,
+        );
+
+        // If the question didn't exist, add it to the questions list
+        if (!questions.contains(question)) {
+          questions.add(question);
+        }
+
+        // Update the specific question-answer pair
+        question.answerText = action.answerText;
+
+        // Update the journal entry with the new list of questions
+        journalEntry.questions = questions;
+
         yield Call(journalEntryRepository.addOrUpdateJournalEntry, args: [journalEntry]);
         yield Put(UpdateQuestionAnswerSuccessAction(
             journalEntryId: action.journalEntryId, questionId: action.questionId, answerText: action.answerText));
       }, Catch: (e, s) sync* {
+        print("$e, $s");
         yield Put(UpdateQuestionAnswerFailureAction(e.toString()));
       });
     } else {
