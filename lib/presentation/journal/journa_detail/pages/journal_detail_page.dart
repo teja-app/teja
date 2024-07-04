@@ -168,7 +168,7 @@ class JournalDetailPageState extends State<JournalDetailPage> {
               ),
             ],
             Button(
-              text: "Explore further",
+              text: "AI Explorer",
               icon: Icons.sunny,
               onPressed: () {
                 List<Map<String, String>> qaList = [];
