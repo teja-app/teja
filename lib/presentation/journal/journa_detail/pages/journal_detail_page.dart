@@ -141,18 +141,37 @@ class JournalDetailPageState extends State<JournalDetailPage> {
       );
     }
 
-    return Column(
+    return Stack(
       children: [
-        if (journalEntry.body != null) ...[
-          FlexibleHeightBox(
-            gridWidth: 4,
-            child: Text(
-              journalEntry.body ?? "",
-              style: textTheme.titleMedium,
-            ),
+        Column(
+          children: [
+            if (journalEntry.body != null) ...[
+              FlexibleHeightBox(
+                gridWidth: 4,
+                child: Text(
+                  journalEntry.body ?? "",
+                  style: textTheme.titleMedium,
+                ),
+              ),
+            ],
+            // questionBuilder
+          ],
+        ),
+        Positioned(
+          top: 0,
+          right: 0,
+          child: IconButton(
+            icon: Icon(Icons.edit, size: 16),
+            onPressed: () {
+              GoRouter.of(context).pushNamed(
+                RootPath.quickJournalEntry,
+                queryParameters: {
+                  "id": journalEntry.id,
+                },
+              );
+            },
           ),
-        ],
-        // questionBuilder
+        ),
       ],
     );
   }

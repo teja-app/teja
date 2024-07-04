@@ -64,6 +64,7 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
                   controller: _bodyController,
                   decoration: const InputDecoration(
                     hintText: 'Write your journal entry...',
+                    border: InputBorder.none,
                   ),
                   maxLines: null,
                 ),

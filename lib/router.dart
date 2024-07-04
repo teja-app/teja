@@ -100,7 +100,7 @@ final GoRouter router = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       name: RootPath.root,
       path: '/',
-      builder: (context, state) => const JournalEntryPage(),
+      builder: (context, state) => const OnboardingPage(),
     ),
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
