@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
@@ -14,6 +12,7 @@ import 'package:teja/presentation/mood/ui/attachement_image.dart';
 import 'package:teja/presentation/mood/ui/attachment_video.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/bento_box.dart';
+import 'package:teja/shared/common/flexible_height_box.dart';
 
 class JournalDetailPage extends StatefulWidget {
   final String journalEntryId;
@@ -53,10 +52,14 @@ class JournalDetailPageState extends State<JournalDetailPage> {
         if (viewModel.journalEntry == null) {
           return Center(child: Text(viewModel.errorMessage ?? 'Journal entry not found.'));
         }
+        late String title = "Detail Page";
+        if (viewModel.journalEntry!.templateId != null) {
+          title = viewModel.templatesById[viewModel.journalEntry!.templateId]!.title;
+        }
 
         return Scaffold(
           appBar: AppBar(
-            title: Text(viewModel.templatesById[viewModel.journalEntry!.templateId]!.title),
+            title: Text(title),
             actions: [
               JournalMenuSettings(
                 journalId: viewModel.journalEntry!.id,
@@ -103,69 +106,73 @@ class JournalDetailPageState extends State<JournalDetailPage> {
     );
   }
 
-  Widget _buildImageList(JournalEntryEntity journalEntry) {
-    // Extracting image entries from the journal entry
-    final imageEntries = journalEntry.imageEntries ?? [];
-
-    // Return an empty widget if there are no images
-    if (imageEntries.isEmpty) {
-      return SizedBox.shrink();
+  Widget _buildJournalEntryContent(JournalEntryEntity journalEntry) {
+    final textTheme = Theme.of(context).textTheme;
+    late ListView questionBuilder = ListView();
+    if (journalEntry.questions!.isNotEmpty) {
+      questionBuilder = ListView.builder(
+        padding: const EdgeInsets.all(16.0),
+        itemCount: journalEntry.questions!.length,
+        itemBuilder: (context, index) {
+          final question = journalEntry.questions![index];
+          return Card(
+            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            elevation: 0.5,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 10.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    question?.questionText ?? 'No question',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    question?.answerText ?? 'No answer',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  _buildMediaForQuestion(journalEntry, index), // This function will handle image display
+                ],
+              ),
+            ),
+          );
+        },
+      );
     }
 
-    return Container(
-      height: 60, // Fixed height for image row
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: imageEntries.length,
-        itemBuilder: (context, index) {
-          // Getting the file path from the image entry
-          final imagePath = imageEntries[index].filePath;
-
-          // Making sure the file path is not null
-          if (imagePath != null) {
-            return AttachmentImage(
-              relativeImagePath: imagePath!,
-              width: 100,
-              height: 50,
-            );
-          } else {
-            // Return an empty widget if the file path is null
-            return SizedBox.shrink();
-          }
-        },
-      ),
-    );
-  }
-
-  Widget _buildJournalEntryContent(JournalEntryEntity journalEntry) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16.0),
-      itemCount: journalEntry.questions!.length,
-      itemBuilder: (context, index) {
-        final question = journalEntry.questions![index];
-        return Card(
-          margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          elevation: 0.5,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 10.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  question?.questionText ?? 'No question',
-                  style: Theme.of(context).textTheme.bodySmall,
+    return Stack(
+      children: [
+        Column(
+          children: [
+            if (journalEntry.body != null) ...[
+              FlexibleHeightBox(
+                gridWidth: 4,
+                child: Text(
+                  journalEntry.body ?? "",
+                  style: textTheme.titleMedium,
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  question?.answerText ?? 'No answer',
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                _buildMediaForQuestion(journalEntry, index), // This function will handle image display
-              ],
-            ),
+              ),
+            ],
+            // questionBuilder
+          ],
+        ),
+        Positioned(
+          top: 0,
+          right: 0,
+          child: IconButton(
+            icon: Icon(Icons.edit, size: 16),
+            onPressed: () {
+              GoRouter.of(context).pushNamed(
+                RootPath.quickJournalEntry,
+                queryParameters: {
+                  "id": journalEntry.id,
+                },
+              );
+            },
           ),
-        );
-      },
+        ),
+      ],
     );
   }
 

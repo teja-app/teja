@@ -10,6 +10,8 @@ import 'package:teja/presentation/journal/journa_detail/pages/journal_detail_pag
 import 'package:teja/presentation/journal/journal_categories/categories_detail_page.dart';
 import 'package:teja/presentation/journal/journal_categories/categories_page.dart';
 import 'package:teja/presentation/journal/journal_editor/pages/journal_editor_page.dart';
+import 'package:teja/presentation/journal/journal_editor/pages/journal_entry_page.dart';
+import 'package:teja/presentation/journal/journal_editor/pages/quick_journal_entry_page.dart';
 import 'package:teja/presentation/mood/detail/page/mood_detail.dart';
 import 'package:teja/presentation/mood/editor/pages/mood_edit.dart';
 import 'package:teja/presentation/music/ui/SimpleMusicPlayer.dart';
@@ -82,6 +84,7 @@ class RootPath {
   static const goalSettings = "goal_settings";
   static const noteEditor = "note_editor";
   static const journalEditor = "journal_editor";
+  static const quickJournalEntry = "quickJournalEntry";
   static const journalDetail = "journal_detail";
 }
 
@@ -194,6 +197,14 @@ final GoRouter router = GoRouter(
       builder: (context, state) {
         final String? moodIdStr = state.uri.queryParameters['id'];
         return MoodSharePage(moodId: moodIdStr!);
+      },
+    ),
+    GoRoute(
+      name: 'quickJournalEntry',
+      path: '/quick-journal-entry',
+      builder: (context, state) {
+        final String? entryId = state.uri.queryParameters['id'];
+        return QuickJournalEntryScreen(entryId: entryId);
       },
     ),
     GoRoute(

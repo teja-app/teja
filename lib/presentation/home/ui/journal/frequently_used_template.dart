@@ -18,7 +18,9 @@ class FrequentlyUsedTemplatesViewModel {
 
     // Assuming each journal entry has a templateId
     for (var entry in store.state.journalListState.journalEntries) {
-      templateUsageCount[entry.templateId!] = (templateUsageCount[entry.templateId] ?? 0) + 1;
+      if (entry.templateId != null) {
+        templateUsageCount[entry.templateId!] = (templateUsageCount[entry.templateId] ?? 0) + 1;
+      }
     }
 
     // Sort templateIds by their usage count, then take the top three

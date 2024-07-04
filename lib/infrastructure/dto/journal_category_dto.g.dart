@@ -54,10 +54,10 @@ Map<String, dynamic> _$ImageSizesDtoToJson(ImageSizesDto instance) =>
 
 ImageDetailDto _$ImageDetailDtoFromJson(Map<String, dynamic> json) =>
     ImageDetailDto(
-      width: json['width'] as int?,
-      height: json['height'] as int?,
+      width: (json['width'] as num?)?.toInt(),
+      height: (json['height'] as num?)?.toInt(),
       mimeType: json['mimeType'] as String?,
-      filesize: json['filesize'] as int?,
+      filesize: (json['filesize'] as num?)?.toInt(),
       filename: json['filename'] as String?,
     );
 

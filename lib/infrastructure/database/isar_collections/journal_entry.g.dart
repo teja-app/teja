@@ -17,75 +17,90 @@ const JournalEntrySchema = CollectionSchema(
   name: r'JournalEntry',
   id: -8443410721192565146,
   properties: {
-    r'bulletPointEntries': PropertySchema(
+    r'body': PropertySchema(
       id: 0,
+      name: r'body',
+      type: IsarType.string,
+    ),
+    r'bulletPointEntries': PropertySchema(
+      id: 1,
       name: r'bulletPointEntries',
       type: IsarType.objectList,
       target: r'BulletPointEntry',
     ),
     r'createdAt': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'createdAt',
       type: IsarType.dateTime,
     ),
     r'id': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'id',
       type: IsarType.string,
     ),
     r'imageEntries': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'imageEntries',
       type: IsarType.objectList,
       target: r'ImageEntry',
     ),
+    r'lock': PropertySchema(
+      id: 5,
+      name: r'lock',
+      type: IsarType.bool,
+    ),
     r'metadata': PropertySchema(
-      id: 4,
+      id: 6,
       name: r'metadata',
       type: IsarType.object,
       target: r'JournalEntryMetadata',
     ),
     r'painNoteEntries': PropertySchema(
-      id: 5,
+      id: 7,
       name: r'painNoteEntries',
       type: IsarType.objectList,
       target: r'PainNoteEntry',
     ),
     r'questions': PropertySchema(
-      id: 6,
+      id: 8,
       name: r'questions',
       type: IsarType.objectList,
       target: r'QuestionAnswerPair',
     ),
     r'templateId': PropertySchema(
-      id: 7,
+      id: 9,
       name: r'templateId',
       type: IsarType.string,
     ),
     r'textEntries': PropertySchema(
-      id: 8,
+      id: 10,
       name: r'textEntries',
       type: IsarType.objectList,
       target: r'TextEntry',
     ),
     r'timestamp': PropertySchema(
-      id: 9,
+      id: 11,
       name: r'timestamp',
       type: IsarType.dateTime,
     ),
+    r'title': PropertySchema(
+      id: 12,
+      name: r'title',
+      type: IsarType.string,
+    ),
     r'updatedAt': PropertySchema(
-      id: 10,
+      id: 13,
       name: r'updatedAt',
       type: IsarType.dateTime,
     ),
     r'videoEntries': PropertySchema(
-      id: 11,
+      id: 14,
       name: r'videoEntries',
       type: IsarType.objectList,
       target: r'VideoEntry',
     ),
     r'voiceEntries': PropertySchema(
-      id: 12,
+      id: 15,
       name: r'voiceEntries',
       type: IsarType.objectList,
       target: r'VoiceEntry',
@@ -134,6 +149,12 @@ int _journalEntryEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  {
+    final value = object.body;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   {
     final list = object.bulletPointEntries;
     if (list != null) {
@@ -220,6 +241,12 @@ int _journalEntryEstimateSize(
     }
   }
   {
+    final value = object.title;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
     final list = object.videoEntries;
     if (list != null) {
       bytesCount += 3 + list.length * 3;
@@ -256,55 +283,58 @@ void _journalEntrySerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
+  writer.writeString(offsets[0], object.body);
   writer.writeObjectList<BulletPointEntry>(
-    offsets[0],
+    offsets[1],
     allOffsets,
     BulletPointEntrySchema.serialize,
     object.bulletPointEntries,
   );
-  writer.writeDateTime(offsets[1], object.createdAt);
-  writer.writeString(offsets[2], object.id);
+  writer.writeDateTime(offsets[2], object.createdAt);
+  writer.writeString(offsets[3], object.id);
   writer.writeObjectList<ImageEntry>(
-    offsets[3],
+    offsets[4],
     allOffsets,
     ImageEntrySchema.serialize,
     object.imageEntries,
   );
+  writer.writeBool(offsets[5], object.lock);
   writer.writeObject<JournalEntryMetadata>(
-    offsets[4],
+    offsets[6],
     allOffsets,
     JournalEntryMetadataSchema.serialize,
     object.metadata,
   );
   writer.writeObjectList<PainNoteEntry>(
-    offsets[5],
+    offsets[7],
     allOffsets,
     PainNoteEntrySchema.serialize,
     object.painNoteEntries,
   );
   writer.writeObjectList<QuestionAnswerPair>(
-    offsets[6],
+    offsets[8],
     allOffsets,
     QuestionAnswerPairSchema.serialize,
     object.questions,
   );
-  writer.writeString(offsets[7], object.templateId);
+  writer.writeString(offsets[9], object.templateId);
   writer.writeObjectList<TextEntry>(
-    offsets[8],
+    offsets[10],
     allOffsets,
     TextEntrySchema.serialize,
     object.textEntries,
   );
-  writer.writeDateTime(offsets[9], object.timestamp);
-  writer.writeDateTime(offsets[10], object.updatedAt);
+  writer.writeDateTime(offsets[11], object.timestamp);
+  writer.writeString(offsets[12], object.title);
+  writer.writeDateTime(offsets[13], object.updatedAt);
   writer.writeObjectList<VideoEntry>(
-    offsets[11],
+    offsets[14],
     allOffsets,
     VideoEntrySchema.serialize,
     object.videoEntries,
   );
   writer.writeObjectList<VoiceEntry>(
-    offsets[12],
+    offsets[15],
     allOffsets,
     VoiceEntrySchema.serialize,
     object.voiceEntries,
@@ -318,55 +348,58 @@ JournalEntry _journalEntryDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = JournalEntry();
+  object.body = reader.readStringOrNull(offsets[0]);
   object.bulletPointEntries = reader.readObjectList<BulletPointEntry>(
-    offsets[0],
+    offsets[1],
     BulletPointEntrySchema.deserialize,
     allOffsets,
     BulletPointEntry(),
   );
-  object.createdAt = reader.readDateTime(offsets[1]);
-  object.id = reader.readString(offsets[2]);
+  object.createdAt = reader.readDateTime(offsets[2]);
+  object.id = reader.readString(offsets[3]);
   object.imageEntries = reader.readObjectList<ImageEntry>(
-    offsets[3],
+    offsets[4],
     ImageEntrySchema.deserialize,
     allOffsets,
     ImageEntry(),
   );
   object.isarId = id;
+  object.lock = reader.readBoolOrNull(offsets[5]);
   object.metadata = reader.readObjectOrNull<JournalEntryMetadata>(
-    offsets[4],
+    offsets[6],
     JournalEntryMetadataSchema.deserialize,
     allOffsets,
   );
   object.painNoteEntries = reader.readObjectList<PainNoteEntry>(
-    offsets[5],
+    offsets[7],
     PainNoteEntrySchema.deserialize,
     allOffsets,
     PainNoteEntry(),
   );
   object.questions = reader.readObjectList<QuestionAnswerPair>(
-    offsets[6],
+    offsets[8],
     QuestionAnswerPairSchema.deserialize,
     allOffsets,
     QuestionAnswerPair(),
   );
-  object.templateId = reader.readStringOrNull(offsets[7]);
+  object.templateId = reader.readStringOrNull(offsets[9]);
   object.textEntries = reader.readObjectList<TextEntry>(
-    offsets[8],
+    offsets[10],
     TextEntrySchema.deserialize,
     allOffsets,
     TextEntry(),
   );
-  object.timestamp = reader.readDateTime(offsets[9]);
-  object.updatedAt = reader.readDateTime(offsets[10]);
+  object.timestamp = reader.readDateTime(offsets[11]);
+  object.title = reader.readStringOrNull(offsets[12]);
+  object.updatedAt = reader.readDateTime(offsets[13]);
   object.videoEntries = reader.readObjectList<VideoEntry>(
-    offsets[11],
+    offsets[14],
     VideoEntrySchema.deserialize,
     allOffsets,
     VideoEntry(),
   );
   object.voiceEntries = reader.readObjectList<VoiceEntry>(
-    offsets[12],
+    offsets[15],
     VoiceEntrySchema.deserialize,
     allOffsets,
     VoiceEntry(),
@@ -382,64 +415,70 @@ P _journalEntryDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
+      return (reader.readStringOrNull(offset)) as P;
+    case 1:
       return (reader.readObjectList<BulletPointEntry>(
         offset,
         BulletPointEntrySchema.deserialize,
         allOffsets,
         BulletPointEntry(),
       )) as P;
-    case 1:
-      return (reader.readDateTime(offset)) as P;
     case 2:
-      return (reader.readString(offset)) as P;
+      return (reader.readDateTime(offset)) as P;
     case 3:
+      return (reader.readString(offset)) as P;
+    case 4:
       return (reader.readObjectList<ImageEntry>(
         offset,
         ImageEntrySchema.deserialize,
         allOffsets,
         ImageEntry(),
       )) as P;
-    case 4:
+    case 5:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 6:
       return (reader.readObjectOrNull<JournalEntryMetadata>(
         offset,
         JournalEntryMetadataSchema.deserialize,
         allOffsets,
       )) as P;
-    case 5:
+    case 7:
       return (reader.readObjectList<PainNoteEntry>(
         offset,
         PainNoteEntrySchema.deserialize,
         allOffsets,
         PainNoteEntry(),
       )) as P;
-    case 6:
+    case 8:
       return (reader.readObjectList<QuestionAnswerPair>(
         offset,
         QuestionAnswerPairSchema.deserialize,
         allOffsets,
         QuestionAnswerPair(),
       )) as P;
-    case 7:
+    case 9:
       return (reader.readStringOrNull(offset)) as P;
-    case 8:
+    case 10:
       return (reader.readObjectList<TextEntry>(
         offset,
         TextEntrySchema.deserialize,
         allOffsets,
         TextEntry(),
       )) as P;
-    case 9:
-      return (reader.readDateTime(offset)) as P;
-    case 10:
-      return (reader.readDateTime(offset)) as P;
     case 11:
+      return (reader.readDateTime(offset)) as P;
+    case 12:
+      return (reader.readStringOrNull(offset)) as P;
+    case 13:
+      return (reader.readDateTime(offset)) as P;
+    case 14:
       return (reader.readObjectList<VideoEntry>(
         offset,
         VideoEntrySchema.deserialize,
         allOffsets,
         VideoEntry(),
       )) as P;
-    case 12:
+    case 15:
       return (reader.readObjectList<VoiceEntry>(
         offset,
         VoiceEntrySchema.deserialize,
@@ -646,6 +685,157 @@ extension JournalEntryQueryWhere
 
 extension JournalEntryQueryFilter
     on QueryBuilder<JournalEntry, JournalEntry, QFilterCondition> {
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition> bodyIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'body',
+      ));
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition>
+      bodyIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'body',
+      ));
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition> bodyEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'body',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition>
+      bodyGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'body',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition> bodyLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'body',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition> bodyBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'body',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition>
+      bodyStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'body',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition> bodyEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'body',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition> bodyContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'body',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition> bodyMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'body',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition>
+      bodyIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'body',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition>
+      bodyIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'body',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition>
       bulletPointEntriesIsNull() {
     return QueryBuilder.apply(this, (query) {
@@ -1098,6 +1288,33 @@ extension JournalEntryQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition> lockIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'lock',
+      ));
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition>
+      lockIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'lock',
+      ));
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition> lockEqualTo(
+      bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'lock',
+        value: value,
       ));
     });
   }
@@ -1652,6 +1869,158 @@ extension JournalEntryQueryFilter
   }
 
   QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition>
+      titleIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'title',
+      ));
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition>
+      titleIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'title',
+      ));
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition> titleEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'title',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition>
+      titleGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'title',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition> titleLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'title',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition> titleBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'title',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition>
+      titleStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'title',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition> titleEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'title',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition> titleContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'title',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition> titleMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'title',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition>
+      titleIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'title',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition>
+      titleIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'title',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition>
       updatedAtEqualTo(DateTime value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -1986,6 +2355,18 @@ extension JournalEntryQueryLinks
 
 extension JournalEntryQuerySortBy
     on QueryBuilder<JournalEntry, JournalEntry, QSortBy> {
+  QueryBuilder<JournalEntry, JournalEntry, QAfterSortBy> sortByBody() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'body', Sort.asc);
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterSortBy> sortByBodyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'body', Sort.desc);
+    });
+  }
+
   QueryBuilder<JournalEntry, JournalEntry, QAfterSortBy> sortByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.asc);
@@ -2007,6 +2388,18 @@ extension JournalEntryQuerySortBy
   QueryBuilder<JournalEntry, JournalEntry, QAfterSortBy> sortByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterSortBy> sortByLock() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lock', Sort.asc);
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterSortBy> sortByLockDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lock', Sort.desc);
     });
   }
 
@@ -2035,6 +2428,18 @@ extension JournalEntryQuerySortBy
     });
   }
 
+  QueryBuilder<JournalEntry, JournalEntry, QAfterSortBy> sortByTitle() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'title', Sort.asc);
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterSortBy> sortByTitleDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'title', Sort.desc);
+    });
+  }
+
   QueryBuilder<JournalEntry, JournalEntry, QAfterSortBy> sortByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.asc);
@@ -2050,6 +2455,18 @@ extension JournalEntryQuerySortBy
 
 extension JournalEntryQuerySortThenBy
     on QueryBuilder<JournalEntry, JournalEntry, QSortThenBy> {
+  QueryBuilder<JournalEntry, JournalEntry, QAfterSortBy> thenByBody() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'body', Sort.asc);
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterSortBy> thenByBodyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'body', Sort.desc);
+    });
+  }
+
   QueryBuilder<JournalEntry, JournalEntry, QAfterSortBy> thenByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.asc);
@@ -2086,6 +2503,18 @@ extension JournalEntryQuerySortThenBy
     });
   }
 
+  QueryBuilder<JournalEntry, JournalEntry, QAfterSortBy> thenByLock() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lock', Sort.asc);
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterSortBy> thenByLockDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lock', Sort.desc);
+    });
+  }
+
   QueryBuilder<JournalEntry, JournalEntry, QAfterSortBy> thenByTemplateId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'templateId', Sort.asc);
@@ -2111,6 +2540,18 @@ extension JournalEntryQuerySortThenBy
     });
   }
 
+  QueryBuilder<JournalEntry, JournalEntry, QAfterSortBy> thenByTitle() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'title', Sort.asc);
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterSortBy> thenByTitleDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'title', Sort.desc);
+    });
+  }
+
   QueryBuilder<JournalEntry, JournalEntry, QAfterSortBy> thenByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.asc);
@@ -2126,6 +2567,13 @@ extension JournalEntryQuerySortThenBy
 
 extension JournalEntryQueryWhereDistinct
     on QueryBuilder<JournalEntry, JournalEntry, QDistinct> {
+  QueryBuilder<JournalEntry, JournalEntry, QDistinct> distinctByBody(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'body', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<JournalEntry, JournalEntry, QDistinct> distinctByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'createdAt');
@@ -2136,6 +2584,12 @@ extension JournalEntryQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'id', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QDistinct> distinctByLock() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'lock');
     });
   }
 
@@ -2152,6 +2606,13 @@ extension JournalEntryQueryWhereDistinct
     });
   }
 
+  QueryBuilder<JournalEntry, JournalEntry, QDistinct> distinctByTitle(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'title', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<JournalEntry, JournalEntry, QDistinct> distinctByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'updatedAt');
@@ -2164,6 +2625,12 @@ extension JournalEntryQueryProperty
   QueryBuilder<JournalEntry, int, QQueryOperations> isarIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isarId');
+    });
+  }
+
+  QueryBuilder<JournalEntry, String?, QQueryOperations> bodyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'body');
     });
   }
 
@@ -2190,6 +2657,12 @@ extension JournalEntryQueryProperty
       imageEntriesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'imageEntries');
+    });
+  }
+
+  QueryBuilder<JournalEntry, bool?, QQueryOperations> lockProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'lock');
     });
   }
 
@@ -2230,6 +2703,12 @@ extension JournalEntryQueryProperty
   QueryBuilder<JournalEntry, DateTime, QQueryOperations> timestampProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'timestamp');
+    });
+  }
+
+  QueryBuilder<JournalEntry, String?, QQueryOperations> titleProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'title');
     });
   }
 

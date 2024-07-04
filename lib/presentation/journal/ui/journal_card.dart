@@ -10,7 +10,7 @@ import 'package:teja/router.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 
 Widget journalEntryLayout(
-  JournalTemplateEntity template,
+  JournalTemplateEntity? template, // Make template nullable
   JournalEntryEntity journalEntry,
   BuildContext context, {
   double gridWidth = 4, // Optional parameter with default value
@@ -84,19 +84,29 @@ Widget journalEntryLayout(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  template.title,
-                  style: textTheme.titleMedium,
-                ),
-                Text(
-                  firstQuestion?.questionText ?? 'No question',
-                  style: textTheme.titleSmall,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  firstQuestion?.answerText ?? 'No answer',
-                  style: textTheme.bodySmall,
-                ),
+                if (journalEntry.body != null) ...[
+                  Text(
+                    journalEntry.body ?? "",
+                    style: textTheme.bodyMedium,
+                  ),
+                ],
+                if (template != null) ...[
+                  Text(
+                    template!.title ?? "",
+                    style: textTheme.titleMedium,
+                  ),
+                ],
+                if (firstQuestion != null) ...[
+                  Text(
+                    firstQuestion?.questionText ?? 'No question',
+                    style: textTheme.titleSmall,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    firstQuestion?.answerText ?? 'No answer',
+                    style: textTheme.bodySmall,
+                  ),
+                ],
                 const SizedBox(height: 16),
                 _buildMediaRow(), // Add the image row here
                 Align(

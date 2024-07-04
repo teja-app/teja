@@ -34,7 +34,7 @@ class JournalEntryRepository {
     return getJournalEntriesPageHelper(isar, pageKey, pageSize, startDate: startDate, endDate: endDate);
   }
 
-  Future<List<JournalEntry>> getJournalEntriesInDateRange(DateTime start, DateTime end) {
+  Future<List<JournalEntryEntity>> getJournalEntriesInDateRange(DateTime start, DateTime end) {
     return getJournalEntriesInDateRangeHelper(isar, start, end);
   }
 

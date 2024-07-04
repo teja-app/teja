@@ -19,8 +19,10 @@ class LastThreeTemplatesViewModel {
     // Reverse the list to start checking from the most recent entry
     var journalEntries = List.from(store.state.journalListState.journalEntries);
     for (var entry in journalEntries) {
-      if (uniqueTemplateIds.add(entry.templateId) && uniqueTemplateIds.length <= 3) {
-        lastThreeTemplates.add(store.state.journalTemplateState.templatesById[entry.templateId]!);
+      if (entry.templateId != null) {
+        if (uniqueTemplateIds.add(entry.templateId) && uniqueTemplateIds.length <= 3) {
+          lastThreeTemplates.add(store.state.journalTemplateState.templatesById[entry.templateId]!);
+        }
       }
       if (uniqueTemplateIds.length == 3) break;
     }

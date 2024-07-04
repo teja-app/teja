@@ -12,6 +12,9 @@ class JournalEntryEntity {
   final List<BulletPointEntryEntity>? bulletPointEntries;
   final List<PainNoteEntryEntity>? painNoteEntries;
   final JournalEntryMetadataEntity? metadata;
+  final bool? lock;
+  final String? title;
+  final String? body;
 
   JournalEntryEntity({
     required this.id,
@@ -27,11 +30,17 @@ class JournalEntryEntity {
     this.bulletPointEntries,
     this.painNoteEntries,
     this.metadata,
+    this.lock,
+    this.title,
+    this.body,
   });
 
   JournalEntryEntity copyWith({
     String? id,
     String? templateId,
+    bool? lock,
+    String? title,
+    String? body,
     DateTime? timestamp,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -58,6 +67,9 @@ class JournalEntryEntity {
       bulletPointEntries: bulletPointEntries ?? this.bulletPointEntries,
       painNoteEntries: painNoteEntries ?? this.painNoteEntries,
       metadata: metadata ?? this.metadata,
+      title: title ?? this.title,
+      lock: lock ?? this.lock,
+      body: body ?? this.body,
     );
   }
 }

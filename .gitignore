@@ -1,4 +1,6 @@
 #Env
+*.env
+*.env.*
 *.env.dev
 *.env.prod
 

@@ -7,7 +7,7 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/home/home_actions.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
 import 'package:teja/domain/redux/mood/list/actions.dart';
-import 'package:teja/domain/redux/token/token_actions.dart';
+import 'package:teja/presentation/home/ui/JournalCollectorFab.dart';
 import 'package:teja/presentation/home/ui/count_down_timer.dart';
 import 'package:teja/presentation/home/ui/journal/journal_entries_widget.dart';
 import 'package:teja/presentation/home/ui/journal/last_used_template.dart';
@@ -19,7 +19,6 @@ import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/presentation/navigation/leadingContainer.dart';
 import 'package:teja/calendar_timeline/calendar_timeline.dart';
-import 'package:teja/shared/storage/secure_storage.dart';
 import 'package:teja/theme/padding.dart';
 
 class HomePage extends StatefulWidget {
@@ -157,6 +156,7 @@ class _HomePageState extends State<HomePage> {
         leadingWidth: 72,
         actions: const [TokenWidget()],
       ),
+      floatingActionButton: const JournalCollectorFab(),
       body: isDesktop(context)
           ? Row(
               children: [

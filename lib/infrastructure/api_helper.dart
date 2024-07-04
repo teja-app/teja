@@ -19,10 +19,7 @@ class ApiHelper {
       );
       return response;
     } catch (e) {
-      logger.e(
-        'Request failed',
-        error: e,
-      );
+      logger.e("Request failed: ${_dio.options.baseUrl}", error: e);
       rethrow;
     }
   }
