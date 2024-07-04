@@ -12,7 +12,11 @@ JournalEditorState _updateJournalEntry(JournalEditorState state, SaveJournalEntr
 JournalEditorState _updateQuestionAnswer(JournalEditorState state, UpdateQuestionAnswer action) {
   var updatedQuestions = state.currentJournalEntry?.questions?.map((q) {
     if (q.questionId == action.questionId) {
-      return q.copyWith(answerText: action.answerText);
+      return q.copyWith(
+        answerText: action.answerText,
+        questionText: action.questionText,
+        questionId: action.questionId,
+      );
     }
     return q;
   }).toList();

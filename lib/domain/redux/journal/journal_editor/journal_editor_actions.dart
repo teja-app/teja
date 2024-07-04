@@ -60,10 +60,12 @@ class UpdateQuestionAnswer {
   final String journalEntryId;
   final String questionId;
   final String answerText;
+  final String questionText;
   const UpdateQuestionAnswer({
     required this.journalEntryId,
     required this.questionId,
     required this.answerText,
+    required this.questionText,
   });
 }
 

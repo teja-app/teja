@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:icons_flutter/icons_flutter.dart';
+import 'package:redux/redux.dart';
+import 'package:uuid/uuid.dart';
 import 'package:teja/infrastructure/api/ai_question_api.dart';
 import 'package:teja/presentation/journal/journal_editor/ui/typing_indicator.dart';
 import 'package:teja/shared/helpers/logger.dart';
 import 'package:teja/shared/storage/secure_storage.dart';
+import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.dart';
 
 class JournalEntryPage extends StatefulWidget {
   final List<Map<String, String>> initialQAList;
@@ -23,6 +28,8 @@ class JournalEntryPageState extends State<JournalEntryPage> {
   late int currentQuestionIndex;
   bool showingAlternatives = false;
   List<String> _alternativeQuestions = [];
+  late final Store<AppState> _store;
+  final Uuid uuid = Uuid();
 
   @override
   void initState() {
@@ -30,6 +37,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
     qaList = List.from(widget.initialQAList);
     currentQuestionIndex = qaList.length - 1;
     _textController.addListener(_scrollToBottom);
+    _store = StoreProvider.of<AppState>(context, listen: false);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _processInitialAnswer();
@@ -57,13 +65,33 @@ class JournalEntryPageState extends State<JournalEntryPage> {
     }
   }
 
+  void saveAnswer() {
+    if (_textController.text.isNotEmpty) {
+      print("_textController.text ${_textController.text}");
+      qaList[currentQuestionIndex]['answer'] = _textController.text;
+      print("qaList ${_textController.text}");
+      print(
+          "_store.state.journalEditorState.currentJournalEntry ${_store.state.journalDetailState.selectedJournalEntry!.id}");
+      _store.dispatch(UpdateQuestionAnswer(
+        journalEntryId: _store.state.journalDetailState.selectedJournalEntry!.id,
+        questionId: qaList[currentQuestionIndex]['questionId']!,
+        answerText: _textController.text,
+        questionText: qaList[currentQuestionIndex]['question']!,
+      ));
+      print("UpdateQuestionAnswer ${_textController.text}");
+      _textController.clear();
+    }
+  }
+
   Future<void> _goDeeper({bool useExistingAnswer = false}) async {
+    print("We are here");
+    if (!useExistingAnswer) {
+      print("We are inside save");
+      saveAnswer();
+    }
+
     setState(() {
       _isLoading = true;
-      if (!useExistingAnswer) {
-        qaList[currentQuestionIndex]['answer'] = _textController.text;
-        _textController.clear();
-      }
     });
 
     try {
@@ -77,6 +105,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
         qaList.add({
           'question': deeperQuestionResponse['question'],
           'answer': '',
+          'questionId': uuid.v4(), // Generate a unique ID for the question
         });
         currentQuestionIndex++;
         showingAlternatives = false;
@@ -167,7 +196,12 @@ class JournalEntryPageState extends State<JournalEntryPage> {
         title: const Text('New entry'),
         actions: [
           IconButton(icon: const Icon(Icons.settings), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.done), onPressed: () {}),
+          IconButton(
+              icon: const Icon(Icons.done),
+              onPressed: () {
+                saveAnswer();
+                // Navigate away or close the screen
+              }),
         ],
       ),
       body: SingleChildScrollView(
@@ -224,7 +258,10 @@ class JournalEntryPageState extends State<JournalEntryPage> {
                       child: ElevatedButton.icon(
                         icon: const Icon(Icons.arrow_downward),
                         label: const Text('Continue'),
-                        onPressed: () => _goDeeper(useExistingAnswer: false),
+                        onPressed: () {
+                          print("Continue");
+                          _goDeeper(useExistingAnswer: false);
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.pink,
                           foregroundColor: Colors.white,
