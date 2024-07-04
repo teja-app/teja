@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -17,6 +19,7 @@ import 'package:teja/presentation/navigation/buildDesktopDrawer.dart';
 import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/presentation/navigation/leadingContainer.dart';
+import 'package:teja/router.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 
 class TimelinePage extends StatefulWidget {
@@ -118,8 +121,10 @@ class _TimelinePageState extends State<TimelinePage> {
             ),
           ); // Your widget to display a mood log
         } else if (item is JournalEntryEntity) {
+          // Check if template exists before calling journalEntryLayout
+          final template = item.templateId != null ? templatesById[item.templateId] : null;
           return journalEntryLayout(
-            templatesById[item.templateId]!,
+            template,
             item,
             context,
           ); // Your widget to display a journal entry
@@ -167,14 +172,15 @@ class _TimelinePageState extends State<TimelinePage> {
         forceMaterialTransparency: true,
         leading: leadingNavBar(context),
         leadingWidth: 72,
-        // actions: [
-        //   IconButton(
-        //     icon: const Icon(AntDesign.filter),
-        //     onPressed: () {
-        //       _showFilterDialog();
-        //     },
-        //   ),
-        // ],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              HapticFeedback.selectionClick();
+              GoRouter.of(context).pushNamed(RootPath.quickJournalEntry);
+            },
+          ),
+        ],
       ),
       body: isDesktop(context)
           ? Row(
@@ -225,7 +231,7 @@ class ListViewModel {
     required this.isMoodLastPage,
     required this.isJournalLoading,
     required this.journalEntries,
-    required this.journalErrorMessage,
+    this.journalErrorMessage,
     required this.isJouralLastPage,
     required this.templatesById,
   });

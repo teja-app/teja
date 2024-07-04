@@ -12,7 +12,7 @@ FeaturedJournalTemplateDto _$FeaturedJournalTemplateDtoFromJson(
       id: json['_id'] as String,
       template: json['template'] as String,
       featured: json['featured'] as bool,
-      priority: json['priority'] as int,
+      priority: (json['priority'] as num).toInt(),
       active: json['active'] as bool? ?? false,
     );
 

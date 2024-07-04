@@ -1,47 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-final textTheme = ThemeData.light().textTheme;
 final ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
   cardColor: Colors.black,
+  textTheme: GoogleFonts.notoSansTextTheme().copyWith(
+    bodyMedium: GoogleFonts.wixMadeforText(
+      textStyle: const TextTheme().bodyMedium,
+    ),
+    bodyLarge: GoogleFonts.wixMadeforText(
+      textStyle: const TextTheme().bodyLarge,
+    ),
+    bodySmall: GoogleFonts.wixMadeforText(
+      textStyle: const TextTheme().bodySmall,
+    ),
+  ),
   timePickerTheme: TimePickerThemeData(
-    backgroundColor: Colors.grey.shade900, // This will be the background color for the time picker dialog.
-    dialHandColor: Colors.teal, // The color for the clock hand.
-    dialBackgroundColor: Colors.black, // The background color for the clock dial.
-    dialTextColor: Colors.white, // The color for the text on the clock dial.
-    dayPeriodTextColor: Colors.white, // The color for the text "AM" and "PM".
-
-    hourMinuteTextColor: Colors.teal.shade200, // The color for the text of the selected hour and minute.
-    dayPeriodColor: Colors.grey.shade800, // The background color for the "AM" and "PM" toggle.
+    backgroundColor: Colors.black,
+    dialHandColor: Colors.white,
+    dialBackgroundColor: Colors.black,
+    dialTextColor: Colors.white,
+    dayPeriodTextColor: Colors.white,
+    hourMinuteTextColor: Colors.white,
+    dayPeriodColor: Colors.black,
     confirmButtonStyle: ButtonStyle(
-      // Define background color for the button
       backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-      // Define text style for the button
+      foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
       textStyle: MaterialStateProperty.all<TextStyle>(
         const TextStyle(
-          color: Colors.black, // Text color
+          color: Colors.black,
           fontWeight: FontWeight.normal,
-        ),
-      ),
-      // Define shape for the button
-      shape: MaterialStateProperty.all<OutlinedBorder>(
-        RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
         ),
       ),
     ),
     cancelButtonStyle: ButtonStyle(
-      // Define background color for the button
       backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-      // Define text style for the button
+      foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
       textStyle: MaterialStateProperty.all<TextStyle>(
         const TextStyle(
-          color: Colors.white70, // Text color
+          color: Colors.black,
           fontWeight: FontWeight.normal,
         ),
       ),
-      // Define shape for the button
       shape: MaterialStateProperty.all<OutlinedBorder>(
         RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),
@@ -49,50 +49,40 @@ final ThemeData darkTheme = ThemeData(
       ),
     ),
     hourMinuteShape: RoundedRectangleBorder(
-      // The shape for the hour and minute boxes.
       borderRadius: BorderRadius.circular(10),
+      side: const BorderSide(color: Colors.white),
     ),
-    hourMinuteColor: Colors.teal.shade700,
     dayPeriodShape: RoundedRectangleBorder(
-      // The shape for the "AM" and "PM" toggle boxes.
       borderRadius: BorderRadius.circular(10),
+      side: const BorderSide(color: Colors.white),
     ),
-    entryModeIconColor: Colors.teal,
-  ),
-  textTheme: GoogleFonts.notoSansTextTheme(
-    ThemeData(brightness: Brightness.dark).textTheme,
-  ).copyWith(
-    titleMedium: GoogleFonts.outfit(
-      textStyle: const TextTheme().titleMedium,
-    ),
-    titleLarge: GoogleFonts.outfit(
-      textStyle: const TextTheme().titleLarge,
-    ),
-    titleSmall: GoogleFonts.outfit(
-      textStyle: const TextTheme().titleSmall,
+    entryModeIconColor: Colors.white,
+    helpTextStyle: const TextStyle(
+      color: Colors.white,
+      fontSize: 16,
     ),
   ),
-  cardTheme: CardTheme(color: Colors.grey.shade800),
-  popupMenuTheme: PopupMenuThemeData(
-    color: Colors.grey.shade800, // Dark theme popup menu color
+  cardTheme: const CardTheme(color: Colors.black),
+  popupMenuTheme: const PopupMenuThemeData(
+    color: Colors.black,
   ),
   colorScheme: ColorScheme.fromSeed(
+    seedColor: Colors.white,
     brightness: Brightness.dark,
-    // seedColor: Colors.white,
-    seedColor: Colors.white, // Adjust seed color for dark theme
-    primary: Colors.black,
-    secondary: Colors.grey,
+    primary: Colors.white,
+    secondary: Colors.black,
     surface: Colors.white,
-    background: Colors.grey.shade900,
+    background: Colors.black,
+    onPrimary: Colors.black,
+    onSecondary: Colors.white,
   ),
-  bottomSheetTheme: BottomSheetThemeData(
-    backgroundColor: Colors.grey.shade900, // Set the color you want for the bottom sheet in dark mode
-    modalBackgroundColor: Colors.grey.shade900, // This is for modal bottom sheets specifically
+  scaffoldBackgroundColor: Colors.black,
+  appBarTheme: const AppBarTheme(
+    color: Colors.black,
   ),
-  scaffoldBackgroundColor: Colors.grey.shade900,
-  appBarTheme: AppBarTheme(
-    // backgroundColor: Colors.grey.shade900,
-    color: Colors.grey.shade900,
+  floatingActionButtonTheme: const FloatingActionButtonThemeData(
+    backgroundColor: Colors.white,
+    foregroundColor: Colors.black,
   ),
   useMaterial3: true,
 );

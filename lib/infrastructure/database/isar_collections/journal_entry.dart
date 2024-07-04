@@ -84,4 +84,7 @@ class JournalEntry {
   List<BulletPointEntry>? bulletPointEntries;
   List<PainNoteEntry>? painNoteEntries;
   JournalEntryMetadata? metadata;
+  bool? lock;
+  String? title;
+  String? body;
 }

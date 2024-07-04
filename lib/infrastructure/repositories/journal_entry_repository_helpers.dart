@@ -30,12 +30,12 @@ Future<List<JournalEntryEntity>> getJournalEntriesPageHelper(Isar isar, int page
   return journalEntries.map((moodLog) => toEntityHelper(moodLog)).toList();
 }
 
-Future<List<JournalEntry>> getJournalEntriesInDateRangeHelper(Isar isar, DateTime start, DateTime end) async {
+Future<List<JournalEntryEntity>> getJournalEntriesInDateRangeHelper(Isar isar, DateTime start, DateTime end) async {
   try {
     // Fetch entries between the specified start and end dates
-    final List<JournalEntry> entries = await isar.journalEntrys.filter().timestampBetween(start, end).findAll();
+    final List<JournalEntry> journalEntries = await isar.journalEntrys.filter().timestampBetween(start, end).findAll();
 
-    return entries;
+    return journalEntries.map((moodLog) => toEntityHelper(moodLog)).toList();
   } catch (e) {
     rethrow; // Propagate any errors for handling in the saga or higher-level logic
   }
@@ -48,6 +48,9 @@ JournalEntryEntity toEntityHelper(JournalEntry journalEntry) {
     timestamp: journalEntry.timestamp,
     createdAt: journalEntry.createdAt,
     updatedAt: journalEntry.updatedAt,
+    lock: journalEntry.lock,
+    title: journalEntry.title,
+    body: journalEntry.body,
     questions: journalEntry.questions
         ?.map((q) => QuestionAnswerPairEntity(
               id: q.id,

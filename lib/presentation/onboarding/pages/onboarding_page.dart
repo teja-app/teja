@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
 import 'package:rive/rive.dart';
-import 'package:teja/domain/redux/auth/auth_action.dart';
 import 'package:teja/infrastructure/service/auth_service.dart';
 import 'package:teja/presentation/onboarding/actions/init_state_actions.dart';
 import 'package:teja/presentation/onboarding/ui/onboarding_description.dart';
@@ -20,10 +18,10 @@ class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
 
   @override
-  _OnboardingPageState createState() => _OnboardingPageState();
+  OnboardingPageState createState() => OnboardingPageState();
 }
 
-class _OnboardingPageState extends State<OnboardingPage> {
+class OnboardingPageState extends State<OnboardingPage> {
   SMIInput<bool>? _isPressed;
   bool _hasExistingMnemonic = false;
 

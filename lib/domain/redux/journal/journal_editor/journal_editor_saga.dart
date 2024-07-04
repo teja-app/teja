@@ -6,6 +6,7 @@ import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_saga.image_saga.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_saga.video_saga.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_saga.voice_saga.dart';
+import 'package:teja/domain/redux/journal/journal_editor/quick_journal_editor_saga.dart';
 import 'package:teja/domain/redux/journal/journal_logs/journal_logs_actions.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
 import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart';
@@ -13,6 +14,7 @@ import 'package:teja/infrastructure/repositories/journal_entry_repository.dart';
 import 'package:isar/isar.dart';
 import 'package:teja/infrastructure/repositories/journal_template_repository.dart';
 import 'package:teja/infrastructure/utils/helpers.dart';
+import 'package:teja/shared/helpers/logger.dart';
 
 class JournalEditorSaga {
   Iterable<void> saga() sync* {
@@ -23,6 +25,7 @@ class JournalEditorSaga {
     yield* ImageSaga().saga();
     yield* VideoSaga().saga();
     yield* VoiceSaga().saga();
+    yield* QuickJournalEditorSaga().saga();
   }
 
   _handleClearJournalFormAction({required ClearJournalEditor action}) sync* {
@@ -107,21 +110,72 @@ class JournalEditorSaga {
 
     var journalEntryRepository = JournalEntryRepository(isar);
 
-    JournalEntry journalEntry = JournalEntry()
-      ..id = action.journalEntry.id
-      ..templateId = action.journalEntry.templateId
-      // ... other properties
-      ..questions = action.journalEntry.questions
-          ?.map((q) => QuestionAnswerPair()
-            ..questionId = q.questionId
-            ..questionText = q.questionText
-            ..answerText = q.answerText)
-          .toList();
-
     yield Try(() sync* {
+      // Fetch the existing journal entry if it exists
+      var journalEntryResult = Result<JournalEntry?>();
+      yield Call(journalEntryRepository.getJournalEntryById,
+          args: [action.journalEntry.id], result: journalEntryResult);
+      JournalEntry? existingEntry = journalEntryResult.value;
+
+      // Create or update the journal entry
+      JournalEntry journalEntry = existingEntry ?? JournalEntry();
+      journalEntry
+        ..updatedAt = DateTime.now()
+        ..questions = action.journalEntry.questions
+            ?.map((q) => QuestionAnswerPair()
+              ..questionId = q.questionId
+              ..questionText = q.questionText
+              ..answerText = q.answerText)
+            .toList()
+        ..textEntries = action.journalEntry.textEntries
+            ?.map((t) => TextEntry()
+              ..id = t.id
+              ..content = t.content)
+            .toList()
+        ..voiceEntries = action.journalEntry.voiceEntries
+            ?.map((v) => VoiceEntry()
+              ..id = v.id
+              ..filePath = v.filePath
+              ..duration = v.duration
+              ..hash = v.hash)
+            .toList()
+        ..videoEntries = action.journalEntry.videoEntries
+            ?.map((v) => VideoEntry()
+              ..id = v.id
+              ..filePath = v.filePath
+              ..duration = v.duration
+              ..hash = v.hash)
+            .toList()
+        ..imageEntries = action.journalEntry.imageEntries
+            ?.map((i) => ImageEntry()
+              ..id = i.id
+              ..filePath = i.filePath
+              ..caption = i.caption
+              ..hash = i.hash)
+            .toList()
+        ..bulletPointEntries = action.journalEntry.bulletPointEntries
+            ?.map((b) => BulletPointEntry()
+              ..id = b.id
+              ..points = b.points)
+            .toList()
+        ..painNoteEntries = action.journalEntry.painNoteEntries
+            ?.map((p) => PainNoteEntry()
+              ..id = p.id
+              ..painLevel = p.painLevel
+              ..notes = p.notes)
+            .toList()
+        ..metadata = action.journalEntry.metadata != null
+            ? (JournalEntryMetadata()..tags = action.journalEntry.metadata!.tags)
+            : null
+        ..lock = action.journalEntry.lock
+        ..title = action.journalEntry.title
+        ..body = action.journalEntry.body;
+
+      print("journalEntry ${journalEntry.id} ${journalEntry.title}");
       yield Call(journalEntryRepository.addOrUpdateJournalEntry, args: [journalEntry]);
-      yield Put(JournalEntrySaved("Journal entry updated successfully."));
+      yield Put(JournalEntrySaved("Journal entry saved successfully."));
     }, Catch: (e, s) sync* {
+      logger.e("JournalEntrySaveFailed", error: e, stackTrace: s);
       yield Put(JournalEntrySaveFailed(e.toString()));
     });
   }
@@ -138,16 +192,38 @@ class JournalEditorSaga {
     yield Call(journalEntryRepository.getJournalEntryById, args: [action.journalEntryId], result: journalEntryResult);
 
     if (journalEntryResult.value != null) {
-      // Update the specific question-answer pair
-      JournalEntry journalEntry = journalEntryResult.value!;
-      journalEntry.questions?.firstWhere((q) => q.questionId == action.questionId).answerText = action.answerText;
-
       // Save the updated journal entry
       yield Try(() sync* {
+        // Get the existing journal entry
+        JournalEntry journalEntry = journalEntryResult.value!;
+
+        // Convert the fixed-length list to a growable list
+        var questions = List<QuestionAnswerPair>.from(journalEntry.questions ?? []);
+
+        // Check if the question exists
+        var question = questions.firstWhere(
+          (q) => q.questionId == action.questionId,
+          orElse: () => QuestionAnswerPair()
+            ..questionId = action.questionId
+            ..questionText = action.questionText,
+        );
+
+        // If the question didn't exist, add it to the questions list
+        if (!questions.contains(question)) {
+          questions.add(question);
+        }
+
+        // Update the specific question-answer pair
+        question.answerText = action.answerText;
+
+        // Update the journal entry with the new list of questions
+        journalEntry.questions = questions;
+
         yield Call(journalEntryRepository.addOrUpdateJournalEntry, args: [journalEntry]);
         yield Put(UpdateQuestionAnswerSuccessAction(
             journalEntryId: action.journalEntryId, questionId: action.questionId, answerText: action.answerText));
       }, Catch: (e, s) sync* {
+        print("$e, $s");
         yield Put(UpdateQuestionAnswerFailureAction(e.toString()));
       });
     } else {
