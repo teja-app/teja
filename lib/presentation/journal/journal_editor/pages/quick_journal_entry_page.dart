@@ -77,7 +77,12 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
                       );
                       if (updatedEntry != null) {
                         _store.dispatch(SaveJournalEntry(updatedEntry));
-                        goRouter.goNamed(RootPath.home);
+                        goRouter.goNamed(
+                          RootPath.journalDetail,
+                          queryParameters: {
+                            "id": viewModel.currentJournalEntry!.id,
+                          },
+                        );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Failed to save entry')),

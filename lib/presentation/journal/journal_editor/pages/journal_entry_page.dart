@@ -6,7 +6,9 @@ import 'package:teja/shared/helpers/logger.dart';
 import 'package:teja/shared/storage/secure_storage.dart';
 
 class JournalEntryPage extends StatefulWidget {
-  const JournalEntryPage({super.key});
+  final List<Map<String, String>> initialQAList;
+
+  const JournalEntryPage({super.key, required this.initialQAList});
 
   @override
   JournalEntryPageState createState() => JournalEntryPageState();
@@ -15,20 +17,53 @@ class JournalEntryPage extends StatefulWidget {
 class JournalEntryPageState extends State<JournalEntryPage> {
   final ScrollController _scrollController = ScrollController();
   bool _isLoading = false;
+  late List<Map<String, String>> qaList;
 
-  List<Map<String, String>> qaList = [
-    {'question': "What's on your mind?", 'answer': ''}
-  ];
   final TextEditingController _textController = TextEditingController();
-  int currentQuestionIndex = 0;
+  late int currentQuestionIndex;
   bool showingAlternatives = false;
   List<String> _alternativeQuestions = [];
 
-  Future<void> _goDeeper() async {
+  @override
+  void initState() {
+    super.initState();
+    qaList = List.from(widget.initialQAList);
+    currentQuestionIndex = qaList.length - 1;
+    _textController.addListener(_scrollToBottom);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _processInitialAnswer();
+    });
+  }
+
+  Future<void> _processInitialAnswer() async {
+    if (qaList.isNotEmpty && qaList.last['answer']!.isNotEmpty) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        await _goDeeper(useExistingAnswer: true);
+      } catch (e) {
+        logger.e("JournalEntryPageState:_processInitialAnswer", error: e);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to generate new question: $e')),
+        );
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _goDeeper({bool useExistingAnswer = false}) async {
     setState(() {
       _isLoading = true;
-      qaList[currentQuestionIndex]['answer'] = _textController.text;
-      _textController.clear();
+      if (!useExistingAnswer) {
+        qaList[currentQuestionIndex]['answer'] = _textController.text;
+        _textController.clear();
+      }
     });
 
     try {
@@ -99,12 +134,6 @@ class JournalEntryPageState extends State<JournalEntryPage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _textController.addListener(_scrollToBottom);
-  }
-
-  @override
   void dispose() {
     _textController.removeListener(_scrollToBottom);
     _textController.dispose();
@@ -159,7 +188,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
                         qaList[index]['question']!,
                         style: const TextStyle(fontSize: 18, color: Colors.blue),
                       ),
-                      if (index == currentQuestionIndex && !showingAlternatives)
+                      if (index == currentQuestionIndex && !showingAlternatives && !_isLoading)
                         IconButton(
                           icon: const Icon(AntDesign.sync, size: 20),
                           onPressed: _showAlternatives,
@@ -186,7 +215,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
                 );
               },
             ),
-            if (!showingAlternatives) ...[
+            if (!showingAlternatives && !_isLoading) ...[
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
@@ -195,7 +224,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
                       child: ElevatedButton.icon(
                         icon: const Icon(Icons.arrow_downward),
                         label: const Text('Continue'),
-                        onPressed: _goDeeper,
+                        onPressed: () => _goDeeper(useExistingAnswer: false),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.pink,
                           foregroundColor: Colors.white,
@@ -207,7 +236,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
                   ],
                 ),
               ),
-            ] else ...[
+            ] else if (showingAlternatives) ...[
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
