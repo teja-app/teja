@@ -169,7 +169,7 @@ class JournalDetailPageState extends State<JournalDetailPage> {
             ],
             Button(
               text: "Explore further",
-              icon: Maki.swimming,
+              icon: Icons.sunny,
               onPressed: () {
                 List<Map<String, String>> qaList = [];
 
@@ -191,21 +191,22 @@ class JournalDetailPageState extends State<JournalDetailPage> {
             ),
           ],
         ),
-        Positioned(
-          top: 0,
-          right: 0,
-          child: IconButton(
-            icon: Icon(Icons.edit, size: 16),
-            onPressed: () {
-              GoRouter.of(context).pushNamed(
-                RootPath.quickJournalEntry,
-                queryParameters: {
-                  "id": journalEntry.id,
-                },
-              );
-            },
+        if (journalEntry.body != null)
+          Positioned(
+            top: 0,
+            right: 0,
+            child: IconButton(
+              icon: Icon(Icons.edit, size: 16),
+              onPressed: () {
+                GoRouter.of(context).pushNamed(
+                  RootPath.quickJournalEntry,
+                  queryParameters: {
+                    "id": journalEntry.id,
+                  },
+                );
+              },
+            ),
           ),
-        ),
       ],
     );
   }
