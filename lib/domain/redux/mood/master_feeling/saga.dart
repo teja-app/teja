@@ -6,7 +6,7 @@ import 'package:teja/domain/redux/mood/master_feeling/actions.dart';
 import 'package:teja/infrastructure/api/feeling_api.dart';
 import 'package:teja/infrastructure/database/isar_collections/master_feeling.dart';
 import 'package:teja/infrastructure/repositories/master_feeling.dart';
-import 'package:teja/shared/storage/secure_storage.dart';
+import 'package:teja/shared/helpers/logger.dart';
 
 class MasterFeelingSaga {
   Iterable<void> saga() sync* {
@@ -68,9 +68,9 @@ class MasterFeelingSaga {
         result: feelingsResult,
       );
 
-      List<MasterFeelingEntity>? feelings = feelingsResult.value;
-      if (feelings != null && feelings.isNotEmpty) {
-        List<MasterFeeling> domainFeelings = feelings.map((entity) {
+      if (feelingsResult.value != null && feelingsResult.value!.isNotEmpty) {
+        List<MasterFeelingEntity>? feelings = feelingsResult.value;
+        List<MasterFeeling> domainFeelings = feelings!.map((entity) {
           return MasterFeeling()
             ..slug = entity.slug
             ..name = entity.name
@@ -106,7 +106,8 @@ class MasterFeelingSaga {
           const MasterFeelingsFetchFailedAction('No feelings data received'),
         );
       }
-    }, Catch: (e) sync* {
+    }, Catch: (e, s) sync* {
+      logger.e("Error", error: e, stackTrace: s);
       yield Put(MasterFeelingsFetchFailedAction(e.toString()));
     });
   }

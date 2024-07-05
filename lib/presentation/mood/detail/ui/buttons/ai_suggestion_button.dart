@@ -65,6 +65,7 @@ class _AISuggestionButtonViewModel {
 
   static _AISuggestionButtonViewModel fromStore(Store<AppState> store, MoodLogEntity selectedMoodLog) {
     final aiSuggestionState = store.state.aiSuggestionState;
+    print("aiSuggestionState.errorMessage ${aiSuggestionState.errorMessage}");
 
     return _AISuggestionButtonViewModel(
       suggestions: selectedMoodLog.ai?.suggestion,

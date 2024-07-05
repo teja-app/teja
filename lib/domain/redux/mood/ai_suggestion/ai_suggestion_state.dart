@@ -15,12 +15,13 @@ class AISuggestionState {
 
   AISuggestionState copyWith({
     bool? isLoading,
+    bool updateErrorMessage = false,
     String? errorMessage,
     List<MoodLogEntity>? moodLogs,
   }) {
     return AISuggestionState(
       isLoading: isLoading ?? this.isLoading,
-      errorMessage: errorMessage ?? this.errorMessage,
+      errorMessage: updateErrorMessage ? errorMessage : this.errorMessage,
       moodLogs: moodLogs ?? this.moodLogs,
     );
   }

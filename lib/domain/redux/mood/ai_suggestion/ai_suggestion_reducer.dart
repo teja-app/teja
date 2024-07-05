@@ -6,6 +6,7 @@ import 'package:teja/domain/redux/mood/ai_suggestion/ai_suggestion_state.dart';
 AISuggestionState _fetchAISuggestion(AISuggestionState state, FetchAISuggestionAction action) {
   return state.copyWith(
     isLoading: true,
+    updateErrorMessage: true,
     errorMessage: null,
   );
 }
@@ -29,6 +30,7 @@ AISuggestionState _fetchAISuggestionSuccess(AISuggestionState state, FetchAISugg
 AISuggestionState _fetchAISuggestionFailure(AISuggestionState state, FetchAISuggestionFailureAction action) {
   return state.copyWith(
     isLoading: false,
+    updateErrorMessage: true,
     errorMessage: action.errorMessage,
   );
 }
@@ -51,6 +53,7 @@ AISuggestionState _updateAISuggestion(AISuggestionState state, UpdateAISuggestio
 AISuggestionState _fetchAITitle(AISuggestionState state, FetchAITitleAction action) {
   return state.copyWith(
     isLoading: true,
+    updateErrorMessage: true,
     errorMessage: null,
   );
 }
@@ -74,6 +77,7 @@ AISuggestionState _fetchAITitleSuccess(AISuggestionState state, FetchAITitleSucc
 AISuggestionState _fetchAITitleFailure(AISuggestionState state, FetchAITitleFailureAction action) {
   return state.copyWith(
     isLoading: false,
+    updateErrorMessage: true,
     errorMessage: action.errorMessage,
   );
 }
@@ -96,6 +100,7 @@ AISuggestionState _updateAITitle(AISuggestionState state, UpdateAITitleAction ac
 AISuggestionState _fetchAIAffirmation(AISuggestionState state, FetchAIAffirmationAction action) {
   return state.copyWith(
     isLoading: true,
+    updateErrorMessage: true,
     errorMessage: null,
   );
 }
@@ -119,6 +124,7 @@ AISuggestionState _fetchAIAffirmationSuccess(AISuggestionState state, FetchAIAff
 AISuggestionState _fetchAIAffirmationFailure(AISuggestionState state, FetchAIAffirmationFailureAction action) {
   return state.copyWith(
     isLoading: false,
+    updateErrorMessage: true,
     errorMessage: action.errorMessage,
   );
 }
@@ -138,6 +144,13 @@ AISuggestionState _updateAIAffirmation(AISuggestionState state, UpdateAIAffirmat
   );
 }
 
+AISuggestionState _clearErrorMessages(AISuggestionState state, ClearErrorMessagesAction action) {
+  return state.copyWith(
+    updateErrorMessage: true,
+    errorMessage: null,
+  );
+}
+
 Reducer<AISuggestionState> aiSuggestionReducer = combineReducers<AISuggestionState>([
   TypedReducer<AISuggestionState, FetchAISuggestionAction>(_fetchAISuggestion),
   TypedReducer<AISuggestionState, FetchAISuggestionSuccessAction>(_fetchAISuggestionSuccess),
@@ -151,4 +164,5 @@ Reducer<AISuggestionState> aiSuggestionReducer = combineReducers<AISuggestionSta
   TypedReducer<AISuggestionState, FetchAIAffirmationSuccessAction>(_fetchAIAffirmationSuccess),
   TypedReducer<AISuggestionState, FetchAIAffirmationFailureAction>(_fetchAIAffirmationFailure),
   TypedReducer<AISuggestionState, UpdateAIAffirmationAction>(_updateAIAffirmation),
+  TypedReducer<AISuggestionState, ClearErrorMessagesAction>(_clearErrorMessages),
 ]);
