@@ -88,7 +88,9 @@ class FinishScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              AISuggestionButton(selectedMoodLog: viewModel.currentMoodLog!),
+              Center(
+                child: AISuggestionButton(moodId: viewModel.currentMoodLog!.id),
+              ),
               if (viewModel.moodRating >= 4) // Conditional Rendering based on moodRating
                 FlexibleHeightBox(
                   gridWidth: 4,

@@ -111,11 +111,10 @@ class MoodEditPageState extends State<MoodEditPage> {
                                 moodId = viewModel.currentMoodLog!.id;
                               }
                               if (moodId != null) {
-                                goRouter.pop();
-                                // goRouter.replaceNamed(
-                                //   RootPath.moodDetail,
-                                //   queryParameters: {"id": moodId},
-                                // );
+                                goRouter.replaceNamed(
+                                  RootPath.moodDetail,
+                                  queryParameters: {"id": moodId},
+                                );
                               } else {
                                 goRouter.pushNamed(RootPath.home);
                               }

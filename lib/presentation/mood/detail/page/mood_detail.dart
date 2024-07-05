@@ -199,7 +199,7 @@ class MoodDetailPageState extends State<MoodDetailPage> {
                 FlexibleHeightBox(
                   gridWidth: 4,
                   child: AISuggestionButton(
-                    selectedMoodLog: viewModel.moodDetailPage.selectedMoodLog!,
+                    moodId: viewModel.moodDetailPage.selectedMoodLog!.id,
                   ),
                 ),
                 Text(
@@ -232,6 +232,12 @@ class MoodDetailPageState extends State<MoodDetailPage> {
                 : MoodEntryWidget(
                     timestamp: moodDetailPage.selectedMoodLog!.timestamp,
                   ),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                GoRouter.of(context).goNamed(RootPath.home);
+              },
+            ),
             actions: [
               SettingsPopupMenu(
                 moodId: widget.moodId,
