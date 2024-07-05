@@ -90,3 +90,8 @@ class UpdateAIAffirmationAction {
 
   const UpdateAIAffirmationAction(this.moodId, this.affirmation);
 }
+
+@immutable
+class ClearErrorMessagesAction {
+  const ClearErrorMessagesAction();
+}
