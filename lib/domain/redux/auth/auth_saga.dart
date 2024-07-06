@@ -55,8 +55,9 @@ class AuthSaga {
             args: [authenticateAction.mnemonic]);
         yield Put(TokenReceivedAction(accessToken, refreshToken));
         yield Put(AuthenticateSuccessAction());
+        yield Put(const SetHasExistingMnemonicAction(true));
       } else {
-        yield Put(AuthenticateFailedAction('Failed to retrieve tokens.'));
+        yield Put(const AuthenticateFailedAction('Failed to retrieve tokens.'));
       }
     }, Catch: (e, stackTrace) sync* {
       yield Put(AuthenticateFailedAction(e.toString()));
@@ -112,4 +113,9 @@ class AuthSaga {
       yield Put(FetchRecoveryPhraseFailedAction(e.toString()));
     });
   }
+}
+
+Iterable<void> _setHasExistingMnemonic(
+    {required SetHasExistingMnemonicAction action}) sync* {
+  yield Put(SetHasExistingMnemonicAction(action.hasExistingMnemonic));
 }

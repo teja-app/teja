@@ -93,3 +93,10 @@ class SetBlankIndexAction {
 
   const SetBlankIndexAction(this.blankIndex);
 }
+
+@immutable
+class SetHasExistingMnemonicAction {
+  final bool hasExistingMnemonic;
+
+  const SetHasExistingMnemonicAction(this.hasExistingMnemonic);
+}

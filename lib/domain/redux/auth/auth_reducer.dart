@@ -13,6 +13,8 @@ Reducer<AuthState> authReducer = combineReducers<AuthState>([
   TypedReducer<AuthState, FetchRecoveryPhraseFailedAction>(
       _fetchRecoveryPhraseFailed),
   TypedReducer<AuthState, SetBlankIndexAction>(_setBlankIndex),
+  TypedReducer<AuthState, SetHasExistingMnemonicAction>(
+      _setHasExistingMnemonic),
 ]);
 
 AuthState _authInProgress(AuthState state, AuthInProgressAction action) {
@@ -57,4 +59,9 @@ AuthState _fetchRecoveryPhraseFailed(
 
 AuthState _setBlankIndex(AuthState state, SetBlankIndexAction action) {
   return state.copyWith(blankIndex: action.blankIndex);
+}
+
+AuthState _setHasExistingMnemonic(
+    AuthState state, SetHasExistingMnemonicAction action) {
+  return state.copyWith(hasExistingMnemonic: action.hasExistingMnemonic);
 }

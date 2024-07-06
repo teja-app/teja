@@ -3,6 +3,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
 import 'package:rive/rive.dart';
+import 'package:teja/domain/redux/auth/auth_action.dart';
 import 'package:teja/infrastructure/service/auth_service.dart';
 import 'package:teja/presentation/onboarding/actions/init_state_actions.dart';
 import 'package:teja/presentation/onboarding/ui/onboarding_description.dart';
@@ -23,13 +24,14 @@ class OnboardingPage extends StatefulWidget {
 
 class OnboardingPageState extends State<OnboardingPage> {
   SMIInput<bool>? _isPressed;
-  bool _hasExistingMnemonic = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final store = StoreProvider.of<AppState>(context);
+      bool _hasExistingMnemonic =
+          await store.state.authState.hasExistingMnemonic;
       performInitStateActions(store);
       if (_isPressed != null) {
         _isPressed!.value = false;
@@ -40,9 +42,10 @@ class OnboardingPageState extends State<OnboardingPage> {
       // await SecureStorage().deleteRecoveryCode();
 
       final recoverCode = await SecureStorage().readRecoveryCode();
-      setState(() {
-        _hasExistingMnemonic = recoverCode != null;
-      });
+
+      _hasExistingMnemonic = await store.dispatch(SetHasExistingMnemonicAction(
+          _hasExistingMnemonic = recoverCode != null));
+
       final authSevice = AuthService();
       await authSevice.validateAndAuthenticate(store);
     });
@@ -52,7 +55,8 @@ class OnboardingPageState extends State<OnboardingPage> {
     authenticate(context, () {
       // This is the callback that gets called on successful authentication
       if (_isPressed != null) {
-        _isPressed!.value = true; // Trigger the animation or perform additional actions
+        _isPressed!.value =
+            true; // Trigger the animation or perform additional actions
       }
       Future.delayed(const Duration(seconds: 3), () {
         GoRouter.of(context).replaceNamed(RootPath.home);
@@ -65,7 +69,8 @@ class OnboardingPageState extends State<OnboardingPage> {
     register(context, () {
       // This is the callback that gets called on successful registration
       if (_isPressed != null) {
-        _isPressed!.value = true; // Trigger the animation or perform additional actions
+        _isPressed!.value =
+            true; // Trigger the animation or perform additional actions
       }
       Future.delayed(const Duration(seconds: 3), () {
         GoRouter.of(context).pushNamed(RootPath.registration);
@@ -137,7 +142,7 @@ class OnboardingPageState extends State<OnboardingPage> {
                     width: 300,
                     onPressed: _onAuthenticatePressed,
                   ),
-                  if (!_hasExistingMnemonic) ...[
+                  if (!store.state.authState.hasExistingMnemonic) ...[
                     Button(
                       key: const Key("register"),
                       text: "Register (Anonymously)",
@@ -148,7 +153,8 @@ class OnboardingPageState extends State<OnboardingPage> {
                     Button(
                       text: "Have a recovery code?",
                       width: 300,
-                      onPressed: _onRecoverAccountPressed, // Updated to navigate to recover account screen
+                      onPressed:
+                          _onRecoverAccountPressed, // Updated to navigate to recover account screen
                       buttonType: ButtonType.disabled,
                     )
                   ]

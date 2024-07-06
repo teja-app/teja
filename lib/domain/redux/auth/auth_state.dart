@@ -6,8 +6,8 @@ class AuthState {
   final String? errorMessage;
   final bool isAuthSuccessful;
   final String? mnemonic;
-  final int? blankIndex; 
-
+  final int? blankIndex;
+  final bool hasExistingMnemonic;
 
   const AuthState({
     this.isLoading = false,
@@ -15,6 +15,7 @@ class AuthState {
     this.isAuthSuccessful = false,
     this.mnemonic,
     this.blankIndex,
+    this.hasExistingMnemonic = true,
   });
 
   factory AuthState.initial() {
@@ -24,6 +25,7 @@ class AuthState {
       isAuthSuccessful: false,
       mnemonic: null,
       blankIndex: null,
+      hasExistingMnemonic: true,
     );
   }
 
@@ -33,6 +35,7 @@ class AuthState {
     bool? isAuthSuccessful,
     String? mnemonic,
     int? blankIndex,
+    bool? hasExistingMnemonic,
   }) {
     return AuthState(
       isLoading: isLoading ?? this.isLoading,
@@ -40,6 +43,7 @@ class AuthState {
       isAuthSuccessful: isAuthSuccessful ?? this.isAuthSuccessful,
       mnemonic: mnemonic ?? this.mnemonic,
       blankIndex: blankIndex ?? this.blankIndex,
+      hasExistingMnemonic: hasExistingMnemonic ?? this.hasExistingMnemonic,
     );
   }
 
