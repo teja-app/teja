@@ -6,6 +6,7 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/master_factor.dart';
 import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/mood/ai_suggestion/ai_suggestion_actions.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_actions.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_state.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
@@ -52,11 +53,12 @@ class MoodDetailPage extends StatefulWidget {
 }
 
 class MoodDetailPageState extends State<MoodDetailPage> {
+  late Store<AppState> store;
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Store<AppState> store = StoreProvider.of<AppState>(context);
+      store = StoreProvider.of<AppState>(context);
       store.dispatch(LoadMoodDetailAction(widget.moodId));
     });
   }
@@ -84,6 +86,12 @@ class MoodDetailPageState extends State<MoodDetailPage> {
         "id": moodLogId,
       },
     );
+  }
+
+  @override
+  void dispose() {
+    store.dispatch(const ClearErrorMessagesAction());
+    super.dispose();
   }
 
   @override
@@ -191,7 +199,7 @@ class MoodDetailPageState extends State<MoodDetailPage> {
                 FlexibleHeightBox(
                   gridWidth: 4,
                   child: AISuggestionButton(
-                    selectedMoodLog: viewModel.moodDetailPage.selectedMoodLog!,
+                    moodId: viewModel.moodDetailPage.selectedMoodLog!.id,
                   ),
                 ),
                 Text(
@@ -224,6 +232,12 @@ class MoodDetailPageState extends State<MoodDetailPage> {
                 : MoodEntryWidget(
                     timestamp: moodDetailPage.selectedMoodLog!.timestamp,
                   ),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                GoRouter.of(context).goNamed(RootPath.home);
+              },
+            ),
             actions: [
               SettingsPopupMenu(
                 moodId: widget.moodId,

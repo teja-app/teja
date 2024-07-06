@@ -2,20 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
-import 'package:teja/domain/entities/mood_log.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/mood/ai_suggestion/ai_suggestion_actions.dart';
+import 'package:teja/domain/redux/mood/detail/mood_detail_actions.dart';
 import 'package:teja/shared/common/button.dart';
 
 class AISuggestionButton extends StatelessWidget {
-  final MoodLogEntity selectedMoodLog;
+  final String moodId;
 
-  const AISuggestionButton({Key? key, required this.selectedMoodLog}) : super(key: key);
+  const AISuggestionButton({Key? key, required this.moodId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, _AISuggestionButtonViewModel>(
-      converter: (store) => _AISuggestionButtonViewModel.fromStore(store, selectedMoodLog),
+      converter: (store) => _AISuggestionButtonViewModel.fromStore(store),
+      onInit: (store) => store.dispatch(LoadMoodDetailAction(moodId)),
       builder: (context, viewModel) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -31,7 +32,7 @@ class AISuggestionButton extends StatelessWidget {
               Button(
                 text: "Fetch AI Suggestion",
                 icon: Icons.favorite,
-                onPressed: viewModel.getSuggestions,
+                onPressed: () => viewModel.getSuggestions(moodId),
               ),
               if (viewModel.isLoading) const Center(child: CircularProgressIndicator()),
               if (viewModel.errorMessage != null)
@@ -54,7 +55,7 @@ class _AISuggestionButtonViewModel {
   final String? suggestions;
   final bool isLoading;
   final String? errorMessage;
-  final VoidCallback getSuggestions;
+  final Function(String) getSuggestions;
 
   _AISuggestionButtonViewModel({
     required this.suggestions,
@@ -63,15 +64,16 @@ class _AISuggestionButtonViewModel {
     required this.getSuggestions,
   });
 
-  static _AISuggestionButtonViewModel fromStore(Store<AppState> store, MoodLogEntity selectedMoodLog) {
+  static _AISuggestionButtonViewModel fromStore(Store<AppState> store) {
     final aiSuggestionState = store.state.aiSuggestionState;
+    final selectedMoodLog = store.state.moodDetailPage.selectedMoodLog;
 
     return _AISuggestionButtonViewModel(
-      suggestions: selectedMoodLog.ai?.suggestion,
+      suggestions: store.state.moodDetailPage.selectedMoodLog?.ai?.suggestion,
       isLoading: aiSuggestionState.isLoading,
       errorMessage: aiSuggestionState.errorMessage,
-      getSuggestions: () {
-        store.dispatch(FetchAISuggestionAction(selectedMoodLog));
+      getSuggestions: (moodId) {
+        store.dispatch(FetchAISuggestionAction(selectedMoodLog!));
       },
     );
   }
