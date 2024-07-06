@@ -132,6 +132,14 @@ class MoodGaugeChart extends StatelessWidget {
 
     // Avoid division by zero
     if (totalCount == 0) {
+      // Add a default range to avoid errors
+      ranges.add(
+        GaugeRange(
+          startValue: 1.0,
+          endValue: 5.0,
+          color: Colors.grey,
+        ),
+      );
       return ranges;
     }
 
