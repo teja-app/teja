@@ -29,6 +29,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   String _errorMessage = '';
   bool _isFetchMnemonicCalled = false;
   int blankIndex = 0;
+  final PageStorageBucket _bucket = PageStorageBucket();
 
   @override
   void initState() {
@@ -125,14 +126,27 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               } else {
                 blankIndex = snapshot.data ?? 0;
 
-                return PageView(
-                  controller: _pageController,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    _buildMnemonicPage(),
-                    _buildConfirmationPage(context, _pageController, _mnemonic,
-                        _confirmAndRegister, blankIndex),
-                  ],
+                // return PageView(
+                //   controller: _pageController,
+                //   physics: const NeverScrollableScrollPhysics(),
+                //   children: [
+                //     _buildMnemonicPage(),
+                //     _buildConfirmationPage(context, _pageController, _mnemonic,
+                //         _confirmAndRegister, blankIndex),
+                //   ],
+                // );
+                return PageStorage(
+                  bucket: _bucket,
+                  child: PageView(
+                    key: PageStorageKey('pageViewKey'),
+                    controller: _pageController,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: [
+                      _buildMnemonicPage(),
+                      _buildConfirmationPage(context, _pageController,
+                          _mnemonic, _confirmAndRegister, blankIndex),
+                    ],
+                  ),
                 );
               }
             },
