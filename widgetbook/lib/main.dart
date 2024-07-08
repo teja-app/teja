@@ -46,7 +46,7 @@ class WidgetbookApp extends StatelessWidget {
             ),
           ],
           themeBuilder: (context, theme, child) => ColoredBox(
-            color: theme.colorScheme.surface,
+            color: theme.colorScheme.background,
             child: Theme(
               data: theme,
               child: child,
