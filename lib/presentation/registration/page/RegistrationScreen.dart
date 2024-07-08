@@ -7,6 +7,7 @@ import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/auth/auth_action.dart';
 import 'package:teja/domain/redux/auth/auth_state.dart';
+import 'package:teja/presentation/registration/ui/RecoveryCodeDisplay.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
@@ -116,8 +117,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           }
 
           return FutureBuilder<int>(
-            future:
-                Future.delayed(Duration.zero, () => authState.blankIndex ?? 0),
+            future: Future.delayed(Duration.zero, () => authState.blankIndex ?? 0),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -138,13 +138,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 return PageStorage(
                   bucket: _bucket,
                   child: PageView(
-                    key: PageStorageKey('pageViewKey'),
+                    key: const PageStorageKey('pageViewKey'),
                     controller: _pageController,
                     physics: const NeverScrollableScrollPhysics(),
                     children: [
                       _buildMnemonicPage(),
-                      _buildConfirmationPage(context, _pageController,
-                          _mnemonic, _confirmAndRegister, blankIndex),
+                      _buildConfirmationPage(context, _pageController, _mnemonic, _confirmAndRegister, blankIndex),
                     ],
                   ),
                 );
@@ -166,97 +165,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Center(
-              child: Icon(AntDesign.key, size: 30),
-            ),
-            const SizedBox(height: 10),
-            Center(
-              child: Text(
-                'These words are the keys to your data',
-                style: textTheme.bodyLarge,
-              ),
-            ),
-            Center(
-              child: Text(
-                'Please write them down or store it somewhere safe',
-                style: textTheme.bodyMedium,
-              ),
-            ),
-            const SizedBox(height: 10),
-            FlexibleHeightBox(
-              gridWidth: 4,
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  childAspectRatio: 2.5,
-                ),
-                itemCount: 15,
-                itemBuilder: (context, index) {
-                  final words = _mnemonic.split(' ');
-                  return Container(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 15,
-                          padding: EdgeInsets.symmetric(vertical: 4),
-                          child:
-                              Text('${index + 1}', style: textTheme.bodySmall),
-                        ),
-                        Container(
-                          width: 80,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: colorScheme.background,
-                          ),
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          child: Text(
-                            words[index],
-                            style: textTheme.bodySmall,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Store recovery phrase securely. '
-              'Do not share it. '
-              'Anyone with these words will have full access to your account. '
-              'Losing it means losing your Teja account.',
-              style: textTheme.bodySmall,
-            ),
-            const SizedBox(height: 20),
+            RecoveryCodeDisplay(recoveryCode: _mnemonic!),
             Center(
               child: Button(
                 onPressed: () {
-                  _pageController.nextPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeIn);
+                  _pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
                 },
                 text: 'Yes, I have saved it securely',
                 buttonType: ButtonType.primary,
-              ),
-            ),
-            Center(
-              child: Button(
-                onPressed: () {
-                  Clipboard.setData(ClipboardData(text: _mnemonic));
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text('Mnemonic copied to clipboard')),
-                  );
-                },
-                icon: AntDesign.copy1,
-                text: 'Copy to Clipboard',
-                buttonType: ButtonType.secondary,
               ),
             ),
           ],
@@ -265,12 +181,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
-  Widget _buildConfirmationPage(
-      BuildContext context,
-      PageController _pageController,
-      String _mnemonic,
-      VoidCallback _confirmAndRegister,
-      int blankIndex) {
+  Widget _buildConfirmationPage(BuildContext context, PageController _pageController, String _mnemonic,
+      VoidCallback _confirmAndRegister, int blankIndex) {
     List<String> mnemonicWords = _mnemonic.split(' ');
     String missingWord = '';
 
@@ -302,32 +214,28 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   ),
                   itemCount: mnemonicWords.length,
                   itemBuilder: (context, index) {
-                    return Container(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: 15,
-                            padding: EdgeInsets.symmetric(vertical: 4),
-                            child: Text('${index + 1}',
-                                style: textTheme.bodySmall),
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 15,
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: Text('${index + 1}', style: textTheme.bodySmall),
+                        ),
+                        Container(
+                          width: 80,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: colorScheme.background,
                           ),
-                          Container(
-                            width: 80,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              color: colorScheme.background,
-                            ),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            child: Text(
-                              mnemonicWords[index],
-                              style: textTheme.bodySmall,
-                              textAlign: TextAlign.center,
-                            ),
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          child: Text(
+                            mnemonicWords[index],
+                            style: textTheme.bodySmall,
+                            textAlign: TextAlign.center,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     );
                   },
                 ),
@@ -335,16 +243,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               TextField(
                 controller: _textController,
                 decoration: InputDecoration(
-                  labelText:
-                      'Enter the missing word at position ${blankIndex + 1}',
+                  labelText: 'Enter the missing word at position ${blankIndex + 1}',
                   errorText: _errorMessage.isNotEmpty ? _errorMessage : null,
                 ),
               ),
               const SizedBox(height: 16.0),
               Button(
                 onPressed: () {
-                  if (_textController.text.trim().toLowerCase() ==
-                      missingWord.toLowerCase()) {
+                  if (_textController.text.trim().toLowerCase() == missingWord.toLowerCase()) {
                     setState(() {
                       mnemonicWords[blankIndex] = missingWord;
                       _errorMessage = ''; // Clear the error message
@@ -353,8 +259,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     _confirmAndRegister(); // Proceed with the registration
                   } else {
                     setState(() {
-                      _errorMessage =
-                          'Wrong word entered. Please try again.'; // Set the error message
+                      _errorMessage = 'Wrong word entered. Please try again.'; // Set the error message
                     });
                   }
                 },

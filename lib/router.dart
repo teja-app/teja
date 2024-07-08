@@ -18,6 +18,7 @@ import 'package:teja/presentation/music/ui/SimpleMusicPlayer.dart';
 import 'package:teja/presentation/registration/page/RecoverAccountScreen.dart';
 import 'package:teja/presentation/registration/page/RegistrationScreen.dart';
 import 'package:teja/presentation/profile/page/profile_page.dart';
+import 'package:teja/presentation/settings/pages/recovery_code_page.dart';
 import 'package:teja/presentation/settings/pages/notification_settings_page.dart';
 import 'package:teja/presentation/timeline/pages/timeline_list_page.dart';
 import 'package:teja/presentation/mood/share/pages/mood_share.dart';
@@ -55,6 +56,7 @@ class SettingPath {
   static const basic = "basic";
   static const security = "security";
   static const advanced = "advanced";
+  static const recoveryCode = "recovery-code";
 }
 
 class RootPath {
@@ -288,6 +290,11 @@ final GoRouter router = GoRouter(
           name: SettingPath.advanced,
           path: 'advanced',
           builder: (context, state) => const AdvancedSettingsPage(),
+        ),
+        GoRoute(
+          path: SettingPath.recoveryCode,
+          name: 'recover',
+          builder: (context, state) => RecoveryCodePage(),
         ),
       ],
     ),
