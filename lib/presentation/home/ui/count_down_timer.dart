@@ -52,8 +52,9 @@ class CountdownTimerState extends State<CountdownTimer> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Image.asset(
-          'assets/background/thunder.png',
+          'background/thunder.png',
           width: 200,
+          package: 'assets',
         ),
         Text(
           "Page will be ready in",
