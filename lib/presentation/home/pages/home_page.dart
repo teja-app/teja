@@ -35,13 +35,28 @@ class _HomePageState extends State<HomePage> {
   get bottomNavigationBar => null;
 
   String getGreetingMessage() {
-    final hour = DateTime.now().hour;
-    if (hour < 12) {
-      return 'Good Morning!';
-    } else if (hour < 17) {
-      return 'Good Afternoon!';
+    final now = DateTime.now();
+    final hour = now.hour;
+    final minute = now.minute;
+
+    if (hour >= 5 && hour < 9) {
+      return 'Good Morning! Have a great start to your day!';
+    } else if (hour >= 9 && hour < 12) {
+      return 'Good Morning! Hope your day is going well!';
+    } else if (hour == 12 && minute == 0) {
+      return 'It\'s High Noon! Time for lunch?';
+    } else if (hour >= 12 && hour < 15) {
+      return 'Good Afternoon! Keep up the good work!';
+    } else if (hour >= 15 && hour < 17) {
+      return 'Good Afternoon! Finish strong!';
+    } else if (hour >= 17 && hour < 19) {
+      return 'Good Evening! Time to wind down.';
+    } else if (hour >= 19 && hour < 22) {
+      return 'Good Evening! Hope you had a great day!';
+    } else if (hour >= 22 || hour < 1) {
+      return 'Good Night! Sweet dreams!';
     } else {
-      return 'Good Evening!';
+      return 'You\'re up late! Get some rest if you can.';
     }
   }
 
@@ -114,7 +129,7 @@ class _HomePageState extends State<HomePage> {
               Center(
                 child: Text(
                   getGreetingMessage(),
-                  style: textTheme.headlineSmall,
+                  style: textTheme.titleSmall,
                 ),
               ),
               const SizedBox(height: 20),
@@ -152,6 +167,7 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: isDesktop(context) ? null : buildMobileNavigationBar(context),
       appBar: AppBar(
         elevation: 0.0,
+        forceMaterialTransparency: true,
         leading: leadingNavBar(context),
         leadingWidth: 72,
         actions: const [TokenWidget()],
