@@ -93,26 +93,6 @@ class MoodGaugePainter extends CustomPainter {
     );
     labelPainter.layout();
     labelPainter.paint(canvas, Offset(centerX - labelPainter.width / 2, height * 180 / 340));
-
-    // Draw mood counts
-    for (int i = 1; i <= 5; i++) {
-      final x = width * (50 + (i - 1) * 75) / 400;
-      final y = height * 240 / 340;
-
-      final count = moodCounts[i] ?? 0;
-      final countPainter = TextPainter(
-        text: TextSpan(
-          text: count.toString(),
-          style: TextStyle(
-            color: isDarkMode ? const Color(0xFFE6E6E6) : const Color(0xFF565656),
-            fontSize: width * 0.03,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      );
-      countPainter.layout();
-      countPainter.paint(canvas, Offset(x - countPainter.width / 2, y + width * 0.09));
-    }
   }
 
   @override

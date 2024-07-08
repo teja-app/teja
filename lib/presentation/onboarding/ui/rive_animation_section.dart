@@ -18,7 +18,10 @@ class RiveAnimationSection extends StatelessWidget {
           SizedBox(
             height: 75,
             width: 75, // Set a width for the Rive animation for consistent sizing
-            child: RiveAnimation.asset('assets/welcome/safe_icon.riv', onInit: onRiveInit),
+            child: RiveAnimation.asset(
+              'assets/welcome/safe_icon.riv',
+              onInit: onRiveInit,
+            ),
           ),
           Expanded(
             child: Text(

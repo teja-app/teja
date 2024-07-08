@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:teja/presentation/profile/ui/MoodGaugePainter.dart';
-import 'package:teja/shared/common/bento_box.dart';
 
 class MoodGaugeChart extends StatelessWidget {
   final double averageMood;
@@ -18,60 +17,73 @@ class MoodGaugeChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
-    return BentoBox(
-      gridWidth: 6,
-      gridHeight: 4,
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 1.0),
-            child: Text(
-              title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(
+            title,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          Expanded(
-            child: BentoBox(
-              gridWidth: 6,
-              gridHeight: 1.0,
-              margin: 0,
-              padding: 0,
-              color: Theme.of(context).colorScheme.background,
-              child: AspectRatio(
-                aspectRatio: 400 / 340,
-                child: CustomPaint(
-                  painter: MoodGaugePainter(
-                    averageMood: averageMood,
-                    moodCounts: moodCounts,
-                    isDarkMode: isDarkMode,
+        ),
+        AspectRatio(
+          aspectRatio: 400 / 340,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return Stack(
+                children: [
+                  CustomPaint(
+                    painter: MoodGaugePainter(
+                      averageMood: averageMood,
+                      moodCounts: moodCounts,
+                      isDarkMode: isDarkMode,
+                    ),
+                    size: Size(constraints.maxWidth, constraints.maxHeight),
                   ),
-                  child: Stack(
-                    children: [
-                      for (int i = 1; i <= 5; i++)
-                        Positioned(
-                          left: 400 * (35 + (i - 1) * 65.5) / 400,
-                          top: 340 * 240 / 340 - 15,
-                          child: _buildMoodIcon(i, isDarkMode),
-                        ),
-                    ],
+                  Positioned(
+                    bottom: constraints.maxHeight * 0.05,
+                    left: 0,
+                    right: 0,
+                    child: _buildMoodIconsAndCounts(isDarkMode, constraints),
                   ),
-                ),
-              ),
-            ),
+                ],
+              );
+            },
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _buildMoodIcon(int moodRating, bool isDarkMode) {
+  Widget _buildMoodIconsAndCounts(bool isDarkMode, BoxConstraints constraints) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: List.generate(5, (index) {
+        return Column(
+          children: [
+            _buildMoodIcon(index + 1, isDarkMode, constraints),
+            SizedBox(height: constraints.maxHeight * 0.02),
+            Text(
+              '${moodCounts[index + 1] ?? 0}',
+              style: TextStyle(
+                color: isDarkMode ? Colors.white : Colors.black,
+                fontSize: constraints.maxWidth * 0.03,
+              ),
+            ),
+          ],
+        );
+      }),
+    );
+  }
+
+  Widget _buildMoodIcon(int moodRating, bool isDarkMode, BoxConstraints constraints) {
     final Color iconColor = isDarkMode ? Colors.white : Colors.black;
+    final double iconSize = constraints.maxWidth * 0.05; // 5% of the width
     return SvgPicture.asset(
       'icons/mood_${moodRating}_inactive.svg',
       package: "assets",
-      width: 20,
-      height: 20,
+      width: iconSize,
+      height: iconSize,
       color: iconColor,
     );
   }

@@ -123,3 +123,20 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - .env.dev
+    - assets/welcome/
+    - assets/logo/
+    - assets/settings/
+    - assets/background/
+    - assets/icons/
+    - assets/mood/
+    - assets/mood/badge/
+    - assets/quotes/
+    - assets/journal/
+    - assets/explore/
+    - assets/music/
+    - assets/sounds/speech_to_text_listening.m4r
+    - assets/sounds/speech_to_text_cancel.m4r
+    - assets/sounds/speech_to_text_stop.m4r
