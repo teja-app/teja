@@ -86,7 +86,7 @@ class MonthlyMoodReportSaga {
       final scatterStepSpots = scatterStepSpotsResult.value;
 
       print("scatterStepSpots: $scatterStepSpots");
-      if (scatterStepSpots == null) {
+      if (scatterStepSpots == null || scatterStepSpots.isEmpty) {
         yield Put(RemovePermissionAction(ACTIVITY_MONTHLY));
         throw Exception("Failed to calculate scatter spots");
       }
@@ -196,7 +196,11 @@ class MonthlyMoodReportSaga {
         continue;
       }
 
-      stepMap[date] = stepsCount;
+      if (stepMap.containsKey(date)) {
+        stepMap[date] = stepMap[date]! + stepsCount;
+      } else {
+        stepMap[date] = stepsCount;
+      }
     }
 
     final List<ScatterSpot> scatterSpots = [];

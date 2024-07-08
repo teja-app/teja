@@ -43,7 +43,7 @@ class _MoodActivityChartScreenState extends State<MoodActivityChartScreen> {
           return const Center(child: CircularProgressIndicator());
         }
         return Checklist(
-          componentName: MOOD_SLEEP_CHART,
+          componentName: MOOD_ACTIVITY_MAP,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxHeight: 400),
             child: MoodSleepChart(
