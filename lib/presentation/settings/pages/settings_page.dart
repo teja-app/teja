@@ -87,6 +87,12 @@ class SettingsPage extends StatelessWidget {
                     title: const Text('Advanced'),
                     onTap: () => GoRouter.of(context).push('/settings/advanced'),
                   ),
+                  ListTile(
+                    title: const Text('Recovery Codes'),
+                    onTap: () {
+                      GoRouter.of(context).push('/settings/recovery-code');
+                    },
+                  ),
                   const Divider(),
                   ListTile(
                     title: const Text('Lock the app'),
