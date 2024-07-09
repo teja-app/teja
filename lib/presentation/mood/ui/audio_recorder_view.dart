@@ -79,7 +79,6 @@ class _AudioRecorderViewState extends State<AudioRecorderView> {
     TextTheme textTheme = Theme.of(context).textTheme;
     return Container(
       padding: const EdgeInsets.all(16),
-      color: colorScheme.background,
       child: Column(
         children: [
           StreamBuilder<Amplitude>(

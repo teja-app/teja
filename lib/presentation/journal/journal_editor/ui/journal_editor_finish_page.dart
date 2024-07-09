@@ -78,7 +78,6 @@ class JournalFinishScreen extends StatelessWidget {
           ),
           Center(
             child: Container(
-              color: colorScheme.background,
               padding: const EdgeInsets.all(10.0),
               child: Button(
                 text: "Done",

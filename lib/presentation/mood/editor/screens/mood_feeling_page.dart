@@ -198,7 +198,6 @@ class FeelingScreenState extends State<FeelingScreen> {
                 left: 0,
                 right: 0,
                 child: Container(
-                  color: colorScheme.background,
                   padding: const EdgeInsets.all(10.0),
                   child: Button(
                     text: "Next",

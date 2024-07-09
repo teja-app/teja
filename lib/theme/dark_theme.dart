@@ -75,7 +75,7 @@ final ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
     primary: Colors.white,
     secondary: Colors.grey.shade300,
-    surface: Colors.white,
+    surface: Colors.black,
     onPrimary: Colors.black,
     onSecondary: Colors.white,
   ),

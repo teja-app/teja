@@ -16,8 +16,7 @@ class DataCheckOverlay extends StatelessWidget {
     if (permission == SLEEP) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-              'Either the sleep data is not enabled or data does not exist.'),
+          content: Text('Either the sleep data is not enabled or data does not exist.'),
         ),
       );
     } else if (permission == MOOD_MONTHLY) {
@@ -25,15 +24,13 @@ class DataCheckOverlay extends StatelessWidget {
     } else if (permission == PREMIUM) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content:
-              Text('You need to be a premium user to access this feature.'),
+          content: Text('You need to be a premium user to access this feature.'),
         ),
       );
     } else if (permission == ACTIVITY_MONTHLY) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-              'Either the activity data is not enabled or data does not exist.'),
+          content: Text('Either the activity data is not enabled or data does not exist.'),
         ),
       );
     }
@@ -42,7 +39,7 @@ class DataCheckOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Theme.of(context).colorScheme.background.withOpacity(0.9),
+      color: Theme.of(context).colorScheme.surface.withOpacity(0.9),
       padding: const EdgeInsets.all(16.0),
       child: Center(
         child: Column(

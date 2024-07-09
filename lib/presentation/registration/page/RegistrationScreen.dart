@@ -226,7 +226,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           width: 80,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
-                            color: colorScheme.background,
                           ),
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           child: Text(

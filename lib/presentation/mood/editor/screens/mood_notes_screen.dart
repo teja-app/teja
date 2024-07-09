@@ -158,7 +158,6 @@ class NotesScreenState extends State<NotesScreen> {
                   ),
                 ),
                 Container(
-                  color: colorScheme.background,
                   padding: const EdgeInsets.all(10.0),
                   child: Button(
                     text: "Next",
