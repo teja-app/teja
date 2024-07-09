@@ -116,7 +116,6 @@ class _RandomQuotePageState extends State<RandomQuotePage> {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
       decoration: BoxDecoration(
-        color: colorScheme.background,
         borderRadius: BorderRadius.circular(16), // Rounded corners
       ),
       child: IconButton(

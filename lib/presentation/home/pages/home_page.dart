@@ -138,8 +138,8 @@ class _HomePageState extends State<HomePage> {
                 firstDate: tenMonthsAgo,
                 lastDate: oneMonthFromNow,
                 selectedDate: store.selectedDate,
-                activeBackgroundDayColor: colorScheme.surface,
-                activeDayColor: colorScheme.background,
+                activeBackgroundDayColor: colorScheme.primary,
+                activeDayColor: colorScheme.surface,
                 onDateSelected: (date) {
                   StoreProvider.of<AppState>(context).dispatch(UpdateSelectedDateAction(date));
                 },

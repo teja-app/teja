@@ -34,10 +34,10 @@ class ExplorePage extends StatefulWidget {
 class ExplorePageState extends State<ExplorePage> {
   @override
   Widget build(BuildContext context) {
-    ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       bottomNavigationBar: isDesktop(context) ? null : MobileNavigationBar(),
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       extendBodyBehindAppBar: true,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(0.0),
@@ -83,7 +83,7 @@ class ExplorePageState extends State<ExplorePage> {
                     width: size.width,
                     height: 300.0,
                     decoration: BoxDecoration(
-                      color: colorScheme.secondary,
+                      color: colorScheme.primary,
                     )),
               ),
               Padding(
@@ -94,7 +94,7 @@ class ExplorePageState extends State<ExplorePage> {
                     //search
                     CustomSearchField(
                       hintField: 'Try "Focus"',
-                      backgroundColor: colorScheme.background,
+                      backgroundColor: colorScheme.surface,
                     ),
                     const SizedBox(height: spacer - 30.0),
                     //categoy card
