@@ -7,10 +7,11 @@ import 'package:teja/infrastructure/dto/featured_journal_template_dto.dart';
 class FeaturedJournalTemplateApi {
   final ApiHelper _apiHelper = ApiHelper();
 
-  Future<List<FeaturedJournalTemplateEntity>> getFeaturedJournalTemplates(String? authToken) async {
+  Future<List<FeaturedJournalTemplateEntity>> getFeaturedJournalTemplates() async {
     const String url = '/featured-journal-templates';
-    Response response = await _apiHelper.get(url, authToken: authToken);
+    Response response = await _apiHelper.unsafeGet(url);
     List<dynamic> jsonResponse = response.data;
+    print("jsonResponse $jsonResponse");
 
     List<FeaturedJournalTemplateEntity> featuredJournalTemplates = jsonResponse.map((json) {
       FeaturedJournalTemplateDto dto = FeaturedJournalTemplateDto.fromJson(json);

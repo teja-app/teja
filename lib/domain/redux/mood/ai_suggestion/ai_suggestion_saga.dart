@@ -20,15 +20,6 @@ class AISuggestionSaga {
 
     var moodLogRepository = MoodLogRepository(isar);
     yield Try(() sync* {
-      final authTokenResult = Result<String?>();
-      yield Call(SecureStorage().readAccessToken, result: authTokenResult);
-
-      final authToken = authTokenResult.value;
-      if (authToken == null) {
-        yield Put(const FetchAISuggestionFailureAction('Authorization token not found'));
-        return;
-      }
-
       final moodData = MoodData(
         moodId: action.moodLogEntity.id,
         moodDetail: (
@@ -40,7 +31,7 @@ class AISuggestionSaga {
         ).toString(),
       );
       final response = Result();
-      yield Call(MoodSuggestionAPI().fetchAISuggestions, args: [authToken, moodData], result: response);
+      yield Call(MoodSuggestionAPI().fetchAISuggestions, args: [moodData], result: response);
 
       if (response.value.statusCode == 201) {
         if (response.value.data["success"] == false) {
@@ -73,15 +64,6 @@ class AISuggestionSaga {
 
     var moodLogRepository = MoodLogRepository(isar);
     yield Try(() sync* {
-      final authTokenResult = Result<String?>();
-      yield Call(SecureStorage().readAccessToken, result: authTokenResult);
-
-      final authToken = authTokenResult.value;
-      if (authToken == null) {
-        yield Put(const FetchAITitleFailureAction('Authorization token not found'));
-        return;
-      }
-
       final moodData = MoodData(
         moodId: action.moodLogEntity.id,
         moodDetail: (
@@ -93,7 +75,7 @@ class AISuggestionSaga {
         ).toString(),
       );
       final response = Result();
-      yield Call(MoodSuggestionAPI().fetchAITitle, args: [authToken, moodData], result: response);
+      yield Call(MoodSuggestionAPI().fetchAITitle, args: [moodData], result: response);
       if (response.value.statusCode == 201) {
         if (response.value.data["success"] == false) {
           String failureMessage = "Failed to fetch title for this. "
@@ -125,15 +107,6 @@ class AISuggestionSaga {
 
     var moodLogRepository = MoodLogRepository(isar);
     yield Try(() sync* {
-      final authTokenResult = Result<String?>();
-      yield Call(SecureStorage().readAccessToken, result: authTokenResult);
-
-      final authToken = authTokenResult.value;
-      if (authToken == null) {
-        yield Put(const FetchAIAffirmationFailureAction('Authorization token not found'));
-        return;
-      }
-
       final moodData = MoodData(
         moodId: action.moodLogEntity.id,
         moodDetail: (
@@ -145,7 +118,7 @@ class AISuggestionSaga {
         ).toString(),
       );
       final response = Result();
-      yield Call(MoodSuggestionAPI().fetchAIAffirmations, args: [authToken, moodData], result: response);
+      yield Call(MoodSuggestionAPI().fetchAIAffirmations, args: [moodData], result: response);
 
       print("response ${response}");
 

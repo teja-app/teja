@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 
 @immutable
 class FetchTokenSummaryAction {
-  final String authToken;
-
-  const FetchTokenSummaryAction(this.authToken);
+  const FetchTokenSummaryAction();
 }
 
 @immutable

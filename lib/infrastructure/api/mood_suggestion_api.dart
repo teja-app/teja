@@ -21,19 +21,19 @@ class MoodData {
 class MoodSuggestionAPI {
   final ApiHelper _apiHelper = ApiHelper();
 
-  Future<Response> fetchAISuggestions(String authToken, MoodData moodData) async {
+  Future<Response> fetchAISuggestions(MoodData moodData) async {
     const String url = '/mood/suggestions';
-    return _apiHelper.post(url, data: moodData.toJson(), authToken: authToken);
+    return _apiHelper.post(url, data: moodData.toJson());
   }
 
-  Future<Response> fetchAITitle(String authToken, MoodData moodData) async {
+  Future<Response> fetchAITitle(MoodData moodData) async {
     const String url = '/mood/title';
-    return _apiHelper.post(url, data: moodData.toJson(), authToken: authToken);
+    return _apiHelper.post(url, data: moodData.toJson());
   }
 
-  Future<Response> fetchAIAffirmations(String authToken, MoodData moodData) async {
+  Future<Response> fetchAIAffirmations(MoodData moodData) async {
     const String url = '/mood/affirmations';
-    return _apiHelper.post(url, data: moodData.toJson(), authToken: authToken);
+    return _apiHelper.post(url, data: moodData.toJson());
   }
 
   void dispose() {

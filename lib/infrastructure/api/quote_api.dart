@@ -6,9 +6,9 @@ import 'package:teja/infrastructure/dto/quote_dto.dart';
 class QuoteApi {
   final ApiHelper _apiHelper = ApiHelper();
 
-  Future<List<QuoteEntity>> getQuotes(String? authToken) async {
+  Future<List<QuoteEntity>> getQuotes() async {
     const String url = '/quotes';
-    Response response = await _apiHelper.get(url, authToken: authToken);
+    Response response = await _apiHelper.unsafeGet(url);
     List<dynamic> jsonResponse = response.data;
     List<QuoteEntity> quotes = jsonResponse.map((json) {
       QuoteDto quoteDto = QuoteDto.fromJson(json);

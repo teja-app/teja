@@ -45,7 +45,7 @@ class JournalCategorySaga {
       // Fetch categories from the API
       var api = JournalCategoryApi();
       var categoriesResult = Result<List<JournalCategoryEntity>>();
-      yield Call(api.getJournalCategories, args: [null], result: categoriesResult);
+      yield Call(api.getJournalCategories, args: [], result: categoriesResult);
 
       if (categoriesResult.value != null && categoriesResult.value!.isNotEmpty) {
         // Save the fetched categories

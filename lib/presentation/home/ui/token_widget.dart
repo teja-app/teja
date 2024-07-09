@@ -23,10 +23,7 @@ class _TokenWidgetState extends State<TokenWidget> {
 
   Future<void> _fetchTokenSummary() async {
     final store = StoreProvider.of<AppState>(context);
-    final authToken = await SecureStorage().readAccessToken();
-    if (authToken != null) {
-      store.dispatch(FetchTokenSummaryAction(authToken));
-    }
+    store.dispatch(const FetchTokenSummaryAction());
   }
 
   @override

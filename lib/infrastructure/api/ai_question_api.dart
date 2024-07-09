@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:teja/infrastructure/api_helper.dart';
 
 class QAData {
@@ -18,15 +17,15 @@ class QAData {
 class AIQuestionAPI {
   final ApiHelper _apiHelper = ApiHelper();
 
-  Future<Map<String, dynamic>> generateDeeperQuestion(String authToken, QAData qaData) async {
+  Future<Map<String, dynamic>> generateDeeperQuestion(QAData qaData) async {
     const String url = '/ai-question/deeper-question';
-    final response = await _apiHelper.post(url, data: qaData.qaList, authToken: authToken);
+    final response = await _apiHelper.post(url, data: qaData.qaList);
     return response.data as Map<String, dynamic>;
   }
 
-  Future<Map<String, dynamic>> generateAlternativeQuestions(String authToken, QAData qaData) async {
+  Future<Map<String, dynamic>> generateAlternativeQuestions(QAData qaData) async {
     const String url = '/ai-question/alternative-questions';
-    final response = await _apiHelper.post(url, data: qaData.qaList, authToken: authToken);
+    final response = await _apiHelper.post(url, data: qaData.qaList);
     return response.data as Map<String, dynamic>;
   }
 

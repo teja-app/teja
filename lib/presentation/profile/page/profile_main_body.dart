@@ -45,7 +45,6 @@ class MainBody extends StatelessWidget {
   void _showReorderBottomSheet(BuildContext context, _ViewModel vm) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Theme.of(context).colorScheme.background,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
@@ -54,28 +53,17 @@ class MainBody extends StatelessWidget {
         return StoreConnector<AppState, List<String>>(
           converter: (store) => store.state.profilePageState.chartSequence,
           builder: (context, chartSequence) {
-            return Theme(
-              data: Theme.of(context).copyWith(
-                textTheme: Theme.of(context).textTheme.apply(
-                      bodyColor: Theme.of(context).textTheme.bodyLarge?.color,
-                      displayColor: Theme.of(context).textTheme.bodyLarge?.color,
-                    ),
-                iconTheme: IconThemeData(
-                  color: Theme.of(context).iconTheme.color,
-                ),
-              ),
-              child: ReorderableListView(
-                onReorder: (oldIndex, newIndex) {
-                  vm.updateChartSequence(oldIndex, newIndex);
-                },
-                children: chartSequence.map((chart) {
-                  return ListTile(
-                    key: Key(chart),
-                    title: Text(_getChartDisplayName(chart)),
-                    leading: const Icon(Icons.drag_handle),
-                  );
-                }).toList(),
-              ),
+            return ReorderableListView(
+              onReorder: (oldIndex, newIndex) {
+                vm.updateChartSequence(oldIndex, newIndex);
+              },
+              children: chartSequence.map((chart) {
+                return ListTile(
+                  key: Key(chart),
+                  title: Text(_getChartDisplayName(chart)),
+                  leading: const Icon(Icons.drag_handle),
+                );
+              }).toList(),
             );
           },
         );
