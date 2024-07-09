@@ -56,12 +56,13 @@ class FeaturedJournalTemplateSaga {
 
       // Fetch new featured templates from the API
       FeaturedJournalTemplateApi api = FeaturedJournalTemplateApi();
+      print("Before");
       var templatesResult = Result<List<FeaturedJournalTemplateEntity>>();
       yield Call(
         api.getFeaturedJournalTemplates,
-        args: [null], // Replace null with actual auth token
         result: templatesResult,
       );
+      print("templatesResult ${templatesResult.value!}");
 
       if (templatesResult.value != null && templatesResult.value!.isNotEmpty) {
         // Save the newly fetched templates

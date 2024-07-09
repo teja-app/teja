@@ -75,10 +75,12 @@ final ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
     primary: Colors.white,
     secondary: Colors.grey.shade300,
-    surface: Colors.white,
-    background: Colors.black,
+    surface: Colors.black,
     onPrimary: Colors.black,
     onSecondary: Colors.white,
+  ),
+  navigationBarTheme: const NavigationBarThemeData(
+    backgroundColor: Colors.black,
   ),
   scaffoldBackgroundColor: Colors.black,
   appBarTheme: const AppBarTheme(

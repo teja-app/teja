@@ -1,0 +1,27 @@
+name: assets
+description: >
+  Holds the assets for the app. The assets are included in a
+  separate package, to be able to share it with Widgetbook app.
+
+version: 0.0.0
+publish_to: none
+
+environment:
+  sdk: ">=3.4.3 <4.0.0"
+
+flutter:
+  assets:
+    - ./welcome/
+    - ./logo/
+    - ./settings/
+    - ./background/
+    - ./icons/
+    - ./mood/
+    - ./mood/badge/
+    - ./quotes/
+    - ./journal/
+    - ./explore/
+    - ./music/
+    - ./sounds/speech_to_text_listening.m4r
+    - ./sounds/speech_to_text_cancel.m4r
+    - ./sounds/speech_to_text_stop.m4r

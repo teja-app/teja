@@ -11,8 +11,7 @@ class MoodSemiCircleChartScreen extends StatefulWidget {
   const MoodSemiCircleChartScreen({super.key});
 
   @override
-  State<MoodSemiCircleChartScreen> createState() =>
-      _MoodSemiCircleChartScreenState();
+  State<MoodSemiCircleChartScreen> createState() => _MoodSemiCircleChartScreenState();
 }
 
 class _MoodSemiCircleChartScreenState extends State<MoodSemiCircleChartScreen> {
@@ -24,8 +23,7 @@ class _MoodSemiCircleChartScreenState extends State<MoodSemiCircleChartScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final DateTime now = DateTime.now();
       final DateTime today = DateTime(now.year, now.month, now.day);
-      StoreProvider.of<AppState>(context)
-          .dispatch(FetchMonthlyMoodReportAction(today));
+      StoreProvider.of<AppState>(context).dispatch(FetchMonthlyMoodReportAction(today));
     });
   }
 
@@ -39,17 +37,10 @@ class _MoodSemiCircleChartScreenState extends State<MoodSemiCircleChartScreen> {
         }
         return Checklist(
           componentName: MOOD_GAUGE_CHART,
-          child: Column(
-            children: [
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxHeight: 350),
-                child: MoodGaugeChart(
-                  averageMood: viewModel.averageMood,
-                  moodCounts: viewModel.moodCounts,
-                  title: 'Mood Gauge Chart',
-                ),
-              ),
-            ],
+          child: MoodGaugeChart(
+            averageMood: viewModel.averageMood,
+            moodCounts: viewModel.moodCounts,
+            title: 'Mood Gauge Chart',
           ),
         );
       },
@@ -73,15 +64,13 @@ class MoodSemiCircleChartViewModel {
 
     double averageMood = 0;
     if (state.currentMonthAverageMoodRatings.isNotEmpty) {
-      averageMood =
-          state.currentMonthAverageMoodRatings.values.reduce((a, b) => a + b) /
-              state.currentMonthAverageMoodRatings.length;
+      averageMood = state.currentMonthAverageMoodRatings.values.reduce((a, b) => a + b) /
+          state.currentMonthAverageMoodRatings.length;
     }
 
     Map<int, int> moodCounts = {};
     for (final mood in state.currentMonthAverageMoodRatings.values) {
-      moodCounts[mood.toInt()] =
-          moodCounts[mood.toInt()] == null ? 1 : moodCounts[mood.toInt()]! + 1;
+      moodCounts[mood.toInt()] = moodCounts[mood.toInt()] == null ? 1 : moodCounts[mood.toInt()]! + 1;
     }
 
     return MoodSemiCircleChartViewModel(

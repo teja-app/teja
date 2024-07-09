@@ -95,9 +95,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
     });
 
     try {
-      final authToken = await SecureStorage().readAccessToken();
       final deeperQuestionResponse = await AIQuestionAPI().generateDeeperQuestion(
-        authToken!,
         QAData(qaList: qaList),
       );
 
@@ -132,9 +130,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
     });
 
     try {
-      final authToken = await SecureStorage().readAccessToken();
       final alternativeQuestionsResponse = await AIQuestionAPI().generateAlternativeQuestions(
-        authToken!,
         QAData(qaList: qaList),
       );
 

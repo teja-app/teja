@@ -9,7 +9,7 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/presentation/home/ui/journal/frequently_used_template.dart';
 import 'package:teja/presentation/home/ui/journal/last_used_template.dart';
 import 'package:teja/presentation/journal/ui/journal_template_card.dart';
-import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
+import 'package:teja/presentation/navigation/mobile_navigation_bar.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/router.dart';
 import 'package:teja/theme/padding.dart';
@@ -34,10 +34,10 @@ class ExplorePage extends StatefulWidget {
 class ExplorePageState extends State<ExplorePage> {
   @override
   Widget build(BuildContext context) {
-    ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      bottomNavigationBar: isDesktop(context) ? null : buildMobileNavigationBar(context),
-      backgroundColor: colorScheme.background,
+      bottomNavigationBar: isDesktop(context) ? null : MobileNavigationBar(),
+      backgroundColor: colorScheme.surface,
       extendBodyBehindAppBar: true,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(0.0),
@@ -83,7 +83,7 @@ class ExplorePageState extends State<ExplorePage> {
                     width: size.width,
                     height: 300.0,
                     decoration: BoxDecoration(
-                      color: colorScheme.secondary,
+                      color: colorScheme.primary,
                     )),
               ),
               Padding(
@@ -94,7 +94,7 @@ class ExplorePageState extends State<ExplorePage> {
                     //search
                     CustomSearchField(
                       hintField: 'Try "Focus"',
-                      backgroundColor: colorScheme.background,
+                      backgroundColor: colorScheme.surface,
                     ),
                     const SizedBox(height: spacer - 30.0),
                     //categoy card

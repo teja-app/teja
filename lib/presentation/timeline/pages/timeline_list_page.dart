@@ -16,7 +16,7 @@ import 'package:teja/presentation/journal/ui/journal_card.dart';
 import 'package:teja/presentation/timeline/ui/filter_bottom_sheet.dart';
 import 'package:teja/presentation/mood/ui/mood_detail_card.dart';
 import 'package:teja/presentation/navigation/buildDesktopDrawer.dart';
-import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
+import 'package:teja/presentation/navigation/mobile_navigation_bar.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/presentation/navigation/leadingContainer.dart';
 import 'package:teja/router.dart';
@@ -166,7 +166,7 @@ class _TimelinePageState extends State<TimelinePage> {
       },
     );
     return Scaffold(
-      bottomNavigationBar: isDesktop(context) ? null : buildMobileNavigationBar(context),
+      bottomNavigationBar: isDesktop(context) ? null : MobileNavigationBar(),
       appBar: AppBar(
         title: const Text('Timeline'),
         forceMaterialTransparency: true,

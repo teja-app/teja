@@ -13,7 +13,7 @@ class TokenSaga {
   Iterable<void> _fetchTokenSummary({required FetchTokenSummaryAction action}) sync* {
     yield Try(() sync* {
       final response = Result<Response>();
-      yield Call(_tokenApi.fetchTokenSummary, args: [action.authToken], result: response);
+      yield Call(_tokenApi.fetchTokenSummary, args: [], result: response);
 
       if (response.value?.statusCode == 200) {
         final data = response.value?.data;
@@ -21,7 +21,6 @@ class TokenSaga {
         final used = data['used'];
         final pending = data['pending'];
         final usedToday = data['usedToday'];
-        print("data ${data}");
         yield Put(TokenSummaryReceivedAction(total, used, pending, usedToday));
       } else {
         yield Put(TokenSummaryFailedAction('Failed to fetch token summary.'));

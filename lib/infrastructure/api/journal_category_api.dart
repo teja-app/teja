@@ -6,9 +6,9 @@ import 'package:teja/infrastructure/dto/journal_category_dto.dart';
 class JournalCategoryApi {
   final ApiHelper _apiHelper = ApiHelper();
 
-  Future<List<JournalCategoryEntity>> getJournalCategories(String? authToken) async {
+  Future<List<JournalCategoryEntity>> getJournalCategories() async {
     const String url = '/journal-categories';
-    Response response = await _apiHelper.get(url, authToken: authToken);
+    Response response = await _apiHelper.unsafeGet(url);
     List<dynamic> jsonResponse = response.data;
     List<JournalCategoryEntity> journalCategories = jsonResponse.map((json) {
       JournalCategoryDto.fromJson(json);

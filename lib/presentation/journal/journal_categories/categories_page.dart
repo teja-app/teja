@@ -95,8 +95,7 @@ class JournalCategoriesPage extends StatelessWidget {
                                 left: 0,
                                 right: 0,
                                 child: Container(
-                                  padding: EdgeInsets.all(extraSmallSpacer), // Use your defined smallSpacer for padding
-                                  color: colorScheme.background.withOpacity(1),
+                                  padding: EdgeInsets.all(extraSmallSpacer),
                                   child: Text(
                                     category.name,
                                     maxLines: 3,

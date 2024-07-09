@@ -46,14 +46,12 @@ class QuoteSaga {
       Isar isar = isarResult.value!;
       var quoteRepo = QuoteRepository(isar);
 
-      final accessToken = Result<String?>();
-
       QuoteApi quoteApi = QuoteApi();
       var quotesResult = Result<List<QuoteEntity>>();
 
       yield Call(
         quoteApi.getQuotes,
-        args: [accessToken.value],
+        args: [],
         result: quotesResult,
       );
 
