@@ -6,9 +6,9 @@ import 'package:teja/infrastructure/dto/master_factor_dto.dart';
 class FactorApi {
   final ApiHelper _apiHelper = ApiHelper();
 
-  Future<List<MasterFactorEntity>> getMasterFactors(String? authToken) async {
+  Future<List<MasterFactorEntity>> getMasterFactors() async {
     const String url = '/factors';
-    Response response = await _apiHelper.get(url, authToken: authToken);
+    Response response = await _apiHelper.unsafeGet(url);
     List<dynamic> jsonResponse = response.data;
 
     List<MasterFactorEntity> factors = jsonResponse.map((json) {

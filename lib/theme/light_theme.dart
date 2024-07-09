@@ -62,7 +62,7 @@ final ThemeData lightTheme = ThemeData(
       fontSize: 16,
     ),
   ),
-  cardTheme: CardTheme(color: Colors.grey.shade300),
+  cardTheme: CardTheme(color: Colors.grey.shade100),
   popupMenuTheme: const PopupMenuThemeData(
     color: Colors.white,
   ),
@@ -72,11 +72,13 @@ final ThemeData lightTheme = ThemeData(
     primary: Colors.black,
     secondary: Colors.grey[900],
     surface: Colors.black,
-    background: Colors.grey.shade100,
     onPrimary: Colors.white,
     onSecondary: Colors.black,
   ),
-  scaffoldBackgroundColor: Colors.grey.shade100,
+  navigationBarTheme: const NavigationBarThemeData(
+    backgroundColor: Colors.white,
+  ),
+  scaffoldBackgroundColor: Colors.white,
   appBarTheme: AppBarTheme(
     color: Colors.grey.shade100,
   ),

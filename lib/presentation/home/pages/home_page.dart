@@ -15,7 +15,7 @@ import 'package:teja/presentation/home/ui/journal_prompt/journal_prompt.dart';
 import 'package:teja/presentation/home/ui/mood/mood_tracker.dart';
 import 'package:teja/presentation/home/ui/token_widget.dart';
 import 'package:teja/presentation/navigation/buildDesktopDrawer.dart';
-import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
+import 'package:teja/presentation/navigation/mobile_navigation_bar.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/presentation/navigation/leadingContainer.dart';
 import 'package:teja/calendar_timeline/calendar_timeline.dart';
@@ -164,7 +164,7 @@ class _HomePageState extends State<HomePage> {
       },
     );
     return Scaffold(
-      bottomNavigationBar: isDesktop(context) ? null : buildMobileNavigationBar(context),
+      bottomNavigationBar: isDesktop(context) ? null : const MobileNavigationBar(),
       appBar: AppBar(
         elevation: 0.0,
         forceMaterialTransparency: true,

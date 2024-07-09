@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/presentation/home/ui/master_fetch/fetch_master_view.dart';
-import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
-import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/presentation/settings/pages/widgets/settings_authenticate.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/bento_box.dart';

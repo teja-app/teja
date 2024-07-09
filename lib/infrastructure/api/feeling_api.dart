@@ -6,9 +6,9 @@ import 'package:teja/infrastructure/dto/master_feelings_dto.dart';
 class FeelingApi {
   final ApiHelper _apiHelper = ApiHelper();
 
-  Future<List<MasterFeelingEntity>> getMasterFeelings(String? authToken) async {
+  Future<List<MasterFeelingEntity>> getMasterFeelings() async {
     const String url = '/feelings';
-    Response response = await _apiHelper.get(url, authToken: authToken);
+    Response response = await _apiHelper.unsafeGet(url);
     List<dynamic> jsonResponse = response.data;
 
     // Deserialize the JSON to DTOs and then to Entities

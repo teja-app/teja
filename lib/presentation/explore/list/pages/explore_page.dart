@@ -9,7 +9,7 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/presentation/home/ui/journal/frequently_used_template.dart';
 import 'package:teja/presentation/home/ui/journal/last_used_template.dart';
 import 'package:teja/presentation/journal/ui/journal_template_card.dart';
-import 'package:teja/presentation/navigation/buildMobileNavigationBar.dart';
+import 'package:teja/presentation/navigation/mobile_navigation_bar.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/router.dart';
 import 'package:teja/theme/padding.dart';
@@ -36,7 +36,7 @@ class ExplorePageState extends State<ExplorePage> {
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      bottomNavigationBar: isDesktop(context) ? null : buildMobileNavigationBar(context),
+      bottomNavigationBar: isDesktop(context) ? null : MobileNavigationBar(),
       backgroundColor: colorScheme.background,
       extendBodyBehindAppBar: true,
       appBar: PreferredSize(
