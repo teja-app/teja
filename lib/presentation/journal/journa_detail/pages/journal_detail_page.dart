@@ -12,7 +12,6 @@ import 'package:teja/presentation/journal/journa_detail/ui/journal_setting_menu.
 import 'package:teja/presentation/mood/ui/attachement_image.dart';
 import 'package:teja/presentation/mood/ui/attachment_video.dart';
 import 'package:teja/router.dart';
-import 'package:teja/shared/common/bento_box.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 
@@ -222,7 +221,7 @@ class JournalDetailPageState extends State<JournalDetailPage> {
 
     if (imageEntries.isEmpty && videoEntries.isEmpty) return SizedBox.shrink();
 
-    return Container(
+    return SizedBox(
       height: 60, // Adjust as necessary
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
@@ -248,7 +247,7 @@ class JournalDetailPageState extends State<JournalDetailPage> {
               );
             }
           }
-          return SizedBox.shrink();
+          return const SizedBox.shrink();
         },
       ),
     );
