@@ -18,8 +18,9 @@ class MainBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return StoreConnector<AppState, _ViewModel>(
       converter: (store) => _ViewModel.fromStore(store),
-      builder: (context, vm) =>
-          vm.isLoading ? const Center(child: CircularProgressIndicator()) : _buildBody(vm, context),
+      builder: (context, vm) => vm.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _buildBody(vm, context),
     );
   }
 
@@ -27,7 +28,9 @@ class MainBody extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
-          ...vm.chartSequence.map((chart) => _buildChart(context, chart)).toList(),
+          ...vm.chartSequence
+              .map((chart) => _buildChart(context, chart))
+              .toList(),
           const SizedBox(height: 20), // Add some space before the button
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -102,7 +105,7 @@ class MainBody extends StatelessWidget {
         return const MoodSemiCircleChartScreen(key: Key('MoodSemiCircleChartScreen'));
       default:
         return Container(
-          key: Key('defaultChart'),
+          key: Key('defaultChart $chartName'),
           child: const Text('Unknown Chart'),
         );
     }
@@ -125,7 +128,8 @@ class _ViewModel {
       isLoading: store.state.profilePageState.isLoading,
       chartSequence: store.state.profilePageState.chartSequence,
       updateChartSequence: (oldIndex, newIndex) {
-        final updatedSequence = List<String>.from(store.state.profilePageState.chartSequence);
+        final updatedSequence =
+            List<String>.from(store.state.profilePageState.chartSequence);
         if (oldIndex < newIndex) {
           newIndex -= 1;
         }
