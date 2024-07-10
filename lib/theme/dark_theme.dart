@@ -16,6 +16,10 @@ final ThemeData darkTheme = ThemeData(
     bodySmall: GoogleFonts.wixMadeforText(
       textStyle: const TextTheme().bodySmall,
     ),
+    titleSmall: GoogleFonts.wixMadeforText(
+      textStyle: const TextTheme().bodySmall,
+      color: Colors.grey.shade300,
+    ),
   ),
   timePickerTheme: TimePickerThemeData(
     backgroundColor: Colors.black,

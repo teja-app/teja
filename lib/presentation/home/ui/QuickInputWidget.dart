@@ -28,7 +28,7 @@ class QuickInputWidget extends StatelessWidget {
             Expanded(
               child: TextField(
                 decoration: const InputDecoration(
-                  hintText: 'What on your mind?...',
+                  hintText: 'What\'s on your mind?...',
                   hintStyle: TextStyle(color: Colors.grey),
                   border: InputBorder.none,
                 ),
