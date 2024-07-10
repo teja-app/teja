@@ -21,8 +21,7 @@ class ProfilePageSaga {
         'MoodSemiCircleChartScreen',
       ];
       final savedSequence = prefs.value?.getStringList('chartSequence');
-      if (savedSequence == null || savedSequence != defaultSequence) {
-        // Default sequence if nothing is saved
+      if (savedSequence == null) {
         yield Put(ChartSequenceFetchSuccessAction(defaultSequence));
       } else {
         yield Put(ChartSequenceFetchSuccessAction(savedSequence));
