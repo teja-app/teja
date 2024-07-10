@@ -49,9 +49,6 @@ Future<void> main() async {
     // Request notification permissions on iOS
     await notificationService.requestIOSPermissions();
   }
-  // Initialize the store here
-  final store = await createStore(isarInstance);
-  print("Connected to local data store");
 
   await Hive.initFlutter();
   Hive.registerAdapter(FeaturedJournalTemplateAdapter());
@@ -59,19 +56,10 @@ Future<void> main() async {
   await Hive.openBox(FeaturedJournalTemplate.boxKey);
   await Hive.openBox(JournalCategory.boxKey);
 
-  print("Connected Hive");
-  // await SentryFlutter.init(
-  //   (options) {
-  //     options.dsn = sentryDsnUrl;
-  //     options.tracesSampleRate = 1.0;
-  //     options.attachScreenshot = true;
-  //     options.attachViewHierarchy = true;
-  //   },
-  //   appRunner: () {
-  //     logger.i('SentryFlutter initialized successfully.');x
-  //     runApp(MyApp(store: store));
-  //   },
-  // );
+  // Initialize the store here
+  final store = await createStore(isarInstance);
+  print("Connected to local data store");
+
   await SentryFlutter.init(
     (options) {
       options.dsn = sentryDsnUrl;

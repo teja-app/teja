@@ -57,14 +57,10 @@ class MasterFeelingSaga {
       yield GetContext('isar', result: isarResult);
       Isar isar = isarResult.value!;
 
-      // Fetch the access token
-      final accessToken = Result<String?>();
-
       FeelingApi moodApi = FeelingApi();
       var feelingsResult = Result<List<MasterFeelingEntity>>();
       yield Call(
         moodApi.getMasterFeelings,
-        args: [accessToken.value],
         result: feelingsResult,
       );
 

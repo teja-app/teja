@@ -93,6 +93,33 @@ class RootPath {
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
+class HeroPageRoute<T> extends CustomTransitionPage<T> {
+  HeroPageRoute({
+    required Widget child,
+    required String heroTag,
+  }) : super(
+          child: child,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return Hero(
+              tag: heroTag,
+              child: child,
+              flightShuttleBuilder: (
+                BuildContext flightContext,
+                Animation<double> animation,
+                HeroFlightDirection flightDirection,
+                BuildContext fromHeroContext,
+                BuildContext toHeroContext,
+              ) {
+                return Material(
+                  color: Colors.transparent,
+                  child: toHeroContext.widget,
+                );
+              },
+            );
+          },
+        );
+}
+
 final GoRouter router = GoRouter(
   // initialLocation: initialLocation, // Use the initialLocation parameter here
   debugLogDiagnostics: true,
@@ -213,9 +240,13 @@ final GoRouter router = GoRouter(
     GoRoute(
       name: 'quickJournalEntry',
       path: '/quick-journal-entry',
-      builder: (context, state) {
+      pageBuilder: (context, state) {
         final String? entryId = state.uri.queryParameters['id'];
-        return QuickJournalEntryScreen(entryId: entryId);
+        final String heroTag = (state.extra as Map<String, dynamic>?)?['heroTag'] ?? 'defaultHeroTag';
+        return HeroPageRoute(
+          heroTag: heroTag,
+          child: QuickJournalEntryScreen(entryId: entryId, heroTag: heroTag),
+        );
       },
     ),
     GoRoute(

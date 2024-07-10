@@ -7,15 +7,16 @@ class FeaturedJournalTemplateRepository {
 
   Future<List<FeaturedJournalTemplateEntity>> getAllFeaturedTemplateEntities() async {
     final box = Hive.box(FeaturedJournalTemplate.boxKey);
-    return box.values
-        .map((hiveTemplate) => FeaturedJournalTemplateEntity(
-              id: _box.keyAt(_box.values.toList().indexOf(hiveTemplate)).toString(),
-              template: hiveTemplate.template,
-              featured: hiveTemplate.featured,
-              priority: hiveTemplate.priority,
-              active: hiveTemplate.active,
-            ))
-        .toList();
+    return box.values.map((hiveTemplate) {
+      final key = box.keyAt(box.values.toList().indexOf(hiveTemplate)).toString();
+      return FeaturedJournalTemplateEntity(
+        id: key,
+        template: hiveTemplate.template,
+        featured: hiveTemplate.featured,
+        priority: hiveTemplate.priority,
+        active: hiveTemplate.active,
+      );
+    }).toList();
   }
 
   Future<void> clearFeaturedJournalTemplates() async {
@@ -23,6 +24,7 @@ class FeaturedJournalTemplateRepository {
   }
 
   Future<void> addOrUpdateFeaturedJournalTemplates(List<FeaturedJournalTemplateEntity> templates) async {
+    print("addOrUpdateFeaturedJournalTemplates");
     var box = Hive.box(FeaturedJournalTemplate.boxKey); // Ensure the box is initialized
     for (var templateEntity in templates) {
       var hiveTemplate = FeaturedJournalTemplate()
@@ -33,5 +35,6 @@ class FeaturedJournalTemplateRepository {
       // Use the entity's id as the key for the Hive box entry
       await box.put(templateEntity.id, hiveTemplate);
     }
+    print("After addOrUpdateFeaturedJournalTemplates");
   }
 }

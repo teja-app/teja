@@ -101,12 +101,6 @@ class SettingsPage extends StatelessWidget {
                       });
                     },
                   ),
-                  ListTile(
-                    title: const Text('Recovery Codes'),
-                    onTap: () {
-                      GoRouter.of(context).push('/settings/recovery-code');
-                    },
-                  ),
                   const Divider(),
                   ListTile(
                     title: const Text('Lock the app'),
