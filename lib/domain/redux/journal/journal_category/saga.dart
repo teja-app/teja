@@ -3,6 +3,7 @@ import 'package:teja/domain/entities/journal_category_entity.dart';
 import 'package:teja/domain/redux/journal/journal_category/actions.dart';
 import 'package:teja/infrastructure/api/journal_category_api.dart';
 import 'package:teja/infrastructure/repositories/journal_category_repository.dart';
+import 'package:teja/shared/helpers/logger.dart';
 
 class JournalCategorySaga {
   Iterable<void> saga() sync* {
@@ -29,6 +30,7 @@ class JournalCategorySaga {
         yield Put(FetchJournalCategoriesActionFromApi());
       }
     }, Catch: (e, s) sync* {
+      logger.e("_fetchJournalCategoriesFromCache", error: e, stackTrace: s);
       yield Put(JournalCategoriesFetchFailedAction(e.toString()));
     });
   }
@@ -45,7 +47,7 @@ class JournalCategorySaga {
       // Fetch categories from the API
       var api = JournalCategoryApi();
       var categoriesResult = Result<List<JournalCategoryEntity>>();
-      yield Call(api.getJournalCategories, args: [], result: categoriesResult);
+      yield Call(api.getJournalCategories, result: categoriesResult);
 
       if (categoriesResult.value != null && categoriesResult.value!.isNotEmpty) {
         // Save the fetched categories
@@ -60,6 +62,7 @@ class JournalCategorySaga {
         yield Put(const JournalCategoriesFetchFailedAction('No journal categories data received'));
       }
     }, Catch: (e, s) sync* {
+      logger.e("_fetchAndProcessJournalCategoriesFromAPI", error: e, stackTrace: s);
       yield Put(JournalCategoriesFetchFailedAction(e.toString()));
     });
   }

@@ -11,8 +11,9 @@ import 'package:teja/shared/common/button.dart';
 
 class QuickJournalEntryScreen extends StatefulWidget {
   final String? entryId;
+  final String? heroTag;
 
-  const QuickJournalEntryScreen({Key? key, this.entryId}) : super(key: key);
+  const QuickJournalEntryScreen({Key? key, this.entryId, this.heroTag}) : super(key: key);
 
   @override
   QuickJournalEntryScreenState createState() => QuickJournalEntryScreenState();
@@ -60,13 +61,17 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                TextField(
-                  controller: _bodyController,
-                  decoration: const InputDecoration(
-                    hintText: 'Write your journal entry...',
-                    border: InputBorder.none,
+                Material(
+                  color: Colors.transparent,
+                  child: TextField(
+                    controller: _bodyController,
+                    decoration: const InputDecoration(
+                      hintText: 'Write your journal entry...',
+                      border: InputBorder.none,
+                    ),
+                    maxLines: null,
+                    autofocus: true,
                   ),
-                  maxLines: null,
                 ),
                 Button(
                   buttonType: ButtonType.primary,

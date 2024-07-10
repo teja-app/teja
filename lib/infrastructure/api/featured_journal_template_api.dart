@@ -11,7 +11,6 @@ class FeaturedJournalTemplateApi {
     const String url = '/featured-journal-templates';
     Response response = await _apiHelper.unsafeGet(url);
     List<dynamic> jsonResponse = response.data;
-    print("jsonResponse $jsonResponse");
 
     List<FeaturedJournalTemplateEntity> featuredJournalTemplates = jsonResponse.map((json) {
       FeaturedJournalTemplateDto dto = FeaturedJournalTemplateDto.fromJson(json);

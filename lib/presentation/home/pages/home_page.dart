@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:go_router/go_router.dart';
+import 'package:icons_flutter/icons_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:redux/redux.dart';
@@ -7,11 +9,10 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/home/home_actions.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
 import 'package:teja/domain/redux/mood/list/actions.dart';
-import 'package:teja/presentation/home/ui/JournalCollectorFab.dart';
+import 'package:teja/presentation/home/ui/QuickInputWidget.dart';
 import 'package:teja/presentation/home/ui/count_down_timer.dart';
 import 'package:teja/presentation/home/ui/journal/journal_entries_widget.dart';
 import 'package:teja/presentation/home/ui/journal/last_used_template.dart';
-import 'package:teja/presentation/home/ui/journal_prompt/journal_prompt.dart';
 import 'package:teja/presentation/home/ui/mood/mood_tracker.dart';
 import 'package:teja/presentation/home/ui/token_widget.dart';
 import 'package:teja/presentation/navigation/buildDesktopDrawer.dart';
@@ -19,6 +20,8 @@ import 'package:teja/presentation/navigation/mobile_navigation_bar.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/presentation/navigation/leadingContainer.dart';
 import 'package:teja/calendar_timeline/calendar_timeline.dart';
+import 'package:teja/router.dart';
+import 'package:teja/shared/common/button.dart';
 import 'package:teja/theme/padding.dart';
 
 class HomePage extends StatefulWidget {
@@ -33,6 +36,7 @@ class _HomePageState extends State<HomePage> {
   static const int pageSize = 3000;
 
   get bottomNavigationBar => null;
+  int _selectedSegment = 0;
 
   String getGreetingMessage() {
     final now = DateTime.now();
@@ -104,6 +108,41 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final GoRouter goRouter = GoRouter.of(context);
+    final TemplateJournalButton = Button(
+      text: "Template Journal",
+      icon: Foundation.clipboard_pencil,
+      onPressed: () => goRouter.pushNamed(RootPath.journalCategory),
+    );
+    final CreateMood = Button(
+      text: "Add Mood",
+      icon: WeatherIcons.wi_sunrise,
+      onPressed: () => goRouter.pushNamed(RootPath.moodEdit),
+    );
+    final List<Widget> segments = [
+      Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [TemplateJournalButton, CreateMood],
+          ),
+          const JournalEntriesWidget(),
+          const MoodTrackerWidget(),
+        ],
+      ),
+      Column(
+        children: [
+          TemplateJournalButton,
+          const JournalEntriesWidget(),
+        ],
+      ),
+      Column(
+        children: [
+          CreateMood,
+          const MoodTrackerWidget(),
+        ],
+      ),
+    ];
     Posthog posthog = Posthog();
     posthog.screen(
       screenName: 'Home Page',
@@ -147,11 +186,59 @@ class _HomePageState extends State<HomePage> {
                 selectableDayPredicate: (date) => date.isBefore(tomorrow),
                 locale: 'en_ISO',
               ),
+              const SizedBox(height: 20),
+              Center(
+                child: Text(
+                  "Quick Journal",
+                  style: textTheme.titleSmall,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Hero(
+                  tag: 'quickInputHero',
+                  child: QuickInputWidget(
+                    onTap: () {
+                      context.pushNamed(
+                        'quickJournalEntry',
+                        extra: {'heroTag': 'quickInputHero'},
+                      );
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
               if (store.selectedDate != null && now.compareTo(store.selectedDate!) > 0) ...[
-                const JournalEntriesWidget(),
-                const MoodTrackerWidget(),
                 const SizedBox(height: spacer),
-                const JournalPrompt(),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Container(
+                          width: double.infinity, // Makes the SegmentedButton occupy full width
+                          child: SegmentedButton(
+                            segments: const [
+                              ButtonSegment(value: 0, label: Text('All')),
+                              ButtonSegment(value: 1, label: Text('Journal')),
+                              ButtonSegment(value: 2, label: Text('Mood')),
+                            ],
+                            selected: {_selectedSegment},
+                            onSelectionChanged: (selected) {
+                              setState(() {
+                                _selectedSegment = selected.first;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      segments[_selectedSegment],
+                    ],
+                  ),
+                ),
+                const SizedBox(height: spacer),
                 const SizedBox(height: spacer),
                 const LatestTemplatesUsed(),
               ],
@@ -172,7 +259,6 @@ class _HomePageState extends State<HomePage> {
         leadingWidth: 72,
         actions: const [TokenWidget()],
       ),
-      floatingActionButton: const JournalCollectorFab(),
       body: isDesktop(context)
           ? Row(
               children: [
