@@ -42,7 +42,7 @@ class _ProfileSleepHeatMapScreenState extends State<ProfileSleepHeatMapScreen> {
         return Checklist(
           componentName: SLEEP_HEAT_MAP,
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 400),
+            constraints: const BoxConstraints(maxHeight: 400, maxWidth: 400),
             child: HeatMapComponent(
               key: const Key('ProfileSleepHeatMapScreen'),
               dataset: viewModel.dataset,

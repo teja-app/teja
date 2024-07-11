@@ -7,7 +7,8 @@ class HeatMapComponent extends StatelessWidget {
   final String title; // Define a field to hold the title
   final Map<DateTime, int> dataset;
 
-  const HeatMapComponent({Key? key, required this.title, required this.dataset}) : super(key: key);
+  const HeatMapComponent({Key? key, required this.title, required this.dataset})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,19 +31,21 @@ class HeatMapComponent extends StatelessWidget {
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
-        const SizedBox(height: 5),
+        const SizedBox(
+          height: 5,
+          width: 5,
+        ),
         HeatMapCalendar(
           initDate: DateTime.now(),
           datasets: dataset,
           colorMode: ColorMode.opacity, // Use opacity for color mode
           colorsets: {
             0: Colors.blue[700]!,
-            // Add more colors as needed
           },
           defaultColor: defaultColor,
           textColor: textColor,
           showColorTip: false,
-          size: 30,
+          size: 42,
           monthFontSize: 14, // Adjust the size of the month label
           weekFontSize: 12, // Adjust the size of the week label
           weekTextColor: weekTextColor,

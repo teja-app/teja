@@ -25,8 +25,8 @@ class Checklist extends StatelessWidget {
         return viewModel;
       },
       builder: (context, viewModel) {
-        final allPermissionsGranted =
-            viewModel.requiredPermissions.every((permission) => viewModel.hasPermissions.contains(permission));
+        final allPermissionsGranted = viewModel.requiredPermissions.every(
+            (permission) => viewModel.hasPermissions.contains(permission));
 
         return Stack(
           children: [
@@ -39,7 +39,7 @@ class Checklist extends StatelessWidget {
               ),
             ),
             Positioned(
-              top: 8,
+              top: 0,
               right: 8,
               child: ShareOptionsPopup(globalKey: globalKey),
             ),
@@ -67,7 +67,8 @@ class ChecklistViewModel {
     required this.requiredPermissions,
   });
 
-  factory ChecklistViewModel.fromStore(Store<AppState> store, String componentName) {
+  factory ChecklistViewModel.fromStore(
+      Store<AppState> store, String componentName) {
     final hasPermissions = store.state.permissionState.hasPermissions;
     final requiredPermissions = featureChecklist[componentName] ?? [];
 
