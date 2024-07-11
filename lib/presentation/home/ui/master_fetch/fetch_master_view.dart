@@ -26,12 +26,11 @@ class _FetchMasterViewState extends State<FetchMasterView> {
           children: <Widget>[
             if (vm.isLoading) ...[
               const CircularProgressIndicator(),
-              const Text(
-                  "Fetching configuration to use application in offline mode, please be connected to the internet"),
+              const Text("Fetching configuration for offline use, please stay connected"),
             ] else if (vm.isFetchSuccessful)
               const Text('Fetch successful!')
             else ...[
-              const Text('Press this button to make it everything work in offline mode'),
+              const Text("Check your internet connection. If the issue persists, contact support."),
               Button(
                 onPressed: () {
                   vm.fetchFeelings();
@@ -78,7 +77,7 @@ class _ViewModel {
           store.state.journalTemplateState.isFetchSuccessful,
       fetchQuotes: () => store.dispatch(FetchQuotesActionFromApi()),
       fetchFeelings: () => store.dispatch(FetchMasterFeelingsActionFromApi()),
-      fetchFactors: () => store.dispatch(FetchMasterFactorsActionFromApi()), // Dispatch action for factors
+      fetchFactors: () => store.dispatch(FetchMasterFactorsActionFromApi()),
       fetchJournalTemplates: () => store.dispatch(FetchJournalTemplatesActionFromApi()),
     );
   }

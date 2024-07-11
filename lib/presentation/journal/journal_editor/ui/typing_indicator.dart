@@ -48,11 +48,13 @@ class _TypingIndicatorState extends State<TypingIndicator> with SingleTickerProv
 class Dot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       width: 8.0,
       height: 8.0,
       decoration: BoxDecoration(
-        color: Colors.black,
+        color: colorScheme.primary,
         shape: BoxShape.circle,
       ),
     );
