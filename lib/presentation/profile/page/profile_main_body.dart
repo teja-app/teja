@@ -18,6 +18,9 @@ class MainBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return StoreConnector<AppState, _ViewModel>(
       converter: (store) => _ViewModel.fromStore(store),
+      onInit: (store) {
+        store.dispatch(FetchChartSequenceAction());
+      },
       builder: (context, vm) => vm.isLoading
           ? const Center(child: CircularProgressIndicator())
           : _buildBody(vm, context),
@@ -96,13 +99,17 @@ class MainBody extends StatelessWidget {
       case 'MoodSleepChartScreen':
         return const MoodSleepChartScreen(key: Key('MoodSleepChartScreen'));
       case 'ProfileSleepHeatMapScreen':
-        return const ProfileSleepHeatMapScreen(key: Key('ProfileSleepHeatMapScreen'));
+        return const ProfileSleepHeatMapScreen(
+            key: Key('ProfileSleepHeatMapScreen'));
       case 'ProfileMoodYearlyHeatMapScreen':
-        return const ProfileMoodYearlyHeatMapScreen(key: Key('ProfileMoodYearlyHeatMapScreen'));
+        return const ProfileMoodYearlyHeatMapScreen(
+            key: Key('ProfileMoodYearlyHeatMapScreen'));
       case 'ProfileMoodActivityScreen':
-        return const MoodActivityChartScreen(key: Key('ProfileMoodActivityScreen'));
+        return const MoodActivityChartScreen(
+            key: Key('ProfileMoodActivityScreen'));
       case 'MoodSemiCircleChartScreen':
-        return const MoodSemiCircleChartScreen(key: Key('MoodSemiCircleChartScreen'));
+        return const MoodSemiCircleChartScreen(
+            key: Key('MoodSemiCircleChartScreen'));
       default:
         return Container(
           key: Key('defaultChart $chartName'),

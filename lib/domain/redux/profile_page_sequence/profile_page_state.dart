@@ -8,26 +8,14 @@ class ProfilePageState {
 
   const ProfilePageState({
     this.isLoading = false,
-    this.chartSequence = const [
-      'MoodSleepChartScreen',
-      'ProfileSleepHeatMapScreen',
-      'ProfileMoodYearlyHeatMapScreen',
-      'ProfileMoodActivityScreen',
-      'MoodSemiCircleChartScreen',
-    ],
+    this.chartSequence = const [],
     this.errorMessage,
   });
 
   factory ProfilePageState.initial() {
     return const ProfilePageState(
       isLoading: false,
-      chartSequence: [
-        'MoodSleepChartScreen',
-        'ProfileSleepHeatMapScreen',
-        'ProfileMoodYearlyHeatMapScreen',
-        'ProfileMoodActivityScreen',
-        'MoodSemiCircleChartScreen',
-      ],
+      chartSequence: [],
       errorMessage: null,
     );
   }
