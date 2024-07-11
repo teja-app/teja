@@ -14,6 +14,10 @@ final ThemeData lightTheme = ThemeData(
     bodySmall: GoogleFonts.wixMadeforText(
       textStyle: const TextTheme().bodySmall,
     ),
+    titleSmall: GoogleFonts.wixMadeforText(
+      textStyle: const TextTheme().bodySmall,
+      color: Colors.grey.shade900,
+    ),
   ),
   timePickerTheme: TimePickerThemeData(
     backgroundColor: Colors.white,
@@ -85,6 +89,31 @@ final ThemeData lightTheme = ThemeData(
   floatingActionButtonTheme: const FloatingActionButtonThemeData(
     backgroundColor: Colors.black,
     foregroundColor: Colors.white,
+  ),
+  segmentedButtonTheme: SegmentedButtonThemeData(
+    style: ButtonStyle(
+      backgroundColor: WidgetStateProperty.resolveWith<Color>(
+        (Set<WidgetState> states) {
+          if (states.contains(WidgetState.selected)) {
+            return Colors.black;
+          }
+          return Colors.white;
+        },
+      ),
+      foregroundColor: WidgetStateProperty.resolveWith<Color>(
+        (Set<WidgetState> states) {
+          if (states.contains(WidgetState.selected)) {
+            return Colors.white;
+          }
+          return Colors.black;
+        },
+      ),
+      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+      ),
+    ),
   ),
   useMaterial3: true,
 );

@@ -6,7 +6,7 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/presentation/home/ui/master_fetch/fetch_master_view.dart';
 import 'package:teja/presentation/settings/pages/widgets/settings_authenticate.dart';
 import 'package:teja/router.dart';
-import 'package:teja/shared/common/bento_box.dart';
+import 'package:teja/shared/common/flexible_height_box.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -33,6 +33,7 @@ class SettingsPage extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(
             title: const Text('Settings'),
+            forceMaterialTransparency: true,
           ),
           body: Center(
             child: SizedBox(
@@ -54,9 +55,9 @@ class SettingsPage extends StatelessWidget {
                   // ),
                   // Personalize Section
                   if (!store.isFetchSuccessful)
-                    const BentoBox(
+                    const FlexibleHeightBox(
                       gridWidth: 4,
-                      gridHeight: 1.5,
+                      disableBackground: true,
                       child: FetchMasterView(),
                     ),
                   // const Padding(
@@ -99,12 +100,6 @@ class SettingsPage extends StatelessWidget {
                       settingsAuthenticate(context, () {
                         GoRouter.of(context).push('/settings/recovery-code');
                       });
-                    },
-                  ),
-                  ListTile(
-                    title: const Text('Recovery Codes'),
-                    onTap: () {
-                      GoRouter.of(context).push('/settings/recovery-code');
                     },
                   ),
                   const Divider(),

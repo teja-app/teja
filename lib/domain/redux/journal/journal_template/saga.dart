@@ -48,7 +48,7 @@ class JournalTemplateSaga {
 
       var templatesResult = Result<List<JournalTemplateEntity>>();
       JournalTemplateApi api = JournalTemplateApi();
-      yield Call(api.getJournalTemplates, args: [null], result: templatesResult); // Replace null with actual auth token
+      yield Call(api.getJournalTemplates, result: templatesResult); // Replace null with actual auth token
 
       if (templatesResult.value != null && templatesResult.value!.isNotEmpty) {
         yield Call(templateRepo.addOrUpdateJournalTemplates, args: [templatesResult.value!]);

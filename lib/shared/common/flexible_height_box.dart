@@ -11,20 +11,22 @@ class FlexibleHeightBox extends StatelessWidget {
   final int desktopColumns;
   final int tabletColumns;
   final int mobileColumns;
+  final bool disableBackground;
 
-  const FlexibleHeightBox(
-      {Key? key,
-      required this.gridWidth,
-      required this.child,
-      this.tabletGridWidth,
-      this.desktopGridWidth,
-      this.color,
-      this.margin = 8.0,
-      this.padding = 16.0,
-      this.desktopColumns = 12,
-      this.tabletColumns = 8,
-      this.mobileColumns = 4})
-      : super(key: key);
+  const FlexibleHeightBox({
+    Key? key,
+    required this.gridWidth,
+    required this.child,
+    this.tabletGridWidth,
+    this.desktopGridWidth,
+    this.color,
+    this.margin = 8.0,
+    this.padding = 16.0,
+    this.desktopColumns = 12,
+    this.tabletColumns = 8,
+    this.mobileColumns = 4,
+    this.disableBackground = false,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +58,7 @@ class FlexibleHeightBox extends StatelessWidget {
       padding: EdgeInsets.all(padding),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: color ?? cardTheme.color,
+        color: disableBackground ? Colors.transparent : (color ?? cardTheme.color),
         boxShadow: [
           BoxShadow(
             color: (color ?? cardTheme.color)!.withOpacity(0.2),

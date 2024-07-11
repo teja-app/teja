@@ -112,7 +112,7 @@ class MainBody extends StatelessWidget {
             key: Key('MoodSemiCircleChartScreen'));
       default:
         return Container(
-          key: Key('defaultChart'),
+          key: Key('defaultChart $chartName'),
           child: const Text('Unknown Chart'),
         );
     }

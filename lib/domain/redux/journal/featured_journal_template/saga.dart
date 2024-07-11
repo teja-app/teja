@@ -4,6 +4,7 @@ import 'package:teja/domain/entities/featured_journal_template_entity.dart';
 import 'package:teja/domain/redux/journal/featured_journal_template/actions.dart';
 import 'package:teja/infrastructure/api/featured_journal_template_api.dart';
 import 'package:teja/infrastructure/repositories/featured_journal_template.dart';
+import 'package:teja/shared/helpers/logger.dart';
 
 class FeaturedJournalTemplateSaga {
   Iterable<void> saga() sync* {
@@ -36,6 +37,7 @@ class FeaturedJournalTemplateSaga {
         yield Put(FetchFeaturedJournalTemplatesActionFromApi());
       }
     }, Catch: (e, s) sync* {
+      logger.e("_fetchAndProcessFeaturedTemplatesFromAPI", error: e, stackTrace: s);
       yield Put(FeaturedJournalTemplatesFetchFailedAction(e.toString()));
     });
   }
@@ -62,12 +64,9 @@ class FeaturedJournalTemplateSaga {
         api.getFeaturedJournalTemplates,
         result: templatesResult,
       );
-      print("templatesResult ${templatesResult.value!}");
 
       if (templatesResult.value != null && templatesResult.value!.isNotEmpty) {
-        // Save the newly fetched templates
         yield Call(featuredTemplateRepo.addOrUpdateFeaturedJournalTemplates, args: [templatesResult.value!]);
-
         // Dispatch success action with the fetched templates
         yield Put(FeaturedJournalTemplatesFetchedSuccessAction(
           templatesResult.value!,
@@ -77,6 +76,7 @@ class FeaturedJournalTemplateSaga {
         yield Put(const FeaturedJournalTemplatesFetchFailedAction('No featured templates data received'));
       }
     }, Catch: (e, s) sync* {
+      logger.e("_fetchAndProcessFeaturedTemplatesFromAPI", error: e, stackTrace: s);
       yield Put(FeaturedJournalTemplatesFetchFailedAction(e.toString()));
     });
   }

@@ -51,7 +51,6 @@ class MasterFactorSaga {
       FactorApi factorApi = FactorApi();
       yield Call(
         factorApi.getMasterFactors,
-        args: [accessToken.value],
         result: factorsResult,
       );
 
