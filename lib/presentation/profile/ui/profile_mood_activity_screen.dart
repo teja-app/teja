@@ -45,7 +45,7 @@ class _MoodActivityChartScreenState extends State<MoodActivityChartScreen> {
         return Checklist(
           componentName: MOOD_ACTIVITY_MAP,
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 400),
+            constraints: const BoxConstraints(maxHeight: 350),
             child: MoodSleepChart(
               key: const Key('moodSleepChart'),
               title: "Mood & Activity",

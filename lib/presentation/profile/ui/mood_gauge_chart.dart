@@ -20,7 +20,8 @@ class MoodGaugeChart extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          padding:
+              const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           child: Text(
             title,
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -76,7 +77,8 @@ class MoodGaugeChart extends StatelessWidget {
     );
   }
 
-  Widget _buildMoodIcon(int moodRating, bool isDarkMode, BoxConstraints constraints) {
+  Widget _buildMoodIcon(
+      int moodRating, bool isDarkMode, BoxConstraints constraints) {
     final Color iconColor = isDarkMode ? Colors.white : Colors.black;
     final double iconSize = constraints.maxWidth * 0.05; // 5% of the width
     return SvgPicture.asset(
