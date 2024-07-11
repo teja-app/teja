@@ -170,7 +170,7 @@ class MonthlyMoodReportSaga {
           sleepValue,
           moodValue,
           radius: calculateRadius(3),
-          color: Colors.blue.withOpacity(0.3),
+          color: Colors.blue.withOpacity(0.6),
         ));
       }
     });
@@ -214,7 +214,7 @@ class MonthlyMoodReportSaga {
           stepsCount,
           moodValue,
           radius: calculateRadius(3),
-          color: Colors.blue.withOpacity(0.3),
+          color: Colors.blue[700]!.withOpacity(0.6),
         ));
       }
     });
