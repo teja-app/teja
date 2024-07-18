@@ -1,9 +1,12 @@
 import 'package:isar/isar.dart';
 import 'package:redux_saga/redux_saga.dart';
+import 'package:teja/domain/entities/app_error.dart';
 import 'package:teja/domain/entities/featured_journal_template_entity.dart';
+import 'package:teja/domain/redux/app_error/app_error_actions.dart';
 import 'package:teja/domain/redux/journal/featured_journal_template/actions.dart';
 import 'package:teja/infrastructure/api/featured_journal_template_api.dart';
 import 'package:teja/infrastructure/repositories/featured_journal_template.dart';
+import 'package:teja/shared/helpers/errors.dart';
 import 'package:teja/shared/helpers/logger.dart';
 
 class FeaturedJournalTemplateSaga {
@@ -76,7 +79,18 @@ class FeaturedJournalTemplateSaga {
         yield Put(const FeaturedJournalTemplatesFetchFailedAction('No featured templates data received'));
       }
     }, Catch: (e, s) sync* {
-      logger.e("_fetchAndProcessFeaturedTemplatesFromAPI", error: e, stackTrace: s);
+      logger.e("Error fetching from API", error: e, stackTrace: s);
+      if (e is AppError) {
+        yield Put(FeaturedJournalTemplatesFetchFailedAction(e.message));
+        yield Put(AddAppErrorAction(createAppError({'code': e.code, 'message': e.message, 'details': e.details})));
+      } else {
+        yield Put(const FeaturedJournalTemplatesFetchFailedAction("An unexpected error occurred"));
+        yield Put(AddAppErrorAction(createAppError({
+          'code': StaticErrorCodes.UNKNOWN_ERROR,
+          'message': "An unexpected error occurred while fetching from API",
+          'details': {'error': e.toString()}
+        })));
+      }
       yield Put(FeaturedJournalTemplatesFetchFailedAction(e.toString()));
     });
   }

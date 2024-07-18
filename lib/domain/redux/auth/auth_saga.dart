@@ -2,6 +2,7 @@ import 'package:redux/redux.dart';
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/infrastructure/service/auth_service.dart';
+import 'package:teja/shared/helpers/logger.dart';
 import 'package:teja/shared/storage/secure_storage.dart'; // Add this import
 import 'auth_action.dart';
 
@@ -24,12 +25,10 @@ class AuthSaga {
       yield Put(AuthInProgressAction());
       RegisterAction registerAction = action;
       yield Call(_authService.register, args: [registerAction.mnemonic]);
-      yield Put(
-          RegisterSuccessAction(registerAction.mnemonic)); // Pass mnemonic here
+      yield Put(RegisterSuccessAction(registerAction.mnemonic)); // Pass mnemonic here
 
       // Store the recovery code securely
-      yield Call(_secureStorage.writeRecoveryCode,
-          args: [registerAction.mnemonic]);
+      yield Call(_secureStorage.writeRecoveryCode, args: [registerAction.mnemonic]);
 
       // Dispatch AuthenticateAction
       yield Put(AuthenticateAction(registerAction.mnemonic));
@@ -40,28 +39,22 @@ class AuthSaga {
   }
 
   Iterable<void> _authenticate({required AuthenticateAction action}) sync* {
-    yield Try(() sync* {
-      yield Put(AuthInProgressAction());
-      final AuthenticateAction authenticateAction = action;
-      final response = Result<Map<String, String>>();
-      yield Call(_authService.authenticate,
-          args: [authenticateAction.mnemonic], result: response);
+    yield Put(AuthInProgressAction());
+    final AuthenticateAction authenticateAction = action;
+    final response = Result<Map<String, String>>();
+    yield Call(_authService.authenticate, args: [authenticateAction.mnemonic], result: response);
 
-      final accessToken = response.value?['accessToken'];
-      final refreshToken = response.value?['refreshToken'];
+    final accessToken = response.value?['accessToken'];
+    final refreshToken = response.value?['refreshToken'];
 
-      if (accessToken != null && refreshToken != null) {
-        yield Call(_secureStorage.writeRecoveryCode,
-            args: [authenticateAction.mnemonic]);
-        yield Put(TokenReceivedAction(accessToken, refreshToken));
-        yield Put(AuthenticateSuccessAction());
-        yield Put(const SetHasExistingMnemonicAction(true));
-      } else {
-        yield Put(const AuthenticateFailedAction('Failed to retrieve tokens.'));
-      }
-    }, Catch: (e, stackTrace) sync* {
-      yield Put(AuthenticateFailedAction(e.toString()));
-    });
+    if (accessToken != null && refreshToken != null) {
+      yield Call(_secureStorage.writeRecoveryCode, args: [authenticateAction.mnemonic]);
+      yield Put(TokenReceivedAction(accessToken, refreshToken));
+      yield Put(AuthenticateSuccessAction());
+      yield Put(const SetHasExistingMnemonicAction(true));
+    } else {
+      yield Put(const AuthenticateFailedAction('Failed to retrieve tokens.'));
+    }
   }
 
   Iterable<void> _tokenReceived({required TokenReceivedAction action}) sync* {
@@ -72,8 +65,7 @@ class AuthSaga {
   Iterable<void> _refreshToken({required RefreshTokenAction action}) sync* {
     yield Try(() sync* {
       final response = Result<String>();
-      yield Call(_authService.refreshToken,
-          args: [action.refreshToken], result: response);
+      yield Call(_authService.refreshToken, args: [action.refreshToken], result: response);
 
       final accessToken = response.value;
 
@@ -88,8 +80,7 @@ class AuthSaga {
     });
   }
 
-  Iterable<void> _fetchRecoveryPhrase(
-      {required FetchRecoveryPhraseAction action}) sync* {
+  Iterable<void> _fetchRecoveryPhrase({required FetchRecoveryPhraseAction action}) sync* {
     yield Try(() sync* {
       yield Put(AuthInProgressAction());
       final result = store.state.authState.mnemonic;
@@ -104,18 +95,15 @@ class AuthSaga {
       mnemonic.value = mnemonic.value!;
 
       final blankIndex = store.state.authState.blankIndex ??
-          3 +
-              (mnemonic.value!.split(' ').length - 7) *
-                  (DateTime.now().millisecondsSinceEpoch % 1000) ~/
-                  1000;
+          3 + (mnemonic.value!.split(' ').length - 7) * (DateTime.now().millisecondsSinceEpoch % 1000) ~/ 1000;
       yield Put(SetBlankIndexAction(blankIndex));
     }, Catch: (e, stackTrace) sync* {
+      logger.e(e, stackTrace: stackTrace);
       yield Put(FetchRecoveryPhraseFailedAction(e.toString()));
     });
   }
 }
 
-Iterable<void> _setHasExistingMnemonic(
-    {required SetHasExistingMnemonicAction action}) sync* {
+Iterable<void> _setHasExistingMnemonic({required SetHasExistingMnemonicAction action}) sync* {
   yield Put(SetHasExistingMnemonicAction(action.hasExistingMnemonic));
 }

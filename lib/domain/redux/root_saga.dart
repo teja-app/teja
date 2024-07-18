@@ -1,5 +1,7 @@
 import 'package:redux/redux.dart';
 import 'package:redux_saga/redux_saga.dart';
+import 'package:teja/domain/entities/app_error.dart';
+import 'package:teja/domain/redux/app_error/app_error_actions.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/auth/auth_saga.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_saga.dart';
@@ -26,31 +28,68 @@ import 'package:teja/domain/redux/visions/vision_saga.dart';
 import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_saga.dart';
 import 'package:teja/domain/redux/yearly_mood_report/yearly_mood_report_saga.dart';
 import 'package:teja/domain/redux/yearly_sleep_report/yearly_sleep_report_saga.dart';
+import 'package:teja/shared/helpers/errors.dart';
+import 'package:teja/shared/helpers/logger.dart';
 
 Iterable<void> rootSaga(Store<AppState> store) sync* {
-  yield Fork(AuthSaga(store).saga);
-  yield Fork(MoodEditorSaga().saga);
-  yield Fork(MoodDetailSaga().saga);
-  yield Fork(MoodLogListSaga().saga);
-  yield Fork(MoodLogsSaga().saga);
-  yield Fork(MasterFeelingSaga().saga);
-  yield Fork(MasterFactorSaga().saga);
-  yield Fork(WeeklyMoodReportSaga().saga);
-  yield Fork(MonthlyMoodReportSaga().saga);
-  yield Fork(YearlySleepReportSaga().saga);
-  yield Fork(QuoteSaga().saga);
-  yield Fork(VisionSaga().saga);
-  yield Fork(TokenSaga().saga);
-  yield Fork(JournalTemplateSaga().saga);
-  yield Fork(JournalEditorSaga().saga);
-  yield Fork(JournalLogsSaga().saga);
-  yield Fork(JournalDetailSaga().saga);
-  yield Fork(JournalCategorySaga().saga);
-  yield Fork(FeaturedJournalTemplateSaga().saga);
-  yield Fork(SyncSaga().saga);
-  yield Fork(JournalListSaga().saga);
-  yield Fork(PermissionSaga(store).saga);
-  yield Fork(AISuggestionSaga().saga);
-  yield Fork(YearlyMoodReportSaga().saga);
-  yield Fork(ProfilePageSaga().saga);
+  final Map<String, Function> sagas = {
+    'AuthSaga': () => AuthSaga(store).saga(),
+    'MoodEditorSaga': () => MoodEditorSaga().saga(),
+    'MoodDetailSaga': () => MoodDetailSaga().saga(),
+    'MoodLogListSaga': () => MoodLogListSaga().saga(),
+    'MoodLogsSaga': () => MoodLogsSaga().saga(),
+    'MasterFeelingSaga': () => MasterFeelingSaga().saga(),
+    'MasterFactorSaga': () => MasterFactorSaga().saga(),
+    'WeeklyMoodReportSaga': () => WeeklyMoodReportSaga().saga(),
+    'MonthlyMoodReportSaga': () => MonthlyMoodReportSaga().saga(),
+    'YearlySleepReportSaga': () => YearlySleepReportSaga().saga(),
+    'QuoteSaga': () => QuoteSaga().saga(),
+    'VisionSaga': () => VisionSaga().saga(),
+    'TokenSaga': () => TokenSaga().saga(),
+    'JournalTemplateSaga': () => JournalTemplateSaga().saga(),
+    'JournalEditorSaga': () => JournalEditorSaga().saga(),
+    'JournalLogsSaga': () => JournalLogsSaga().saga(),
+    'JournalDetailSaga': () => JournalDetailSaga().saga(),
+    'JournalCategorySaga': () => JournalCategorySaga().saga(),
+    'FeaturedJournalTemplateSaga': () => FeaturedJournalTemplateSaga().saga(),
+    'SyncSaga': () => SyncSaga().saga(),
+    'JournalListSaga': () => JournalListSaga().saga(),
+    'PermissionSaga': () => PermissionSaga(store).saga(),
+    'AISuggestionSaga': () => AISuggestionSaga().saga(),
+    'YearlyMoodReportSaga': () => YearlyMoodReportSaga().saga(),
+    'ProfilePageSaga': () => ProfilePageSaga().saga(),
+  };
+
+  yield All(sagas.map((key, saga) => MapEntry(key, Spawn(() sync* {
+        while (true) {
+          yield Try(() sync* {
+            yield Call(saga);
+          }, Catch: (error, stackTrace) sync* {
+            if (error is AppError) {
+              yield Put(AddAppErrorAction(
+                  createAppError({'code': error.code, 'message': error.message, 'details': error.details})));
+            } else {
+              yield Call(_handleSagaError, args: [store, key, error, stackTrace]);
+            }
+          });
+          // Small delay before restarting the saga
+          yield Delay(const Duration(seconds: 1));
+        }
+      }))));
+}
+
+void _handleSagaError(Store<AppState> store, String sagaName, dynamic error, StackTrace? stackTrace) {
+  logger.e('Saga error in $sagaName', error: error, stackTrace: stackTrace);
+
+  final appError = AppError(
+    code: 'SAGA_ERROR',
+    message: 'An error occurred in $sagaName: ${error.toString()}',
+    details: {'sagaName': sagaName, 'stackTrace': stackTrace?.toString()},
+  );
+
+  store.dispatch(AddAppErrorAction(appError));
+
+  // Additional error handling logic can be added here
+  // For example, you might want to dispatch actions to update the app state
+  // based on which saga failed, or send the error to a remote logging service
 }

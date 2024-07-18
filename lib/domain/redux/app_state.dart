@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teja/domain/redux/app_error/app_error_state.dart';
 import 'package:teja/domain/redux/home/home_state.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_state.dart';
 import 'package:teja/domain/redux/journal/featured_journal_template/state.dart';
@@ -27,7 +28,8 @@ import 'package:teja/domain/redux/yearly_sleep_report/yearly_sleep_report_state.
 
 @immutable
 class AppState {
-  final AuthState authState; // Nested AuthState
+  final AuthState authState;
+  final AppErrorState appErrorState;
   final HomeState homeState;
   final MasterFeelingState masterFeelingState;
   final MasterFactorState masterFactorState;
@@ -59,6 +61,7 @@ class AppState {
 
   const AppState({
     required this.authState,
+    required this.appErrorState,
     required this.homeState,
     required this.moodEditorState,
     required this.aiSuggestionState,
@@ -87,6 +90,7 @@ class AppState {
 
   AppState copyWith({
     AuthState? authState,
+    AppErrorState? appErrorState,
     HomeState? homeState,
     MoodEditorState? moodEditorState,
     MoodDetailState? moodDetailPage,
@@ -114,6 +118,7 @@ class AppState {
   }) {
     return AppState(
       authState: authState ?? this.authState,
+      appErrorState: appErrorState ?? this.appErrorState,
       homeState: homeState ?? this.homeState,
       moodEditorState: moodEditorState ?? this.moodEditorState,
       moodDetailPage: moodDetailPage ?? this.moodDetailPage,
@@ -121,12 +126,9 @@ class AppState {
       masterFeelingState: masterFeelingState ?? this.masterFeelingState,
       masterFactorState: masterFactorState ?? this.masterFactorState,
       moodLogListState: moodLogListState ?? this.moodLogListState,
-      weeklyMoodReportState:
-          weeklyMoodReportState ?? this.weeklyMoodReportState,
-      monthlyMoodReportState:
-          monthlyMoodReportState ?? this.monthlyMoodReportState,
-      yearlySleepReportState:
-          yearlySleepReportState ?? this.yearlySleepReportState,
+      weeklyMoodReportState: weeklyMoodReportState ?? this.weeklyMoodReportState,
+      monthlyMoodReportState: monthlyMoodReportState ?? this.monthlyMoodReportState,
+      yearlySleepReportState: yearlySleepReportState ?? this.yearlySleepReportState,
       quoteState: quoteState ?? this.quoteState,
       visionState: visionState ?? this.visionState,
       tokenState: tokenState ?? this.tokenState,
@@ -134,14 +136,12 @@ class AppState {
       journalEditorState: journalEditorState ?? this.journalEditorState,
       journalLogsState: journalLogsState ?? this.journalLogsState,
       journalDetailState: journalDetailState ?? this.journalDetailState,
-      featuredJournalTemplateState:
-          featuredJournalTemplateState ?? this.featuredJournalTemplateState,
+      featuredJournalTemplateState: featuredJournalTemplateState ?? this.featuredJournalTemplateState,
       journalCategoryState: journalCategoryState ?? this.journalCategoryState,
       journalListState: journalListState ?? this.journalListState,
       permissionState: permissionState ?? this.permissionState,
       aiSuggestionState: aiSuggestionState ?? this.aiSuggestionState,
-      yearlyMoodReportState:
-          yearlyMoodReportState ?? this.yearlyMoodReportState,
+      yearlyMoodReportState: yearlyMoodReportState ?? this.yearlyMoodReportState,
       profilePageState: profilePageState ?? this.profilePageState,
     );
   }
@@ -149,6 +149,7 @@ class AppState {
   static AppState initialState() {
     return AppState(
       authState: AuthState.initial(),
+      appErrorState: AppErrorState.initial(),
       homeState: HomeState.initialState(),
       moodEditorState: MoodEditorState.initialState(),
       moodDetailPage: MoodDetailState.initialState(),

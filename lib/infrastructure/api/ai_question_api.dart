@@ -26,6 +26,7 @@ class AIQuestionAPI {
   Future<Map<String, dynamic>> generateAlternativeQuestions(QAData qaData) async {
     const String url = '/ai-question/alternative-questions';
     final response = await _apiHelper.post(url, data: qaData.qaList);
+    print("response ${response.data}");
     return response.data as Map<String, dynamic>;
   }
 
