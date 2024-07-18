@@ -1,10 +1,13 @@
 import 'package:isar/isar.dart';
 import 'package:redux_saga/redux_saga.dart';
+import 'package:teja/domain/entities/app_error.dart';
 import 'package:teja/domain/entities/quote_entity.dart';
+import 'package:teja/domain/redux/app_error/app_error_actions.dart';
 import 'package:teja/domain/redux/quotes/quote_action.dart';
 import 'package:teja/infrastructure/api/quote_api.dart';
 import 'package:teja/infrastructure/repositories/quote_respository.dart';
-import 'package:teja/shared/storage/secure_storage.dart';
+import 'package:teja/shared/helpers/errors.dart';
+import '../../../shared/helpers/logger.dart';
 
 class QuoteSaga {
   Iterable<void> saga() sync* {
@@ -79,6 +82,18 @@ class QuoteSaga {
         yield Put(const QuotesFetchFailedAction('No quotes data received'));
       }
     }, Catch: (e, s) sync* {
+      logger.e("Error fetching from API", error: e, stackTrace: s);
+      if (e is AppError) {
+        yield Put(QuotesFetchFailedAction(e.message));
+        yield Put(AddAppErrorAction(createAppError({'code': e.code, 'message': e.message, 'details': e.details})));
+      } else {
+        yield Put(const QuotesFetchFailedAction("An unexpected error occurred"));
+        yield Put(AddAppErrorAction(createAppError({
+          'code': StaticErrorCodes.UNKNOWN_ERROR,
+          'message': "An unexpected error occurred while fetching from API",
+          'details': {'error': e.toString()}
+        })));
+      }
       yield Put(QuotesFetchFailedAction(e.toString()));
     });
   }

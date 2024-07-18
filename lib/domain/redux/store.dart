@@ -5,6 +5,7 @@ import 'package:redux/redux.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/redux/app_reducer.dart';
+import 'package:teja/domain/redux/error_middleware.dart';
 import 'package:teja/domain/redux/root_saga.dart';
 
 import 'package:teja/domain/redux/app_state.dart';
@@ -23,12 +24,14 @@ Future<Store<AppState>> createStore(Isar isarInstance) async {
     },
   );
   var sagaMiddleware = createSagaMiddleware(options);
+  final errorMiddleware = ErrorMiddleware();
 
   final store = Store<AppState>(
     appReducer,
     initialState: AppState.initialState(),
     middleware: [
       applyMiddleware(sagaMiddleware),
+      errorMiddleware,
       LoggingMiddleware(),
     ],
   );

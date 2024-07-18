@@ -22,6 +22,8 @@ import 'package:teja/infrastructure/database/isar_collections/mood_log.dart';
 import 'package:teja/infrastructure/database/isar_collections/quote.dart';
 import 'package:teja/infrastructure/database/isar_collections/vision.dart';
 import 'package:teja/infrastructure/utils/notification_service.dart';
+import 'package:teja/presentation/error_handler/error_handler.dart';
+import 'package:toastification/toastification.dart';
 
 import 'shared/helpers/logger.dart';
 
@@ -106,7 +108,16 @@ class MyApp extends StatelessWidget {
           PosthogObserver(),
         ],
         debugShowCheckedModeBanner: false,
-        home: const App(),
+        home: const ToastificationConfigProvider(
+          config: ToastificationConfig(
+            alignment: Alignment.topRight,
+            itemWidth: 440,
+            animationDuration: Duration(milliseconds: 500),
+          ),
+          child: ErrorHandler(
+            child: App(),
+          ),
+        ),
       ),
     );
   }

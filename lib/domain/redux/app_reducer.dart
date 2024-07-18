@@ -1,4 +1,5 @@
 import 'package:redux/redux.dart';
+import 'package:teja/domain/redux/app_error/app_error_reducer.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/auth/auth_reducer.dart';
 import 'package:teja/domain/redux/home/home_reducer.dart';
@@ -70,22 +71,19 @@ AppState _masterFactorReducer(AppState state, action) {
 
 AppState _weeklyMoodReportReducer(AppState state, action) {
   return state.copyWith(
-    weeklyMoodReportState:
-        weeklyMoodReportReducer(state.weeklyMoodReportState, action),
+    weeklyMoodReportState: weeklyMoodReportReducer(state.weeklyMoodReportState, action),
   );
 }
 
 AppState _monthlyMoodReportReducer(AppState state, action) {
   return state.copyWith(
-    monthlyMoodReportState:
-        monthlyMoodReportReducer(state.monthlyMoodReportState, action),
+    monthlyMoodReportState: monthlyMoodReportReducer(state.monthlyMoodReportState, action),
   );
 }
 
 AppState _yearlySleepReportReducer(AppState state, action) {
   return state.copyWith(
-    yearlySleepReportState:
-        yearlySleepReportReducer(state.yearlySleepReportState, action),
+    yearlySleepReportState: yearlySleepReportReducer(state.yearlySleepReportState, action),
   );
 }
 
@@ -109,8 +107,7 @@ AppState _tokenReducer(AppState state, action) {
 
 AppState _journalTemplateReducer(AppState state, action) {
   return state.copyWith(
-    journalTemplateState:
-        journalTemplateReducer(state.journalTemplateState, action),
+    journalTemplateState: journalTemplateReducer(state.journalTemplateState, action),
   );
 }
 
@@ -134,15 +131,13 @@ AppState _journalDetailReducer(AppState state, action) {
 
 AppState _featuredJournalTemplateReducer(AppState state, action) {
   return state.copyWith(
-    featuredJournalTemplateState: featuredJournalTemplateReducer(
-        state.featuredJournalTemplateState, action),
+    featuredJournalTemplateState: featuredJournalTemplateReducer(state.featuredJournalTemplateState, action),
   );
 }
 
 AppState _journalCategoryReducer(AppState state, action) {
   return state.copyWith(
-    journalCategoryState:
-        journalCategoryReducer(state.journalCategoryState, action),
+    journalCategoryState: journalCategoryReducer(state.journalCategoryState, action),
   );
 }
 
@@ -166,8 +161,7 @@ AppState _aiSuggestionReducer(AppState state, action) {
 
 AppState _yearlyMoodReportReducer(AppState state, action) {
   return state.copyWith(
-    yearlyMoodReportState:
-        yearlyMoodReportReducer(state.yearlyMoodReportState, action),
+    yearlyMoodReportState: yearlyMoodReportReducer(state.yearlyMoodReportState, action),
   );
 }
 
@@ -177,9 +171,16 @@ AppState _profilePageReducer(AppState state, action) {
   );
 }
 
+AppState _appErrorReducer(AppState state, action) {
+  return state.copyWith(
+    appErrorState: appErrorReducer(state.appErrorState, action),
+  );
+}
+
 Reducer<AppState> appReducer = combineReducers<AppState>([
   ...moodDetailReducer,
   _authReducer,
+  _appErrorReducer,
   _moodEditorReducer,
   _moodLogsReducer,
   _homeReducer,

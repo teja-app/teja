@@ -50,6 +50,7 @@ class AuthService {
 
   Future<String> fetchRecoveryPhrase() async {
     final response = await _authApi.fetchRecoveryPhrase();
+    print("Reponse: $response");
     return response.data['mnemonic'];
   }
 
