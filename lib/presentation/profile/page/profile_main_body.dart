@@ -12,7 +12,7 @@ import 'package:teja/presentation/profile/ui/profile_mood_yearly_heatmap.dart';
 import 'package:teja/shared/common/button.dart';
 
 class MainBody extends StatelessWidget {
-  const MainBody();
+  const MainBody({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +21,8 @@ class MainBody extends StatelessWidget {
       onInit: (store) {
         store.dispatch(FetchChartSequenceAction());
       },
-      builder: (context, vm) => vm.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _buildBody(vm, context),
+      builder: (context, vm) =>
+          vm.isLoading ? const Center(child: CircularProgressIndicator()) : _buildBody(vm, context),
     );
   }
 
@@ -31,9 +30,7 @@ class MainBody extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
-          ...vm.chartSequence
-              .map((chart) => _buildChart(context, chart))
-              .toList(),
+          ...vm.chartSequence.map((chart) => _buildChart(context, chart)).toList(),
           const SizedBox(height: 20), // Add some space before the button
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -80,15 +77,15 @@ class MainBody extends StatelessWidget {
   String _getChartDisplayName(String chartName) {
     switch (chartName) {
       case 'MoodSleepChartScreen':
-        return 'Mood Sleep Chart';
+        return 'Mood-Sleep Correlation Chart';
       case 'ProfileSleepHeatMapScreen':
-        return 'Sleep Heat Map';
+        return 'Sleep Tracker Calendar';
       case 'ProfileMoodYearlyHeatMapScreen':
-        return 'Mood Heat Map';
+        return 'Emotion Tracker';
       case 'ProfileMoodActivityScreen':
-        return 'Mood Activity Chart';
+        return 'Mood-Walk Correlation';
       case 'MoodSemiCircleChartScreen':
-        return 'Mood Gauge Chart';
+        return 'Mood Compass';
       default:
         return 'Unknown Chart';
     }
@@ -99,17 +96,13 @@ class MainBody extends StatelessWidget {
       case 'MoodSleepChartScreen':
         return const MoodSleepChartScreen(key: Key('MoodSleepChartScreen'));
       case 'ProfileSleepHeatMapScreen':
-        return const ProfileSleepHeatMapScreen(
-            key: Key('ProfileSleepHeatMapScreen'));
+        return const ProfileSleepHeatMapScreen(key: Key('ProfileSleepHeatMapScreen'));
       case 'ProfileMoodYearlyHeatMapScreen':
-        return const ProfileMoodYearlyHeatMapScreen(
-            key: Key('ProfileMoodYearlyHeatMapScreen'));
+        return const ProfileMoodYearlyHeatMapScreen(key: Key('ProfileMoodYearlyHeatMapScreen'));
       case 'ProfileMoodActivityScreen':
-        return const MoodActivityChartScreen(
-            key: Key('ProfileMoodActivityScreen'));
+        return const MoodActivityChartScreen(key: Key('ProfileMoodActivityScreen'));
       case 'MoodSemiCircleChartScreen':
-        return const MoodSemiCircleChartScreen(
-            key: Key('MoodSemiCircleChartScreen'));
+        return const MoodSemiCircleChartScreen(key: Key('MoodSemiCircleChartScreen'));
       default:
         return Container(
           key: Key('defaultChart $chartName'),
@@ -135,8 +128,7 @@ class _ViewModel {
       isLoading: store.state.profilePageState.isLoading,
       chartSequence: store.state.profilePageState.chartSequence,
       updateChartSequence: (oldIndex, newIndex) {
-        final updatedSequence =
-            List<String>.from(store.state.profilePageState.chartSequence);
+        final updatedSequence = List<String>.from(store.state.profilePageState.chartSequence);
         if (oldIndex < newIndex) {
           newIndex -= 1;
         }
