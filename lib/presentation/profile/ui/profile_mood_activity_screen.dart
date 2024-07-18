@@ -12,8 +12,7 @@ class MoodActivityChartScreen extends StatefulWidget {
   const MoodActivityChartScreen({super.key});
 
   @override
-  State<MoodActivityChartScreen> createState() =>
-      _MoodActivityChartScreenState();
+  State<MoodActivityChartScreen> createState() => _MoodActivityChartScreenState();
 }
 
 class _MoodActivityChartScreenState extends State<MoodActivityChartScreen> {
@@ -24,10 +23,8 @@ class _MoodActivityChartScreenState extends State<MoodActivityChartScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final DateTime now = DateTime.now();
-      final DateTime today =
-          DateTime(now.year, now.month, now.day); // Reset time to midnight
-      StoreProvider.of<AppState>(context)
-          .dispatch(FetchMonthlyMoodReportAction(today));
+      final DateTime today = DateTime(now.year, now.month, now.day); // Reset time to midnight
+      StoreProvider.of<AppState>(context).dispatch(FetchMonthlyMoodReportAction(today));
     });
   }
 
@@ -48,19 +45,20 @@ class _MoodActivityChartScreenState extends State<MoodActivityChartScreen> {
             constraints: const BoxConstraints(maxHeight: 350),
             child: MoodSleepChart(
               key: const Key('moodSleepChart'),
-              title: "Mood & Activity",
+              title: "Walk-Emotion Correlation",
               scatterData: viewModel.scatterData,
               maxX: viewModel.scatterData.isNotEmpty
-                  ? viewModel.scatterData.map((spot) => spot.x).reduce(
-                          (value, element) =>
-                              value > element ? value : element) +
-                      viewModel.scatterData.map((spot) => spot.x).reduce(
-                          (value, element) => value < element ? value : element)
+                  ? viewModel.scatterData
+                          .map((spot) => spot.x)
+                          .reduce((value, element) => value > element ? value : element) +
+                      viewModel.scatterData
+                          .map((spot) => spot.x)
+                          .reduce((value, element) => value < element ? value : element)
                   : 20,
               minY: viewModel.scatterData.isNotEmpty
-                  ? viewModel.scatterData.map((spot) => spot.y).reduce(
-                          (value, element) =>
-                              value < element ? value : element) -
+                  ? viewModel.scatterData
+                          .map((spot) => spot.y)
+                          .reduce((value, element) => value < element ? value : element) -
                       4
                   : 0,
             ),

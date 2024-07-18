@@ -14,7 +14,7 @@ class ProfilePage extends StatelessWidget {
     const mainBody = MainBody();
 
     return Scaffold(
-      bottomNavigationBar: isDesktop(context) ? null : MobileNavigationBar(),
+      bottomNavigationBar: isDesktop(context) ? null : const MobileNavigationBar(),
       appBar: AppBar(
         title: const Text('Profile'),
         forceMaterialTransparency: true,

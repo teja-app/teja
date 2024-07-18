@@ -11,21 +11,17 @@ class ProfileMoodYearlyHeatMapScreen extends StatefulWidget {
   const ProfileMoodYearlyHeatMapScreen({super.key});
 
   @override
-  State<ProfileMoodYearlyHeatMapScreen> createState() =>
-      _ProfileMoodYearlyHeatMapScreenState();
+  State<ProfileMoodYearlyHeatMapScreen> createState() => _ProfileMoodYearlyHeatMapScreenState();
 }
 
-class _ProfileMoodYearlyHeatMapScreenState
-    extends State<ProfileMoodYearlyHeatMapScreen> {
+class _ProfileMoodYearlyHeatMapScreenState extends State<ProfileMoodYearlyHeatMapScreen> {
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final DateTime now = DateTime.now();
-      final DateTime today =
-          DateTime(now.year, now.month, now.day); // Reset time to midnight
-      StoreProvider.of<AppState>(context)
-          .dispatch(FetchYearlyMoodReportAction(today));
+      final DateTime today = DateTime(now.year, now.month, now.day); // Reset time to midnight
+      StoreProvider.of<AppState>(context).dispatch(FetchYearlyMoodReportAction(today));
     });
   }
 
@@ -47,7 +43,7 @@ class _ProfileMoodYearlyHeatMapScreenState
             child: HeatMapComponent(
               key: const Key('ProfileMoodYearlyHeatMapScreen'),
               dataset: viewModel.dataset,
-              title: "Mood Heat Map",
+              title: "Emotion Tracker",
             ),
           ),
         );

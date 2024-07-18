@@ -23,10 +23,8 @@ class _MoodSleepChartScreenState extends State<MoodSleepChartScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final DateTime now = DateTime.now();
-      final DateTime today =
-          DateTime(now.year, now.month, now.day); // Reset time to midnight
-      StoreProvider.of<AppState>(context)
-          .dispatch(FetchMonthlyMoodReportAction(today));
+      final DateTime today = DateTime(now.year, now.month, now.day); // Reset time to midnight
+      StoreProvider.of<AppState>(context).dispatch(FetchMonthlyMoodReportAction(today));
     });
   }
 
@@ -47,19 +45,20 @@ class _MoodSleepChartScreenState extends State<MoodSleepChartScreen> {
             constraints: const BoxConstraints(maxHeight: 350),
             child: MoodSleepChart(
               key: const Key('MoodSleepChartScreen'),
-              title: "Mood & Sleep",
+              title: "Mood-Sleep Correlation Chart",
               scatterData: viewModel.scatterData,
               maxX: viewModel.scatterData.isNotEmpty
-                  ? viewModel.scatterData.map((spot) => spot.x).reduce(
-                          (value, element) =>
-                              value > element ? value : element) +
-                      viewModel.scatterData.map((spot) => spot.x).reduce(
-                          (value, element) => value < element ? value : element)
+                  ? viewModel.scatterData
+                          .map((spot) => spot.x)
+                          .reduce((value, element) => value > element ? value : element) +
+                      viewModel.scatterData
+                          .map((spot) => spot.x)
+                          .reduce((value, element) => value < element ? value : element)
                   : 20,
               minY: viewModel.scatterData.isNotEmpty
-                  ? viewModel.scatterData.map((spot) => spot.y).reduce(
-                          (value, element) =>
-                              value < element ? value : element) -
+                  ? viewModel.scatterData
+                          .map((spot) => spot.y)
+                          .reduce((value, element) => value < element ? value : element) -
                       4
                   : 0,
             ),
