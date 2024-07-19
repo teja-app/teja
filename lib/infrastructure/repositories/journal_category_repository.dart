@@ -7,7 +7,6 @@ import 'package:teja/infrastructure/dto/journal_category_dto.dart';
 class JournalCategoryRepository {
   Future<List<JournalCategoryEntity>> getAllJournalCategoryEntities() async {
     final box = Hive.box(JournalCategory.boxKey);
-    print("box.values ${box.values}");
     return box.values.map((hiveCategoryString) {
       final hiveCategory = json.decode(hiveCategoryString);
       final key = box.keyAt(box.values.toList().indexOf(hiveCategoryString)).toString();

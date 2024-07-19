@@ -72,7 +72,6 @@ class VisionSaga {
           yield Put(const VisionUpdateFailedAction('Failed to update visions'));
         }
       }, Catch: (e, s) sync* {
-        print("e $e $s");
         yield Put(VisionUpdateFailedAction(e.toString()));
       });
     }

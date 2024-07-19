@@ -24,7 +24,6 @@ class FeaturedJournalTemplateRepository {
   }
 
   Future<void> addOrUpdateFeaturedJournalTemplates(List<FeaturedJournalTemplateEntity> templates) async {
-    print("addOrUpdateFeaturedJournalTemplates");
     var box = Hive.box(FeaturedJournalTemplate.boxKey); // Ensure the box is initialized
     for (var templateEntity in templates) {
       var hiveTemplate = FeaturedJournalTemplate()
@@ -35,6 +34,5 @@ class FeaturedJournalTemplateRepository {
       // Use the entity's id as the key for the Hive box entry
       await box.put(templateEntity.id, hiveTemplate);
     }
-    print("After addOrUpdateFeaturedJournalTemplates");
   }
 }

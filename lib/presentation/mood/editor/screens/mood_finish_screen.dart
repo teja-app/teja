@@ -58,7 +58,6 @@ class FinishScreen extends StatelessWidget {
     return StoreConnector<AppState, FinishScreenModel>(
       converter: FinishScreenModel.fromStore,
       builder: (context, viewModel) {
-        print("viewModel.moodRating ${viewModel.moodRating}");
         return SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: Column(

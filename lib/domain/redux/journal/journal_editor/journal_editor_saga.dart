@@ -170,12 +170,9 @@ class JournalEditorSaga {
         ..lock = action.journalEntry.lock
         ..title = action.journalEntry.title
         ..body = action.journalEntry.body;
-
-      print("journalEntry ${journalEntry.id} ${journalEntry.title}");
       yield Call(journalEntryRepository.addOrUpdateJournalEntry, args: [journalEntry]);
       yield Put(JournalEntrySaved("Journal entry saved successfully."));
     }, Catch: (e, s) sync* {
-      logger.e("JournalEntrySaveFailed", error: e, stackTrace: s);
       yield Put(JournalEntrySaveFailed(e.toString()));
     });
   }
@@ -223,7 +220,6 @@ class JournalEditorSaga {
         yield Put(UpdateQuestionAnswerSuccessAction(
             journalEntryId: action.journalEntryId, questionId: action.questionId, answerText: action.answerText));
       }, Catch: (e, s) sync* {
-        print("$e, $s");
         yield Put(UpdateQuestionAnswerFailureAction(e.toString()));
       });
     } else {

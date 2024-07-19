@@ -33,7 +33,6 @@ class AuthSaga {
       // Dispatch AuthenticateAction
       yield Put(AuthenticateAction(registerAction.mnemonic));
     }, Catch: (e, stackTrace) sync* {
-      print("e, stackTrace $e $stackTrace");
       yield Put(RegisterFailedAction(e.toString()));
     });
   }

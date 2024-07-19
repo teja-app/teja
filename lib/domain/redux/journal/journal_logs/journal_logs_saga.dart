@@ -39,8 +39,6 @@ class JournalLogsSaga {
         }
       }
 
-      print("journalLogsMap ${journalLogsMap}");
-
       yield Put(FetchJournalLogsSuccessAction(journalLogsMap));
     }, Catch: (e, s) sync* {
       yield Put(FetchJournalLogsErrorAction(e.toString()));

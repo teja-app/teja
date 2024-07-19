@@ -4,9 +4,8 @@ import 'package:teja/shared/helpers/logger.dart';
 
 class LoggingMiddleware extends MiddlewareClass<AppState> {
   @override
-  void call(Store<AppState> store, dynamic action, NextDispatcher next) {
+  call(Store<AppState> store, dynamic action, NextDispatcher next) {
     logger.i('dispatching ${action.runtimeType}');
     next(action);
-    logger.i('next state ${store.state}');
   }
 }

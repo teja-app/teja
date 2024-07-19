@@ -84,12 +84,8 @@ class MoodLogRepository {
           if (await fileToDelete.exists()) {
             await fileToDelete.delete();
           }
-        } catch (e) {
-          print("Error deleting file: $e");
-        }
-      } else {
-        print("Mood log with ID $moodLogId not found or has no attachments.");
-      }
+        } catch (e) {}
+      } else {}
     });
   }
 
@@ -158,9 +154,7 @@ class MoodLogRepository {
       if (moodLog != null) {
         moodLog.factors = broadFactors; // Update the broad factors field
         await isar.moodLogs.put(moodLog);
-      } else {
-        print("Mood log with ID $moodLogId not found.");
-      }
+      } else {}
     });
   }
 
@@ -186,9 +180,7 @@ class MoodLogRepository {
 
       moodLog.feelings = updatedFeelings;
       await addOrUpdateMoodLog(moodLog);
-    } else {
-      print("Mood log with ID $moodLogId not found.");
-    }
+    } else {}
   }
 
   Future<MoodLog?> getTodaysMoodLog() async {

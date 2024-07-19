@@ -39,13 +39,13 @@ Future<void> main() async {
   await dotenv.load(fileName: '.env.dev');
   final String? sentryDsnUrl = dotenv.env['SENTRY_DSN_URL'];
   // Initialize Isar
-  print("Loaded the ENV files");
+  logger.i("Loaded the ENV files");
   final Isar isarInstance = await openIsar();
-  print("Database Instance is ready");
+  logger.i("Database Instance is ready");
 
   // Initialize NotificationService
   await notificationService.initialize(); // Initialize notifications
-  print("Notification Service Connected");
+  logger.i("Notification Service Connected");
 
   if (Platform.isIOS) {
     // Request notification permissions on iOS
@@ -60,7 +60,7 @@ Future<void> main() async {
 
   // Initialize the store here
   final store = await createStore(isarInstance);
-  print("Connected to local data store");
+  logger.i("Connected to local data store");
 
   await SentryFlutter.init(
     (options) {
@@ -71,7 +71,7 @@ Future<void> main() async {
       store: store,
     )),
   );
-  print("SentryFlutter Initialized");
+  logger.i("SentryFlutter Initialized");
 }
 
 Future<Isar> openIsar() async {
@@ -100,7 +100,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("Main App Build Opened");
+    logger.i("Main App Build Opened");
     return StoreProvider(
       store: store,
       child: MaterialApp(

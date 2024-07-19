@@ -70,7 +70,6 @@ class MoodEditorSaga {
         yield Put(const ClearMoodEditorSuccessFormAction());
       }
     }, Catch: (e, s) sync* {
-      print("e.toString() ${e.toString()}");
       yield Put(const ClearMoodEditorFailureFormAction());
     });
   }

@@ -66,7 +66,6 @@ class JournalQuestionPageState extends State<JournalQuestionPage> with WidgetsBi
   }
 
   void saveAnswer(JournalQuestionViewModel viewModel) {
-    print("textEditingController.text ${textEditingController.text}");
     _store.dispatch(UpdateQuestionAnswer(
       journalEntryId: viewModel.journalEntry.id,
       questionId: viewModel.journalEntry.questions![widget.questionIndex].questionId!,
@@ -83,8 +82,6 @@ class JournalQuestionPageState extends State<JournalQuestionPage> with WidgetsBi
   Future<void> recordVideo(JournalQuestionViewModel viewModel) async {
     final XFile? video = await _picker.pickVideo(source: ImageSource.camera);
     if (video != null) {
-      // Handle the video file
-      print("Video Path: ${video.path}");
       handleMediaType(video, viewModel);
     }
   }

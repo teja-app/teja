@@ -28,8 +28,7 @@ class NotesScreenState extends State<NotesScreen> {
   void initState() {
     super.initState();
     textFocusNode = FocusNode();
-    codeEditingController = CodeLineEditingController.fromText(
-        ''); // Properly initialize with default text
+    codeEditingController = CodeLineEditingController.fromText(''); // Properly initialize with default text
     textFocusNode.addListener(() {
       if (!textFocusNode.hasFocus) {
         _saveComment();
@@ -57,10 +56,7 @@ class NotesScreenState extends State<NotesScreen> {
   void _saveComment() {
     final String currentText = codeEditingController.text;
     // Check if the text has actually changed to avoid unnecessary updates
-    final currentMoodLog = StoreProvider.of<AppState>(context)
-        .state
-        .moodEditorState
-        .currentMoodLog;
+    final currentMoodLog = StoreProvider.of<AppState>(context).state.moodEditorState.currentMoodLog;
     if (currentMoodLog?.comment != currentText) {
       final store = StoreProvider.of<AppState>(context);
       final currentMoodLogId = store.state.moodEditorState.currentMoodLog!.id;
@@ -93,7 +89,7 @@ class NotesScreenState extends State<NotesScreen> {
                     padding: const EdgeInsets.all(16),
                     children: [
                       Text(
-                        'Notes Test',
+                        'Notes',
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                       const SizedBox(height: 10),
@@ -126,8 +122,7 @@ class NotesScreenState extends State<NotesScreen> {
                       FocusScope.of(context).unfocus();
                       await Future.delayed(const Duration(milliseconds: 100));
                       final store = StoreProvider.of<AppState>(context);
-                      store.dispatch(
-                          ChangePageAction(viewModel.currentPageIndex + 1));
+                      store.dispatch(ChangePageAction(viewModel.currentPageIndex + 1));
                     },
                     buttonType: ButtonType.primary,
                   ),

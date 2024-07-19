@@ -107,8 +107,6 @@ class AISuggestionSaga {
     final response = Result();
     yield Call(MoodSuggestionAPI().fetchAIAffirmations, args: [moodData], result: response);
 
-    print("response ${response}");
-
     if (response.value.statusCode == 201) {
       if (response.value.data["success"] == false) {
         String failureMessage = "Failed to fetch affirmations for this. "
@@ -116,11 +114,9 @@ class AISuggestionSaga {
             "The response can be blocked because the input or response may contain descriptions of violence, sexual themes, or otherwise derogatory content.";
         yield Put(FetchAIAffirmationFailureAction(failureMessage));
       } else {
-        print("Inside Success");
         yield Put(FetchAIAffirmationSuccessAction(action.moodLogEntity.id, response.value.data['affirmations']));
         yield Call(moodLogRepository.updateAIAffirmation,
             args: [action.moodLogEntity.id, response.value.data['affirmations']]);
-        print("Inside Success");
         yield Put(UpdateAIAffirmationAction(action.moodLogEntity.id, response.value.data['affirmations']));
         yield Put(
           LoadMoodDetailAction(
@@ -129,7 +125,6 @@ class AISuggestionSaga {
         );
       }
     } else {
-      print("response ${response.value}");
       yield Put(const FetchAIAffirmationFailureAction('Failed to get affirmations'));
     }
   }
