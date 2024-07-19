@@ -14,8 +14,6 @@ Future<void> selectMedia(JournalQuestionViewModel viewModel, ImagePicker picker)
     for (XFile file in mediaFiles) {
       handleMediaType(file, viewModel);
     }
-  } else {
-    print("No media selected.");
   }
 }
 

@@ -31,7 +31,6 @@ class JournalEditorScreenState extends State<JournalEditorScreen> {
 
   @override
   void dispose() {
-    print("state.journalEditorState.currentJournalEntry, ${_store.state.journalEditorState.currentJournalEntry?.id}");
     _store.dispatch(const ClearJournalEditor());
     _pageController.dispose();
     super.dispose();

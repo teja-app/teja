@@ -27,7 +27,6 @@ class _FactorsScreenState extends State<FactorsScreen> {
       builder: (context, viewModel) {
         List<SubCategoryEntity> selectedSubcategories =
             viewModel.selectedFactorsForFeelings?[widget.feeling.id]?.whereType<SubCategoryEntity>().toList() ?? [];
-        print("selectedSubcategories $selectedSubcategories");
         return Stack(
           children: [
             SingleChildScrollView(

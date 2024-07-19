@@ -34,16 +34,11 @@ class NotificationService {
     }
   }
 
-  Future onDidReceiveLocalNotification(int? id, String? title, String? body, String? payload) async {
-    print("Welcome To Flutter");
-  }
+  Future onDidReceiveLocalNotification(int? id, String? title, String? body, String? payload) async {}
 
   void selectNotification(NotificationResponse? payload) {
     if (payload != null) {
-      print('notif payload $payload');
-    } else {
-      print("Notification Done");
-    }
+    } else {}
     // Get.to(() => NotiFiedPage(label: '$payload'));
   }
 
@@ -84,7 +79,6 @@ class NotificationService {
     int uniqueId = await getUniqueNotificationId(); // Get a unique ID for the notification
 
     try {
-      print("Before zonedSchedule $title $body");
       await flutterLocalNotificationsPlugin.zonedSchedule(
         uniqueId, // Use the unique ID
         title,
@@ -97,10 +91,7 @@ class NotificationService {
         uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
         androidScheduleMode: scheduleMode,
       );
-      print("After zonedSchedule");
-    } catch (e) {
-      print("Scheduling failure: $e");
-    }
+    } catch (e) {}
   }
 
   /// Cancels a scheduled notification
@@ -125,7 +116,6 @@ class NotificationService {
     final now = tz.TZDateTime.now(tz.local);
     var scheduledDate = tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
     if (scheduledDate.isBefore(now)) scheduledDate = scheduledDate.add(const Duration(days: 1));
-    print("scheduledDate: $scheduledDate");
     return scheduledDate;
   }
 }

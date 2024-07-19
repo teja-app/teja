@@ -1,5 +1,6 @@
 import 'package:redux/redux.dart';
 import 'package:redux_saga/redux_saga.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:teja/domain/entities/app_error.dart';
 import 'package:teja/domain/redux/app_error/app_error_actions.dart';
 import 'package:teja/domain/redux/app_state.dart';
@@ -87,9 +88,20 @@ void _handleSagaError(Store<AppState> store, String sagaName, dynamic error, Sta
     details: {'sagaName': sagaName, 'stackTrace': stackTrace?.toString()},
   );
 
-  store.dispatch(AddAppErrorAction(appError));
+  // Convert AppError to a map that Sentry can use
+  final appErrorMap = {
+    'code': appError.code,
+    'message': appError.message,
+    'details': appError.details,
+  };
 
-  // Additional error handling logic can be added here
-  // For example, you might want to dispatch actions to update the app state
-  // based on which saga failed, or send the error to a remote logging service
+  // Capture the exception with Sentry, including the AppError information
+  Sentry.captureException(
+    error,
+    stackTrace: stackTrace,
+    hint: Hint.withMap({
+      'appError': appErrorMap,
+    }),
+  );
+  // Additional error handling logic can be added here if needed
 }

@@ -61,7 +61,6 @@ class FeaturedJournalTemplateSaga {
 
       // Fetch new featured templates from the API
       FeaturedJournalTemplateApi api = FeaturedJournalTemplateApi();
-      print("Before");
       var templatesResult = Result<List<FeaturedJournalTemplateEntity>>();
       yield Call(
         api.getFeaturedJournalTemplates,

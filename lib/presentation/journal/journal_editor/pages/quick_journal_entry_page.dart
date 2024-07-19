@@ -77,10 +77,8 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
         await Future.delayed(const Duration(milliseconds: 100));
         await _store.dispatch(LoadJournalDetailAction(updatedEntry.id));
 
-        print("Present");
         // Wait for a short period to allow the state to update
         await Future.delayed(const Duration(milliseconds: 100));
-        print("Future");
         _checkAndNavigate(context, updatedEntry.id);
       }
     } catch (e) {
@@ -96,9 +94,6 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
 
   void _checkAndNavigate(BuildContext context, String entryId) {
     final state = _store.state.journalDetailState;
-    print("journalDetailState ${state.selectedJournalEntry}");
-    print("journalDetailState.id ${state.selectedJournalEntry!.id}");
-    print("journalDetailState.body ${state.selectedJournalEntry!.body}");
     if (state.selectedJournalEntry != null &&
         state.selectedJournalEntry!.id == entryId &&
         state.selectedJournalEntry!.body != null) {

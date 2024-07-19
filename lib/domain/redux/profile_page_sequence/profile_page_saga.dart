@@ -27,7 +27,6 @@ class ProfilePageSaga {
         yield Put(ChartSequenceFetchSuccessAction(savedSequence));
       }
     }, Catch: (e, s) sync* {
-      print("Error fetching chart sequence: $e");
       yield Put(ChartSequenceFetchFailedAction(e.toString()));
     });
   }
@@ -37,12 +36,10 @@ class ProfilePageSaga {
       final prefs = Result<SharedPreferences>();
       yield Call(SharedPreferences.getInstance, result: prefs);
 
-      yield Call(prefs.value?.setStringList as Function,
-          args: ['chartSequence', action.chartSequence]);
+      yield Call(prefs.value?.setStringList as Function, args: ['chartSequence', action.chartSequence]);
 
       yield Put(ChartSequenceFetchSuccessAction(action.chartSequence));
     }, Catch: (e, s) sync* {
-      print("Error updating chart sequence: $e");
       yield Put(ChartSequenceFetchFailedAction(e.toString()));
     });
   }

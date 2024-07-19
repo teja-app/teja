@@ -36,7 +36,6 @@ class JournalTemplateRepository {
 
   Future<JournalTemplateEntity?> getJournalTemplateById(String templateId) async {
     var isarTemplate = await isar.journalTemplates.where().templateIDEqualTo(templateId).findFirst();
-    print("isarTemplate ${isarTemplate?.questions}");
     if (isarTemplate != null) {
       final meta = MetaDataEntity(
         version: isarTemplate.meta.version,

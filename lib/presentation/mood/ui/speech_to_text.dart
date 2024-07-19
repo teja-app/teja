@@ -77,7 +77,6 @@ class SpeechToTextViewState extends State<SpeechToTextView> {
   }
 
   void errorListener(SpeechRecognitionError error) {
-    print("Received speech recognition error: ${error.errorMsg}");
     setState(() {
       _isListening = false;
     });
