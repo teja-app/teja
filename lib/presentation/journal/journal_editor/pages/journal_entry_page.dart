@@ -98,7 +98,9 @@ class JournalEntryPageState extends State<JournalEntryPage> {
       await Future.delayed(const Duration(milliseconds: 100));
       _navigateToDetailPage(context, journalEntry!.id);
     } catch (e) {
-      logger.e("JournalEntryPageState:_saveAndExit", error: e);
+      GoRouter.of(context).pushNamed(
+        RootPath.home,
+      );
       _showError('Failed to save answer: $e');
     } finally {
       if (mounted) {

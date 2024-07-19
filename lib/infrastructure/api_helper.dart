@@ -2,11 +2,13 @@ import 'package:dio/dio.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:teja/constants.dart';
 import 'package:teja/domain/entities/app_error.dart';
+import 'package:teja/infrastructure/service/token_service.dart';
 import 'package:teja/shared/helpers/logger.dart';
 import 'package:teja/shared/storage/secure_storage.dart';
 
 class ApiHelper {
   final Dio _dio = Dio();
+  final TokenService _tokenService = TokenService();
   final SecureStorage _secureStorage = SecureStorage();
   static const int maxRetries = 1;
 
@@ -79,7 +81,7 @@ class ApiHelper {
   }) async {
     logger.i("Request");
     try {
-      final token = await getValidAccessToken();
+      final token = await _tokenService.getValidAccessToken();
       if (token != null) {
         _dio.options.headers['Authorization'] = 'Bearer $token';
       }
@@ -106,20 +108,20 @@ class ApiHelper {
     DioException originalError,
   ) async {
     try {
-      final newToken = await getValidAccessToken();
+      final newToken = await _tokenService.getValidAccessToken();
       if (newToken != null) {
         _dio.options.headers['Authorization'] = 'Bearer $newToken';
         return await _safeRequest(requestFunction, retries: retries + 1);
       } else {
         await _handleReAuthentication();
-        throw _handleDioError(originalError); // Throw the original error if we can't refresh
+        throw _handleDioError(originalError);
       }
     } catch (e) {
       logger.e("Token refresh failed", error: e);
       if (e is DioException) {
         throw _handleDioError(e);
       }
-      throw _handleDioError(originalError); // Use the original error if refresh fails
+      throw _handleDioError(originalError);
     }
   }
 
@@ -146,7 +148,7 @@ class ApiHelper {
       case DioExceptionType.cancel:
         return AppError(code: 'REQUEST_CANCELLED', message: 'The request was cancelled');
       case DioExceptionType.connectionError:
-        return AppError(code: 'NETWORK_ERROR', message: 'A network error occurred');
+        return AppError(code: 'NETWORK_ERROR', message: 'Check your internet connection');
       case DioExceptionType.unknown:
       default:
         return AppError(code: 'UNKNOWN_ERROR', message: 'An unknown error occurred');
@@ -183,15 +185,15 @@ class ApiHelper {
     if (e is DioException) {
       return _handleDioError(e);
     }
+    if (e is AppError) {
+      return e;
+    }
     logger.e("Unknown error", error: e, stackTrace: StackTrace.current);
     return AppError(code: 'UNKNOWN_ERROR', message: 'An unexpected error occurred');
   }
 
   Future<void> _handleReAuthentication() async {
-    await _secureStorage.deleteAccessToken();
-    await _secureStorage.deleteRefreshToken();
-    // Here you might want to dispatch an action to clear the user's session in your Redux store
-    // store.dispatch(LogoutAction());
+    await _tokenService.clearTokens();
   }
 
   Future<Response> get(String path) async {

@@ -1,52 +1,22 @@
 import 'dart:convert';
-import 'dart:typed_data';
-import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart';
-import 'package:pointycastle/block/aes_fast.dart';
-import 'package:pointycastle/block/modes/cbc.dart';
-import 'package:pointycastle/export.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/auth/auth_action.dart';
 import 'package:teja/infrastructure/api/auth_api.dart';
+import 'package:teja/infrastructure/service/token_service.dart';
+import 'package:teja/infrastructure/utils/token_helper.dart';
 import 'package:teja/shared/storage/secure_storage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
-String encryptText(String keyHex, String text) {
-  final key = Uint8List.fromList(hex.decode(keyHex));
-  final iv = _generateRandomBytes(16);
-  final textBytes = utf8.encode(text);
-
-  final cipher = PaddedBlockCipherImpl(PKCS7Padding(), CBCBlockCipher(AESEngine()));
-  cipher.init(
-    true,
-    PaddedBlockCipherParameters<ParametersWithIV<KeyParameter>, Null>(
-      ParametersWithIV<KeyParameter>(KeyParameter(key), iv),
-      null,
-    ),
-  );
-
-  final encryptedBytes = cipher.process(Uint8List.fromList(textBytes));
-  final encryptedText = iv + encryptedBytes;
-
-  return hex.encode(encryptedText);
-}
-
-Uint8List _generateRandomBytes(int length) {
-  final secureRandom = SecureRandom('Fortuna')..seed(KeyParameter(Uint8List(32))); // 256 bits key for Fortuna
-
-  final randomBytes = Uint8List(length);
-  for (int i = 0; i < length; i++) {
-    randomBytes[i] = secureRandom.nextUint8();
-  }
-  return randomBytes;
-}
-
 class AuthService {
   final AuthApi _authApi;
+  final TokenService _tokenService;
 
   final SecureStorage _secureStorage = SecureStorage();
-  AuthService() : _authApi = AuthApi();
+  AuthService()
+      : _authApi = AuthApi(),
+        _tokenService = TokenService();
 
   Future<String> fetchRecoveryPhrase() async {
     final response = await _authApi.fetchRecoveryPhrase();
@@ -66,31 +36,11 @@ class AuthService {
       'nonce': nonce,
     };
 
-    final registerResponse = await _authApi.register(payload);
-    print(registerResponse.data['message']);
+    await _authApi.register(payload);
   }
 
   Future<Map<String, String>> authenticate(String mnemonic) async {
-    final response = await _authApi.authenticateChallenge();
-    final nonce = response.data['nonce'];
-    final dynamicKey = response.data['dynamicKey'];
-
-    final encryptedMnemonic = encryptText(dynamicKey, mnemonic);
-
-    final hmac = Hmac(sha256, utf8.encode(dynamicKey));
-    final signature = hmac.convert(utf8.encode(nonce)).toString();
-
-    final payload = {
-      'encryptedMnemonic': encryptedMnemonic,
-      'nonce': nonce,
-      'signature': signature,
-    };
-
-    final authResponse = await _authApi.authenticate(payload);
-    return {
-      'accessToken': authResponse.data['accessToken'],
-      'refreshToken': authResponse.data['refreshToken'],
-    };
+    return _tokenService.authenticateWithRecoveryCode(mnemonic);
   }
 
   Future<String> refreshToken(String refreshToken) async {
@@ -104,17 +54,8 @@ class AuthService {
     final recoverCode = await _secureStorage.readRecoveryCode();
 
     if (accessToken != null && !JwtDecoder.isExpired(accessToken)) {
-      // store.dispatch(RefreshTokenAction(refreshToken));
       return;
     }
-    print(
-      "accessToken ${accessToken} ${JwtDecoder.isExpired(accessToken!)}",
-    );
-
-    print(
-      "refreshToken ${refreshToken} ${JwtDecoder.isExpired(refreshToken!)}",
-    );
-
     if (refreshToken != null && !JwtDecoder.isExpired(refreshToken)) {
       store.dispatch(RefreshTokenAction(refreshToken));
     } else if (recoverCode != null) {
