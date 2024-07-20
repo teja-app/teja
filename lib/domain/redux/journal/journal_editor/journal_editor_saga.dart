@@ -12,6 +12,7 @@ import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
 import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart';
 import 'package:teja/infrastructure/repositories/journal_entry_repository.dart';
 import 'package:isar/isar.dart';
+import 'package:teja/infrastructure/repositories/journal_entry_repository_helpers.dart';
 import 'package:teja/infrastructure/repositories/journal_template_repository.dart';
 import 'package:teja/infrastructure/utils/helpers.dart';
 import 'package:teja/shared/helpers/logger.dart';

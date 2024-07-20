@@ -41,6 +41,76 @@ Future<List<JournalEntryEntity>> getJournalEntriesInDateRangeHelper(Isar isar, D
   }
 }
 
+JournalEntry fromEntity(JournalEntryEntity entity) {
+  return JournalEntry()
+    ..id = entity.id
+    ..templateId = entity.templateId
+    ..timestamp = entity.timestamp
+    ..createdAt = entity.createdAt
+    ..updatedAt = entity.updatedAt
+    ..lock = entity.lock
+    ..emoticon = entity.emoticon
+    ..title = entity.title
+    ..body = entity.body
+    ..summary = entity.summary
+    ..keyInsight = entity.keyInsight
+    ..affirmation = entity.affirmation
+    ..topics = entity.topics
+    ..feelings = entity.feelings
+        ?.map((f) => JournalFeeling()
+          ..emoticon = f.emoticon
+          ..title = f.title)
+        .toList()
+    ..questions = entity.questions
+        ?.map((q) => QuestionAnswerPair()
+          ..id = q.id
+          ..questionId = q.questionId
+          ..questionText = q.questionText
+          ..answerText = q.answerText
+          ..imageEntryIds = q.imageEntryIds
+          ..videoEntryIds = q.videoEntryIds
+          ..voiceEntryIds = q.voiceEntryIds)
+        .toList()
+    ..textEntries = entity.textEntries
+        ?.map((t) => TextEntry()
+          ..id = t.id
+          ..content = t.content)
+        .toList()
+    ..voiceEntries = entity.voiceEntries
+        ?.map((v) => VoiceEntry()
+          ..id = v.id
+          ..filePath = v.filePath
+          ..duration = v.duration
+          ..hash = v.hash)
+        .toList()
+    ..videoEntries = entity.videoEntries
+        ?.map((v) => VideoEntry()
+          ..id = v.id
+          ..filePath = v.filePath
+          ..duration = v.duration
+          ..hash = v.hash)
+        .toList()
+    ..imageEntries = entity.imageEntries
+        ?.map((i) => ImageEntry()
+          ..id = i.id
+          ..filePath = i.filePath
+          ..caption = i.caption
+          ..hash = i.hash)
+        .toList()
+    ..bulletPointEntries = entity.bulletPointEntries
+        ?.map((b) => BulletPointEntry()
+          ..id = b.id
+          ..points = b.points)
+        .toList()
+    ..painNoteEntries = entity.painNoteEntries
+        ?.map((p) => PainNoteEntry()
+          ..id = p.id
+          ..painLevel = p.painLevel
+          ..notes = p.notes)
+        .toList()
+    ..metadata = entity.metadata != null ? (JournalEntryMetadata()..tags = entity.metadata?.tags) : null;
+}
+
 JournalEntryEntity toEntityHelper(JournalEntry journalEntry) {
   return JournalEntryEntity(
     id: journalEntry.id,
@@ -49,8 +119,19 @@ JournalEntryEntity toEntityHelper(JournalEntry journalEntry) {
     createdAt: journalEntry.createdAt,
     updatedAt: journalEntry.updatedAt,
     lock: journalEntry.lock,
+    emoticon: journalEntry.emoticon,
     title: journalEntry.title,
     body: journalEntry.body,
+    summary: journalEntry.summary,
+    keyInsight: journalEntry.keyInsight,
+    affirmation: journalEntry.affirmation,
+    topics: journalEntry.topics,
+    feelings: journalEntry.feelings
+        ?.map((f) => JournalFeelingEntity(
+              emoticon: f.emoticon ?? '',
+              title: f.title ?? '',
+            ))
+        .toList(),
     questions: journalEntry.questions
         ?.map((q) => QuestionAnswerPairEntity(
               id: q.id,

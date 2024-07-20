@@ -84,31 +84,52 @@ Widget journalEntryLayout(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (journalEntry.body != null) ...[
-                  Text(
-                    journalEntry.body ?? "",
-                    style: textTheme.bodyMedium,
+                if (journalEntry.title != null && journalEntry.title!.isNotEmpty) ...[
+                  Row(
+                    children: [
+                      if (journalEntry.emoticon != null && journalEntry.emoticon!.isNotEmpty)
+                        Text(
+                          journalEntry.emoticon!,
+                          style: textTheme.titleLarge,
+                        ),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          journalEntry.title!,
+                          style: textTheme.titleMedium,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-                if (template != null) ...[
-                  Text(
-                    template!.title ?? "",
-                    style: textTheme.titleMedium,
-                  ),
-                ],
-                if (firstQuestion != null) ...[
-                  Text(
-                    firstQuestion?.questionText ?? 'No question',
-                    style: textTheme.titleSmall,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    firstQuestion?.answerText ?? 'No answer',
-                    style: textTheme.bodySmall,
-                  ),
+                  SizedBox(height: 8),
+                ] else ...[
+                  if (journalEntry.body != null) ...[
+                    Text(
+                      journalEntry.body ?? "",
+                      style: textTheme.bodyMedium,
+                    ),
+                  ],
+                  if (template != null) ...[
+                    Text(
+                      template.title ?? "",
+                      style: textTheme.titleMedium,
+                    ),
+                  ],
+                  if (firstQuestion != null) ...[
+                    Text(
+                      firstQuestion.questionText ?? 'No question',
+                      style: textTheme.titleSmall,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      firstQuestion.answerText ?? 'No answer',
+                      style: textTheme.bodySmall,
+                    ),
+                  ],
                 ],
                 const SizedBox(height: 16),
-                _buildMediaRow(), // Add the image row here
+                _buildMediaRow(),
                 Align(
                   alignment: Alignment.bottomRight,
                   child: Text(

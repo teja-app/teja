@@ -5,20 +5,18 @@ part 'journal_entry.g.dart';
 
 @Embedded()
 class QuestionAnswerPair {
-  late String id = Helpers.generateUniqueId(); // Unique identifier for each question-answer pair
+  late String id = Helpers.generateUniqueId();
   String? questionId;
   String? questionText;
   String? answerText;
-
-  // Adding lists to handle multiple entries
-  List<String>? imageEntryIds; // IDs of linked ImageEntry objects
-  List<String>? videoEntryIds; // IDs of linked VideoEntry objects
-  List<String>? voiceEntryIds; // IDs of linked VoiceEntry objects
+  List<String>? imageEntryIds;
+  List<String>? videoEntryIds;
+  List<String>? voiceEntryIds;
 }
 
 @Embedded()
 class TextEntry {
-  String id = Helpers.generateUniqueId(); // Unique identifier for each text entry
+  String id = Helpers.generateUniqueId();
   String? content;
 }
 
@@ -27,7 +25,7 @@ class ImageEntry {
   String id = Helpers.generateUniqueId();
   String? filePath;
   String? caption;
-  String? hash; // Add hash field
+  String? hash;
 }
 
 @Embedded()
@@ -35,7 +33,7 @@ class VideoEntry {
   String id = Helpers.generateUniqueId();
   String? filePath;
   int? duration;
-  String? hash; // Add hash field
+  String? hash;
 }
 
 @Embedded()
@@ -43,18 +41,18 @@ class VoiceEntry {
   String id = Helpers.generateUniqueId();
   String? filePath;
   int? duration;
-  String? hash; // Add hash field
+  String? hash;
 }
 
 @Embedded()
 class BulletPointEntry {
-  String id = Helpers.generateUniqueId(); // Unique identifier for each bullet point entry
+  String id = Helpers.generateUniqueId();
   List<String>? points;
 }
 
 @Embedded()
 class PainNoteEntry {
-  String id = Helpers.generateUniqueId(); // Unique identifier for each pain note entry
+  String id = Helpers.generateUniqueId();
   int? painLevel;
   String? notes;
 }
@@ -64,18 +62,24 @@ class JournalEntryMetadata {
   List<String>? tags;
 }
 
+@Embedded()
+class JournalFeeling {
+  String? emoticon;
+  String? title;
+}
+
 @Collection()
 class JournalEntry {
   Id isarId = Isar.autoIncrement;
 
   @Index(unique: true)
-  late String id = Helpers.generateUniqueId(); // Unique identifier for the journal entry
+  late String id = Helpers.generateUniqueId();
 
-  String? templateId; // Nullable ID of the template used for this entry
-
-  DateTime timestamp = DateTime.now(); // The date and time of journal entry creation or modification
+  String? templateId;
+  DateTime timestamp = DateTime.now();
   DateTime createdAt = DateTime.now();
   DateTime updatedAt = DateTime.now();
+
   List<QuestionAnswerPair>? questions;
   List<TextEntry>? textEntries;
   List<VoiceEntry>? voiceEntries;
@@ -83,8 +87,17 @@ class JournalEntry {
   List<ImageEntry>? imageEntries;
   List<BulletPointEntry>? bulletPointEntries;
   List<PainNoteEntry>? painNoteEntries;
+
   JournalEntryMetadata? metadata;
+
   bool? lock;
+  String? emoticon;
   String? title;
   String? body;
+  String? summary;
+  String? keyInsight;
+  String? affirmation;
+
+  List<String>? topics;
+  List<JournalFeeling>? feelings;
 }
