@@ -7,6 +7,7 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/auth/auth_saga.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_saga.dart';
 import 'package:teja/domain/redux/journal/featured_journal_template/saga.dart';
+import 'package:teja/domain/redux/journal/journal_analysis/journal_analysis_saga.dart';
 import 'package:teja/domain/redux/journal/journal_category/saga.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_saga.dart';
 import 'package:teja/domain/redux/journal/journal_logs/journal_logs_saga.dart';
@@ -49,6 +50,7 @@ Iterable<void> rootSaga(Store<AppState> store) sync* {
     'TokenSaga': () => TokenSaga().saga(),
     'JournalTemplateSaga': () => JournalTemplateSaga().saga(),
     'JournalEditorSaga': () => JournalEditorSaga().saga(),
+    'JournalAnalysisSaga': () => JournalAnalysisSaga().saga(),
     'JournalLogsSaga': () => JournalLogsSaga().saga(),
     'JournalDetailSaga': () => JournalDetailSaga().saga(),
     'JournalCategorySaga': () => JournalCategorySaga().saga(),

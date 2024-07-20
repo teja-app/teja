@@ -35,6 +35,8 @@ class JournalEntryPageState extends State<JournalEntryPage> {
   List<String> _alternativeQuestions = [];
   late final Store<AppState> _store;
   final Uuid uuid = Uuid();
+  String? _helpText;
+  List<String> _inputSuggestions = [];
 
   @override
   void initState() {
@@ -154,6 +156,8 @@ class JournalEntryPageState extends State<JournalEntryPage> {
           'answer': '',
           'questionId': uuid.v4(),
         });
+        _helpText = deeperQuestionResponse['helpText'];
+        _inputSuggestions = (deeperQuestionResponse['inputSuggestions'] as List<dynamic>).cast<String>();
         currentQuestionIndex++;
         showingAlternatives = false;
       });
@@ -168,6 +172,17 @@ class JournalEntryPageState extends State<JournalEntryPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    });
+  }
+
+  void _onInputSuggestionSelected(String suggestion) {
+    setState(() {
+      if (_textController.text.isEmpty) {
+        _textController.text = suggestion;
+      } else {
+        _textController.text += ' ' + suggestion;
+      }
+      _inputSuggestions.remove(suggestion); // Remove only the clicked suggestion
     });
   }
 
@@ -194,6 +209,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
         _isLoading = false;
       });
     }
+    _scrollToBottom();
   }
 
   void _regenerateAlternatives() {
@@ -227,6 +243,41 @@ class JournalEntryPageState extends State<JournalEntryPage> {
     setState(() {
       qaList[currentQuestionIndex]['question'] = question;
       showingAlternatives = false;
+    });
+    _scrollToBottom();
+  }
+
+  Widget _buildInputSuggestions() {
+    return Builder(builder: (BuildContext context) {
+      final theme = Theme.of(context);
+      final colorScheme = theme.colorScheme;
+
+      return Wrap(
+        spacing: 8.0,
+        runSpacing: 8.0,
+        children: _inputSuggestions
+            .map((suggestion) => ElevatedButton(
+                  onPressed: () => _onInputSuggestionSelected(suggestion),
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: colorScheme.onPrimary,
+                    backgroundColor: colorScheme.primary,
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    minimumSize: Size(0, 0),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    suggestion,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onPrimary,
+                    ),
+                  ),
+                ))
+            .toList(),
+      );
     });
   }
 
@@ -265,15 +316,27 @@ class JournalEntryPageState extends State<JournalEntryPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          if (index == currentQuestionIndex && _helpText != null)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: Text(
+                                _helpText!,
+                                style: textTheme.bodyMedium?.copyWith(
+                                  fontStyle: FontStyle.italic,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ),
                           Text(
                             qaList[index]['question']!,
                             style: textTheme.titleSmall,
                           ),
                           if (index == currentQuestionIndex && !showingAlternatives && !_isLoading)
-                            IconButton(
-                              icon: const Icon(AntDesign.sync, size: 20),
+                            Button(
+                              text: 'Change Question',
+                              icon: AntDesign.sync,
+                              buttonType: ButtonType.disabled,
                               onPressed: _showAlternatives,
-                              tooltip: 'Show alternative questions',
                             ),
                           Text(
                             qaList[index]['answer']!,
@@ -281,15 +344,17 @@ class JournalEntryPageState extends State<JournalEntryPage> {
                           ),
                           if (index == currentQuestionIndex && !showingAlternatives) ...[
                             if (_isLoading) const TypingIndicator(),
-                            if (!_isLoading)
+                            if (!_isLoading) ...[
                               TextField(
                                 controller: _textController,
                                 decoration: const InputDecoration(
                                   hintText: 'Write...',
                                   border: InputBorder.none,
                                 ),
-                                maxLines: null,
+                                maxLines: 5,
                               ),
+                              if (_inputSuggestions.isNotEmpty) _buildInputSuggestions(),
+                            ],
                           ],
                         ],
                       ),

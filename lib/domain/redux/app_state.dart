@@ -3,6 +3,7 @@ import 'package:teja/domain/redux/app_error/app_error_state.dart';
 import 'package:teja/domain/redux/home/home_state.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_state.dart';
 import 'package:teja/domain/redux/journal/featured_journal_template/state.dart';
+import 'package:teja/domain/redux/journal/journal_analysis/journal_analysis_state.dart';
 import 'package:teja/domain/redux/journal/journal_category/state.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_state.dart';
 import 'package:teja/domain/redux/journal/journal_logs/journal_logs_state.dart';
@@ -52,6 +53,7 @@ class AppState {
   // Journal
   final JournalTemplateState journalTemplateState;
   final JournalEditorState journalEditorState;
+  final JournalAnalysisState journalAnalysisState;
   final JournalLogsState journalLogsState;
   final JournalDetailState journalDetailState;
   final JournalCategoryState journalCategoryState;
@@ -78,6 +80,7 @@ class AppState {
     required this.tokenState,
     required this.journalTemplateState,
     required this.journalEditorState,
+    required this.journalAnalysisState,
     required this.journalLogsState,
     required this.journalDetailState,
     required this.featuredJournalTemplateState,
@@ -106,6 +109,7 @@ class AppState {
     TokenState? tokenState,
     JournalTemplateState? journalTemplateState,
     JournalEditorState? journalEditorState,
+    JournalAnalysisState? journalAnalysisState,
     JournalLogsState? journalLogsState,
     JournalDetailState? journalDetailState,
     FeaturedJournalTemplateState? featuredJournalTemplateState,
@@ -134,6 +138,7 @@ class AppState {
       tokenState: tokenState ?? this.tokenState,
       journalTemplateState: journalTemplateState ?? this.journalTemplateState,
       journalEditorState: journalEditorState ?? this.journalEditorState,
+      journalAnalysisState: journalAnalysisState ?? this.journalAnalysisState,
       journalLogsState: journalLogsState ?? this.journalLogsState,
       journalDetailState: journalDetailState ?? this.journalDetailState,
       featuredJournalTemplateState: featuredJournalTemplateState ?? this.featuredJournalTemplateState,
@@ -165,6 +170,7 @@ class AppState {
       tokenState: TokenState.initial(),
       journalTemplateState: JournalTemplateState.initial(),
       journalEditorState: JournalEditorState.initialState(),
+      journalAnalysisState: JournalAnalysisState.initialState(),
       journalLogsState: JournalLogsState.initialState(),
       journalDetailState: JournalDetailState.initialState(),
       featuredJournalTemplateState: FeaturedJournalTemplateState.initial(),

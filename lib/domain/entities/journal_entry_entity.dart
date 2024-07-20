@@ -13,7 +13,13 @@ class JournalEntryEntity {
   final List<PainNoteEntryEntity>? painNoteEntries;
   final JournalEntryMetadataEntity? metadata;
   final bool? lock;
+  final String? emoticon;
   final String? title;
+  final String? summary;
+  final String? keyInsight;
+  final String? affirmation;
+  final List<String>? topics;
+  final List<JournalFeelingEntity>? feelings;
   final String? body;
 
   JournalEntryEntity({
@@ -31,7 +37,13 @@ class JournalEntryEntity {
     this.painNoteEntries,
     this.metadata,
     this.lock,
+    this.emoticon,
     this.title,
+    this.summary,
+    this.keyInsight,
+    this.affirmation,
+    this.topics,
+    this.feelings,
     this.body,
   });
 
@@ -39,8 +51,14 @@ class JournalEntryEntity {
     String? id,
     String? templateId,
     bool? lock,
+    String? emoticon,
     String? title,
     String? body,
+    String? summary,
+    String? keyInsight,
+    String? affirmation,
+    List<String>? topics,
+    List<JournalFeelingEntity>? feelings,
     DateTime? timestamp,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -67,9 +85,34 @@ class JournalEntryEntity {
       bulletPointEntries: bulletPointEntries ?? this.bulletPointEntries,
       painNoteEntries: painNoteEntries ?? this.painNoteEntries,
       metadata: metadata ?? this.metadata,
+      emoticon: emoticon ?? this.emoticon,
       title: title ?? this.title,
+      summary: summary ?? this.summary,
+      keyInsight: keyInsight ?? this.keyInsight,
+      affirmation: affirmation ?? this.affirmation,
+      feelings: feelings ?? this.feelings,
       lock: lock ?? this.lock,
       body: body ?? this.body,
+    );
+  }
+}
+
+class JournalFeelingEntity {
+  final String? emoticon;
+  final String? title;
+
+  JournalFeelingEntity({
+    this.emoticon,
+    this.title,
+  });
+
+  JournalFeelingEntity copyWith({
+    String? emoticon,
+    String? title,
+  }) {
+    return JournalFeelingEntity(
+      emoticon: emoticon ?? this.emoticon,
+      title: title ?? this.title,
     );
   }
 }

@@ -48,7 +48,9 @@ class TokenService {
   Future<String> getRefreshToken(String refreshToken) async {
     final response = await _dio.post('/auth/refresh-token', data: {'refreshToken': refreshToken});
     final newAccessToken = response.data['accessToken'];
+    final newRefreshToken = response.data['refreshToken'];
     await _secureStorage.writeAccessToken(newAccessToken);
+    await _secureStorage.writeRefreshToken(newRefreshToken);
     return newAccessToken;
   }
 
