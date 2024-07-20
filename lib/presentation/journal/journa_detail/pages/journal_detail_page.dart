@@ -115,97 +115,84 @@ class JournalDetailPageState extends State<JournalDetailPage> {
 
   Widget _buildJournalEntryContent(JournalEntryEntity journalEntry) {
     final textTheme = Theme.of(context).textTheme;
-    late ListView questionBuilder = ListView.builder(
-      itemCount: 0,
-      itemBuilder: (BuildContext context, int index) {
-        return Container();
-      },
-    );
-    if (journalEntry.questions!.isNotEmpty) {
-      questionBuilder = ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemCount: journalEntry.questions!.length,
-        itemBuilder: (context, index) {
-          final question = journalEntry.questions![index];
-          return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            elevation: 0.5,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    question?.questionText ?? 'No question',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    question?.answerText ?? 'No answer',
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                  _buildMediaForQuestion(journalEntry, index), // This function will handle image display
-                ],
-              ),
-            ),
-          );
-        },
-      );
-    }
 
-    return Stack(
+    return ListView(
+      padding: const EdgeInsets.all(16.0),
       children: [
-        Column(
-          children: [
-            if (journalEntry.body != null) ...[
-              FlexibleHeightBox(
-                gridWidth: 4,
-                child: Text(
-                  journalEntry.body ?? "",
-                  style: textTheme.titleMedium,
+        if (journalEntry.body != null && journalEntry.body!.isNotEmpty) ...[
+          Stack(
+            children: [
+              Text(
+                journalEntry.body!,
+                style: textTheme.titleMedium,
+              ),
+              Positioned(
+                top: 0,
+                right: 0,
+                child: IconButton(
+                  icon: Icon(Icons.edit, size: 16),
+                  onPressed: () {
+                    GoRouter.of(context).pushNamed(
+                      RootPath.quickJournalEntry,
+                      queryParameters: {
+                        "id": journalEntry.id,
+                      },
+                    );
+                  },
                 ),
               ),
             ],
-            Button(
-              text: "Delve deeper",
-              icon: Maki.swimming,
-              onPressed: () {
-                List<Map<String, String>> qaList = [];
-
-                if (journalEntry.body != null && journalEntry.body!.isNotEmpty) {
-                  qaList.add({'question': 'What\'s on your mind?', 'answer': journalEntry.body!});
-                }
-
-                for (var question in journalEntry.questions ?? []) {
-                  qaList.add({'question': question.questionText ?? '', 'answer': question.answerText ?? ''});
-                }
-                GoRouter.of(context).pushNamed(
-                  RootPath.journalEntryPage,
-                  extra: qaList,
-                );
-              },
-            ),
-            Expanded(
-              child: questionBuilder,
-            ),
-          ],
-        ),
-        if (journalEntry.body != null)
-          Positioned(
-            top: 0,
-            right: 0,
-            child: IconButton(
-              icon: Icon(Icons.edit, size: 16),
-              onPressed: () {
-                GoRouter.of(context).pushNamed(
-                  RootPath.quickJournalEntry,
-                  queryParameters: {
-                    "id": journalEntry.id,
-                  },
-                );
-              },
-            ),
           ),
+          SizedBox(height: 16),
+        ],
+        Button(
+          text: "Delve deeper",
+          icon: Maki.swimming,
+          onPressed: () {
+            List<Map<String, String>> qaList = [];
+
+            if (journalEntry.body != null && journalEntry.body!.isNotEmpty) {
+              qaList.add({'question': 'What\'s on your mind?', 'answer': journalEntry.body!});
+            }
+
+            for (var question in journalEntry.questions ?? []) {
+              qaList.add({'question': question.questionText ?? '', 'answer': question.answerText ?? ''});
+            }
+            GoRouter.of(context).pushNamed(
+              RootPath.journalEntryPage,
+              extra: qaList,
+            );
+          },
+        ),
+        SizedBox(height: 24),
+        if (journalEntry.questions != null)
+          ...journalEntry.questions!.asMap().entries.map((entry) {
+            final index = entry.key;
+            final question = entry.value;
+            return Card(
+              margin: const EdgeInsets.only(bottom: 16),
+              elevation: 0.5,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      question?.questionText ?? 'No question',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      question?.answerText ?? 'No answer',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    SizedBox(height: 8),
+                    _buildMediaForQuestion(journalEntry, index),
+                  ],
+                ),
+              ),
+            );
+          }).toList(),
       ],
     );
   }
