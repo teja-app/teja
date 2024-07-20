@@ -5,6 +5,7 @@ import 'package:teja/domain/redux/auth/auth_reducer.dart';
 import 'package:teja/domain/redux/home/home_reducer.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_reducer.dart';
 import 'package:teja/domain/redux/journal/featured_journal_template/reducer.dart';
+import 'package:teja/domain/redux/journal/journal_analysis/journal_analysis_redux.dart';
 import 'package:teja/domain/redux/journal/journal_category/reducer.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_reducer.dart';
 import 'package:teja/domain/redux/journal/journal_logs/journal_logs_reducer.dart';
@@ -117,6 +118,12 @@ AppState _journalEditorReducer(AppState state, action) {
   );
 }
 
+AppState _journalAnalysisReducer(AppState state, action) {
+  return state.copyWith(
+    journalAnalysisState: journalAnalysisReducer(state.journalAnalysisState, action),
+  );
+}
+
 AppState _journalLogsReducer(AppState state, action) {
   return state.copyWith(
     journalLogsState: journalLogsReducer(state.journalLogsState, action),
@@ -195,6 +202,7 @@ Reducer<AppState> appReducer = combineReducers<AppState>([
   _tokenReducer,
   _journalTemplateReducer,
   _journalEditorReducer,
+  _journalAnalysisReducer,
   _journalLogsReducer,
   _journalDetailReducer,
   _featuredJournalTemplateReducer,

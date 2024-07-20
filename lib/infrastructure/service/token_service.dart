@@ -47,8 +47,7 @@ class TokenService {
   }
 
   Future<void> getMeDetails(String refreshToken) async {
-    final response =
-        await _dio.post('/me', data: {'refreshToken': refreshToken});
+    final response = await _dio.post('/me', data: {'refreshToken': refreshToken});
     final newAccessDetails = response.data['access'];
     print("newAccessDetails: $newAccessDetails");
     // final newAccessDetails = [AI_SUGGESTIONS];
@@ -57,16 +56,15 @@ class TokenService {
   }
 
   Future<String> getRefreshToken(String refreshToken) async {
-    final response = await _dio
-        .post('/auth/refresh-token', data: {'refreshToken': refreshToken});
+    final response = await _dio.post('/auth/refresh-token', data: {'refreshToken': refreshToken});
     final newAccessToken = response.data['accessToken'];
+    final newRefreshToken = response.data['refreshToken'];
     await _secureStorage.writeAccessToken(newAccessToken);
-    await getMeDetails(refreshToken);
+    await _secureStorage.writeRefreshToken(newRefreshToken);
     return newAccessToken;
   }
 
-  Future<Map<String, String>> authenticateWithRecoveryCode(
-      String recoveryCode) async {
+  Future<Map<String, String>> authenticateWithRecoveryCode(String recoveryCode) async {
     final response = await _dio.post('/auth/authenticate-challenge');
     final nonce = response.data['nonce'];
     final dynamicKey = response.data['dynamicKey'];
