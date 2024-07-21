@@ -30,7 +30,8 @@ class OnboardingPageState extends State<OnboardingPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final store = StoreProvider.of<AppState>(context);
-      bool _hasExistingMnemonic = await store.state.authState.hasExistingMnemonic;
+      bool _hasExistingMnemonic =
+          await store.state.authState.hasExistingMnemonic;
       performInitStateActions(store);
       if (_isPressed != null) {
         _isPressed!.value = false;
@@ -42,8 +43,8 @@ class OnboardingPageState extends State<OnboardingPage> {
 
       final recoverCode = await SecureStorage().readRecoveryCode();
 
-      _hasExistingMnemonic =
-          await store.dispatch(SetHasExistingMnemonicAction(_hasExistingMnemonic = recoverCode != null));
+      _hasExistingMnemonic = await store.dispatch(SetHasExistingMnemonicAction(
+          _hasExistingMnemonic = recoverCode != null));
 
       final authSevice = AuthService();
       await authSevice.validateAndAuthenticate(store);
@@ -54,7 +55,8 @@ class OnboardingPageState extends State<OnboardingPage> {
     authenticate(context, () {
       // This is the callback that gets called on successful authentication
       if (_isPressed != null) {
-        _isPressed!.value = true; // Trigger the animation or perform additional actions
+        _isPressed!.value =
+            true; // Trigger the animation or perform additional actions
       }
       Future.delayed(const Duration(seconds: 3), () {
         GoRouter.of(context).replaceNamed(RootPath.home);
@@ -67,7 +69,8 @@ class OnboardingPageState extends State<OnboardingPage> {
     register(context, () {
       // This is the callback that gets called on successful registration
       if (_isPressed != null) {
-        _isPressed!.value = true; // Trigger the animation or perform additional actions
+        _isPressed!.value =
+            true; // Trigger the animation or perform additional actions
       }
       Future.delayed(const Duration(seconds: 3), () {
         GoRouter.of(context).pushNamed(RootPath.registration);
@@ -150,7 +153,8 @@ class OnboardingPageState extends State<OnboardingPage> {
                     Button(
                       text: "Have a recovery code?",
                       width: 300,
-                      onPressed: _onRecoverAccountPressed, // Updated to navigate to recover account screen
+                      onPressed:
+                          _onRecoverAccountPressed, // Updated to navigate to recover account screen
                       buttonType: ButtonType.disabled,
                     )
                   ]

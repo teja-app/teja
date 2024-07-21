@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:teja/domain/entities/app_error.dart';
+import 'package:teja/domain/redux/permission/permissions_constants.dart';
 import 'package:teja/infrastructure/utils/token_helper.dart';
 import 'package:teja/shared/storage/secure_storage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -45,14 +46,26 @@ class TokenService {
     return tokens['accessToken'];
   }
 
+  Future<void> getMeDetails(String refreshToken) async {
+    // final response =
+    //     await _dio.post('/me', data: {'refreshToken': refreshToken});
+    // final newAccessDetails = response.data['access'];
+    final newAccessDetails = [AI_SUGGESTIONS];
+    await _secureStorage.writeAccessDetails(newAccessDetails);
+    // return newAccessDetails;
+  }
+
   Future<String> getRefreshToken(String refreshToken) async {
-    final response = await _dio.post('/auth/refresh-token', data: {'refreshToken': refreshToken});
+    final response = await _dio
+        .post('/auth/refresh-token', data: {'refreshToken': refreshToken});
     final newAccessToken = response.data['accessToken'];
     await _secureStorage.writeAccessToken(newAccessToken);
+    await getMeDetails(refreshToken);
     return newAccessToken;
   }
 
-  Future<Map<String, String>> authenticateWithRecoveryCode(String recoveryCode) async {
+  Future<Map<String, String>> authenticateWithRecoveryCode(
+      String recoveryCode) async {
     final response = await _dio.post('/auth/authenticate-challenge');
     final nonce = response.data['nonce'];
     final dynamicKey = response.data['dynamicKey'];
@@ -72,6 +85,7 @@ class TokenService {
     final newRefreshToken = authResponse.data['refreshToken'];
 
     await setTokens(newAccessToken, newRefreshToken);
+    await getMeDetails(newRefreshToken);
 
     return {
       'accessToken': authResponse.data['accessToken'],

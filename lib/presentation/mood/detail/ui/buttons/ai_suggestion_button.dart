@@ -5,6 +5,8 @@ import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/mood/ai_suggestion/ai_suggestion_actions.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_actions.dart';
+import 'package:teja/domain/redux/permission/permissions_constants.dart';
+import 'package:teja/presentation/onboarding/widgets/feature_gate.dart';
 import 'package:teja/shared/common/button.dart';
 
 class AISuggestionButton extends StatelessWidget {
@@ -29,12 +31,18 @@ class AISuggestionButton extends StatelessWidget {
                 ),
               )
             else ...[
-              Button(
-                text: "Fetch AI Suggestion",
-                icon: Icons.favorite,
-                onPressed: () => viewModel.getSuggestions(moodId),
+              FeatureGate(
+                feature: AI_SUGGESTIONS,
+                autoTriggerOnAccess: true,
+                onFeatureAccessed: () => viewModel.getSuggestions(moodId),
+                child: const Button(
+                  text: "Fetch AI Suggestion",
+                  icon: Icons.favorite,
+                  // onPressed: () => viewModel.getSuggestions(moodId),
+                ),
               ),
-              if (viewModel.isLoading) const Center(child: CircularProgressIndicator()),
+              if (viewModel.isLoading)
+                const Center(child: CircularProgressIndicator()),
               if (viewModel.errorMessage != null)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -69,7 +77,7 @@ class _AISuggestionButtonViewModel {
     final selectedMoodLog = store.state.moodDetailPage.selectedMoodLog;
 
     return _AISuggestionButtonViewModel(
-      suggestions: store.state.moodDetailPage.selectedMoodLog?.ai?.suggestion,
+      suggestions: selectedMoodLog?.ai?.suggestion,
       isLoading: aiSuggestionState.isLoading,
       errorMessage: aiSuggestionState.errorMessage,
       getSuggestions: (moodId) {
