@@ -1,4 +1,5 @@
 import 'package:redux_saga/redux_saga.dart';
+import 'package:teja/domain/redux/journal/detail/journal_detail_actions.dart';
 import 'package:teja/infrastructure/api/journal_analysis_api.dart';
 import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart';
 import 'package:teja/infrastructure/repositories/journal_entry_repository.dart';
@@ -56,6 +57,7 @@ class JournalAnalysisSaga {
         ..affirmation = analysisResult['affirmation'];
 
       yield Call(repository.addOrUpdateJournalEntry, args: [updatedEntry]);
+      yield Put(LoadJournalDetailAction(journalEntryId));
     }
   }
 }
