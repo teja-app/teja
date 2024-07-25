@@ -47,7 +47,8 @@ class _FeatureGateState extends State<FeatureGate> {
             // Conditionally trigger onFeatureAccessed callback
             if (widget.autoTriggerOnAccess &&
                 widget.onFeatureAccessed != null &&
-                !_hasTriggered) {
+                !_hasTriggered &&
+                snapshot.data!.hasAccess) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 widget.onFeatureAccessed!();
                 setState(() {
@@ -105,7 +106,9 @@ class FeatureGateViewModel {
   ) async {
     try {
       final accessDetails = await secureStorage.readAccessDetails();
+      print('Access details: $accessDetails'); // Debug print
       final hasAccess = accessDetails?.contains(feature) ?? false;
+      print('Has access: $hasAccess'); // Debug print
       return FeatureGateViewModel(hasAccess: hasAccess);
     } catch (e) {
       print('Error fetching access details: $e'); // Debug print

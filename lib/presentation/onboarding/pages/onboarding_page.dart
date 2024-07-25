@@ -40,6 +40,7 @@ class OnboardingPageState extends State<OnboardingPage> {
       // await SecureStorage().deleteRefreshToken();
       // await SecureStorage().deleteAccessToken();
       // await SecureStorage().deleteRecoveryCode();
+      // await SecureStorage().deleteAll();
 
       final recoverCode = await SecureStorage().readRecoveryCode();
 

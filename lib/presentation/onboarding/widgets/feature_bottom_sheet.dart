@@ -30,7 +30,11 @@ class _FeatureAccessBottomSheetState extends State<FeatureAccessBottomSheet> {
 
   List<ProductDetails> _products = [];
   List<PurchaseDetails> _purchases = [];
-  final String _kProductID = 'your_product_id'; // Replace with your product ID
+  final List<String> _kProductIDs = [
+    'app.teja.subscription.all',
+    'app.teja.subscription.monthly',
+    'test.teja.subscription.pro'
+  ];
 
   @override
   void initState() {
@@ -45,16 +49,25 @@ class _FeatureAccessBottomSheetState extends State<FeatureAccessBottomSheet> {
     });
 
     if (_available) {
-      Set<String> kIds = {_kProductID};
-      final ProductDetailsResponse response =
-          await _iap.queryProductDetails(kIds);
-      if (response.error != null) {
-        // Handle the error
-        print('Error querying product details: ${response.error}');
-      } else {
-        setState(() {
-          _products = response.productDetails;
-        });
+      final Set<String> kIds = _kProductIDs.toSet();
+      print('Product IDs: $kIds');
+
+      // final ProductDetailsResponse response =
+      //     await _iap.queryProductDetails(kIds);
+      try {
+        final ProductDetailsResponse response =
+            await _iap.queryProductDetails(kIds);
+        if (response.error != null) {
+          // Handle the error
+          print('Error querying product details: ${response.error}');
+        } else {
+          print('Product details: ${response.productDetails}');
+          setState(() {
+            _products = response.productDetails;
+          });
+        }
+      } catch (e) {
+        print('Error querying product details: $e');
       }
     }
 
@@ -66,14 +79,13 @@ class _FeatureAccessBottomSheetState extends State<FeatureAccessBottomSheet> {
   void _handlePurchaseUpdates(List<PurchaseDetails> purchases) async {
     for (var purchase in purchases) {
       if (purchase.pendingCompletePurchase) {
-        _iap.completePurchase(purchase);
+        await _iap.completePurchase(purchase);
       }
       if (purchase.status == PurchaseStatus.purchased) {
         // Verify the purchase and grant the feature
         // You might want to call your backend here to verify the purchase
-
-        // final refreshToken = await _secureStorage.readRefreshToken();
-        // await _tokenService.getMeDetails(refreshToken!);
+        final refreshToken = await _secureStorage.readRefreshToken();
+        await _tokenService.getMeDetails(refreshToken!);
       }
     }
     setState(() {
@@ -190,8 +202,10 @@ class _FeatureAccessBottomSheetState extends State<FeatureAccessBottomSheet> {
           alignment: Alignment.center,
           child: hasExistingMnemonic
               ? ElevatedButton(
-                  onPressed: _buyProduct,
-                  child: const Text('Purchase'),
+                  onPressed: () {
+                    _buyProduct(_kProductIDs[0]);
+                  },
+                  child: const Text('Purchase All'),
                 )
               : Column(
                   children: [
@@ -203,8 +217,10 @@ class _FeatureAccessBottomSheetState extends State<FeatureAccessBottomSheet> {
                     ),
                     const SizedBox(height: 10),
                     ElevatedButton(
-                      onPressed: _buyProduct,
-                      child: const Text('Purchase'),
+                      onPressed: () {
+                        _buyProduct(_kProductIDs[1]);
+                      },
+                      child: const Text('Purchase Monthly'),
                     ),
                   ],
                 ),
@@ -213,11 +229,24 @@ class _FeatureAccessBottomSheetState extends State<FeatureAccessBottomSheet> {
     );
   }
 
-  void _buyProduct() {
-    final ProductDetails product =
-        _products.firstWhere((product) => product.id == _kProductID);
-    final PurchaseParam purchaseParam = PurchaseParam(productDetails: product);
-    _iap.buyNonConsumable(purchaseParam: purchaseParam);
+  void _buyProduct(String productId) {
+    try {
+      if (_products.isEmpty) {
+        throw Exception('Product details are not loaded yet.');
+      }
+      final ProductDetails product =
+          _products.firstWhere((product) => product.id == productId);
+      final PurchaseParam purchaseParam =
+          PurchaseParam(productDetails: product);
+      _iap.buyNonConsumable(purchaseParam: purchaseParam);
+    } catch (e) {
+      // Handle the error
+      print('Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Product not found. Please try again later.')),
+      );
+    }
   }
 
   void _onRegisterPressed() {

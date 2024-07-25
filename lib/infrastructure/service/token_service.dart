@@ -47,10 +47,11 @@ class TokenService {
   }
 
   Future<void> getMeDetails(String refreshToken) async {
-    // final response =
-    //     await _dio.post('/me', data: {'refreshToken': refreshToken});
-    // final newAccessDetails = response.data['access'];
-    final newAccessDetails = [AI_SUGGESTIONS];
+    final response =
+        await _dio.post('/me', data: {'refreshToken': refreshToken});
+    final newAccessDetails = response.data['access'];
+    print("newAccessDetails: $newAccessDetails");
+    // final newAccessDetails = [AI_SUGGESTIONS];
     await _secureStorage.writeAccessDetails(newAccessDetails);
     // return newAccessDetails;
   }
