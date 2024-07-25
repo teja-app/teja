@@ -12,6 +12,10 @@ class Button extends StatelessWidget {
   final double spacing;
   final double runSpacing;
   final ButtonType buttonType;
+  final double buttonRadius;
+  final Color textColor;
+  final Color backgroundColor;
+  final Color borderColor;
 
   const Button({
     super.key,
@@ -19,18 +23,22 @@ class Button extends StatelessWidget {
     this.secondaryText,
     this.onPressed,
     this.icon,
+    this.textColor = Colors.black,
+    this.backgroundColor = Colors.white,
+    this.borderColor = Colors.black,
     this.width = 40,
     this.margin = 8.0,
     this.spacing = 8.0,
     this.runSpacing = 4.0,
     this.buttonType = ButtonType.defaultButton,
+    this.buttonRadius = 8.0,
   });
 
   @override
   Widget build(BuildContext context) {
-    Color textColor;
-    Color backgroundColor;
-    Color borderColor;
+    Color textColor = this.textColor;
+    Color backgroundColor = this.backgroundColor;
+    Color borderColor = this.borderColor;
 
     switch (buttonType) {
       case ButtonType.primary:
@@ -50,9 +58,9 @@ class Button extends StatelessWidget {
         break;
       case ButtonType.defaultButton:
       default:
-        textColor = Colors.black;
-        backgroundColor = Colors.white;
-        borderColor = Colors.black;
+        textColor = this.textColor;
+        backgroundColor = this.backgroundColor;
+        borderColor = this.borderColor;
         break;
     }
 
@@ -66,8 +74,8 @@ class Button extends StatelessWidget {
           maximumSize: const Size(double.infinity, 42),
           minimumSize: Size(width ?? 40, 42),
           side: BorderSide(color: borderColor),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(8)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(buttonRadius)),
           ),
         ),
         child: Padding(

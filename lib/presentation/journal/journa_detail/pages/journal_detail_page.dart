@@ -57,6 +57,14 @@ class JournalDetailPageState extends State<JournalDetailPage> {
     viewModel.dispatchAnalyzeJournal(viewModel.journalEntry!.id, qaList);
   }
 
+  bool _hasAnalysisData(JournalEntryEntity journalEntry) {
+    return journalEntry.summary != null ||
+        journalEntry.keyInsight != null ||
+        journalEntry.affirmation != null ||
+        (journalEntry.feelings != null && journalEntry.feelings!.isNotEmpty) ||
+        (journalEntry.topics != null && journalEntry.topics!.isNotEmpty);
+  }
+
   @override
   Widget build(BuildContext context) {
     BuildContext pageContext = context;
@@ -74,8 +82,11 @@ class JournalDetailPageState extends State<JournalDetailPage> {
         DateTime entryDate = viewModel.journalEntry!.createdAt;
         String formattedDate = DateFormat('EEEE, MMMM d @ h:mm a').format(entryDate);
 
+        bool hasAnalysis = _hasAnalysisData(viewModel.journalEntry!);
+
         return Scaffold(
           appBar: AppBar(
+            forceMaterialTransparency: true,
             title: Row(
               children: [
                 Text(
@@ -99,12 +110,12 @@ class JournalDetailPageState extends State<JournalDetailPage> {
               },
             ),
             actions: [
-              IconButton(
-                icon: const Icon(Icons.share),
-                onPressed: () {
-                  // Implement share functionality
-                },
-              ),
+              // IconButton(
+              //   icon: const Icon(Icons.share),
+              //   onPressed: () {
+              //     // Implement share functionality
+              //   },
+              // ),
               JournalMenuSettings(
                 journalId: viewModel.journalEntry!.id,
                 onDelete: () => _showDeleteConfirmationDialog(pageContext, viewModel),
@@ -128,9 +139,9 @@ class JournalDetailPageState extends State<JournalDetailPage> {
                         label: const Text('Analyze Journal'),
                       ),
               ),
-              _buildTabs(),
+              if (hasAnalysis) _buildTabs(),
               Expanded(
-                child: _selectedTabIndex == 0
+                child: hasAnalysis && _selectedTabIndex == 0
                     ? _buildAnalysisTab(viewModel.journalEntry!)
                     : _buildEntryTab(viewModel.journalEntry!),
               ),
@@ -385,7 +396,7 @@ class JournalDetailPageState extends State<JournalDetailPage> {
                 StoreProvider.of<AppState>(dialogContext)
                     .dispatch(DeleteJournalDetailAction(viewModel.journalEntry!.id));
                 Navigator.of(dialogContext).pop();
-                GoRouter.of(pageContext).pop();
+                GoRouter.of(context).replaceNamed(RootPath.home);
               },
             ),
           ],

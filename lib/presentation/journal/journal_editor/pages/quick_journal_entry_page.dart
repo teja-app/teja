@@ -24,6 +24,7 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
   late final Store<AppState> _store;
   final TextEditingController _bodyController = TextEditingController();
   bool _isSaving = false;
+  bool _isInitialized = false;
   String? _errorMessage;
 
   @override
@@ -160,98 +161,149 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
     }
   }
 
+  void _handleBack(BuildContext context, JournalEntryEntity? currentEntry) {
+    if (_bodyController.text.isNotEmpty) {
+      showDialog(
+        context: context,
+        builder: (BuildContext dialogContext) {
+          return AlertDialog(
+            title: Text('Unsaved Changes'),
+            content: Text('You have unsaved changes. Do you want to save before leaving?'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('Discard'),
+                onPressed: () {
+                  Navigator.of(dialogContext).pop();
+                  _discardAndGoBack(context, currentEntry);
+                },
+              ),
+              TextButton(
+                child: Text('Save'),
+                onPressed: () {
+                  Navigator.of(dialogContext).pop();
+                  _saveEntry(context, currentEntry);
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      _discardAndGoBack(context, currentEntry);
+    }
+  }
+
+  void _discardAndGoBack(BuildContext context, JournalEntryEntity? currentEntry) {
+    if (currentEntry != null && (currentEntry.body == null || currentEntry.body!.isEmpty)) {
+      _store.dispatch(DeleteJournalDetailAction(currentEntry.id));
+    }
+    if (context.mounted) {
+      GoRouter.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return StoreConnector<AppState, QuickJournalEditViewModel>(
-      converter: (store) => QuickJournalEditViewModel.fromStore(store),
-      builder: (context, viewModel) {
-        if (viewModel.currentJournalEntry == null) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
+    return WillPopScope(
+      onWillPop: () async {
+        _handleBack(context, _store.state.journalEditorState.currentJournalEntry);
+        return false;
+      },
+      child: StoreConnector<AppState, QuickJournalEditViewModel>(
+        converter: (store) => QuickJournalEditViewModel.fromStore(store),
+        onWillChange: (oldViewModel, newViewModel) {
+          if (!_isInitialized && newViewModel.currentJournalEntry != null) {
+            _bodyController.text = newViewModel.currentJournalEntry?.body ?? '';
+            _isInitialized = true;
+          }
+        },
+        builder: (context, viewModel) {
+          if (!_isInitialized) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
 
-        _bodyController.text = viewModel.currentJournalEntry?.body ?? '';
-
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text("Quick Journal Entry"),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: _isSaving ? null : () => _saveEntry(context, viewModel.currentJournalEntry),
-            ),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.done),
-                onPressed: _isSaving ? null : () => _saveEntry(context, viewModel.currentJournalEntry),
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text("Quick Journal Entry"),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: _isSaving ? null : () => _handleBack(context, viewModel.currentJournalEntry),
               ),
-            ],
-          ),
-          body: Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _bodyController,
-                        decoration: const InputDecoration(
-                          hintText: 'Write your journal entry...',
-                          border: InputBorder.none,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.done),
+                  onPressed: _isSaving ? null : () => _saveEntry(context, viewModel.currentJournalEntry),
+                ),
+              ],
+            ),
+            body: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _bodyController,
+                          decoration: const InputDecoration(
+                            hintText: 'Write your journal entry...',
+                            border: InputBorder.none,
+                          ),
+                          maxLines: null,
+                          autofocus: true,
                         ),
-                        maxLines: null,
-                        autofocus: true,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Button(
+                              buttonType: ButtonType.secondary,
+                              onPressed: _isSaving ? null : () => _saveEntry(context, viewModel.currentJournalEntry),
+                              text: 'Save',
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Button(
+                              buttonType: ButtonType.primary,
+                              onPressed:
+                                  _isSaving ? null : () => _saveAndContinue(context, viewModel.currentJournalEntry),
+                              text: 'Continue',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                if (_isSaving)
+                  Container(
+                    color: Colors.black.withOpacity(0.3),
+                    child: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                if (_errorMessage != null)
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      color: Colors.red,
+                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                      child: Text(
+                        _errorMessage!,
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Button(
-                            buttonType: ButtonType.primary,
-                            onPressed: _isSaving ? null : () => _saveEntry(context, viewModel.currentJournalEntry),
-                            text: 'Save',
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Button(
-                            buttonType: ButtonType.secondary,
-                            onPressed:
-                                _isSaving ? null : () => _saveAndContinue(context, viewModel.currentJournalEntry),
-                            text: 'Continue',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              if (_isSaving)
-                Container(
-                  color: Colors.black.withOpacity(0.3),
-                  child: const Center(
-                    child: CircularProgressIndicator(),
                   ),
-                ),
-              if (_errorMessage != null)
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    color: Colors.red,
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                    child: Text(
-                      _errorMessage!,
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        );
-      },
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

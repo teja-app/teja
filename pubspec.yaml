@@ -101,6 +101,7 @@ dependencies:
   reorderables: ^0.4.0
   syncfusion_flutter_gauges: ^20.2.47
   toastification: ^2.0.0
+  palette_generator: ^0.3.3+4
 
 dev_dependencies:
   flutter_test:
