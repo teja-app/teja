@@ -96,8 +96,7 @@ Widget journalEntryLayout(
                       Expanded(
                         child: Text(
                           journalEntry.title!,
-                          style: textTheme.titleMedium,
-                          overflow: TextOverflow.ellipsis,
+                          style: textTheme.bodyMedium,
                         ),
                       ),
                     ],

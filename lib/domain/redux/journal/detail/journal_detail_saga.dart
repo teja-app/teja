@@ -1,6 +1,7 @@
 import 'package:isar/isar.dart';
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_actions.dart';
+import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
 import 'package:teja/infrastructure/repositories/journal_entry_repository.dart';
 import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart' as journal_collection;
 
@@ -44,6 +45,9 @@ class JournalDetailSaga {
     yield Try(() sync* {
       yield Call(journalEntryRepository.deleteJournalEntryById, args: [action.journalEntryId]);
       yield Put(const DeleteJournalDetailSuccessAction());
+
+      yield Put(ResetJournalEntriesListAction());
+      yield Put(LoadJournalEntriesListAction(0, 30));
     }, Catch: (e, s) sync* {
       yield Put(DeleteJournalDetailFailureAction(e.toString()));
     });

@@ -12,7 +12,6 @@ class JournalCollectorFab extends StatefulWidget {
 class JournalCollectorFabState extends State<JournalCollectorFab> with SingleTickerProviderStateMixin {
   bool isOpened = false;
   late AnimationController _animationController;
-  late Animation<Color?> _buttonColor;
   late Animation<double> _animateIcon;
   late Animation<double> _translateButton;
   late GoRouter goRouter;
@@ -29,23 +28,6 @@ class JournalCollectorFabState extends State<JournalCollectorFab> with SingleTic
         setState(() {});
       });
     _animateIcon = Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _buttonColor = ColorTween(
-      begin: Theme.of(context).colorScheme.primary,
-      end: Theme.of(context).colorScheme.primary,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(
-        0.00,
-        0.75,
-        curve: Curves.linear,
-      ),
-    ));
-
     _translateButton = Tween<double>(
       begin: _fabHeight,
       end: -14.0,
@@ -74,55 +56,45 @@ class JournalCollectorFabState extends State<JournalCollectorFab> with SingleTic
     isOpened = !isOpened;
   }
 
-  Widget mood() {
-    return Container(
-      child: FloatingActionButton(
-        onPressed: () {
-          goRouter.pushNamed(RootPath.moodEdit);
-        },
-        tooltip: 'Mood',
+  Widget _buildLabeledIconButton(String label, IconData icon, VoidCallback onPressed) {
+    return AnimatedOpacity(
+      opacity: isOpened ? 1.0 : 0.0,
+      duration: const Duration(milliseconds: 250),
+      child: FloatingActionButton.extended(
+        onPressed: onPressed,
+        icon: Icon(icon),
+        label: Text(label),
         backgroundColor: Theme.of(context).primaryColor,
-        child: const Icon(Icons.mood),
       ),
     );
+  }
+
+  Widget mood() {
+    return _buildLabeledIconButton('Mood', Icons.mood, () {
+      goRouter.pushNamed(RootPath.moodEdit);
+    });
   }
 
   Widget journal() {
-    return Container(
-      child: FloatingActionButton(
-        onPressed: () {
-          goRouter.pushNamed(RootPath.quickJournalEntry);
-        },
-        tooltip: 'Journal',
-        backgroundColor: Theme.of(context).primaryColor,
-        child: const Icon(Icons.book),
-      ),
-    );
+    return _buildLabeledIconButton('Journal', Icons.book, () {
+      goRouter.pushNamed(RootPath.quickJournalEntry);
+    });
   }
 
   Widget audio() {
-    return Container(
-      child: FloatingActionButton(
-        onPressed: () {
-          goRouter.pushNamed(RootPath.journalCategory);
-        },
-        tooltip: 'Audio',
-        backgroundColor: Theme.of(context).primaryColor,
-        child: const Icon(Icons.mic),
-      ),
-    );
+    return _buildLabeledIconButton('Audio', Icons.mic, () {
+      goRouter.pushNamed(RootPath.journalCategory);
+    });
   }
 
   Widget toggle() {
-    return Container(
-      child: FloatingActionButton(
-        backgroundColor: _buttonColor.value,
-        onPressed: animate,
-        tooltip: 'Toggle',
-        child: AnimatedIcon(
-          icon: isOpened ? AnimatedIcons.menu_close : AnimatedIcons.add_event,
-          progress: _animateIcon,
-        ),
+    return FloatingActionButton(
+      backgroundColor: Theme.of(context).primaryColor,
+      onPressed: animate,
+      tooltip: 'Toggle',
+      child: AnimatedIcon(
+        icon: AnimatedIcons.menu_close,
+        progress: _animateIcon,
       ),
     );
   }
@@ -132,6 +104,7 @@ class JournalCollectorFabState extends State<JournalCollectorFab> with SingleTic
     goRouter = GoRouter.of(context);
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
         Transform(
           transform: Matrix4.translationValues(
