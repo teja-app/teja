@@ -71,7 +71,7 @@
          </BuildableReference>
       </BuildableProductRunnable>
       <StoreKitConfigurationFileReference
-         identifier = "../TejaProducts.storekit">
+         identifier = "../Runner/TejaProducts.storekit">
       </StoreKitConfigurationFileReference>
    </LaunchAction>
    <ProfileAction

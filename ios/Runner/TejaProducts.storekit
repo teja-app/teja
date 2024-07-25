@@ -4,13 +4,27 @@
 
   ],
   "products" : [
-
+    {
+      "displayPrice" : "9.99",
+      "familyShareable" : false,
+      "internalID" : "6569262630",
+      "localizations" : [
+        {
+          "description" : "Testing the Non-consumables",
+          "displayName" : "Test Price",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "test.teja.subscription.pro",
+      "referenceName" : "Teja Pro",
+      "type" : "NonConsumable"
+    }
   ],
   "settings" : {
     "_applicationInternalID" : "6473733799",
     "_developerTeamID" : "35S57HXHB7",
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 743451546.54182899,
+    "_lastSynchronizedDate" : 743594968.59307098,
     "_locale" : "en_US",
     "_storefront" : "USA",
     "_storeKitErrors" : [
