@@ -1,18 +1,18 @@
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
+import 'package:teja/config/app_config.dart';
 import 'package:teja/domain/entities/app_error.dart';
 import 'package:teja/infrastructure/utils/token_helper.dart';
 import 'package:teja/shared/storage/secure_storage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:dio/dio.dart';
-import 'package:teja/constants.dart';
 
 class TokenService {
   final SecureStorage _secureStorage = SecureStorage();
   final Dio _dio = Dio();
 
   TokenService() {
-    _dio.options.baseUrl = Env().baseUrl;
+    _dio.options.baseUrl = AppConfig.instance.apiBaseUrl;
   }
 
   Future<String?> getValidAccessToken() async {
