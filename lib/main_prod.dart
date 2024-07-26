@@ -1,24 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:teja/config/shared_config.dart';
 import 'package:teja/shared/helpers/logger.dart';
-import 'package:teja/shared_config.dart';
 import 'package:teja/app.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:teja/config/app_config.dart';
 
 void main() async {
-  final store = await configureCommonDependencies('.env.prod');
-
-  // Prod-specific configurations
-  final String? sentryDsnUrl = dotenv.env['SENTRY_DSN_URL'];
+  WidgetsFlutterBinding.ensureInitialized();
+  await AppConfig.initialize('prod');
+  final store = await configureCommonDependencies();
 
   await SentryFlutter.init(
     (options) {
-      options.dsn = sentryDsnUrl;
-      options.environment = 'production';
-      // Add any other prod-specific Sentry options here
+      options.dsn = AppConfig.instance.sentryDsnUrl;
+      options.environment = AppConfig.instance.environment;
     },
     appRunner: () => runApp(App(store: store)),
   );
 
-  logger.i("App initialized in production mode");
+  logger.i("App initialized in ${AppConfig.instance.environment} mode");
 }

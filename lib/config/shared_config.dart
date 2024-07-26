@@ -4,7 +4,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:redux/redux.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:teja/infrastructure/analytics/set_context.dart';
 import 'package:teja/infrastructure/database/hive_collections/featured_journal_template.dart';
 import 'package:teja/infrastructure/database/hive_collections/journal_category.dart';
@@ -22,11 +21,10 @@ import 'package:teja/domain/redux/store.dart';
 
 final notificationService = NotificationService();
 
-Future<Store<AppState>> configureCommonDependencies(String envFileName) async {
+Future<Store<AppState>> configureCommonDependencies() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   setPosthogContext();
-  await dotenv.load(fileName: envFileName);
 
   final Isar isarInstance = await openIsar();
   logger.i("Database Instance is ready");

@@ -127,7 +127,6 @@ flutter:
   uses-material-design: true
 
   assets:
-    - .env.dev
     - assets/welcome/
     - assets/logo/
     - assets/settings/
@@ -139,6 +138,7 @@ flutter:
     - assets/journal/
     - assets/explore/
     - assets/music/
+    - assets/config/
     - assets/sounds/speech_to_text_listening.m4r
     - assets/sounds/speech_to_text_cancel.m4r
     - assets/sounds/speech_to_text_stop.m4r
