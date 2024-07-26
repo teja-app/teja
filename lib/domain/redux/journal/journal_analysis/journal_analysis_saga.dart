@@ -16,7 +16,7 @@ class JournalAnalysisSaga {
   _analyzeJournal({required AnalyzeJournalAction action}) sync* {
     try {
       var analysisResult = Result<Map<String, dynamic>>();
-      yield Call(_api.analyzeJournal, args: [action.qaList], result: analysisResult);
+      yield Call(_api.analyzeJournal, args: [action.journalEntryId], result: analysisResult);
 
       if (analysisResult.value != null) {
         yield Put(AnalyzeJournalSuccessAction(action.journalEntryId, analysisResult.value!));

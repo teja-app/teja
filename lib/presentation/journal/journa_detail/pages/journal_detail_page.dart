@@ -406,19 +406,9 @@ class JournalDetailPageState extends State<JournalDetailPage> {
   }
 
   void _navigateToJournalEntryPage(JournalEntryEntity journalEntry) {
-    List<Map<String, String>> qaList = [];
-
-    if (journalEntry.body != null && journalEntry.body!.isNotEmpty) {
-      qaList.add({'question': 'What\'s on your mind?', 'answer': journalEntry.body!});
-    }
-
-    for (var question in journalEntry.questions ?? []) {
-      qaList.add({'question': question.questionText ?? '', 'answer': question.answerText ?? ''});
-    }
-
     GoRouter.of(context).pushNamed(
       RootPath.journalEntryPage,
-      extra: qaList,
+      pathParameters: {'id': journalEntry.id},
     );
   }
 
@@ -515,7 +505,7 @@ class JournalDetailViewModel {
       isLoading: state.isLoading,
       errorMessage: state.errorMessage,
       dispatchAnalyzeJournal: (String journalEntryId, List<Map<String, String>> qaList) {
-        store.dispatch(AnalyzeJournalAction(journalEntryId, qaList));
+        store.dispatch(AnalyzeJournalAction(journalEntryId));
       },
     );
   }
