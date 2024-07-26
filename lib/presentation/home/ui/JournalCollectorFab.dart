@@ -62,9 +62,9 @@ class JournalCollectorFabState extends State<JournalCollectorFab> with SingleTic
       duration: const Duration(milliseconds: 250),
       child: FloatingActionButton.extended(
         onPressed: onPressed,
-        icon: Icon(icon),
-        label: Text(label),
-        backgroundColor: Theme.of(context).primaryColor,
+        icon: Icon(icon, color: Theme.of(context).colorScheme.onPrimary),
+        label: Text(label, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
     );
   }
@@ -89,7 +89,8 @@ class JournalCollectorFabState extends State<JournalCollectorFab> with SingleTic
 
   Widget toggle() {
     return FloatingActionButton(
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      foregroundColor: Theme.of(context).colorScheme.onPrimary,
       onPressed: animate,
       tooltip: 'Toggle',
       child: AnimatedIcon(

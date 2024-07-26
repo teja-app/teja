@@ -32,8 +32,7 @@ import 'package:teja/presentation/settings/pages/security_settings_page.dart';
 import 'package:teja/presentation/settings/pages/settings_page.dart';
 import 'package:teja/presentation/settings/pages/sync_settings_page.dart';
 import 'package:teja/shared/helpers/logger.dart';
-
-import 'main.dart';
+import 'package:teja/config/shared_config.dart';
 
 class RouteLoggingObserver extends NavigatorObserver {
   @override

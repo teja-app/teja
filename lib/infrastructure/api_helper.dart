@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:teja/constants.dart';
 import 'package:teja/domain/entities/app_error.dart';
 import 'package:teja/infrastructure/service/token_service.dart';
 import 'package:teja/shared/helpers/logger.dart';
 import 'package:teja/shared/storage/secure_storage.dart';
+import 'package:teja/config/app_config.dart';
 
 class ApiHelper {
   final Dio _dio = Dio();
@@ -13,7 +13,7 @@ class ApiHelper {
   static const int maxRetries = 1;
 
   ApiHelper() {
-    _dio.options.baseUrl = Env().baseUrl;
+    _dio.options.baseUrl = AppConfig.instance.apiBaseUrl;
   }
 
   // Unsafe methods with improved error handling
