@@ -3,21 +3,27 @@ import 'package:icons_flutter/icons_flutter.dart';
 
 class QuickInputWidget extends StatelessWidget {
   final VoidCallback onTap;
+  final VoidCallback onMoodTap;
+  final VoidCallback onAudioTap;
 
-  const QuickInputWidget({Key? key, required this.onTap}) : super(key: key);
+  const QuickInputWidget({
+    Key? key,
+    required this.onTap,
+    required this.onMoodTap,
+    required this.onAudioTap,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
         color: theme.cardColor,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: theme.shadowColor.withOpacity(0.1),
             spreadRadius: 1,
             blurRadius: 3,
             offset: const Offset(0, 1),
@@ -59,7 +65,56 @@ class QuickInputWidget extends StatelessWidget {
               ),
             ),
           ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildQuickActionButton(
+                context,
+                icon: Icons.mood,
+                label: 'Track Mood',
+                onTap: onMoodTap,
+              ),
+              _buildQuickActionButton(
+                context,
+                icon: Foundation.microphone,
+                label: 'Add Audio',
+                onTap: onAudioTap,
+              ),
+            ],
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildQuickActionButton(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    final theme = Theme.of(context);
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 24, color: theme.colorScheme.secondary),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: theme.colorScheme.secondary,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

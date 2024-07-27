@@ -235,6 +235,7 @@ class OnboardingPageState extends State<OnboardingPage> {
             RiveAnimationSection(onRiveInit: onRiveInit),
             const SizedBox(height: 20),
             Button(
+              buttonType: ButtonType.primary,
               key: const Key("letsBegin"),
               text: "Let's Begin",
               width: 300,
