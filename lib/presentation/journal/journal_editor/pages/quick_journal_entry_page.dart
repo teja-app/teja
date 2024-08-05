@@ -7,6 +7,8 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.dart';
 import 'package:teja/domain/redux/journal/journal_editor/quick_journal_editor_actions.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_actions.dart';
+import 'package:teja/domain/redux/permission/permissions_constants.dart';
+import 'package:teja/presentation/onboarding/widgets/feature_gate.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/button.dart';
 
@@ -278,6 +280,8 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
                           ),
                           const SizedBox(width: 16),
                           Expanded(
+                              child: FeatureGate(
+                            feature: AI_SUGGESTIONS,
                             child: Button(
                               buttonType: ButtonType.primary,
                               onPressed: _isSaving
@@ -286,7 +290,7 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
                                       context, viewModel.currentJournalEntry),
                               text: 'Continue',
                             ),
-                          ),
+                          )),
                         ],
                       ),
                     ],
