@@ -11,6 +11,7 @@ import 'package:teja/domain/redux/journal/journal_analysis/journal_analysis_saga
 import 'package:teja/domain/redux/journal/journal_category/saga.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_saga.dart';
 import 'package:teja/domain/redux/journal/journal_logs/journal_logs_saga.dart';
+import 'package:teja/domain/redux/journal/journal_sync/journal_sync_saga.dart';
 import 'package:teja/domain/redux/journal/journal_template/saga.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_saga.dart';
 import 'package:teja/domain/redux/monthly_mood_report/monthly_mood_report_saga.dart';
@@ -61,6 +62,7 @@ Iterable<void> rootSaga(Store<AppState> store) sync* {
     'AISuggestionSaga': () => AISuggestionSaga().saga(),
     'YearlyMoodReportSaga': () => YearlyMoodReportSaga().saga(),
     'ProfilePageSaga': () => ProfilePageSaga().saga(),
+    'journalSync': () => JournalSyncSaga().saga(),
   };
 
   yield All(sagas.map((key, saga) => MapEntry(key, Spawn(() sync* {
@@ -68,6 +70,7 @@ Iterable<void> rootSaga(Store<AppState> store) sync* {
           yield Try(() sync* {
             yield Call(saga);
           }, Catch: (error, stackTrace) sync* {
+            print("error ${error}");
             if (error is AppError) {
               yield Put(AddAppErrorAction(
                   createAppError({'code': error.code, 'message': error.message, 'details': error.details})));

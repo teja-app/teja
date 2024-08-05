@@ -95,6 +95,76 @@ class JournalEntryEntity {
       body: body ?? this.body,
     );
   }
+
+  static JournalEntryEntity fromJson(Map<String, dynamic> json) {
+    return JournalEntryEntity(
+      id: json['id'],
+      templateId: json['templateId'],
+      timestamp: DateTime.parse(json['timestamp']),
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: DateTime.parse(json['updatedAt']),
+      questions: json['questions'] != null
+          ? (json['questions'] as List).map((q) => QuestionAnswerPairEntity.fromJson(q)).toList()
+          : null,
+      textEntries: json['textEntries'] != null
+          ? (json['textEntries'] as List).map((t) => TextEntryEntity.fromJson(t)).toList()
+          : null,
+      voiceEntries: json['voiceEntries'] != null
+          ? (json['voiceEntries'] as List).map((v) => VoiceEntryEntity.fromJson(v)).toList()
+          : null,
+      videoEntries: json['videoEntries'] != null
+          ? (json['videoEntries'] as List).map((v) => VideoEntryEntity.fromJson(v)).toList()
+          : null,
+      imageEntries: json['imageEntries'] != null
+          ? (json['imageEntries'] as List).map((i) => ImageEntryEntity.fromJson(i)).toList()
+          : null,
+      bulletPointEntries: json['bulletPointEntries'] != null
+          ? (json['bulletPointEntries'] as List).map((b) => BulletPointEntryEntity.fromJson(b)).toList()
+          : null,
+      painNoteEntries: json['painNoteEntries'] != null
+          ? (json['painNoteEntries'] as List).map((p) => PainNoteEntryEntity.fromJson(p)).toList()
+          : null,
+      metadata: json['metadata'] != null ? JournalEntryMetadataEntity.fromJson(json['metadata']) : null,
+      lock: json['lock'],
+      emoticon: json['emoticon'],
+      title: json['title'],
+      summary: json['summary'],
+      keyInsight: json['keyInsight'],
+      affirmation: json['affirmation'],
+      topics: json['topics'] != null ? List<String>.from(json['topics']) : null,
+      feelings: json['feelings'] != null
+          ? (json['feelings'] as List).map((f) => JournalFeelingEntity.fromJson(f)).toList()
+          : null,
+      body: json['body'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'templateId': templateId,
+      'timestamp': timestamp.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+      'questions': questions?.map((q) => q.toJson()).toList(),
+      'textEntries': textEntries?.map((t) => t.toJson()).toList(),
+      'voiceEntries': voiceEntries?.map((v) => v.toJson()).toList(),
+      'videoEntries': videoEntries?.map((v) => v.toJson()).toList(),
+      'imageEntries': imageEntries?.map((i) => i.toJson()).toList(),
+      'bulletPointEntries': bulletPointEntries?.map((b) => b.toJson()).toList(),
+      'painNoteEntries': painNoteEntries?.map((p) => p.toJson()).toList(),
+      'metadata': metadata?.toJson(),
+      'lock': lock,
+      'emoticon': emoticon,
+      'title': title,
+      'summary': summary,
+      'keyInsight': keyInsight,
+      'affirmation': affirmation,
+      'topics': topics,
+      'feelings': feelings?.map((f) => f.toJson()).toList(),
+      'body': body,
+    };
+  }
 }
 
 class JournalFeelingEntity {
@@ -114,6 +184,20 @@ class JournalFeelingEntity {
       emoticon: emoticon ?? this.emoticon,
       title: title ?? this.title,
     );
+  }
+
+  static JournalFeelingEntity fromJson(Map<String, dynamic> json) {
+    return JournalFeelingEntity(
+      emoticon: json['emoticon'],
+      title: json['title'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'emoticon': emoticon,
+      'title': title,
+    };
   }
 }
 
@@ -154,6 +238,30 @@ class QuestionAnswerPairEntity {
       voiceEntryIds: voiceEntryIds ?? this.voiceEntryIds,
     );
   }
+
+  static QuestionAnswerPairEntity fromJson(Map<String, dynamic> json) {
+    return QuestionAnswerPairEntity(
+      id: json['id'],
+      questionId: json['questionId'],
+      questionText: json['questionText'],
+      answerText: json['answerText'],
+      imageEntryIds: json['imageEntryIds'] != null ? List<String>.from(json['imageEntryIds']) : null,
+      videoEntryIds: json['videoEntryIds'] != null ? List<String>.from(json['videoEntryIds']) : null,
+      voiceEntryIds: json['voiceEntryIds'] != null ? List<String>.from(json['voiceEntryIds']) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'questionId': questionId,
+      'questionText': questionText,
+      'answerText': answerText,
+      'imageEntryIds': imageEntryIds,
+      'videoEntryIds': videoEntryIds,
+      'voiceEntryIds': voiceEntryIds,
+    };
+  }
 }
 
 class TextEntryEntity {
@@ -173,6 +281,20 @@ class TextEntryEntity {
       id: id ?? this.id,
       content: content ?? this.content,
     );
+  }
+
+  static TextEntryEntity fromJson(Map<String, dynamic> json) {
+    return TextEntryEntity(
+      id: json['id'],
+      content: json['content'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'content': content,
+    };
   }
 }
 
@@ -202,6 +324,24 @@ class ImageEntryEntity {
       hash: hash ?? this.hash,
     );
   }
+
+  static ImageEntryEntity fromJson(Map<String, dynamic> json) {
+    return ImageEntryEntity(
+      id: json['id'],
+      filePath: json['filePath'],
+      caption: json['caption'],
+      hash: json['hash'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'filePath': filePath,
+      'caption': caption,
+      'hash': hash,
+    };
+  }
 }
 
 class VideoEntryEntity {
@@ -229,6 +369,24 @@ class VideoEntryEntity {
       duration: duration ?? this.duration,
       hash: hash ?? this.hash,
     );
+  }
+
+  static VideoEntryEntity fromJson(Map<String, dynamic> json) {
+    return VideoEntryEntity(
+      id: json['id'],
+      filePath: json['filePath'],
+      duration: json['duration'],
+      hash: json['hash'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'filePath': filePath,
+      'duration': duration,
+      'hash': hash,
+    };
   }
 }
 
@@ -258,6 +416,24 @@ class VoiceEntryEntity {
       hash: hash ?? this.hash,
     );
   }
+
+  static VoiceEntryEntity fromJson(Map<String, dynamic> json) {
+    return VoiceEntryEntity(
+      id: json['id'],
+      filePath: json['filePath'],
+      duration: json['duration'],
+      hash: json['hash'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'filePath': filePath,
+      'duration': duration,
+      'hash': hash,
+    };
+  }
 }
 
 class BulletPointEntryEntity {
@@ -277,6 +453,20 @@ class BulletPointEntryEntity {
       id: id ?? this.id,
       points: points ?? this.points,
     );
+  }
+
+  static BulletPointEntryEntity fromJson(Map<String, dynamic> json) {
+    return BulletPointEntryEntity(
+      id: json['id'],
+      points: json['points'] != null ? List<String>.from(json['points']) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'points': points,
+    };
   }
 }
 
@@ -302,6 +492,22 @@ class PainNoteEntryEntity {
       notes: notes ?? this.notes,
     );
   }
+
+  static PainNoteEntryEntity fromJson(Map<String, dynamic> json) {
+    return PainNoteEntryEntity(
+      id: json['id'],
+      painLevel: json['painLevel'],
+      notes: json['notes'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'painLevel': painLevel,
+      'notes': notes,
+    };
+  }
 }
 
 class JournalEntryMetadataEntity {
@@ -317,5 +523,17 @@ class JournalEntryMetadataEntity {
     return JournalEntryMetadataEntity(
       tags: tags ?? this.tags,
     );
+  }
+
+  static JournalEntryMetadataEntity fromJson(Map<String, dynamic> json) {
+    return JournalEntryMetadataEntity(
+      tags: json['tags'] != null ? List<String>.from(json['tags']) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'tags': tags,
+    };
   }
 }
