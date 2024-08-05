@@ -105,15 +105,24 @@ class FeatureGateViewModel {
     SecureStorage secureStorage,
   ) async {
     try {
-      final accessDetails = await secureStorage.readAccessDetails();
-      print('Access details: $accessDetails'); // Debug print
-      final hasAccess = accessDetails?.contains(feature) ?? false;
-      print('Has access: $hasAccess'); // Debug print
-      return FeatureGateViewModel(hasAccess: hasAccess);
+      bool _hasExistingMnemonic =
+          await store.state.authState.hasExistingMnemonic;
+      return FeatureGateViewModel(hasAccess: _hasExistingMnemonic);
     } catch (e) {
       print('Error fetching access details: $e'); // Debug print
       return FeatureGateViewModel(
           hasAccess: false); // Default to no access on error
     }
+    // try {
+    //   final accessDetails = await secureStorage.readAccessDetails();
+    //   print('Access details: $accessDetails'); // Debug print
+    //   final hasAccess = accessDetails?.contains(feature) ?? false;
+    //   print('Has access: $hasAccess'); // Debug print
+    //   return FeatureGateViewModel(hasAccess: hasAccess);
+    // } catch (e) {
+    //   print('Error fetching access details: $e'); // Debug print
+    //   return FeatureGateViewModel(
+    //       hasAccess: false); // Default to no access on error
+    // }
   }
 }

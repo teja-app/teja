@@ -7,6 +7,8 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.dart';
 import 'package:teja/domain/redux/journal/journal_editor/quick_journal_editor_actions.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_actions.dart';
+import 'package:teja/domain/redux/permission/permissions_constants.dart';
+import 'package:teja/presentation/onboarding/widgets/feature_gate.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/button.dart';
 
@@ -14,7 +16,8 @@ class QuickJournalEntryScreen extends StatefulWidget {
   final String? entryId;
   final String? heroTag;
 
-  const QuickJournalEntryScreen({Key? key, this.entryId, this.heroTag}) : super(key: key);
+  const QuickJournalEntryScreen({Key? key, this.entryId, this.heroTag})
+      : super(key: key);
 
   @override
   QuickJournalEntryScreenState createState() => QuickJournalEntryScreenState();
@@ -34,7 +37,8 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
   }
 
   void _initializeJournalEntry() {
-    _store.dispatch(InitializeQuickJournalEditor(journalEntryId: widget.entryId));
+    _store
+        .dispatch(InitializeQuickJournalEditor(journalEntryId: widget.entryId));
   }
 
   @override
@@ -57,7 +61,8 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
     });
   }
 
-  Future<void> _saveEntry(BuildContext context, JournalEntryEntity? currentEntry) async {
+  Future<void> _saveEntry(
+      BuildContext context, JournalEntryEntity? currentEntry) async {
     if (_bodyController.text.isEmpty) {
       _showError('Journal entry cannot be empty');
       return;
@@ -110,7 +115,8 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
     );
   }
 
-  Future<void> _saveAndContinue(BuildContext context, JournalEntryEntity? currentEntry) async {
+  Future<void> _saveAndContinue(
+      BuildContext context, JournalEntryEntity? currentEntry) async {
     if (_bodyController.text.isEmpty) {
       _showError('Journal entry cannot be empty');
       return;
@@ -138,7 +144,10 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
             state.selectedJournalEntry!.id == updatedEntry.id &&
             state.selectedJournalEntry!.body != null) {
           List<Map<String, String>> initialQAList = [
-            {'question': 'What\'s on your mind?', 'answer': _bodyController.text}
+            {
+              'question': 'What\'s on your mind?',
+              'answer': _bodyController.text
+            }
           ];
 
           GoRouter.of(context).pushNamed(
@@ -178,12 +187,16 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
             title: const Text("Quick Journal Entry"),
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
-              onPressed: _isSaving ? null : () => _saveEntry(context, viewModel.currentJournalEntry),
+              onPressed: _isSaving
+                  ? null
+                  : () => _saveEntry(context, viewModel.currentJournalEntry),
             ),
             actions: [
               IconButton(
                 icon: const Icon(Icons.done),
-                onPressed: _isSaving ? null : () => _saveEntry(context, viewModel.currentJournalEntry),
+                onPressed: _isSaving
+                    ? null
+                    : () => _saveEntry(context, viewModel.currentJournalEntry),
               ),
             ],
           ),
@@ -209,17 +222,25 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
                         Expanded(
                           child: Button(
                             buttonType: ButtonType.primary,
-                            onPressed: _isSaving ? null : () => _saveEntry(context, viewModel.currentJournalEntry),
+                            onPressed: _isSaving
+                                ? null
+                                : () => _saveEntry(
+                                    context, viewModel.currentJournalEntry),
                             text: 'Save',
                           ),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
-                          child: Button(
-                            buttonType: ButtonType.secondary,
-                            onPressed:
-                                _isSaving ? null : () => _saveAndContinue(context, viewModel.currentJournalEntry),
-                            text: 'Continue',
+                          child: FeatureGate(
+                            feature: AI_SUGGESTIONS,
+                            child: Button(
+                              buttonType: ButtonType.secondary,
+                              onPressed: _isSaving
+                                  ? null
+                                  : () => _saveAndContinue(
+                                      context, viewModel.currentJournalEntry),
+                              text: 'Continue',
+                            ),
                           ),
                         ),
                       ],

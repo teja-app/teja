@@ -14,10 +14,12 @@ enum FeatureTab { free, paid }
 class FeatureAccessBottomSheet extends StatefulWidget {
   final FeatureTab initialTab;
 
-  const FeatureAccessBottomSheet({Key? key, this.initialTab = FeatureTab.free}) : super(key: key);
+  const FeatureAccessBottomSheet({Key? key, this.initialTab = FeatureTab.free})
+      : super(key: key);
 
   @override
-  FeatureAccessBottomSheetState createState() => FeatureAccessBottomSheetState();
+  FeatureAccessBottomSheetState createState() =>
+      FeatureAccessBottomSheetState();
 }
 
 class FeatureAccessBottomSheetState extends State<FeatureAccessBottomSheet> {
@@ -51,7 +53,8 @@ class FeatureAccessBottomSheetState extends State<FeatureAccessBottomSheet> {
       print('Product IDs: $kIds');
 
       try {
-        final ProductDetailsResponse response = await _iap.queryProductDetails(kIds);
+        final ProductDetailsResponse response =
+            await _iap.queryProductDetails(kIds);
         if (response.error != null) {
           print('Error querying product details: ${response.error!.message}');
           // You might want to show this error to the user
@@ -100,7 +103,8 @@ class FeatureAccessBottomSheetState extends State<FeatureAccessBottomSheet> {
     return StoreConnector<AppState, Store<AppState>>(
       converter: (store) => store,
       builder: (context, store) {
-        final bool hasExistingMnemonic = store.state.authState.hasExistingMnemonic;
+        final bool hasExistingMnemonic =
+            store.state.authState.hasExistingMnemonic;
         final ThemeData theme = Theme.of(context);
         final textTheme = theme.textTheme;
 
@@ -110,7 +114,8 @@ class FeatureAccessBottomSheetState extends State<FeatureAccessBottomSheet> {
           child: Container(
             padding: const EdgeInsets.all(20.0),
             decoration: BoxDecoration(
-              color: theme.scaffoldBackgroundColor, // Use the theme's background color
+              color: theme
+                  .scaffoldBackgroundColor, // Use the theme's background color
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(25.0),
                 topRight: Radius.circular(25.0),
@@ -137,7 +142,7 @@ class FeatureAccessBottomSheetState extends State<FeatureAccessBottomSheet> {
                 const TabBar(
                   tabs: [
                     Tab(text: 'Free'),
-                    Tab(text: 'Paid'),
+                    // Tab(text: 'Paid'),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -164,7 +169,8 @@ class FeatureAccessBottomSheetState extends State<FeatureAccessBottomSheet> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('You do not have access to this free feature.', style: textTheme.bodyMedium),
+        Text('You do not have access to this free feature.',
+            style: textTheme.bodyMedium),
         const SizedBox(height: 20),
         Align(
           alignment: Alignment.center,
@@ -194,7 +200,8 @@ class FeatureAccessBottomSheetState extends State<FeatureAccessBottomSheet> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('You do not have access to this paid feature.', style: textTheme.bodyMedium),
+        Text('You do not have access to this paid feature.',
+            style: textTheme.bodyMedium),
         const SizedBox(height: 20),
         Align(
           alignment: Alignment.center,
@@ -232,14 +239,17 @@ class FeatureAccessBottomSheetState extends State<FeatureAccessBottomSheet> {
       if (_products.isEmpty) {
         throw Exception('Product details are not loaded yet.');
       }
-      final ProductDetails product = _products.firstWhere((product) => product.id == productId);
-      final PurchaseParam purchaseParam = PurchaseParam(productDetails: product);
+      final ProductDetails product =
+          _products.firstWhere((product) => product.id == productId);
+      final PurchaseParam purchaseParam =
+          PurchaseParam(productDetails: product);
       _iap.buyNonConsumable(purchaseParam: purchaseParam);
     } catch (e) {
       // Handle the error
       print('Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Product not found. Please try again later.')),
+        const SnackBar(
+            content: Text('Product not found. Please try again later.')),
       );
     }
   }

@@ -17,13 +17,15 @@ class AISuggestionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, _AISuggestionButtonViewModel>(
-      converter: (store) => _AISuggestionButtonViewModel.fromStore(store),
+      converter: (store) =>
+          _AISuggestionButtonViewModel.fromStore(store, moodId),
       onInit: (store) => store.dispatch(LoadMoodDetailAction(moodId)),
       builder: (context, viewModel) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (viewModel.suggestions != null)
+            if (viewModel.suggestions != null &&
+                viewModel.currentMoodId == moodId)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: MarkdownBody(
@@ -64,25 +66,31 @@ class _AISuggestionButtonViewModel {
   final bool isLoading;
   final String? errorMessage;
   final Function(String) getSuggestions;
+  final String currentMoodId;
 
   _AISuggestionButtonViewModel({
     required this.suggestions,
     required this.isLoading,
     required this.errorMessage,
     required this.getSuggestions,
+    required this.currentMoodId,
   });
 
-  static _AISuggestionButtonViewModel fromStore(Store<AppState> store) {
+  static _AISuggestionButtonViewModel fromStore(
+      Store<AppState> store, String moodId) {
     final aiSuggestionState = store.state.aiSuggestionState;
     final selectedMoodLog = store.state.moodDetailPage.selectedMoodLog;
 
     return _AISuggestionButtonViewModel(
-      suggestions: selectedMoodLog?.ai?.suggestion,
+      suggestions: selectedMoodLog?.id == moodId
+          ? selectedMoodLog?.ai?.suggestion
+          : null,
       isLoading: aiSuggestionState.isLoading,
       errorMessage: aiSuggestionState.errorMessage,
       getSuggestions: (moodId) {
         store.dispatch(FetchAISuggestionAction(selectedMoodLog!));
       },
+      currentMoodId: moodId,
     );
   }
 }
