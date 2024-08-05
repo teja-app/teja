@@ -26,7 +26,6 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
   final TextEditingController _bodyController = TextEditingController();
   bool _isSaving = false;
   bool _isInitialized = false;
-  bool _isInitialized = false;
   String? _errorMessage;
 
   @override

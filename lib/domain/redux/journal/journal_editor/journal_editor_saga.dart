@@ -9,7 +9,6 @@ import 'package:teja/domain/redux/journal/journal_editor/journal_editor_saga.voi
 import 'package:teja/domain/redux/journal/journal_editor/quick_journal_editor_saga.dart';
 import 'package:teja/domain/redux/journal/journal_logs/journal_logs_actions.dart';
 import 'package:teja/domain/redux/journal/journal_sync/journal_sync_actions.dart';
-import 'package:teja/domain/redux/journal/journal_sync/journal_sync_actions.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
 import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart';
 import 'package:teja/infrastructure/repositories/journal_entry_repository.dart';
@@ -19,8 +18,7 @@ import 'package:teja/infrastructure/utils/helpers.dart';
 
 class JournalEditorSaga {
   Iterable<void> saga() sync* {
-    yield TakeEvery(_handleInitializeJournalEditor,
-        pattern: InitializeJournalEditor);
+    yield TakeEvery(_handleInitializeJournalEditor, pattern: InitializeJournalEditor);
     yield TakeEvery(_handleSaveJournalEntry, pattern: SaveJournalEntry);
     yield TakeEvery(_handleUpdateQuestionAnswer, pattern: UpdateQuestionAnswer);
     yield TakeEvery(_handleClearJournalFormAction, pattern: ClearJournalEditor);
@@ -35,8 +33,7 @@ class JournalEditorSaga {
     yield Try(() sync* {
       var currentJournalIdResult = Result<String?>();
       yield Select(
-        selector: (AppState state) =>
-            state.journalEditorState.currentJournalEntry?.id,
+        selector: (AppState state) => state.journalEditorState.currentJournalEntry?.id,
         result: currentJournalIdResult,
       );
       String? journalEntryId = currentJournalIdResult.value;
@@ -61,8 +58,7 @@ class JournalEditorSaga {
     });
   }
 
-  _handleInitializeJournalEditor(
-      {required InitializeJournalEditor action}) sync* {
+  _handleInitializeJournalEditor({required InitializeJournalEditor action}) sync* {
     var isarResult = Result<Isar>();
     yield GetContext('isar', result: isarResult);
     Isar isar = isarResult.value!;
@@ -76,16 +72,14 @@ class JournalEditorSaga {
         yield Call(journalEntryRepository.getJournalEntryById,
             args: [action.journalEntryId], result: journalEntryResult);
         JournalEntry journalEntry = journalEntryResult.value!;
-        yield Put(InitializeJournalEditorSuccessAction(
-            journalEntryRepository.toEntity(journalEntry)));
+        yield Put(InitializeJournalEditorSuccessAction(journalEntryRepository.toEntity(journalEntry)));
       } else if (action.template != null && action.template?.id != null) {
         // Fetch the journal template to get the questions
         var journalTemplateResult = Result<JournalTemplateEntity>();
         yield Call(journalTemplateRepository.getJournalTemplateById,
             args: [action.template!.templateID], result: journalTemplateResult);
 
-        JournalTemplateEntity journalTemplate =
-            journalTemplateResult.value!; // Handle null case as needed
+        JournalTemplateEntity journalTemplate = journalTemplateResult.value!; // Handle null case as needed
 
         // Create a new entry with questions initialized from the template
         JournalEntry newJournalEntry = JournalEntry()
@@ -101,10 +95,8 @@ class JournalEditorSaga {
                 ..answerText = "")
               .toList();
 
-        yield Call(journalEntryRepository.addOrUpdateJournalEntry,
-            args: [newJournalEntry]);
-        yield Put(InitializeJournalEditorSuccessAction(
-            journalEntryRepository.toEntity(newJournalEntry)));
+        yield Call(journalEntryRepository.addOrUpdateJournalEntry, args: [newJournalEntry]);
+        yield Put(InitializeJournalEditorSuccessAction(journalEntryRepository.toEntity(newJournalEntry)));
       }
     }, Catch: (e, s) sync* {
       yield Put(InitializeJournalEditorFailureAction(e.toString()));
@@ -173,14 +165,12 @@ class JournalEditorSaga {
               ..notes = p.notes)
             .toList()
         ..metadata = action.journalEntry.metadata != null
-            ? (JournalEntryMetadata()
-              ..tags = action.journalEntry.metadata!.tags)
+            ? (JournalEntryMetadata()..tags = action.journalEntry.metadata!.tags)
             : null
         ..lock = action.journalEntry.lock
         ..title = action.journalEntry.title
         ..body = action.journalEntry.body;
-      yield Call(journalEntryRepository.addOrUpdateJournalEntry,
-          args: [journalEntry]);
+      yield Call(journalEntryRepository.addOrUpdateJournalEntry, args: [journalEntry]);
       yield Put(JournalEntrySaved("Journal entry saved successfully."));
       yield Put(const SyncJournalEntries());
     }, Catch: (e, s) sync* {
@@ -197,8 +187,7 @@ class JournalEditorSaga {
 
     // Fetch the existing journal entry
     var journalEntryResult = Result<JournalEntry>();
-    yield Call(journalEntryRepository.getJournalEntryById,
-        args: [action.journalEntryId], result: journalEntryResult);
+    yield Call(journalEntryRepository.getJournalEntryById, args: [action.journalEntryId], result: journalEntryResult);
 
     if (journalEntryResult.value != null) {
       // Save the updated journal entry
@@ -207,8 +196,7 @@ class JournalEditorSaga {
         JournalEntry journalEntry = journalEntryResult.value!;
 
         // Convert the fixed-length list to a growable list
-        var questions =
-            List<QuestionAnswerPair>.from(journalEntry.questions ?? []);
+        var questions = List<QuestionAnswerPair>.from(journalEntry.questions ?? []);
 
         // Check if the question exists
         var question = questions.firstWhere(
@@ -229,19 +217,15 @@ class JournalEditorSaga {
         // Update the journal entry with the new list of questions
         journalEntry.questions = questions;
 
-        yield Call(journalEntryRepository.addOrUpdateJournalEntry,
-            args: [journalEntry]);
+        yield Call(journalEntryRepository.addOrUpdateJournalEntry, args: [journalEntry]);
         yield Put(UpdateQuestionAnswerSuccessAction(
-            journalEntryId: action.journalEntryId,
-            questionId: action.questionId,
-            answerText: action.answerText));
+            journalEntryId: action.journalEntryId, questionId: action.questionId, answerText: action.answerText));
         yield Put(const SyncJournalEntries());
       }, Catch: (e, s) sync* {
         yield Put(UpdateQuestionAnswerFailureAction(e.toString()));
       });
     } else {
-      yield Put(
-          const UpdateQuestionAnswerFailureAction("Journal entry not found."));
+      yield Put(const UpdateQuestionAnswerFailureAction("Journal entry not found."));
     }
   }
 }
