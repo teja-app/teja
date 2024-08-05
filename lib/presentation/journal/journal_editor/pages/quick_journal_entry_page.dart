@@ -142,16 +142,9 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
         if (state.selectedJournalEntry != null &&
             state.selectedJournalEntry!.id == updatedEntry.id &&
             state.selectedJournalEntry!.body != null) {
-          List<Map<String, String>> initialQAList = [
-            {
-              'question': 'What\'s on your mind?',
-              'answer': _bodyController.text
-            }
-          ];
-
           GoRouter.of(context).pushNamed(
             RootPath.journalEntryPage,
-            extra: initialQAList,
+            pathParameters: {'id': updatedEntry.id},
           );
         } else {
           _showError('Failed to save entry. Please try again.');

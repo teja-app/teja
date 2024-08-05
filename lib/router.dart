@@ -157,9 +157,9 @@ final GoRouter router = GoRouter(
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       name: RootPath.journalEntryPage,
-      path: '/journal_entry_page',
+      path: '/journal_entry_page/:id',
       builder: (context, state) => JournalEntryPage(
-        initialQAList: state.extra as List<Map<String, String>>,
+        journalEntryId: state.pathParameters['id']!,
       ),
     ),
     GoRoute(

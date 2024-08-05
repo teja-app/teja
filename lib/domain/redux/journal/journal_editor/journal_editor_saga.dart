@@ -8,14 +8,13 @@ import 'package:teja/domain/redux/journal/journal_editor/journal_editor_saga.vid
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_saga.voice_saga.dart';
 import 'package:teja/domain/redux/journal/journal_editor/quick_journal_editor_saga.dart';
 import 'package:teja/domain/redux/journal/journal_logs/journal_logs_actions.dart';
+import 'package:teja/domain/redux/journal/journal_sync/journal_sync_actions.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
 import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart';
 import 'package:teja/infrastructure/repositories/journal_entry_repository.dart';
 import 'package:isar/isar.dart';
-import 'package:teja/infrastructure/repositories/journal_entry_repository_helpers.dart';
 import 'package:teja/infrastructure/repositories/journal_template_repository.dart';
 import 'package:teja/infrastructure/utils/helpers.dart';
-import 'package:teja/shared/helpers/logger.dart';
 
 class JournalEditorSaga {
   Iterable<void> saga() sync* {
@@ -173,6 +172,7 @@ class JournalEditorSaga {
         ..body = action.journalEntry.body;
       yield Call(journalEntryRepository.addOrUpdateJournalEntry, args: [journalEntry]);
       yield Put(JournalEntrySaved("Journal entry saved successfully."));
+      yield Put(const SyncJournalEntries());
     }, Catch: (e, s) sync* {
       yield Put(JournalEntrySaveFailed(e.toString()));
     });
@@ -220,6 +220,7 @@ class JournalEditorSaga {
         yield Call(journalEntryRepository.addOrUpdateJournalEntry, args: [journalEntry]);
         yield Put(UpdateQuestionAnswerSuccessAction(
             journalEntryId: action.journalEntryId, questionId: action.questionId, answerText: action.answerText));
+        yield Put(const SyncJournalEntries());
       }, Catch: (e, s) sync* {
         yield Put(UpdateQuestionAnswerFailureAction(e.toString()));
       });

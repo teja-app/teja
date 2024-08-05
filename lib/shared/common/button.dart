@@ -5,7 +5,7 @@ enum ButtonType { defaultButton, primary, secondary, disabled }
 class Button extends StatelessWidget {
   final String text;
   final String? secondaryText;
-  final void Function()? onPressed;
+  final VoidCallback? onPressed;
   final double? width;
   final IconData? icon;
   final double margin;
@@ -13,98 +13,125 @@ class Button extends StatelessWidget {
   final double runSpacing;
   final ButtonType buttonType;
   final double buttonRadius;
-  final Color textColor;
-  final Color backgroundColor;
-  final Color borderColor;
+  final Color? textColor;
+  final Color? backgroundColor;
+  final Color? borderColor;
+  final double elevation;
+  final double height;
+  final TextStyle? textStyle;
+  final TextStyle? secondaryTextStyle;
 
   const Button({
-    super.key,
+    Key? key,
     required this.text,
     this.secondaryText,
     this.onPressed,
     this.icon,
-    this.textColor = Colors.black,
-    this.backgroundColor = Colors.white,
-    this.borderColor = Colors.black,
-    this.width = 40,
+    this.textColor,
+    this.backgroundColor,
+    this.borderColor,
+    this.width,
     this.margin = 8.0,
     this.spacing = 8.0,
     this.runSpacing = 4.0,
     this.buttonType = ButtonType.defaultButton,
     this.buttonRadius = 8.0,
-  });
+    this.elevation = 0,
+    this.height = 42,
+    this.textStyle,
+    this.secondaryTextStyle,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Color textColor = this.textColor;
-    Color backgroundColor = this.backgroundColor;
-    Color borderColor = this.borderColor;
+    final ThemeData theme = Theme.of(context);
 
-    switch (buttonType) {
-      case ButtonType.primary:
-        textColor = Colors.white;
-        backgroundColor = Colors.black;
-        borderColor = Colors.transparent;
-        break;
-      case ButtonType.secondary:
-        textColor = Colors.black;
-        backgroundColor = Colors.white;
-        borderColor = Colors.transparent;
-        break;
-      case ButtonType.disabled:
-        textColor = Colors.grey;
-        backgroundColor = Colors.transparent;
-        borderColor = Colors.transparent;
-        break;
-      case ButtonType.defaultButton:
-      default:
-        textColor = this.textColor;
-        backgroundColor = this.backgroundColor;
-        borderColor = this.borderColor;
-        break;
+    Color getTextColor() {
+      switch (buttonType) {
+        case ButtonType.primary:
+          return textColor ?? theme.colorScheme.onPrimary;
+        case ButtonType.secondary:
+          return textColor ?? theme.colorScheme.onSecondary;
+        case ButtonType.disabled:
+          return Colors.grey;
+        case ButtonType.defaultButton:
+        default:
+          return textColor ?? theme.colorScheme.onSurface;
+      }
+    }
+
+    Color getBackgroundColor() {
+      switch (buttonType) {
+        case ButtonType.primary:
+          return backgroundColor ?? theme.colorScheme.primary;
+        case ButtonType.secondary:
+          return backgroundColor ?? theme.colorScheme.secondary;
+        case ButtonType.disabled:
+          return Colors.grey.withOpacity(0.3);
+        case ButtonType.defaultButton:
+        default:
+          return backgroundColor ?? theme.colorScheme.surface;
+      }
+    }
+
+    Color getBorderColor() {
+      switch (buttonType) {
+        case ButtonType.primary:
+        case ButtonType.secondary:
+          return Colors.transparent;
+        case ButtonType.disabled:
+          return Colors.grey.withOpacity(0.5);
+        case ButtonType.defaultButton:
+        default:
+          return borderColor ?? theme.colorScheme.outline;
+      }
     }
 
     return Container(
       margin: EdgeInsets.all(margin),
-      child: TextButton(
-        onPressed: onPressed,
-        style: TextButton.styleFrom(
-          foregroundColor: textColor,
-          backgroundColor: backgroundColor,
-          maximumSize: const Size(double.infinity, 42),
-          minimumSize: Size(width ?? 40, 42),
-          side: BorderSide(color: borderColor),
+      child: ElevatedButton(
+        onPressed: buttonType == ButtonType.disabled ? null : onPressed,
+        style: ElevatedButton.styleFrom(
+          foregroundColor: getTextColor(),
+          backgroundColor: getBackgroundColor(),
+          elevation: elevation,
+          minimumSize: Size(width ?? 40, height),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(buttonRadius)),
+            borderRadius: BorderRadius.circular(buttonRadius),
+            side: BorderSide(color: getBorderColor()),
           ),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Wrap(
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: spacing, // space between parts horizontally
-            runSpacing: runSpacing, // space between parts vertically when wrapping
-            children: [
-              if (icon != null)
-                Icon(
-                  icon,
-                  color: textColor,
-                  size: 16,
-                ),
-              Text(
-                text,
-                style: TextStyle(color: textColor),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null)
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: Icon(icon, size: 18, color: getTextColor()),
               ),
-              if (secondaryText != null)
-                Text(
-                  secondaryText!,
-                  style: TextStyle(
-                    color: textColor.withOpacity(0.7),
-                    fontSize: 12,
+            Flexible(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    text,
+                    style: textStyle?.copyWith(color: getTextColor()) ?? TextStyle(color: getTextColor()),
                   ),
-                ),
-            ],
-          ),
+                  if (secondaryText != null)
+                    Text(
+                      secondaryText!,
+                      style: secondaryTextStyle?.copyWith(color: getTextColor().withOpacity(0.7)) ??
+                          TextStyle(
+                            color: getTextColor().withOpacity(0.7),
+                            fontSize: 12,
+                          ),
+                    ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

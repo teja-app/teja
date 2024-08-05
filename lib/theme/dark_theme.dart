@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 final ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
-  cardColor: Colors.black,
+  cardColor: const Color(0xFF2C2C2C), // Darker gray for cards
   textTheme: GoogleFonts.notoSansTextTheme(
     ThemeData(brightness: Brightness.dark).textTheme,
   ).copyWith(
@@ -22,97 +22,79 @@ final ThemeData darkTheme = ThemeData(
     ),
   ),
   timePickerTheme: TimePickerThemeData(
-    backgroundColor: Colors.black,
-    dialHandColor: Colors.white,
-    dialBackgroundColor: Colors.black,
+    backgroundColor: const Color(0xFF3A3A3A),
+    dialHandColor: Colors.green[400],
+    dialBackgroundColor: const Color(0xFF2C2C2C),
     dialTextColor: Colors.white,
     dayPeriodTextColor: Colors.white,
     hourMinuteTextColor: Colors.white,
-    dayPeriodColor: Colors.black,
+    dayPeriodColor: const Color(0xFF3A3A3A),
     confirmButtonStyle: ButtonStyle(
-      backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+      backgroundColor: MaterialStateProperty.all<Color>(Colors.green[400]!),
       foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
-      textStyle: MaterialStateProperty.all<TextStyle>(
-        const TextStyle(
-          color: Colors.black,
-          fontWeight: FontWeight.normal,
-        ),
-      ),
     ),
     cancelButtonStyle: ButtonStyle(
-      backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-      foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
-      textStyle: MaterialStateProperty.all<TextStyle>(
-        const TextStyle(
-          color: Colors.black,
-          fontWeight: FontWeight.normal,
-        ),
-      ),
-      shape: MaterialStateProperty.all<OutlinedBorder>(
-        RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-      ),
+      backgroundColor: MaterialStateProperty.all<Color>(Colors.grey[700]!),
+      foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
     ),
     hourMinuteShape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10),
-      side: const BorderSide(color: Colors.white),
+      side: BorderSide(color: Colors.green[400]!),
     ),
     dayPeriodShape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10),
-      side: const BorderSide(color: Colors.white),
+      side: BorderSide(color: Colors.green[400]!),
     ),
-    entryModeIconColor: Colors.white,
-    helpTextStyle: const TextStyle(
-      color: Colors.white,
+    entryModeIconColor: Colors.green[400],
+    helpTextStyle: TextStyle(
+      color: Colors.grey[300],
       fontSize: 16,
     ),
   ),
-  cardTheme: CardTheme(
-    color: Colors.grey.shade900,
+  cardTheme: const CardTheme(
+    color: Color(0xFF2C2C2C),
   ),
   popupMenuTheme: const PopupMenuThemeData(
-    color: Colors.black,
+    color: Color(0xFF3A3A3A),
   ),
-  colorScheme: ColorScheme.fromSeed(
-    seedColor: Colors.white,
-    brightness: Brightness.dark,
-    primary: Colors.white,
-    secondary: Colors.grey.shade300,
-    surface: Colors.black,
-    onPrimary: Colors.black,
-    onSecondary: Colors.white,
+  colorScheme: ColorScheme.dark(
+    primary: Colors.green[400]!,
+    secondary: Colors.green[200]!,
+    onPrimary: Colors.white,
+    onSecondary: Colors.black,
+    onSurface: Colors.white,
   ),
   navigationBarTheme: const NavigationBarThemeData(
-    backgroundColor: Colors.black,
+    backgroundColor: Color(0xFF1E1E1E),
+    indicatorColor: Color.fromARGB(255, 48, 49, 48),
   ),
-  scaffoldBackgroundColor: Colors.black,
+  scaffoldBackgroundColor: const Color(0xFF1E1E1E), // Dark gray scaffold background
   appBarTheme: const AppBarTheme(
-    color: Colors.black,
+    color: Color(0xFF2C2C2C),
   ),
-  floatingActionButtonTheme: const FloatingActionButtonThemeData(
-    backgroundColor: Colors.white,
+  floatingActionButtonTheme: FloatingActionButtonThemeData(
+    backgroundColor: Colors.green[400],
     foregroundColor: Colors.black,
   ),
   segmentedButtonTheme: SegmentedButtonThemeData(
     style: ButtonStyle(
-      foregroundColor: WidgetStateProperty.resolveWith<Color>(
-        (Set<WidgetState> states) {
-          if (states.contains(WidgetState.selected)) {
+      foregroundColor: MaterialStateProperty.resolveWith<Color>(
+        (Set<MaterialState> states) {
+          if (states.contains(MaterialState.selected)) {
             return Colors.black;
           }
           return Colors.white;
         },
       ),
-      backgroundColor: WidgetStateProperty.resolveWith<Color>(
-        (Set<WidgetState> states) {
-          if (states.contains(WidgetState.selected)) {
-            return Colors.white;
+      backgroundColor: MaterialStateProperty.resolveWith<Color>(
+        (Set<MaterialState> states) {
+          if (states.contains(MaterialState.selected)) {
+            return Colors.green[400]!;
           }
-          return Colors.black;
+          return const Color(0xFF3A3A3A);
         },
       ),
-      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
         RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),
         ),

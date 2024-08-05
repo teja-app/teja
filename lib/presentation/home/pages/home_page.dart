@@ -139,7 +139,7 @@ class _HomePageState extends State<HomePage> {
               ),
               const SizedBox(height: 20),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 0),
                 child: Hero(
                   tag: 'quickInputHero',
                   child: QuickInputWidget(
@@ -148,6 +148,12 @@ class _HomePageState extends State<HomePage> {
                         'quickJournalEntry',
                         extra: {'heroTag': 'quickInputHero'},
                       );
+                    },
+                    onMoodTap: () {
+                      context.pushNamed(RootPath.moodEdit);
+                    },
+                    onAudioTap: () {
+                      context.pushNamed(RootPath.moodEdit);
                     },
                   ),
                 ),
@@ -182,7 +188,6 @@ class _HomePageState extends State<HomePage> {
         leadingWidth: 72,
         // actions: const [TokenWidget()],
       ),
-      floatingActionButton: const JournalCollectorFab(),
       body: isDesktop(context)
           ? Row(
               children: [

@@ -3,9 +3,8 @@ import 'package:flutter/foundation.dart';
 @immutable
 class AnalyzeJournalAction {
   final String journalEntryId;
-  final List<Map<String, String>> qaList;
 
-  const AnalyzeJournalAction(this.journalEntryId, this.qaList);
+  const AnalyzeJournalAction(this.journalEntryId);
 }
 
 @immutable
