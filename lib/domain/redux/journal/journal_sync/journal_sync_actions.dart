@@ -4,6 +4,22 @@ class SyncJournalEntries {
   const SyncJournalEntries();
 }
 
+class SyncJournalEntriesPartialSuccessAction {
+  final List<JournalEntryEntity> serverChanges;
+  final List<JournalEntryEntity> clientChanges;
+  final DateTime newSyncTimestamp;
+  final List<String> failedChunks;
+  final int lastSuccessfulIndex;
+
+  SyncJournalEntriesPartialSuccessAction({
+    required this.serverChanges,
+    required this.clientChanges,
+    required this.newSyncTimestamp,
+    required this.failedChunks,
+    required this.lastSuccessfulIndex,
+  });
+}
+
 class SyncJournalEntriesSuccessAction {
   final List<JournalEntryEntity> serverChanges;
   final List<JournalEntryEntity> clientChanges;

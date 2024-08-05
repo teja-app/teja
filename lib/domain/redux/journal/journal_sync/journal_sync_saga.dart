@@ -1,4 +1,5 @@
 import 'package:redux_saga/redux_saga.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
 import 'package:teja/domain/redux/journal/journal_sync/journal_sync_actions.dart';
 import 'package:teja/infrastructure/api/journal_entry_api.dart';
@@ -12,50 +13,77 @@ class JournalSyncSaga {
   }
 
   _handleSyncJournalEntries({required SyncJournalEntries action}) sync* {
-    var isarResult = Result<Isar>();
-    yield GetContext('isar', result: isarResult);
-    Isar isar = isarResult.value!;
+    try {
+      var isarResult = Result<Isar>();
+      yield GetContext('isar', result: isarResult);
+      Isar isar = isarResult.value!;
 
-    var journalEntryRepository = JournalEntryRepository(isar);
-    print("_handleSyncJournalEntries:2");
+      var journalEntryRepository = JournalEntryRepository(isar);
 
-    // Get the last sync timestamp
-    var lastSyncTimestampResult = Result<DateTime?>();
-    yield Call(journalEntryRepository.getLastSyncTimestamp, result: lastSyncTimestampResult);
-    DateTime lastSyncTimestamp = lastSyncTimestampResult.value ?? DateTime.fromMillisecondsSinceEpoch(0);
+      var lastSyncTimestampResult = Result<DateTime?>();
+      yield Call(journalEntryRepository.getLastSyncTimestamp, result: lastSyncTimestampResult);
+      DateTime lastSyncTimestamp = lastSyncTimestampResult.value ?? DateTime.fromMillisecondsSinceEpoch(0);
 
-    print("_handleSyncJournalEntries:3 ${lastSyncTimestamp}");
-    // Get all local entries
-    var localEntriesResult = Result<List<JournalEntryEntity>>();
-    yield Call(journalEntryRepository.getAllJournalEntries, result: localEntriesResult);
-    print("_handleSyncJournalEntries:4");
-    List<JournalEntryEntity> localEntries = localEntriesResult.value!;
+      var localEntriesResult = Result<List<JournalEntryEntity>>();
+      yield Call(journalEntryRepository.getAllJournalEntries, result: localEntriesResult);
+      List<JournalEntryEntity> localEntries = localEntriesResult.value!;
 
-    print("_handleSyncJournalEntries:localEntries ${localEntries}");
-    JournalEntryApiService api = JournalEntryApiService();
+      var previousFailedChunksResult = Result<List<String>?>();
+      yield Call(_getPreviousFailedChunks, result: previousFailedChunksResult);
+      List<String>? previousFailedChunks = previousFailedChunksResult.value;
 
-    // Sync with server
-    var syncResultResult = Result<Map<String, List<JournalEntryEntity>>>();
-    yield Call(api.syncEntries, args: [localEntries, lastSyncTimestamp], result: syncResultResult);
-    var syncResult = syncResultResult.value!;
+      JournalEntryApiService api = JournalEntryApiService();
 
-    // Process server changes
-    yield Call(journalEntryRepository.addOrUpdateJournalEntries, args: [syncResult['serverChanges']]);
+      var syncResultResult = Result<Map<String, dynamic>>();
+      yield Call(api.syncEntries,
+          args: [localEntries, lastSyncTimestamp, previousFailedChunks], result: syncResultResult);
+      var syncResult = syncResultResult.value!;
 
-    // Process client changes
-    yield Call(journalEntryRepository.addOrUpdateJournalEntries, args: [syncResult['clientChanges']]);
+      if (syncResult['serverChanges'].isNotEmpty) {
+        yield Call(journalEntryRepository.addOrUpdateJournalEntries, args: [syncResult['serverChanges']]);
+      }
 
-    // Update the last sync timestamp
-    DateTime newSyncTimestamp = DateTime.now();
-    yield Call(journalEntryRepository.updateLastSyncTimestamp, args: [newSyncTimestamp]);
+      if (syncResult['clientChanges'].isNotEmpty) {
+        yield Call(journalEntryRepository.addOrUpdateJournalEntries, args: [syncResult['clientChanges']]);
+      }
 
-    yield Put(
-      SyncJournalEntriesSuccessAction(
-        serverChanges: syncResult['serverChanges'] ?? [],
-        clientChanges: syncResult['clientChanges'] ?? [],
-        newSyncTimestamp: newSyncTimestamp,
-      ),
-    );
+      if (syncResult['failedChunks'].isEmpty) {
+        yield Call(_clearFailedChunks);
+        yield Call(journalEntryRepository.updateLastSyncTimestamp, args: [DateTime.now()]);
+        yield Put(SyncJournalEntriesSuccessAction(
+          serverChanges: syncResult['serverChanges'],
+          clientChanges: syncResult['clientChanges'],
+          newSyncTimestamp: DateTime.now(),
+        ));
+      } else {
+        yield Call(_storeFailedChunks, args: [syncResult['failedChunks']]);
+        yield Call(journalEntryRepository.updateLastSyncTimestamp, args: [lastSyncTimestamp]);
+        yield Put(SyncJournalEntriesPartialSuccessAction(
+          serverChanges: syncResult['serverChanges'],
+          clientChanges: syncResult['clientChanges'],
+          newSyncTimestamp: lastSyncTimestamp,
+          failedChunks: syncResult['failedChunks'],
+          lastSuccessfulIndex: syncResult['lastSuccessfulIndex'],
+        ));
+      }
+    } catch (error) {
+      yield Put(SyncJournalEntriesFailureAction(error.toString()));
+    }
+  }
+
+  Future<List<String>?> _getPreviousFailedChunks() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getStringList('failedChunks');
+  }
+
+  Future<void> _storeFailedChunks(List<String> failedChunks) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('failedChunks', failedChunks);
+  }
+
+  Future<void> _clearFailedChunks() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('failedChunks');
   }
 
   _handleFetchInitialJournalEntries({required FetchInitialJournalEntriesAction action}) sync* {
