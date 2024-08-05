@@ -268,10 +268,13 @@ class JournalDetailPageState extends State<JournalDetailPage> {
           ),
           const SizedBox(height: 16),
         ],
-        Button(
-          text: "Delve deeper",
-          icon: Maki.swimming,
-          onPressed: () => _navigateToJournalEntryPage(journalEntry),
+        FeatureGate(
+          feature: AI_SUGGESTIONS,
+          child: Button(
+            text: "Delve deeper",
+            icon: Maki.swimming,
+            onPressed: () => _navigateToJournalEntryPage(journalEntry),
+          ),
         ),
         const SizedBox(height: 24),
         if (journalEntry.questions != null)
@@ -540,7 +543,8 @@ class JournalDetailViewModel {
       templatesById: store.state.journalTemplateState.templatesById,
       isLoading: state.isLoading,
       errorMessage: state.errorMessage,
-      dispatchAnalyzeJournal: (String journalEntryId, List<Map<String, String>> qaList) {
+      dispatchAnalyzeJournal:
+          (String journalEntryId, List<Map<String, String>> qaList) {
         store.dispatch(AnalyzeJournalAction(journalEntryId));
       },
     );

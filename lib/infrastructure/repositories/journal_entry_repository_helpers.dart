@@ -127,7 +127,7 @@ JournalEntryEntity toEntityHelper(JournalEntry journalEntry) {
     affirmation: journalEntry.affirmation,
     topics: journalEntry.topics,
     feelings: journalEntry.feelings
-        ?.map((f) => JournalFeelingEntity(
+        !.map((f) => JournalFeelingEntity(
               emoticon: f.emoticon ?? '',
               title: f.title ?? '',
             ))
