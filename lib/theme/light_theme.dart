@@ -21,94 +21,78 @@ final ThemeData lightTheme = ThemeData(
   ),
   timePickerTheme: TimePickerThemeData(
     backgroundColor: Colors.white,
-    dialHandColor: Colors.black,
-    dialBackgroundColor: Colors.white,
+    dialHandColor: Colors.green[600],
+    dialBackgroundColor: Colors.green[50],
     dialTextColor: Colors.black,
     dayPeriodTextColor: Colors.black,
     hourMinuteTextColor: Colors.black,
     dayPeriodColor: Colors.white,
     confirmButtonStyle: ButtonStyle(
-      backgroundColor: MaterialStateProperty.all<Color>(Colors.black),
+      backgroundColor: MaterialStateProperty.all<Color>(Colors.green[600]!),
       foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-      textStyle: MaterialStateProperty.all<TextStyle>(
-        const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.normal,
-        ),
-      ),
     ),
     cancelButtonStyle: ButtonStyle(
-      backgroundColor: MaterialStateProperty.all<Color>(Colors.black),
-      foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-      textStyle: MaterialStateProperty.all<TextStyle>(
-        const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.normal,
-        ),
-      ),
-      shape: MaterialStateProperty.all<OutlinedBorder>(
-        RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-      ),
+      backgroundColor: MaterialStateProperty.all<Color>(Colors.grey[300]!),
+      foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
     ),
     hourMinuteShape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10),
-      side: const BorderSide(color: Colors.black),
+      side: BorderSide(color: Colors.green[600]!),
     ),
     dayPeriodShape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10),
-      side: const BorderSide(color: Colors.black),
+      side: BorderSide(color: Colors.green[600]!),
     ),
-    entryModeIconColor: Colors.black,
-    helpTextStyle: const TextStyle(
-      color: Colors.black,
+    entryModeIconColor: Colors.green[600],
+    helpTextStyle: TextStyle(
+      color: Colors.grey[600],
       fontSize: 16,
     ),
   ),
-  cardTheme: CardTheme(color: Colors.grey.shade100),
+  cardTheme: CardTheme(color: Colors.grey.shade50),
   popupMenuTheme: const PopupMenuThemeData(
     color: Colors.white,
   ),
-  colorScheme: ColorScheme.fromSeed(
-    seedColor: Colors.black,
-    brightness: Brightness.light,
-    primary: Colors.black,
-    secondary: Colors.grey[900],
+  colorScheme: ColorScheme.light(
+    primary: Colors.green[600]!,
+    secondary: Colors.green[400]!,
     surface: Colors.white,
     onPrimary: Colors.white,
     onSecondary: Colors.black,
+    onSurface: Colors.black,
   ),
-  navigationBarTheme: const NavigationBarThemeData(
+  navigationBarTheme: NavigationBarThemeData(
     backgroundColor: Colors.white,
+    indicatorColor: Colors.green[400],
   ),
-  scaffoldBackgroundColor: Colors.white,
-  appBarTheme: AppBarTheme(
-    color: Colors.grey.shade100,
+  scaffoldBackgroundColor: Colors.grey[100],
+  appBarTheme: const AppBarTheme(
+    color: Colors.white,
+    foregroundColor: Colors.black,
   ),
-  floatingActionButtonTheme: const FloatingActionButtonThemeData(
-    backgroundColor: Colors.black,
+  floatingActionButtonTheme: FloatingActionButtonThemeData(
+    backgroundColor: Colors.green[600],
     foregroundColor: Colors.white,
   ),
   segmentedButtonTheme: SegmentedButtonThemeData(
     style: ButtonStyle(
-      backgroundColor: WidgetStateProperty.resolveWith<Color>(
-        (Set<WidgetState> states) {
-          if (states.contains(WidgetState.selected)) {
-            return Colors.black;
+      backgroundColor: MaterialStateProperty.resolveWith<Color>(
+        (Set<MaterialState> states) {
+          if (states.contains(MaterialState.selected)) {
+            return Colors.green[600]!;
           }
           return Colors.white;
         },
       ),
-      foregroundColor: WidgetStateProperty.resolveWith<Color>(
-        (Set<WidgetState> states) {
-          if (states.contains(WidgetState.selected)) {
+      foregroundColor: MaterialStateProperty.resolveWith<Color>(
+        (Set<MaterialState> states) {
+          if (states.contains(MaterialState.selected)) {
             return Colors.white;
           }
           return Colors.black;
         },
       ),
-      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
         RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),
         ),
