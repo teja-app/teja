@@ -128,6 +128,7 @@ JournalEntryEntity toEntityHelper(JournalEntry journalEntry) {
     updatedAt: journalEntry.updatedAt,
     lock: journalEntry.lock,
     emoticon: journalEntry.emoticon,
+    emoticon: journalEntry.emoticon,
     title: journalEntry.title,
     body: journalEntry.body,
     summary: journalEntry.summary,

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
 import 'package:rive/rive.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:teja/domain/redux/auth/auth_action.dart';
 import 'package:teja/infrastructure/service/auth_service.dart';

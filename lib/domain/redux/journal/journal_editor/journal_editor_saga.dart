@@ -9,6 +9,7 @@ import 'package:teja/domain/redux/journal/journal_editor/journal_editor_saga.voi
 import 'package:teja/domain/redux/journal/journal_editor/quick_journal_editor_saga.dart';
 import 'package:teja/domain/redux/journal/journal_logs/journal_logs_actions.dart';
 import 'package:teja/domain/redux/journal/journal_sync/journal_sync_actions.dart';
+import 'package:teja/domain/redux/journal/journal_sync/journal_sync_actions.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
 import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart';
 import 'package:teja/infrastructure/repositories/journal_entry_repository.dart';
