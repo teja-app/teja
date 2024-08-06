@@ -60,6 +60,7 @@ final ThemeData lightTheme = ThemeData(
     onPrimary: Colors.white,
     onSecondary: Colors.black,
     onSurface: Colors.black,
+    error: Colors.pinkAccent[400]!,
   ),
   navigationBarTheme: NavigationBarThemeData(
     backgroundColor: Colors.white,

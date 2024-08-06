@@ -63,6 +63,7 @@ final ThemeData darkTheme = ThemeData(
     onPrimary: Colors.white,
     onSecondary: Colors.black,
     onSurface: Colors.white,
+    error: Colors.pinkAccent[400]!,
   ),
   navigationBarTheme: const NavigationBarThemeData(
     backgroundColor: Color(0xFF1E1E1E),

@@ -31,11 +31,10 @@ class _FeatureGateState extends State<FeatureGate> {
 
   @override
   Widget build(BuildContext context) {
-    return StoreConnector<AppState, Future<FeatureGateViewModel>>(
-        converter: (store) {
-      return FeatureGateViewModel.fromStore(
-          store, widget.feature, _secureStorage);
+    return StoreConnector<AppState, Future<FeatureGateViewModel>>(converter: (store) {
+      return FeatureGateViewModel.fromStore(store, widget.feature, _secureStorage);
     }, builder: (context, futureViewModel) {
+      final colorScheme = Theme.of(context).colorScheme;
       return FutureBuilder<FeatureGateViewModel>(
         future: futureViewModel,
         builder: (context, snapshot) {
@@ -59,22 +58,19 @@ class _FeatureGateState extends State<FeatureGate> {
 
             return widget.child;
           } else {
-            return Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                AbsorbPointer(
-                  absorbing: true,
-                  child: Opacity(
-                    opacity: 0.5, // You can adjust the opacity as needed
+            return GestureDetector(
+              onTap: () => _showFeatureBottomSheet(context),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Opacity(
+                    opacity: 0.5,
                     child: widget.child,
                   ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.lock, color: Colors.white, size: 24),
-                  onPressed: () => _showFeatureBottomSheet(context),
-                ),
-              ],
+                  Icon(Icons.lock, color: colorScheme.error, size: 24),
+                ],
+              ),
             );
           }
         },
@@ -105,13 +101,11 @@ class FeatureGateViewModel {
     SecureStorage secureStorage,
   ) async {
     try {
-      bool _hasExistingMnemonic =
-          await store.state.authState.hasExistingMnemonic;
+      bool _hasExistingMnemonic = await store.state.authState.hasExistingMnemonic;
       return FeatureGateViewModel(hasAccess: _hasExistingMnemonic);
     } catch (e) {
       print('Error fetching access details: $e'); // Debug print
-      return FeatureGateViewModel(
-          hasAccess: false); // Default to no access on error
+      return FeatureGateViewModel(hasAccess: false); // Default to no access on error
     }
     // try {
     //   final accessDetails = await secureStorage.readAccessDetails();
