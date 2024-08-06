@@ -202,6 +202,9 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
+    Color primary = colorScheme.primary;
+
     return WillPopScope(
       onWillPop: () async {
         _handleBack(context, _store.state.journalEditorState.currentJournalEntry);
@@ -236,71 +239,54 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
                 ),
               ],
             ),
-            body: Stack(
+            body: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _bodyController,
-                          decoration: InputDecoration(
-                            hintText: 'Write your journal entry...',
-                            border: const OutlineInputBorder(),
-                            filled: true,
-                            fillColor: Colors.grey[200],
-                          ),
-                          maxLines: 4,
-                          autofocus: true,
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: TextField(
+                      controller: _bodyController,
+                      decoration: InputDecoration(
+                        hintText: 'Write your journal entry...',
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(color: primary),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: primary),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: primary),
                         ),
                       ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Button(
-                              buttonType: ButtonType.secondary,
-                              onPressed: _isSaving ? null : () => _saveEntry(context, viewModel.currentJournalEntry),
-                              text: 'Save',
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                              child: FeatureGate(
-                            feature: AI_SUGGESTIONS,
-                            child: Button(
-                              buttonType: ButtonType.primary,
-                              onPressed:
-                                  _isSaving ? null : () => _saveAndContinue(context, viewModel.currentJournalEntry),
-                              text: 'Continue',
-                            ),
-                          )),
-                        ],
+                      minLines: 4,
+                      maxLines: null,
+                      autofocus: true,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Button(
+                            onPressed: _isSaving ? null : () => _saveEntry(context, viewModel.currentJournalEntry),
+                            text: 'Save',
+                            buttonType: ButtonType.secondary),
                       ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                          child: FeatureGate(
+                        feature: AI_SUGGESTIONS,
+                        child: Button(
+                          buttonType: ButtonType.primary,
+                          onPressed: _isSaving ? null : () => _saveAndContinue(context, viewModel.currentJournalEntry),
+                          text: 'Continue',
+                        ),
+                      )),
                     ],
                   ),
                 ),
-                if (_isSaving)
-                  Container(
-                    color: Colors.black.withOpacity(0.3),
-                    child: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  ),
-                if (_errorMessage != null)
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      color: Colors.red,
-                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                      child: Text(
-                        _errorMessage!,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
               ],
             ),
           );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
+import 'package:icons_flutter/icons_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
@@ -197,12 +198,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
         _textController.clear();
         _isTyping = false; // Reset typing state
       });
-
-      // Scroll to the bottom after a short delay to ensure the UI has updated
-      Future.delayed(Duration(milliseconds: 100), () {
-        _scrollToBottom();
-        _textFocusNode.requestFocus();
-      });
+      _scrollToBottom();
     } catch (e) {
       logger.e("JournalEntryPageState:_goDeeper", error: e);
       _showError('Failed to generate new question: $e');
@@ -238,6 +234,8 @@ class JournalEntryPageState extends State<JournalEntryPage> {
 
   @override
   Widget build(BuildContext context) {
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Journal Entry'),
@@ -245,50 +243,85 @@ class JournalEntryPageState extends State<JournalEntryPage> {
           icon: const Icon(Icons.arrow_back),
           onPressed: _loadingState.isSaving ? null : _saveAndExit,
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.done),
-            onPressed: _loadingState.isSaving ? null : _saveAndExit,
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: _loadingState.isInitialLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ListView(
+                      controller: _scrollController,
+                      children: [
+                        ...qaList.asMap().entries.map((entry) => _buildQuestionAnswerItem(entry.key, colorScheme)),
+                        if (showingAlternatives) _buildAlternativesSection(colorScheme),
+                      ],
+                    ),
+            ),
+            _buildBottomInputArea(colorScheme),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottomInputArea(ColorScheme colorScheme) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: Offset(0, -2),
           ),
         ],
       ),
-      body: _loadingState.isInitialLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Stack(
-              children: [
-                ListView(
-                  controller: _scrollController,
-                  children: [
-                    ...qaList.asMap().entries.map((entry) => _buildQuestionAnswerItem(entry.key)),
-                    if (showingAlternatives) _buildAlternativesSection(),
-                    if (!showingAlternatives) _buildContinueButton(),
-                    SizedBox(height: 100), // Add extra space at the bottom
-                  ],
-                ),
-                if (_loadingState.isSaving)
-                  Container(
-                    color: Colors.black.withOpacity(0.3),
-                    child: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  ),
-                if (_errorMessage != null)
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      color: Colors.red,
-                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                      child: Text(
-                        _errorMessage!,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-              ],
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _textController,
+              focusNode: _textFocusNode,
+              decoration: InputDecoration(
+                hintText: 'Write your answer...',
+                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              ),
+              maxLines: null,
+              textInputAction: TextInputAction.newline,
+              onChanged: (text) {
+                setState(() {
+                  _isTyping = text.trim().isNotEmpty;
+                });
+              },
             ),
+          ),
+          SizedBox(width: 8),
+          ElevatedButton(
+            onPressed: _determineButtonAction(),
+            child: Icon(_isTyping ? AntDesign.right : AntDesign.check),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: colorScheme.primary,
+              foregroundColor: colorScheme.onPrimary,
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            ),
+          ),
+        ],
+      ),
     );
+  }
+
+  VoidCallback? _determineButtonAction() {
+    if (_loadingState.isGeneratingQuestion) {
+      return null;
+    }
+    if (_isTyping) {
+      return _goDeeper;
+    }
+    return _saveAndExit;
   }
 
   Future<void> _showAlternatives() async {
@@ -317,7 +350,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
     _scrollToBottom();
   }
 
-  Widget _buildQuestionAnswerItem(int index) {
+  Widget _buildQuestionAnswerItem(int index, ColorScheme colorScheme) {
     final isCurrentQuestion = index == currentQuestionIndex;
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -327,93 +360,69 @@ class JournalEntryPageState extends State<JournalEntryPage> {
           if (isCurrentQuestion && _helpText != null)
             Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
-              child: Text(
-                _helpText!,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontStyle: FontStyle.italic,
-                      color: Colors.grey[600],
-                    ),
-              ),
+              child: Text(_helpText!,
+                  style: TextStyle(fontStyle: FontStyle.italic, color: colorScheme.onSurface.withOpacity(0.6))),
             ),
-          Text(
-            qaList[index]['question']!,
-            style: Theme.of(context).textTheme.titleSmall,
-          ),
+          Text(qaList[index]['question']!, style: TextStyle(fontWeight: FontWeight.bold)),
           if (isCurrentQuestion && !showingAlternatives && !_loadingState.isGeneratingQuestion)
-            Button(
-              text: 'Change Question',
-              icon: Icons.sync,
-              buttonType: ButtonType.disabled,
+            TextButton(
               onPressed: _showAlternatives,
+              child: Text('Change Question'),
+              style: TextButton.styleFrom(foregroundColor: colorScheme.primary),
             ),
-          if (isCurrentQuestion)
-            TextField(
-              controller: _textController,
-              focusNode: _textFocusNode,
-              decoration: InputDecoration(
-                hintText: 'Write...',
-                border: OutlineInputBorder(),
-                filled: true,
-                fillColor: Colors.grey[200],
-              ),
-              maxLines: null,
-              enabled: isCurrentQuestion && !_loadingState.isGeneratingQuestion,
-            )
-          else
-            Text(
-              qaList[index]['answer']!,
-              style: Theme.of(context).textTheme.bodyMedium,
+          if (!isCurrentQuestion)
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Text(qaList[index]['answer']!),
             ),
           if (isCurrentQuestion && _inputSuggestions.isNotEmpty)
             Wrap(
-              spacing: 8.0,
+              spacing: 4.0,
+              runSpacing: 4.0,
               children: _inputSuggestions
-                  .map((suggestion) => Chip(
-                        label: Text(suggestion),
-                        onDeleted: () => _onInputSuggestionSelected(suggestion),
+                  .map((suggestion) => GestureDetector(
+                        onTap: () => _onInputSuggestionSelected(suggestion),
+                        child: Chip(
+                          label: Text(suggestion, style: TextStyle(fontSize: 12)),
+                          padding: EdgeInsets.all(4),
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
                       ))
                   .toList(),
             ),
-          if (isCurrentQuestion && _loadingState.isGeneratingQuestion) const TypingIndicator(),
+          if (isCurrentQuestion && _loadingState.isGeneratingQuestion) const CircularProgressIndicator(),
         ],
       ),
     );
   }
 
-  Widget _buildAlternativesSection() {
+  bool get _isLastQuestion => qaList.length >= 2 && currentQuestionIndex == qaList.length - 1;
+
+  void _handleContinueOrDone() {
+    if (_isLastQuestion) {
+      _saveAndExit();
+    } else {
+      _goDeeper();
+    }
+  }
+
+  Widget _buildAlternativesSection(ColorScheme colorScheme) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Choose a different question to explore:',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          ..._alternativeQuestions.map((question) => GestureDetector(
+          Text('Choose a different question:', style: TextStyle(fontWeight: FontWeight.bold)),
+          ..._alternativeQuestions.map((question) => ListTile(
+                title: Text(question),
                 onTap: () => _selectAlternative(question),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text(question, style: Theme.of(context).textTheme.titleSmall),
-                ),
               )),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Row(
             children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: _showAlternatives,
-                  child: const Text('Regenerate'),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: _backToWriting,
-                  child: const Text('Back to writing'),
-                ),
-              ),
+              Expanded(child: ElevatedButton(onPressed: _showAlternatives, child: Text('Regenerate'))),
+              SizedBox(width: 16),
+              Expanded(child: ElevatedButton(onPressed: _backToWriting, child: Text('Back to writing'))),
             ],
           ),
         ],
