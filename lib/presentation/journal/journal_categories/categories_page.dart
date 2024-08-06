@@ -17,7 +17,8 @@ class JournalCategoriesPage extends StatelessWidget {
 
   void navigateToCategoryDetail(BuildContext context, String categoryId) {
     GoRouter.of(context).pushNamed(
-      RootPath.journalCategoryDetail, // Assuming you've defined this in your router's path
+      RootPath
+          .journalCategoryDetail, // Assuming you've defined this in your router's path
       queryParameters: {
         "id": categoryId,
       },
@@ -43,6 +44,7 @@ class JournalCategoriesPage extends StatelessWidget {
               children: [
                 SizedBox(
                   height: spacer,
+                  width: double.infinity,
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -53,7 +55,8 @@ class JournalCategoriesPage extends StatelessWidget {
                     ),
                     const SizedBox(height: smallSpacer),
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 20),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 0.0, horizontal: 20),
                       child: Text(
                         "Imagine a space where every tool is tailored just for you, helping to illuminate paths you've yet to explore.",
                         style: textTheme.labelSmall,
@@ -67,10 +70,12 @@ class JournalCategoriesPage extends StatelessWidget {
                 Wrap(
                   spacing: 8.0, // Space between the boxes horizontally
                   runSpacing: 16.0, // Space between the boxes vertically
-                  children: List<Widget>.generate(vm.categories.length, (index) {
+                  children:
+                      List<Widget>.generate(vm.categories.length, (index) {
                     final category = vm.categories[index];
                     return GestureDetector(
-                      onTap: () => navigateToCategoryDetail(context, category.id),
+                      onTap: () =>
+                          navigateToCategoryDetail(context, category.id),
                       child: BentoBox(
                           gridWidth: 2,
                           gridHeight: 3,
@@ -82,7 +87,8 @@ class JournalCategoriesPage extends StatelessWidget {
                               if (category.featureImage != null)
                                 Positioned.fill(
                                   child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(12), // Adjust the border radius as needed
+                                    borderRadius: BorderRadius.circular(
+                                        12), // Adjust the border radius as needed
                                     child: Image.network(
                                       'https://f000.backblazeb2.com/file/swayam-dev-master/${category.featureImage?.sizes.thumbnail?.filename}',
                                       fit: BoxFit.cover,
@@ -99,8 +105,10 @@ class JournalCategoriesPage extends StatelessWidget {
                                   child: Text(
                                     category.name,
                                     maxLines: 3,
-                                    textAlign: TextAlign.center, // Center the text (optional)
-                                    style: textTheme.titleSmall, // Your predefined text theme
+                                    textAlign: TextAlign
+                                        .center, // Center the text (optional)
+                                    style: textTheme
+                                        .titleSmall, // Your predefined text theme
                                   ),
                                 ),
                               ),
