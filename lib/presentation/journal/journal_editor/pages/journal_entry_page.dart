@@ -243,6 +243,12 @@ class JournalEntryPageState extends State<JournalEntryPage> {
           icon: const Icon(Icons.arrow_back),
           onPressed: _loadingState.isSaving ? null : _saveAndExit,
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.done),
+            onPressed: _loadingState.isSaving ? null : _saveAndExit,
+          ),
+        ],
       ),
       body: SafeArea(
         child: Column(
