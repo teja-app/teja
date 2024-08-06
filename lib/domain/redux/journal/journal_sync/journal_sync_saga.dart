@@ -97,7 +97,7 @@ class JournalSyncSaga {
 
       // Fetch all entries from the server
       var entriesResult = Result<List<JournalEntryEntity>>();
-      yield Call(api.getAllEntries, result: entriesResult);
+      yield Call(api.getAllEntries, args: [], namedArgs: {#includeDeleted: true}, result: entriesResult);
       List<JournalEntryEntity> entries = entriesResult.value!;
 
       // Save all entries to local storage

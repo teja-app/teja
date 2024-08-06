@@ -1,10 +1,10 @@
 class JournalEntryEntity {
   final String id;
-  final String? templateId; // Nullable if a template is not used
+  final String? templateId;
   final DateTime timestamp;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final List<QuestionAnswerPairEntity>? questions; // Nullable to allow entries without questions
+  final List<QuestionAnswerPairEntity>? questions;
   final List<TextEntryEntity>? textEntries;
   final List<VoiceEntryEntity>? voiceEntries;
   final List<VideoEntryEntity>? videoEntries;
@@ -21,6 +21,7 @@ class JournalEntryEntity {
   final List<String>? topics;
   final List<JournalFeelingEntity>? feelings;
   final String? body;
+  final bool isDeleted; // New field for soft delete
 
   JournalEntryEntity({
     required this.id,
@@ -45,6 +46,7 @@ class JournalEntryEntity {
     this.topics,
     this.feelings,
     this.body,
+    this.isDeleted = false, // Default to false
   });
 
   JournalEntryEntity copyWith({
@@ -70,6 +72,7 @@ class JournalEntryEntity {
     List<BulletPointEntryEntity>? bulletPointEntries,
     List<PainNoteEntryEntity>? painNoteEntries,
     JournalEntryMetadataEntity? metadata,
+    bool? isDeleted,
   }) {
     return JournalEntryEntity(
       id: id ?? this.id,
@@ -93,6 +96,7 @@ class JournalEntryEntity {
       feelings: feelings ?? this.feelings,
       lock: lock ?? this.lock,
       body: body ?? this.body,
+      isDeleted: isDeleted ?? this.isDeleted,
     );
   }
 
@@ -136,6 +140,7 @@ class JournalEntryEntity {
           ? (json['feelings'] as List).map((f) => JournalFeelingEntity.fromJson(f)).toList()
           : null,
       body: json['body'],
+      isDeleted: json['isDeleted'] ?? false,
     );
   }
 
@@ -163,6 +168,7 @@ class JournalEntryEntity {
       'topics': topics,
       'feelings': feelings?.map((f) => f.toJson()).toList(),
       'body': body,
+      'isDeleted': isDeleted,
     };
   }
 }

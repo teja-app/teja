@@ -4,13 +4,17 @@ import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart
 import 'package:teja/domain/entities/journal_entry_entity.dart';
 
 Future<List<JournalEntryEntity>> getJournalEntriesPageHelper(
-    Isar isar, int pageKey, int pageSize,
-    {DateTime? startDate, DateTime? endDate}) async {
+  Isar isar,
+  int pageKey,
+  int pageSize, {
+  DateTime? startDate,
+  DateTime? endDate,
+  bool includeDeleted = false,
+}) async {
   final startIndex = pageKey * pageSize;
 
   var filterConditions = <FilterCondition>[];
 
-  // Example filter condition based on a hypothetical date range
   if (startDate != null && endDate != null) {
     filterConditions.add(FilterCondition.between(
       property: 'timestamp',
@@ -19,9 +23,15 @@ Future<List<JournalEntryEntity>> getJournalEntriesPageHelper(
     ));
   }
 
+  if (!includeDeleted) {
+    filterConditions.add(FilterCondition.equalTo(
+      property: 'isDeleted',
+      value: false,
+    ));
+  }
+
   final query = isar.journalEntrys.buildQuery(
-    filter:
-        filterConditions.isNotEmpty ? FilterGroup.and(filterConditions) : null,
+    filter: filterConditions.isNotEmpty ? FilterGroup.and(filterConditions) : null,
     sortBy: [const SortProperty(property: 'timestamp', sort: Sort.desc)],
     offset: startIndex,
     limit: pageSize,
@@ -29,21 +39,47 @@ Future<List<JournalEntryEntity>> getJournalEntriesPageHelper(
 
   final journalEntries = await query.findAll();
 
-  return journalEntries.map((moodLog) => toEntityHelper(moodLog)).toList();
+  return journalEntries.map((entry) => toEntityHelper(entry)).toList();
 }
 
 Future<List<JournalEntryEntity>> getJournalEntriesInDateRangeHelper(
-    Isar isar, DateTime start, DateTime end) async {
+  Isar isar,
+  DateTime start,
+  DateTime end, {
+  bool includeDeleted = false,
+}) async {
   try {
-    // Fetch entries between the specified start and end dates
-    final List<JournalEntry> journalEntries = await isar.journalEntrys
-        .filter()
-        .timestampBetween(start, end)
-        .findAll();
+    var filterConditions = <FilterCondition>[];
 
-    return journalEntries.map((moodLog) => toEntityHelper(moodLog)).toList();
+    // Add date range filter
+    filterConditions.add(FilterCondition.between(
+      property: 'timestamp',
+      lower: start,
+      upper: end,
+    ));
+
+    // Add isDeleted filter if needed
+    if (!includeDeleted) {
+      filterConditions.add(FilterCondition.equalTo(
+        property: 'isDeleted',
+        value: false,
+      ));
+    }
+
+    final query = isar.journalEntrys.buildQuery(
+      filter: FilterGroup.and(filterConditions),
+      sortBy: [SortProperty(property: 'timestamp', sort: Sort.desc)],
+    );
+
+    final journalEntries = await query.findAll();
+
+    print("Query parameters: start=$start, end=$end, includeDeleted=$includeDeleted");
+    print("Number of entries found: ${journalEntries.length}");
+
+    return journalEntries.map((entry) => toEntityHelper(entry)).toList();
   } catch (e) {
-    rethrow; // Propagate any errors for handling in the saga or higher-level logic
+    print("Error in getJournalEntriesInDateRangeHelper: $e");
+    rethrow;
   }
 }
 
@@ -62,6 +98,7 @@ JournalEntry fromEntity(JournalEntryEntity entity) {
     ..keyInsight = entity.keyInsight
     ..affirmation = entity.affirmation
     ..topics = entity.topics
+    ..isDeleted = entity.isDeleted
     ..feelings = entity.feelings
         ?.map((f) => JournalFeeling()
           ..emoticon = f.emoticon
@@ -114,9 +151,7 @@ JournalEntry fromEntity(JournalEntryEntity entity) {
           ..painLevel = p.painLevel
           ..notes = p.notes)
         .toList()
-    ..metadata = entity.metadata != null
-        ? (JournalEntryMetadata()..tags = entity.metadata?.tags)
-        : null;
+    ..metadata = entity.metadata != null ? (JournalEntryMetadata()..tags = entity.metadata?.tags) : null;
 }
 
 JournalEntryEntity toEntityHelper(JournalEntry journalEntry) {
@@ -134,6 +169,7 @@ JournalEntryEntity toEntityHelper(JournalEntry journalEntry) {
     keyInsight: journalEntry.keyInsight,
     affirmation: journalEntry.affirmation,
     topics: journalEntry.topics,
+    isDeleted: journalEntry.isDeleted,
     feelings: journalEntry.feelings
         ?.map((f) => JournalFeelingEntity(
               emoticon: f.emoticon ?? '',
@@ -194,8 +230,6 @@ JournalEntryEntity toEntityHelper(JournalEntry journalEntry) {
               notes: p.notes,
             ))
         .toList(),
-    metadata: journalEntry.metadata != null
-        ? JournalEntryMetadataEntity(tags: journalEntry.metadata?.tags)
-        : null,
+    metadata: journalEntry.metadata != null ? JournalEntryMetadataEntity(tags: journalEntry.metadata?.tags) : null,
   );
 }

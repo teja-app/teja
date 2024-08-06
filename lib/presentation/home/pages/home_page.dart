@@ -1,28 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
-import 'package:icons_flutter/icons_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
-import 'package:teja/domain/redux/home/home_actions.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
 import 'package:teja/domain/redux/mood/list/actions.dart';
-import 'package:teja/presentation/home/ui/JournalCollectorFab.dart';
 import 'package:teja/presentation/home/ui/QuickInputWidget.dart';
 import 'package:teja/presentation/home/ui/count_down_timer.dart';
 import 'package:teja/presentation/home/ui/journal/journal_entries_widget.dart';
-import 'package:teja/presentation/home/ui/journal/last_used_template.dart';
 import 'package:teja/presentation/home/ui/mood/mood_tracker.dart';
-import 'package:teja/presentation/home/ui/token_widget.dart';
 import 'package:teja/presentation/navigation/buildDesktopDrawer.dart';
 import 'package:teja/presentation/navigation/mobile_navigation_bar.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/presentation/navigation/leadingContainer.dart';
 import 'package:teja/router.dart';
-import 'package:teja/shared/common/button.dart';
-import 'package:teja/theme/padding.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -154,6 +147,9 @@ class _HomePageState extends State<HomePage> {
                     },
                     onAudioTap: () {
                       context.pushNamed(RootPath.moodEdit);
+                    },
+                    onGuidedJournal: () {
+                      context.pushNamed(RootPath.journalCategory);
                     },
                   ),
                 ),

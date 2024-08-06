@@ -60,78 +60,83 @@ const JournalEntrySchema = CollectionSchema(
       type: IsarType.objectList,
       target: r'ImageEntry',
     ),
-    r'keyInsight': PropertySchema(
+    r'isDeleted': PropertySchema(
       id: 8,
+      name: r'isDeleted',
+      type: IsarType.bool,
+    ),
+    r'keyInsight': PropertySchema(
+      id: 9,
       name: r'keyInsight',
       type: IsarType.string,
     ),
     r'lock': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'lock',
       type: IsarType.bool,
     ),
     r'metadata': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'metadata',
       type: IsarType.object,
       target: r'JournalEntryMetadata',
     ),
     r'painNoteEntries': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'painNoteEntries',
       type: IsarType.objectList,
       target: r'PainNoteEntry',
     ),
     r'questions': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'questions',
       type: IsarType.objectList,
       target: r'QuestionAnswerPair',
     ),
     r'summary': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'summary',
       type: IsarType.string,
     ),
     r'templateId': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'templateId',
       type: IsarType.string,
     ),
     r'textEntries': PropertySchema(
-      id: 15,
+      id: 16,
       name: r'textEntries',
       type: IsarType.objectList,
       target: r'TextEntry',
     ),
     r'timestamp': PropertySchema(
-      id: 16,
+      id: 17,
       name: r'timestamp',
       type: IsarType.dateTime,
     ),
     r'title': PropertySchema(
-      id: 17,
+      id: 18,
       name: r'title',
       type: IsarType.string,
     ),
     r'topics': PropertySchema(
-      id: 18,
+      id: 19,
       name: r'topics',
       type: IsarType.stringList,
     ),
     r'updatedAt': PropertySchema(
-      id: 19,
+      id: 20,
       name: r'updatedAt',
       type: IsarType.dateTime,
     ),
     r'videoEntries': PropertySchema(
-      id: 20,
+      id: 21,
       name: r'videoEntries',
       type: IsarType.objectList,
       target: r'VideoEntry',
     ),
     r'voiceEntries': PropertySchema(
-      id: 21,
+      id: 22,
       name: r'voiceEntries',
       type: IsarType.objectList,
       target: r'VoiceEntry',
@@ -388,46 +393,47 @@ void _journalEntrySerialize(
     ImageEntrySchema.serialize,
     object.imageEntries,
   );
-  writer.writeString(offsets[8], object.keyInsight);
-  writer.writeBool(offsets[9], object.lock);
+  writer.writeBool(offsets[8], object.isDeleted);
+  writer.writeString(offsets[9], object.keyInsight);
+  writer.writeBool(offsets[10], object.lock);
   writer.writeObject<JournalEntryMetadata>(
-    offsets[10],
+    offsets[11],
     allOffsets,
     JournalEntryMetadataSchema.serialize,
     object.metadata,
   );
   writer.writeObjectList<PainNoteEntry>(
-    offsets[11],
+    offsets[12],
     allOffsets,
     PainNoteEntrySchema.serialize,
     object.painNoteEntries,
   );
   writer.writeObjectList<QuestionAnswerPair>(
-    offsets[12],
+    offsets[13],
     allOffsets,
     QuestionAnswerPairSchema.serialize,
     object.questions,
   );
-  writer.writeString(offsets[13], object.summary);
-  writer.writeString(offsets[14], object.templateId);
+  writer.writeString(offsets[14], object.summary);
+  writer.writeString(offsets[15], object.templateId);
   writer.writeObjectList<TextEntry>(
-    offsets[15],
+    offsets[16],
     allOffsets,
     TextEntrySchema.serialize,
     object.textEntries,
   );
-  writer.writeDateTime(offsets[16], object.timestamp);
-  writer.writeString(offsets[17], object.title);
-  writer.writeStringList(offsets[18], object.topics);
-  writer.writeDateTime(offsets[19], object.updatedAt);
+  writer.writeDateTime(offsets[17], object.timestamp);
+  writer.writeString(offsets[18], object.title);
+  writer.writeStringList(offsets[19], object.topics);
+  writer.writeDateTime(offsets[20], object.updatedAt);
   writer.writeObjectList<VideoEntry>(
-    offsets[20],
+    offsets[21],
     allOffsets,
     VideoEntrySchema.serialize,
     object.videoEntries,
   );
   writer.writeObjectList<VoiceEntry>(
-    offsets[21],
+    offsets[22],
     allOffsets,
     VoiceEntrySchema.serialize,
     object.voiceEntries,
@@ -464,46 +470,47 @@ JournalEntry _journalEntryDeserialize(
     allOffsets,
     ImageEntry(),
   );
+  object.isDeleted = reader.readBool(offsets[8]);
   object.isarId = id;
-  object.keyInsight = reader.readStringOrNull(offsets[8]);
-  object.lock = reader.readBoolOrNull(offsets[9]);
+  object.keyInsight = reader.readStringOrNull(offsets[9]);
+  object.lock = reader.readBoolOrNull(offsets[10]);
   object.metadata = reader.readObjectOrNull<JournalEntryMetadata>(
-    offsets[10],
+    offsets[11],
     JournalEntryMetadataSchema.deserialize,
     allOffsets,
   );
   object.painNoteEntries = reader.readObjectList<PainNoteEntry>(
-    offsets[11],
+    offsets[12],
     PainNoteEntrySchema.deserialize,
     allOffsets,
     PainNoteEntry(),
   );
   object.questions = reader.readObjectList<QuestionAnswerPair>(
-    offsets[12],
+    offsets[13],
     QuestionAnswerPairSchema.deserialize,
     allOffsets,
     QuestionAnswerPair(),
   );
-  object.summary = reader.readStringOrNull(offsets[13]);
-  object.templateId = reader.readStringOrNull(offsets[14]);
+  object.summary = reader.readStringOrNull(offsets[14]);
+  object.templateId = reader.readStringOrNull(offsets[15]);
   object.textEntries = reader.readObjectList<TextEntry>(
-    offsets[15],
+    offsets[16],
     TextEntrySchema.deserialize,
     allOffsets,
     TextEntry(),
   );
-  object.timestamp = reader.readDateTime(offsets[16]);
-  object.title = reader.readStringOrNull(offsets[17]);
-  object.topics = reader.readStringList(offsets[18]);
-  object.updatedAt = reader.readDateTime(offsets[19]);
+  object.timestamp = reader.readDateTime(offsets[17]);
+  object.title = reader.readStringOrNull(offsets[18]);
+  object.topics = reader.readStringList(offsets[19]);
+  object.updatedAt = reader.readDateTime(offsets[20]);
   object.videoEntries = reader.readObjectList<VideoEntry>(
-    offsets[20],
+    offsets[21],
     VideoEntrySchema.deserialize,
     allOffsets,
     VideoEntry(),
   );
   object.voiceEntries = reader.readObjectList<VoiceEntry>(
-    offsets[21],
+    offsets[22],
     VoiceEntrySchema.deserialize,
     allOffsets,
     VoiceEntry(),
@@ -550,56 +557,58 @@ P _journalEntryDeserializeProp<P>(
         ImageEntry(),
       )) as P;
     case 8:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 9:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 10:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 11:
       return (reader.readObjectOrNull<JournalEntryMetadata>(
         offset,
         JournalEntryMetadataSchema.deserialize,
         allOffsets,
       )) as P;
-    case 11:
+    case 12:
       return (reader.readObjectList<PainNoteEntry>(
         offset,
         PainNoteEntrySchema.deserialize,
         allOffsets,
         PainNoteEntry(),
       )) as P;
-    case 12:
+    case 13:
       return (reader.readObjectList<QuestionAnswerPair>(
         offset,
         QuestionAnswerPairSchema.deserialize,
         allOffsets,
         QuestionAnswerPair(),
       )) as P;
-    case 13:
-      return (reader.readStringOrNull(offset)) as P;
     case 14:
       return (reader.readStringOrNull(offset)) as P;
     case 15:
+      return (reader.readStringOrNull(offset)) as P;
+    case 16:
       return (reader.readObjectList<TextEntry>(
         offset,
         TextEntrySchema.deserialize,
         allOffsets,
         TextEntry(),
       )) as P;
-    case 16:
-      return (reader.readDateTime(offset)) as P;
     case 17:
-      return (reader.readStringOrNull(offset)) as P;
-    case 18:
-      return (reader.readStringList(offset)) as P;
-    case 19:
       return (reader.readDateTime(offset)) as P;
+    case 18:
+      return (reader.readStringOrNull(offset)) as P;
+    case 19:
+      return (reader.readStringList(offset)) as P;
     case 20:
+      return (reader.readDateTime(offset)) as P;
+    case 21:
       return (reader.readObjectList<VideoEntry>(
         offset,
         VideoEntrySchema.deserialize,
         allOffsets,
         VideoEntry(),
       )) as P;
-    case 21:
+    case 22:
       return (reader.readObjectList<VoiceEntry>(
         offset,
         VoiceEntrySchema.deserialize,
@@ -1770,6 +1779,16 @@ extension JournalEntryQueryFilter
         upper,
         includeUpper,
       );
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterFilterCondition>
+      isDeletedEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isDeleted',
+        value: value,
+      ));
     });
   }
 
@@ -3510,6 +3529,18 @@ extension JournalEntryQuerySortBy
     });
   }
 
+  QueryBuilder<JournalEntry, JournalEntry, QAfterSortBy> sortByIsDeleted() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDeleted', Sort.asc);
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterSortBy> sortByIsDeletedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDeleted', Sort.desc);
+    });
+  }
+
   QueryBuilder<JournalEntry, JournalEntry, QAfterSortBy> sortByKeyInsight() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'keyInsight', Sort.asc);
@@ -3660,6 +3691,18 @@ extension JournalEntryQuerySortThenBy
     });
   }
 
+  QueryBuilder<JournalEntry, JournalEntry, QAfterSortBy> thenByIsDeleted() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDeleted', Sort.asc);
+    });
+  }
+
+  QueryBuilder<JournalEntry, JournalEntry, QAfterSortBy> thenByIsDeletedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDeleted', Sort.desc);
+    });
+  }
+
   QueryBuilder<JournalEntry, JournalEntry, QAfterSortBy> thenByIsarId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isarId', Sort.asc);
@@ -3795,6 +3838,12 @@ extension JournalEntryQueryWhereDistinct
     });
   }
 
+  QueryBuilder<JournalEntry, JournalEntry, QDistinct> distinctByIsDeleted() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isDeleted');
+    });
+  }
+
   QueryBuilder<JournalEntry, JournalEntry, QDistinct> distinctByKeyInsight(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -3904,6 +3953,12 @@ extension JournalEntryQueryProperty
       imageEntriesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'imageEntries');
+    });
+  }
+
+  QueryBuilder<JournalEntry, bool, QQueryOperations> isDeletedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isDeleted');
     });
   }
 
