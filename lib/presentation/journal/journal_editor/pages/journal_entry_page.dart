@@ -61,16 +61,35 @@ class JournalEntryPageState extends State<JournalEntryPage> {
   String? _helpText;
   List<String> _inputSuggestions = [];
 
+  bool _isTyping = false;
+  final FocusNode _textFocusNode = FocusNode();
+
   @override
   void initState() {
     super.initState();
     _store = StoreProvider.of<AppState>(context, listen: false);
-    _textController.addListener(_scrollToBottom);
+    _textController.addListener(_handleTextChange);
+    _scrollController.addListener(_checkScrollPosition);
     currentQuestionIndex = 0;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadJournalEntry();
     });
+  }
+
+  void _checkScrollPosition() {
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      _textFocusNode.requestFocus();
+    }
+  }
+
+  void _handleTextChange() {
+    final newIsTyping = _textController.text.trim().isNotEmpty;
+    if (newIsTyping != _isTyping) {
+      setState(() {
+        _isTyping = newIsTyping;
+      });
+    }
   }
 
   Future<void> _loadJournalEntry() async {
@@ -148,6 +167,11 @@ class JournalEntryPageState extends State<JournalEntryPage> {
   }
 
   Future<void> _goDeeper({bool useExistingAnswer = false}) async {
+    if (_textController.text.trim().isEmpty) {
+      _showError('Please write an answer before continuing');
+      return;
+    }
+
     if (!useExistingAnswer) {
       await _saveAnswer();
     }
@@ -171,6 +195,13 @@ class JournalEntryPageState extends State<JournalEntryPage> {
         currentQuestionIndex = qaList.length - 1;
         showingAlternatives = false;
         _textController.clear();
+        _isTyping = false; // Reset typing state
+      });
+
+      // Scroll to the bottom after a short delay to ensure the UI has updated
+      Future.delayed(Duration(milliseconds: 100), () {
+        _scrollToBottom();
+        _textFocusNode.requestFocus();
       });
     } catch (e) {
       logger.e("JournalEntryPageState:_goDeeper", error: e);
@@ -180,8 +211,6 @@ class JournalEntryPageState extends State<JournalEntryPage> {
         _loadingState = _loadingState.copyWith(isGeneratingQuestion: false);
       });
     }
-
-    _scrollToBottom();
   }
 
   void _showError(String message) {
@@ -198,15 +227,13 @@ class JournalEntryPageState extends State<JournalEntryPage> {
   }
 
   void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
-    });
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
   @override
@@ -235,6 +262,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
                     ...qaList.asMap().entries.map((entry) => _buildQuestionAnswerItem(entry.key)),
                     if (showingAlternatives) _buildAlternativesSection(),
                     if (!showingAlternatives) _buildContinueButton(),
+                    SizedBox(height: 100), // Add extra space at the bottom
                   ],
                 ),
                 if (_loadingState.isSaving)
@@ -321,9 +349,12 @@ class JournalEntryPageState extends State<JournalEntryPage> {
           if (isCurrentQuestion)
             TextField(
               controller: _textController,
+              focusNode: _textFocusNode,
               decoration: InputDecoration(
                 hintText: 'Write...',
-                border: InputBorder.none,
+                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Colors.grey[200],
               ),
               maxLines: null,
               enabled: isCurrentQuestion && !_loadingState.isGeneratingQuestion,
@@ -391,12 +422,20 @@ class JournalEntryPageState extends State<JournalEntryPage> {
   }
 
   Widget _buildContinueButton() {
+    final bool isLastQuestion = qaList.length >= 2;
+    final String buttonText = (isLastQuestion && !_isTyping) ? "Done" : "Continue";
+    final IconData buttonIcon = (isLastQuestion && !_isTyping) ? Icons.check : Icons.arrow_downward;
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Button(
-        text: "Continue",
-        icon: Icons.arrow_downward,
-        onPressed: _loadingState.isGeneratingQuestion ? null : _goDeeper,
+        text: buttonText,
+        icon: buttonIcon,
+        onPressed: _textController.text.trim().isEmpty || _loadingState.isGeneratingQuestion
+            ? null
+            : (isLastQuestion && !_isTyping)
+                ? _saveAndExit
+                : _goDeeper,
       ),
     );
   }
@@ -469,9 +508,11 @@ class JournalEntryPageState extends State<JournalEntryPage> {
 
   @override
   void dispose() {
-    _textController.removeListener(_scrollToBottom);
+    _textController.removeListener(_handleTextChange);
+    _scrollController.removeListener(_checkScrollPosition);
     _textController.dispose();
     _scrollController.dispose();
+    _textFocusNode.dispose();
     super.dispose();
   }
 }
