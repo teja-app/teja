@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/redux/app_state.dart';
@@ -41,21 +42,26 @@ class AuthSaga {
   Iterable<void> _authenticate({required AuthenticateAction action}) sync* {
     yield Put(AuthInProgressAction());
     final AuthenticateAction authenticateAction = action;
-    final response = Result<Map<String, String>>();
-    yield Call(_authService.authenticate, args: [authenticateAction.mnemonic], result: response);
 
-    final accessToken = response.value?['accessToken'];
-    final refreshToken = response.value?['refreshToken'];
+    yield Try(() sync* {
+      final response = Result<Map<String, String>>();
+      yield Call(_authService.authenticate, args: [authenticateAction.mnemonic], result: response);
 
-    if (accessToken != null && refreshToken != null) {
-      yield Call(_secureStorage.writeRecoveryCode, args: [authenticateAction.mnemonic]);
-      yield Put(TokenReceivedAction(accessToken, refreshToken));
-      yield Put(AuthenticateSuccessAction());
-      yield Put(const SetHasExistingMnemonicAction(true));
-      yield Put(const FetchInitialJournalEntriesAction());
-    } else {
-      yield Put(const AuthenticateFailedAction('Failed to retrieve tokens.'));
-    }
+      final accessToken = response.value?['accessToken'];
+      final refreshToken = response.value?['refreshToken'];
+
+      if (accessToken != null && refreshToken != null) {
+        yield Call(_secureStorage.writeRecoveryCode, args: [authenticateAction.mnemonic]);
+        yield Put(TokenReceivedAction(accessToken, refreshToken));
+        yield Put(AuthenticateSuccessAction());
+        yield Put(const SetHasExistingMnemonicAction(true));
+        yield Put(const FetchInitialJournalEntriesAction());
+      } else {
+        yield Put(const AuthenticateFailedAction('Failed to retrieve tokens.'));
+      }
+    }, Catch: (e, stackTrace) sync* {
+      yield Put(const AuthenticateFailedAction('Failed in authentication'));
+    });
   }
 
   Iterable<void> _tokenReceived({required TokenReceivedAction action}) sync* {
@@ -74,7 +80,7 @@ class AuthSaga {
         yield Put(TokenReceivedAction(accessToken, action.refreshToken));
         yield Put(RefreshTokenSuccessAction(accessToken));
       } else {
-        yield Put(RefreshTokenFailedAction('Failed to refresh token.'));
+        yield Put(const RefreshTokenFailedAction('Failed to refresh token.'));
       }
     }, Catch: (e, stackTrace) sync* {
       yield Put(RefreshTokenFailedAction(e.toString()));

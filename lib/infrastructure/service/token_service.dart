@@ -46,13 +46,17 @@ class TokenService {
     return tokens['accessToken'];
   }
 
-  Future<void> getMeDetails(String refreshToken) async {
-    final response = await _dio.get('/users/me', data: {'refreshToken': refreshToken});
-    final newAccessDetails = response.data['access'];
-    print("newAccessDetails: $newAccessDetails");
-    // final newAccessDetails = [AI_SUGGESTIONS];
+  Future<void> getMeDetails(String accessToken) async {
+    final response = await _dio.get(
+      '/users/me',
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+        },
+      ),
+    );
+    final newAccessDetails = response.data['features'];
     await _secureStorage.writeAccessDetails(newAccessDetails);
-    // return newAccessDetails;
   }
 
   Future<String> getRefreshToken(String refreshToken) async {
@@ -84,7 +88,7 @@ class TokenService {
     final newRefreshToken = authResponse.data['refreshToken'];
 
     await setTokens(newAccessToken, newRefreshToken);
-    await getMeDetails(newRefreshToken);
+    await getMeDetails(newAccessToken);
 
     return {
       'accessToken': authResponse.data['accessToken'],

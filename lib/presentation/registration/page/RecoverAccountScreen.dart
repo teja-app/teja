@@ -26,6 +26,9 @@ class _RecoverAccountScreenState extends State<RecoverAccountScreen> {
   void _authenticate() {
     final mnemonic = _mnemonicController.text.trim();
     if (mnemonic.isNotEmpty) {
+      setState(() {
+        _errorMessage = '';
+      });
       StoreProvider.of<AppState>(context).dispatch(AuthenticateAction(mnemonic));
     } else {
       setState(() {
@@ -48,24 +51,30 @@ class _RecoverAccountScreenState extends State<RecoverAccountScreen> {
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () {
-            Navigator.pop(context); // Exit the recovery screen
+            Navigator.pop(context);
           },
         ),
       ),
       body: StoreConnector<AppState, AuthState>(
         converter: (Store<AppState> store) => store.state.authState,
-        builder: (context, authState) {
-          if (authState.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (authState.isAuthSuccessful) {
+        onWillChange: (previousState, currentState) {
+          if (currentState.isAuthSuccessful) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               _showSnackbar(context, 'Authentication Successful!');
+              // Reset isAuthSuccessful
+              StoreProvider.of<AppState>(context).dispatch(ResetAuthStateAction());
               GoRouter.of(context).goNamed(RootPath.root);
             });
           }
-
+          if (currentState.errorMessage != null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              setState(() {
+                _errorMessage = currentState.errorMessage!;
+              });
+            });
+          }
+        },
+        builder: (context, authState) {
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -87,8 +96,8 @@ class _RecoverAccountScreenState extends State<RecoverAccountScreen> {
                 const SizedBox(height: 20),
                 Center(
                   child: Button(
-                    onPressed: _authenticate,
-                    text: 'Authenticate',
+                    onPressed: authState.isLoading ? null : _authenticate,
+                    text: authState.isLoading ? 'Authenticating...' : 'Authenticate',
                     buttonType: ButtonType.primary,
                   ),
                 ),

@@ -55,7 +55,7 @@ final ThemeData lightTheme = ThemeData(
   ),
   colorScheme: ColorScheme.light(
     primary: Colors.green[600]!,
-    secondary: Colors.green[400]!,
+    secondary: Colors.grey[400]!,
     surface: Colors.white,
     onPrimary: Colors.white,
     onSecondary: Colors.black,

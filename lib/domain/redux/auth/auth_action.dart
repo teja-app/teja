@@ -100,3 +100,6 @@ class SetHasExistingMnemonicAction {
 
   const SetHasExistingMnemonicAction(this.hasExistingMnemonic);
 }
+
+@immutable
+class ResetAuthStateAction {}

@@ -15,6 +15,7 @@ final maps = <String, String>{
 };
 
 AppError createAppError(dynamic serverResponse) {
+  print("serverResponse ${serverResponse}");
   if (serverResponse is Map<String, dynamic>) {
     if (maps[serverResponse['code']] != null) {
       serverResponse['code'] = maps[serverResponse['code']];
