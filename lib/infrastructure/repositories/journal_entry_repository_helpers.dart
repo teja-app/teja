@@ -3,7 +3,8 @@ import 'package:isar/isar.dart';
 import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
 
-Future<List<JournalEntryEntity>> getJournalEntriesPageHelper(Isar isar, int pageKey, int pageSize,
+Future<List<JournalEntryEntity>> getJournalEntriesPageHelper(
+    Isar isar, int pageKey, int pageSize,
     {DateTime? startDate, DateTime? endDate}) async {
   final startIndex = pageKey * pageSize;
 
@@ -19,7 +20,8 @@ Future<List<JournalEntryEntity>> getJournalEntriesPageHelper(Isar isar, int page
   }
 
   final query = isar.journalEntrys.buildQuery(
-    filter: filterConditions.isNotEmpty ? FilterGroup.and(filterConditions) : null,
+    filter:
+        filterConditions.isNotEmpty ? FilterGroup.and(filterConditions) : null,
     sortBy: [const SortProperty(property: 'timestamp', sort: Sort.desc)],
     offset: startIndex,
     limit: pageSize,
@@ -30,10 +32,14 @@ Future<List<JournalEntryEntity>> getJournalEntriesPageHelper(Isar isar, int page
   return journalEntries.map((moodLog) => toEntityHelper(moodLog)).toList();
 }
 
-Future<List<JournalEntryEntity>> getJournalEntriesInDateRangeHelper(Isar isar, DateTime start, DateTime end) async {
+Future<List<JournalEntryEntity>> getJournalEntriesInDateRangeHelper(
+    Isar isar, DateTime start, DateTime end) async {
   try {
     // Fetch entries between the specified start and end dates
-    final List<JournalEntry> journalEntries = await isar.journalEntrys.filter().timestampBetween(start, end).findAll();
+    final List<JournalEntry> journalEntries = await isar.journalEntrys
+        .filter()
+        .timestampBetween(start, end)
+        .findAll();
 
     return journalEntries.map((moodLog) => toEntityHelper(moodLog)).toList();
   } catch (e) {
@@ -108,7 +114,9 @@ JournalEntry fromEntity(JournalEntryEntity entity) {
           ..painLevel = p.painLevel
           ..notes = p.notes)
         .toList()
-    ..metadata = entity.metadata != null ? (JournalEntryMetadata()..tags = entity.metadata?.tags) : null;
+    ..metadata = entity.metadata != null
+        ? (JournalEntryMetadata()..tags = entity.metadata?.tags)
+        : null;
 }
 
 JournalEntryEntity toEntityHelper(JournalEntry journalEntry) {
@@ -186,6 +194,8 @@ JournalEntryEntity toEntityHelper(JournalEntry journalEntry) {
               notes: p.notes,
             ))
         .toList(),
-    metadata: journalEntry.metadata != null ? JournalEntryMetadataEntity(tags: journalEntry.metadata?.tags) : null,
+    metadata: journalEntry.metadata != null
+        ? JournalEntryMetadataEntity(tags: journalEntry.metadata?.tags)
+        : null,
   );
 }

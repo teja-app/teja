@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:teja/config/app_config.dart';
 import 'package:teja/domain/entities/app_error.dart';
+import 'package:teja/domain/redux/permission/permissions_constants.dart';
 import 'package:teja/infrastructure/utils/token_helper.dart';
 import 'package:teja/shared/storage/secure_storage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -45,6 +46,15 @@ class TokenService {
     return tokens['accessToken'];
   }
 
+  Future<void> getMeDetails(String refreshToken) async {
+    final response = await _dio.get('/users/me', data: {'refreshToken': refreshToken});
+    final newAccessDetails = response.data['access'];
+    print("newAccessDetails: $newAccessDetails");
+    // final newAccessDetails = [AI_SUGGESTIONS];
+    await _secureStorage.writeAccessDetails(newAccessDetails);
+    // return newAccessDetails;
+  }
+
   Future<String> getRefreshToken(String refreshToken) async {
     final response = await _dio.post('/auth/refresh-token', data: {'refreshToken': refreshToken});
     final newAccessToken = response.data['accessToken'];
@@ -74,6 +84,7 @@ class TokenService {
     final newRefreshToken = authResponse.data['refreshToken'];
 
     await setTokens(newAccessToken, newRefreshToken);
+    await getMeDetails(newRefreshToken);
 
     return {
       'accessToken': authResponse.data['accessToken'],

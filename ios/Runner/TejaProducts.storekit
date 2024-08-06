@@ -1,0 +1,146 @@
+{
+  "identifier" : "371553E8",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "9.99",
+      "familyShareable" : false,
+      "internalID" : "6569262630",
+      "localizations" : [
+        {
+          "description" : "Testing the Non-consumables",
+          "displayName" : "Test Price",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "test.teja.subscription.pro",
+      "referenceName" : "Teja Pro",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "6473733799",
+    "_developerTeamID" : "35S57HXHB7",
+    "_failTransactionsEnabled" : false,
+    "_lastSynchronizedDate" : 743594968.59307098,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+      {
+        "current" : {
+          "index" : 2,
+          "type" : "generic"
+        },
+        "enabled" : false,
+        "name" : "Load Products"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Purchase"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Verification"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Store Sync"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Subscription Status"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Transaction"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Manage Subscriptions Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Refund Request Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Offer Code Redeem Sheet"
+      }
+    ]
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "21469863",
+      "localizations" : [
+
+      ],
+      "name" : "Teja Pro",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "9.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "6480300170",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Pro - As all of it.",
+              "displayName" : "Teja Pro",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "app.teja.subscription.all.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Monthly Subscription",
+          "subscriptionGroupID" : "21469863",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "99.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "6480212380",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "AI, Journal and Echo features",
+              "displayName" : "Yearly Plan",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "app.teja.subscription.all",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Yearly Subscription",
+          "subscriptionGroupID" : "21469863",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}

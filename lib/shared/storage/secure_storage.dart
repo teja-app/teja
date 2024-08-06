@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SecureStorage {
@@ -41,5 +43,17 @@ class SecureStorage {
 
   Future<void> deleteAll() async {
     await _storage.deleteAll();
+  }
+
+  Future<void> writeAccessDetails(List<dynamic> accessDetails) async {
+    await _storage.write(key: "access", value: jsonEncode(accessDetails));
+  }
+
+  Future<List<dynamic>?> readAccessDetails() async {
+    final accessDetails = await _storage.read(key: "access");
+    if (accessDetails != null) {
+      return jsonDecode(accessDetails) as List<dynamic>;
+    }
+    return null;
   }
 }
