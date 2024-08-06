@@ -69,7 +69,7 @@ class JournalEntryApiService {
       try {
         Response response = await _apiHelper.post(url, data: {
           'entries': chunk.map((e) => e.toJson()).toList(),
-          'lastSyncTimestamp': lastSyncTimestamp.toIso8601String(),
+          'lastSyncTimestamp': lastSyncTimestamp.millisecondsSinceEpoch,
         });
 
         if (response.data is! Map<String, dynamic>) {
