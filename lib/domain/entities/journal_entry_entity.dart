@@ -104,9 +104,9 @@ class JournalEntryEntity {
     return JournalEntryEntity(
       id: json['id'],
       templateId: json['templateId'],
-      timestamp: DateTime.parse(json['timestamp']),
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      timestamp: DateTime.fromMillisecondsSinceEpoch(json['timestamp']),
+      createdAt: DateTime.fromMillisecondsSinceEpoch(json['createdAt']),
+      updatedAt: DateTime.fromMillisecondsSinceEpoch(json['updatedAt']),
       questions: json['questions'] != null
           ? (json['questions'] as List).map((q) => QuestionAnswerPairEntity.fromJson(q)).toList()
           : null,
@@ -148,9 +148,9 @@ class JournalEntryEntity {
     return {
       'id': id,
       'templateId': templateId,
-      'timestamp': timestamp.toIso8601String(),
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'timestamp': timestamp.millisecondsSinceEpoch,
+      'createdAt': createdAt.millisecondsSinceEpoch,
+      'updatedAt': updatedAt.millisecondsSinceEpoch,
       'questions': questions?.map((q) => q.toJson()).toList(),
       'textEntries': textEntries?.map((t) => t.toJson()).toList(),
       'voiceEntries': voiceEntries?.map((v) => v.toJson()).toList(),
