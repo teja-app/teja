@@ -197,8 +197,8 @@ class ApiHelper {
     await _tokenService.clearTokens();
   }
 
-  Future<Response> get(String path) async {
-    return _safeRequest(() => _dio.get(path));
+  Future<Response> get(String path, {Map<String, dynamic>? queryParameters}) async {
+    return _safeRequest(() => _dio.get(path, queryParameters: queryParameters));
   }
 
   Future<Response> post(String path, {dynamic data}) async {

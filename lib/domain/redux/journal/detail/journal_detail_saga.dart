@@ -1,6 +1,7 @@
 import 'package:isar/isar.dart';
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_actions.dart';
+import 'package:teja/domain/redux/journal/journal_sync/journal_sync_actions.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
 import 'package:teja/infrastructure/repositories/journal_entry_repository.dart';
 import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart' as journal_collection;
@@ -26,7 +27,11 @@ class JournalDetailSaga {
       );
 
       if (journalEntry.value != null) {
-        yield Put(LoadJournalDetailSuccessAction(journalEntryRepository.toEntity(journalEntry.value!)));
+        if (journalEntry.value!.isDeleted) {
+          yield Put(const LoadJournalDetailFailureAction('Journal entry has been deleted.'));
+        } else {
+          yield Put(LoadJournalDetailSuccessAction(journalEntryRepository.toEntity(journalEntry.value!)));
+        }
       } else {
         yield Put(const LoadJournalDetailFailureAction('No journal entry found.'));
       }
@@ -43,9 +48,10 @@ class JournalDetailSaga {
     var journalEntryRepository = JournalEntryRepository(isar);
 
     yield Try(() sync* {
-      yield Call(journalEntryRepository.deleteJournalEntryById, args: [action.journalEntryId]);
+      yield Call(journalEntryRepository.softDeleteJournalEntry, args: [action.journalEntryId]);
       yield Put(const DeleteJournalDetailSuccessAction());
-
+      yield Put(const SyncJournalEntries());
+      // Refresh the journal entries list
       yield Put(ResetJournalEntriesListAction());
       yield Put(LoadJournalEntriesListAction(0, 30));
     }, Catch: (e, s) sync* {

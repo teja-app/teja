@@ -7,18 +7,14 @@ import 'package:teja/infrastructure/api_helper.dart';
 class JournalEntryApiService {
   final ApiHelper _apiHelper = ApiHelper();
 
-  Future<List<JournalEntryEntity>> getAllEntries() async {
+  Future<List<JournalEntryEntity>> getAllEntries({bool includeDeleted = false}) async {
     try {
-      const String url = '/journals';
-      final response = await _apiHelper.get(url);
-      if (response.statusCode == 200) {
-        final List<dynamic> data = response.data;
-        return data.map((json) => JournalEntryEntity.fromJson(json)).toList();
-      } else {
-        throw Exception('Failed to fetch journal entries');
-      }
+      final response = await _apiHelper.get('/journals', queryParameters: {
+        'includeDeleted': includeDeleted,
+      });
+      return (response.data as List).map((json) => JournalEntryEntity.fromJson(json)).toList();
     } catch (e) {
-      throw Exception('Error fetching journal entries: $e');
+      throw Exception('Failed to fetch journal entries: $e');
     }
   }
 

@@ -14,15 +14,30 @@ class JournalEntryRepository {
     return isar.journalEntrys.getById(id!);
   }
 
-  Future<List<JournalEntryEntity>> getAllJournalEntries() async {
-    List<JournalEntry> journalEntries = await isar.journalEntrys.where().findAll();
-    return journalEntries.map((moodLog) => toEntityHelper(moodLog)).toList();
+  Future<List<JournalEntryEntity>> getAllJournalEntries({bool includeDeleted = false}) async {
+    final query = isar.journalEntrys.where();
+    if (!includeDeleted) {
+      query.filter().isDeletedEqualTo(false);
+    }
+    List<JournalEntry> journalEntries = await query.findAll();
+    return journalEntries.map((entry) => toEntityHelper(entry)).toList();
   }
 
   Future<void> addOrUpdateJournalEntry(JournalEntry journalEntry) async {
     await isar.writeTxn(() async {
       journalEntry.updatedAt = DateTime.now();
       await isar.journalEntrys.put(journalEntry);
+    });
+  }
+
+  Future<void> softDeleteJournalEntry(String id) async {
+    await isar.writeTxn(() async {
+      final entry = await isar.journalEntrys.getById(id);
+      if (entry != null) {
+        entry.isDeleted = true;
+        entry.updatedAt = DateTime.now();
+        await isar.journalEntrys.put(entry);
+      }
     });
   }
 
@@ -54,13 +69,29 @@ class JournalEntryRepository {
     });
   }
 
-  Future<List<JournalEntryEntity>> getJournalEntriesPage(int pageKey, int pageSize,
-      {DateTime? startDate, DateTime? endDate}) {
-    return getJournalEntriesPageHelper(isar, pageKey, pageSize, startDate: startDate, endDate: endDate);
+  Future<List<JournalEntryEntity>> getJournalEntriesPage(
+    int pageKey,
+    int pageSize, {
+    DateTime? startDate,
+    DateTime? endDate,
+    bool includeDeleted = false,
+  }) {
+    return getJournalEntriesPageHelper(
+      isar,
+      pageKey,
+      pageSize,
+      startDate: startDate,
+      endDate: endDate,
+      includeDeleted: includeDeleted,
+    );
   }
 
-  Future<List<JournalEntryEntity>> getJournalEntriesInDateRange(DateTime start, DateTime end) {
-    return getJournalEntriesInDateRangeHelper(isar, start, end);
+  Future<List<JournalEntryEntity>> getJournalEntriesInDateRange(
+    DateTime start,
+    DateTime end, {
+    bool includeDeleted = false,
+  }) {
+    return getJournalEntriesInDateRangeHelper(isar, start, end, includeDeleted: includeDeleted);
   }
 
   JournalEntryEntity toEntity(JournalEntry journalEntry) {

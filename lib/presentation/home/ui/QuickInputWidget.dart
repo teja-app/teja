@@ -5,12 +5,14 @@ class QuickInputWidget extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback onMoodTap;
   final VoidCallback onAudioTap;
+  final VoidCallback onGuidedJournal;
 
   const QuickInputWidget({
     Key? key,
     required this.onTap,
     required this.onMoodTap,
     required this.onAudioTap,
+    required this.onGuidedJournal,
   }) : super(key: key);
 
   @override
@@ -72,14 +74,14 @@ class QuickInputWidget extends StatelessWidget {
               _buildQuickActionButton(
                 context,
                 icon: Icons.mood,
-                label: 'Track Mood',
+                label: 'Mood',
                 onTap: onMoodTap,
               ),
               _buildQuickActionButton(
                 context,
-                icon: Foundation.microphone,
-                label: 'Add Audio',
-                onTap: onAudioTap,
+                icon: Foundation.book,
+                label: 'Guided',
+                onTap: onGuidedJournal,
               ),
             ],
           ),

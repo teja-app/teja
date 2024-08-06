@@ -100,4 +100,6 @@ class JournalEntry {
 
   List<String>? topics;
   List<JournalFeeling>? feelings;
+
+  bool isDeleted = false;
 }
