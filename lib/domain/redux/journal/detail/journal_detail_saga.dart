@@ -53,7 +53,7 @@ class JournalDetailSaga {
       yield Put(const SyncJournalEntries());
       // Refresh the journal entries list
       yield Put(ResetJournalEntriesListAction());
-      yield Put(LoadJournalEntriesListAction(0, 30));
+      yield Put(LoadJournalEntriesListAction(0, 3000));
     }, Catch: (e, s) sync* {
       yield Put(DeleteJournalDetailFailureAction(e.toString()));
     });

@@ -173,6 +173,7 @@ class JournalEditorSaga {
       yield Call(journalEntryRepository.addOrUpdateJournalEntry, args: [journalEntry]);
       yield Put(JournalEntrySaved("Journal entry saved successfully."));
       yield Put(const SyncJournalEntries());
+      yield Put(LoadJournalEntriesListAction(0, 3000));
     }, Catch: (e, s) sync* {
       yield Put(JournalEntrySaveFailed(e.toString()));
     });
@@ -221,6 +222,7 @@ class JournalEditorSaga {
         yield Put(UpdateQuestionAnswerSuccessAction(
             journalEntryId: action.journalEntryId, questionId: action.questionId, answerText: action.answerText));
         yield Put(const SyncJournalEntries());
+        yield Put(LoadJournalEntriesListAction(0, 3000));
       }, Catch: (e, s) sync* {
         yield Put(UpdateQuestionAnswerFailureAction(e.toString()));
       });

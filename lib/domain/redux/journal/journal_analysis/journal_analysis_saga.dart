@@ -1,6 +1,7 @@
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_actions.dart';
 import 'package:teja/domain/redux/journal/journal_sync/journal_sync_actions.dart';
+import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
 import 'package:teja/infrastructure/api/journal_analysis_api.dart';
 import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart';
 import 'package:teja/infrastructure/repositories/journal_entry_repository.dart';
@@ -61,6 +62,7 @@ class JournalAnalysisSaga {
       yield Call(repository.addOrUpdateJournalEntry, args: [existingEntry]);
       yield Put(LoadJournalDetailAction(journalEntryId));
       yield Put(const SyncJournalEntries());
+      yield Put(LoadJournalEntriesListAction(0, 3000));
     } else {
       yield Put(const AnalyzeJournalErrorAction("Journal entry not found."));
     }

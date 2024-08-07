@@ -1,6 +1,7 @@
 import 'package:isar/isar.dart';
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
+import 'package:teja/domain/redux/journal/journal_logs/journal_logs_actions.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
 import 'package:teja/infrastructure/repositories/journal_entry_repository.dart';
 
@@ -31,6 +32,7 @@ class JournalListSaga {
       } else {
         yield Put(JournalEntriesListFetchFailedAction('No journal entries found for the requested page.'));
       }
+      yield Put(const FetchJournalLogsAction());
     }, Catch: (e, s) sync* {
       yield Put(JournalEntriesListFetchFailedAction(e.toString()));
     });
