@@ -112,7 +112,8 @@ class _HomePageState extends State<HomePage> {
     Duration oneMonth = const Duration(days: 31);
     DateTime oneMonthFromNow = now.add(oneMonth);
     Duration tenMonths = oneMonth * 10; // Calculate the duration for 3 weeks
-    DateTime tenMonthsAgo = now.subtract(tenMonths); // Subtract the duration to get the past date
+    DateTime tenMonthsAgo =
+        now.subtract(tenMonths); // Subtract the duration to get the past date
 
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
@@ -167,7 +168,8 @@ class _HomePageState extends State<HomePage> {
                   MoodTrackerWidget(),
                 ],
               ),
-              if (store.selectedDate != null && now.compareTo(store.selectedDate!) < 0)
+              if (store.selectedDate != null &&
+                  now.compareTo(store.selectedDate!) < 0)
                 const Center(child: CountdownTimer()),
               const SizedBox(height: 10),
             ],
@@ -176,7 +178,8 @@ class _HomePageState extends State<HomePage> {
       },
     );
     return Scaffold(
-      bottomNavigationBar: isDesktop(context) ? null : const MobileNavigationBar(),
+      bottomNavigationBar:
+          isDesktop(context) ? null : const MobileNavigationBar(),
       appBar: AppBar(
         elevation: 0.0,
         forceMaterialTransparency: true,
@@ -191,7 +194,10 @@ class _HomePageState extends State<HomePage> {
                 Expanded(
                   child: Align(
                     alignment: Alignment.topCenter, // Adjust this as needed
-                    child: mainBody,
+                    child: SizedBox(
+                      width: 630,
+                      child: mainBody,
+                    ),
                   ),
                 ), // Main content area
               ],
