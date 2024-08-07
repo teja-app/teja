@@ -86,7 +86,7 @@ dependencies:
   video_player: ^2.8.6
   video_thumbnail: ^0.5.3
   permission_handler: ^11.3.1
-  record: ^5.0.5
+  record: ^5.1.2
   speech_to_text: ^6.6.0
   just_audio: ^0.9.37
   audio_video_progress_bar: ^2.0.2

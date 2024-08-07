@@ -68,6 +68,16 @@ android {
         }
     }
 
+    flavorDimensions "default"
+
+    productFlavors {
+        development {
+            dimension "default"
+            resValue "string", "app_name", "Teja Dev"
+            applicationIdSuffix ".dev"
+        }
+    }
+
     buildTypes {
         release {
             // Remove the line below that sets the signingConfig to debug for release builds.
