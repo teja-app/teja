@@ -8,6 +8,7 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
 import 'package:teja/domain/redux/mood/list/actions.dart';
 import 'package:teja/presentation/home/ui/QuickInputWidget.dart';
+import 'package:teja/presentation/home/ui/StreakDashboardWidget.dart';
 import 'package:teja/presentation/home/ui/count_down_timer.dart';
 import 'package:teja/presentation/home/ui/journal/journal_entries_widget.dart';
 import 'package:teja/presentation/home/ui/mood/mood_tracker.dart';
@@ -112,8 +113,7 @@ class _HomePageState extends State<HomePage> {
     Duration oneMonth = const Duration(days: 31);
     DateTime oneMonthFromNow = now.add(oneMonth);
     Duration tenMonths = oneMonth * 10; // Calculate the duration for 3 weeks
-    DateTime tenMonthsAgo =
-        now.subtract(tenMonths); // Subtract the duration to get the past date
+    DateTime tenMonthsAgo = now.subtract(tenMonths); // Subtract the duration to get the past date
 
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
@@ -131,6 +131,8 @@ class _HomePageState extends State<HomePage> {
                   style: textTheme.titleSmall,
                 ),
               ),
+              const SizedBox(height: 20),
+              ExampleStreakEntriesDashboard(),
               const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 0),
@@ -168,8 +170,7 @@ class _HomePageState extends State<HomePage> {
                   MoodTrackerWidget(),
                 ],
               ),
-              if (store.selectedDate != null &&
-                  now.compareTo(store.selectedDate!) < 0)
+              if (store.selectedDate != null && now.compareTo(store.selectedDate!) < 0)
                 const Center(child: CountdownTimer()),
               const SizedBox(height: 10),
             ],
@@ -178,8 +179,7 @@ class _HomePageState extends State<HomePage> {
       },
     );
     return Scaffold(
-      bottomNavigationBar:
-          isDesktop(context) ? null : const MobileNavigationBar(),
+      bottomNavigationBar: isDesktop(context) ? null : const MobileNavigationBar(),
       appBar: AppBar(
         elevation: 0.0,
         forceMaterialTransparency: true,
