@@ -1,5 +1,6 @@
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_actions.dart';
+import 'package:teja/domain/redux/journal/journal_sync/journal_sync_actions.dart';
 import 'package:teja/infrastructure/api/journal_analysis_api.dart';
 import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart';
 import 'package:teja/infrastructure/repositories/journal_entry_repository.dart';
@@ -42,8 +43,8 @@ class JournalAnalysisSaga {
     yield Call(repository.getJournalEntryById, args: [journalEntryId], result: journalEntryResult);
 
     if (journalEntryResult.value != null) {
-      JournalEntry updatedEntry = journalEntryResult.value!;
-      updatedEntry
+      JournalEntry existingEntry = journalEntryResult.value!;
+      existingEntry
         ..emoticon = analysisResult['emoticon']
         ..title = analysisResult['title']
         ..summary = analysisResult['summary']
@@ -54,10 +55,14 @@ class JournalAnalysisSaga {
               ..title = feeling['title'])
             .toList()
         ..topics = (analysisResult['topics'] as List<dynamic>).cast<String>()
-        ..affirmation = analysisResult['affirmation'];
+        ..affirmation = analysisResult['affirmation']
+        ..updatedAt = DateTime.now(); // Set the updated timestamp
 
-      yield Call(repository.addOrUpdateJournalEntry, args: [updatedEntry]);
+      yield Call(repository.addOrUpdateJournalEntry, args: [existingEntry]);
       yield Put(LoadJournalDetailAction(journalEntryId));
+      yield Put(const SyncJournalEntries());
+    } else {
+      yield Put(const AnalyzeJournalErrorAction("Journal entry not found."));
     }
   }
 }
