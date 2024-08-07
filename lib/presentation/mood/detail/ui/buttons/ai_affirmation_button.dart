@@ -5,17 +5,21 @@ import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/mood_log.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/mood/ai_suggestion/ai_suggestion_actions.dart';
+import 'package:teja/domain/redux/permission/permissions_constants.dart';
+import 'package:teja/presentation/onboarding/widgets/feature_gate.dart';
 import 'package:teja/shared/common/button.dart';
 
 class AIAffirmationButton extends StatelessWidget {
   final MoodLogEntity selectedMoodLog;
 
-  const AIAffirmationButton({Key? key, required this.selectedMoodLog}) : super(key: key);
+  const AIAffirmationButton({Key? key, required this.selectedMoodLog})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, _AIAffirmationButtonViewModel>(
-      converter: (store) => _AIAffirmationButtonViewModel.fromStore(store, selectedMoodLog),
+      converter: (store) =>
+          _AIAffirmationButtonViewModel.fromStore(store, selectedMoodLog),
       builder: (context, viewModel) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,12 +32,18 @@ class AIAffirmationButton extends StatelessWidget {
                 ),
               )
             else ...[
-              Button(
-                text: "Fetch AI Affirmation",
-                icon: Icons.lightbulb,
-                onPressed: viewModel.getAffirmation,
+              FeatureGate(
+                feature: AI_SUGGESTIONS,
+                autoTriggerOnAccess: true,
+                onFeatureAccessed: () => viewModel.getAffirmation,
+                child: const Button(
+                  text: "Fetch AI Affirmation",
+                  icon: Icons.lightbulb,
+                  // onPressed: viewModel.getAffirmation,
+                ),
               ),
-              if (viewModel.isLoading) const Center(child: CircularProgressIndicator()),
+              if (viewModel.isLoading)
+                const Center(child: CircularProgressIndicator()),
               if (viewModel.errorMessage != null)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -63,7 +73,8 @@ class _AIAffirmationButtonViewModel {
     required this.getAffirmation,
   });
 
-  static _AIAffirmationButtonViewModel fromStore(Store<AppState> store, MoodLogEntity selectedMoodLog) {
+  static _AIAffirmationButtonViewModel fromStore(
+      Store<AppState> store, MoodLogEntity selectedMoodLog) {
     final aiSuggestionState = store.state.aiSuggestionState;
 
     return _AIAffirmationButtonViewModel(

@@ -5,28 +5,38 @@ import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/mood_log.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/mood/ai_suggestion/ai_suggestion_actions.dart';
+import 'package:teja/domain/redux/permission/permissions_constants.dart';
+import 'package:teja/presentation/onboarding/widgets/feature_gate.dart';
 import 'package:teja/shared/common/button.dart';
 
 class AITitleButton extends StatelessWidget {
   final MoodLogEntity selectedMoodLog;
 
-  const AITitleButton({Key? key, required this.selectedMoodLog}) : super(key: key);
+  const AITitleButton({Key? key, required this.selectedMoodLog})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, _AITitleButtonViewModel>(
-      converter: (store) => _AITitleButtonViewModel.fromStore(store, selectedMoodLog),
+      converter: (store) =>
+          _AITitleButtonViewModel.fromStore(store, selectedMoodLog),
       builder: (context, viewModel) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (viewModel.title == null) ...[
-              Button(
-                text: "Fetch AI Title",
-                icon: Icons.title,
-                onPressed: viewModel.getTitle,
+              FeatureGate(
+                feature: AI_SUGGESTIONS,
+                autoTriggerOnAccess: true,
+                onFeatureAccessed: () => viewModel.getTitle,
+                child: const Button(
+                  text: "Fetch AI Title",
+                  icon: Icons.title,
+                  // onPressed: viewModel.getTitle,
+                ),
               ),
-              if (viewModel.isLoading) const Center(child: CircularProgressIndicator()),
+              if (viewModel.isLoading)
+                const Center(child: CircularProgressIndicator()),
               if (viewModel.errorMessage != null)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -56,7 +66,8 @@ class _AITitleButtonViewModel {
     required this.getTitle,
   });
 
-  static _AITitleButtonViewModel fromStore(Store<AppState> store, MoodLogEntity selectedMoodLog) {
+  static _AITitleButtonViewModel fromStore(
+      Store<AppState> store, MoodLogEntity selectedMoodLog) {
     final aiSuggestionState = store.state.aiSuggestionState;
 
     return _AITitleButtonViewModel(
