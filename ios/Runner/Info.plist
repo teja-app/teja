@@ -83,9 +83,11 @@
 	<key>com.posthog.posthog.API_KEY</key>
 	<string>phc_mKsbKa4mA0xUc8zt2T5d3MKifEZzfi00lSqsHpS7XmI</string>
 	<key>com.posthog.posthog.POSTHOG_HOST</key>
-	<string>https://app.posthog.com</string>
-	<key>com.posthog.posthog.TRACK_APPLICATION_LIFECYCLE_EVENTS</key>
-	<false/>
+	<string>https://us.i.posthog.com</string>
+	<key>com.posthog.posthog.CAPTURE_APPLICATION_LIFECYCLE_EVENTS</key>
+	<true/>
+	<key>com.posthog.posthog.DEBUG</key>
+	<true/>
 	<key>NSHealthShareUsageDescription</key>
 	<string>Integrating your Apple Health data with $(APP_DISPLAY_NAME) will make it easy for you to track and manage all health goals!</string>
 	<key>NSHealthUpdateUsageDescription</key>

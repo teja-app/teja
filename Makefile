@@ -26,6 +26,9 @@ run-prod:
 deploy-ios:
 	shorebird release ios --target ./lib/main_prod.dart --flavor production
 
+deploy-android:
+	shorebird release android --target ./lib/main_prod.dart --flavor production
+
 deploy-ios-patch:
 	shorebird patch --platforms=ios --flavor=production --target=./lib/main_prod.dart
 

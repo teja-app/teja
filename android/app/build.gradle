@@ -76,6 +76,11 @@ android {
             resValue "string", "app_name", "Teja Dev"
             applicationIdSuffix ".dev"
         }
+        production {
+            dimension "default"
+            resValue "string", "app_name", "Teja"
+            // No applicationIdSuffix for production
+        }
     }
 
     buildTypes {
