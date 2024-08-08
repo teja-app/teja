@@ -75,7 +75,10 @@
 	<string>Main</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
-		<string>UIInterfaceOrientationPortrait</string>
+			<string>UIInterfaceOrientationPortrait</string>
+			<string>UIInterfaceOrientationPortraitUpsideDown</string>
+			<string>UIInterfaceOrientationLandscapeLeft</string>
+			<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>com.posthog.posthog.API_KEY</key>
 	<string>phc_mKsbKa4mA0xUc8zt2T5d3MKifEZzfi00lSqsHpS7XmI</string>
