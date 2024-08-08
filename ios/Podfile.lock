@@ -62,18 +62,6 @@ PODS:
     - Flutter
   - just_audio (0.0.1):
     - Flutter
-  - libwebp (1.3.2):
-    - libwebp/demux (= 1.3.2)
-    - libwebp/mux (= 1.3.2)
-    - libwebp/sharpyuv (= 1.3.2)
-    - libwebp/webp (= 1.3.2)
-  - libwebp/demux (1.3.2):
-    - libwebp/webp
-  - libwebp/mux (1.3.2):
-    - libwebp/demux
-  - libwebp/sharpyuv (1.3.2)
-  - libwebp/webp (1.3.2):
-    - libwebp/sharpyuv
   - local_auth_darwin (0.0.1):
     - Flutter
   - package_info_plus (0.4.5):
@@ -83,19 +71,20 @@ PODS:
     - FlutterMacOS
   - permission_handler_apple (9.3.0):
     - Flutter
-  - PostHog (2.1.0)
+  - PostHog (3.7.0)
   - posthog_flutter (0.0.1):
     - Flutter
-    - PostHog (~> 2.0)
+    - FlutterMacOS
+    - PostHog (~> 3.0)
   - ReachabilitySwift (5.2.3)
   - record_darwin (1.0.0):
     - Flutter
     - FlutterMacOS
   - rive_common (0.0.1):
     - Flutter
-  - SDWebImage (5.19.2):
-    - SDWebImage/Core (= 5.19.2)
-  - SDWebImage/Core (5.19.2)
+  - SDWebImage (5.19.6):
+    - SDWebImage/Core (= 5.19.6)
+  - SDWebImage/Core (5.19.6)
   - Sentry/HybridSDK (8.29.0)
   - sentry_flutter (8.3.0):
     - Flutter
@@ -118,9 +107,6 @@ PODS:
   - video_player_avfoundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - video_thumbnail (0.0.1):
-    - Flutter
-    - libwebp
 
 DEPENDENCIES:
   - audio_session (from `.symlinks/plugins/audio_session/ios`)
@@ -152,13 +138,11 @@ DEPENDENCIES:
   - speech_to_text (from `.symlinks/plugins/speech_to_text/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
   - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/darwin`)
-  - video_thumbnail (from `.symlinks/plugins/video_thumbnail/ios`)
 
 SPEC REPOS:
   trunk:
     - DKImagePickerController
     - DKPhotoGallery
-    - libwebp
     - PostHog
     - ReachabilitySwift
     - SDWebImage
@@ -225,8 +209,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
   video_player_avfoundation:
     :path: ".symlinks/plugins/video_player_avfoundation/darwin"
-  video_thumbnail:
-    :path: ".symlinks/plugins/video_thumbnail/ios"
 
 SPEC CHECKSUMS:
   audio_session: 088d2483ebd1dc43f51d253d4a1c517d9a2e7207
@@ -246,17 +228,16 @@ SPEC CHECKSUMS:
   integration_test: ce0a3ffa1de96d1a89ca0ac26fca7ea18a749ef4
   isar_flutter_libs: b69f437aeab9c521821c3f376198c4371fa21073
   just_audio: baa7252489dbcf47a4c7cc9ca663e9661c99aafa
-  libwebp: 1786c9f4ff8a279e4dac1e8f385004d5fc253009
   local_auth_darwin: 4d56c90c2683319835a61274b57620df9c4520ab
   package_info_plus: 115f4ad11e0698c8c1c5d8a689390df880f47e85
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
-  PostHog: cec53400d07af379cc46c8982a757b2ecad48c9e
-  posthog_flutter: 080dc6e4638a25095095965517ca84ce85581ef0
+  PostHog: 74d4c3b47908a7b284e87369eb7af9f809ac8436
+  posthog_flutter: e80defebf021b13375b351c838c9b87d769d7546
   ReachabilitySwift: 7f151ff156cea1481a8411701195ac6a984f4979
   record_darwin: df0a677188e5fed18472550298e675f19ddaffbe
   rive_common: 3a4c254c6e4db7e4b9e05daeb3d1f47ae4f7bf76
-  SDWebImage: dfe95b2466a9823cf9f0c6d01217c06550d7b29a
+  SDWebImage: a79252b60f4678812d94316c91da69ec83089c9f
   Sentry: 016de45ee5ce5fca2a829996f1bfafeb5e62e8b4
   sentry_flutter: 5fb57c5b7e6427a9dc1fedde4269eb65823982d4
   share_plus: c3fef564749587fc939ef86ffb283ceac0baf9f5
@@ -267,7 +248,6 @@ SPEC CHECKSUMS:
   Try: 5ef669ae832617b3cee58cb2c6f99fb767a4ff96
   url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
   video_player_avfoundation: 7c6c11d8470e1675df7397027218274b6d2360b3
-  video_thumbnail: c4e2a3c539e247d4de13cd545344fd2d26ffafd1
 
 PODFILE CHECKSUM: 819463e6a0290f5a72f145ba7cde16e8b6ef0796
 

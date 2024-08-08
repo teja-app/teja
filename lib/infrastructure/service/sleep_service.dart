@@ -1,8 +1,13 @@
+import 'dart:io';
+
 import 'package:health/health.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class HealthDataFetcher {
   static Future<List<HealthDataPoint>> fetchSleepData(List<DateTime> dates) async {
+    if (Platform.isAndroid) {
+      return []; // Return empty list for Android
+    }
     Health().configure(useHealthConnectIfAvailable: true);
     final types = [HealthDataType.SLEEP_IN_BED]; // Define the types you want to fetch
     final permissions = types.map((e) => HealthDataAccess.READ).toList();
@@ -49,6 +54,9 @@ class HealthDataFetcher {
   }
 
   static Future<List<HealthDataPoint>> fetchStepsData(List<DateTime> dates) async {
+    if (Platform.isAndroid) {
+      return []; // Return empty list for Android
+    }
     Health().configure(useHealthConnectIfAvailable: true);
     final types = [HealthDataType.STEPS]; // Define the types you want to fetch
     final permissions = types.map((e) => HealthDataAccess.READ).toList();

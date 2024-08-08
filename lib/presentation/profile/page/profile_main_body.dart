@@ -10,6 +10,7 @@ import 'package:teja/presentation/profile/ui/profile_mood_gauge.dart';
 import 'package:teja/presentation/profile/ui/profile_mood_sleep_chart.dart';
 import 'package:teja/presentation/profile/ui/profile_mood_yearly_heatmap.dart';
 import 'package:teja/shared/common/button.dart';
+import 'dart:io' show Platform;
 
 class MainBody extends StatelessWidget {
   const MainBody({super.key});
@@ -56,11 +57,24 @@ class MainBody extends StatelessWidget {
         return StoreConnector<AppState, List<String>>(
           converter: (store) => store.state.profilePageState.chartSequence,
           builder: (context, chartSequence) {
+            // Filter out unavailable charts for Android
+            final availableCharts = Platform.isAndroid
+                ? chartSequence
+                    .where((chart) =>
+                        chart != 'MoodSleepChartScreen' &&
+                        chart != 'ProfileSleepHeatMapScreen' &&
+                        chart != 'ProfileMoodActivityScreen')
+                    .toList()
+                : chartSequence;
+
             return ReorderableListView(
               onReorder: (oldIndex, newIndex) {
-                vm.updateChartSequence(oldIndex, newIndex);
+                // Adjust indices if necessary due to filtered list
+                final actualOldIndex = chartSequence.indexOf(availableCharts[oldIndex]);
+                final actualNewIndex = chartSequence.indexOf(availableCharts[newIndex]);
+                vm.updateChartSequence(actualOldIndex, actualNewIndex);
               },
-              children: chartSequence.map((chart) {
+              children: availableCharts.map((chart) {
                 return ListTile(
                   key: Key(chart),
                   title: Text(_getChartDisplayName(chart)),
@@ -92,6 +106,13 @@ class MainBody extends StatelessWidget {
   }
 
   Widget _buildChart(BuildContext context, String chartName) {
+    if (Platform.isAndroid &&
+        (chartName == 'MoodSleepChartScreen' ||
+            chartName == 'ProfileSleepHeatMapScreen' ||
+            chartName == 'ProfileMoodActivityScreen')) {
+      return Container(); // Return an empty container for Android
+    }
+
     switch (chartName) {
       case 'MoodSleepChartScreen':
         return const MoodSleepChartScreen(key: Key('MoodSleepChartScreen'));

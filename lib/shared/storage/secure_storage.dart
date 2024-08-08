@@ -45,6 +45,18 @@ class SecureStorage {
     await _storage.deleteAll();
   }
 
+  Future<void> writeUserId(String id) async {
+    await _storage.write(key: 'user_id', value: id);
+  }
+
+  Future<void> deleteUserId() async {
+    await _storage.delete(key: 'user_id');
+  }
+
+  Future<String?> readUserId() async {
+    return await _storage.read(key: 'user_id');
+  }
+
   Future<void> writeAccessDetails(List<dynamic> accessDetails) async {
     await _storage.write(key: "access", value: jsonEncode(accessDetails));
   }
