@@ -6,6 +6,7 @@ import 'package:teja/domain/redux/journal/journal_sync/journal_sync_actions.dart
 import 'package:teja/domain/redux/journal/journal_template/actions.dart';
 import 'package:teja/domain/redux/mood/master_factor/actions.dart';
 import 'package:teja/domain/redux/mood/master_feeling/actions.dart';
+import 'package:teja/domain/redux/mood/mood_sync/mood_sync_actions.dart';
 import 'package:teja/domain/redux/quotes/quote_action.dart';
 // Import actions
 
@@ -26,5 +27,7 @@ void performInitStateActions(Store<AppState> store) {
   store.dispatch(FetchJournalCategoriesActionFromCache());
 
   store.dispatch(const SyncJournalEntries());
+  store.dispatch(const SyncMoodLogs());
   store.dispatch(const FetchInitialJournalEntriesAction());
+  store.dispatch(const FetchInitialMoodLogsAction());
 }

@@ -32,8 +32,7 @@ class FinishScreenModel {
 class FinishScreen extends StatelessWidget {
   final VoidCallback onFinish;
 
-  const FinishScreen({Key? key, required this.onFinish})
-      : super(key: key); // Modify this line
+  const FinishScreen({Key? key, required this.onFinish}) : super(key: key); // Modify this line
 
   void _triggerAppReview() async {
     if (await InAppReview.instance.isAvailable()) {
@@ -51,10 +50,7 @@ class FinishScreen extends StatelessWidget {
       }
       Posthog().capture(
         eventName: 'survey sent',
-        properties: {
-          "\$survey_id": "018c81d5-a04a-0000-5b8d-a27f1aa8f6a8",
-          "\$survey_response": response
-        },
+        properties: {"\$survey_id": "018c81d5-a04a-0000-5b8d-a27f1aa8f6a8", "\$survey_response": response},
       );
       onFinish();
     }
@@ -94,8 +90,7 @@ class FinishScreen extends StatelessWidget {
               Center(
                 child: AISuggestionButton(moodId: viewModel.currentMoodLog!.id),
               ),
-              if (viewModel.moodRating >=
-                  4) // Conditional Rendering based on moodRating
+              if (viewModel.moodRating >= 4) // Conditional Rendering based on moodRating
                 FlexibleHeightBox(
                   gridWidth: 4,
                   child: Column(
@@ -114,14 +109,12 @@ class FinishScreen extends StatelessWidget {
                           // Dislike Button
                           IconButton(
                             icon: const Icon(AntDesign.like1),
-                            onPressed: () =>
-                                {_handleSurveyResponse(context, "Yes")},
+                            onPressed: () => {_handleSurveyResponse(context, "Yes")},
                           ),
                           // Like Button
                           IconButton(
                             icon: const Icon(AntDesign.dislike1),
-                            onPressed: () =>
-                                {_handleSurveyResponse(context, "No")},
+                            onPressed: () => {_handleSurveyResponse(context, "No")},
                           ),
                         ],
                       ),

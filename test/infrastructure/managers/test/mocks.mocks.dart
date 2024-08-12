@@ -8,7 +8,6 @@ import 'dart:async' as _i5;
 import 'package:isar/isar.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:teja/domain/entities/mood_log.dart' as _i3;
-import 'package:teja/domain/redux/mood/list/state.dart' as _i9;
 import 'package:teja/infrastructure/database/isar_collections/badge.dart'
     as _i6;
 import 'package:teja/infrastructure/database/isar_collections/mood_log.dart'
@@ -163,234 +162,60 @@ class MockMoodLogRepository extends _i1.Mock implements _i7.MoodLogRepository {
       ) as _i5.Future<_i8.MoodLog?>);
 
   @override
-  _i5.Future<List<_i8.MoodLog>> getAllMoodLogs() => (super.noSuchMethod(
-        Invocation.method(
-          #getAllMoodLogs,
-          [],
-        ),
-        returnValue: _i5.Future<List<_i8.MoodLog>>.value(<_i8.MoodLog>[]),
-      ) as _i5.Future<List<_i8.MoodLog>>);
-
-  @override
-  _i5.Future<List<dynamic>> getMoodLogsPage(
-    int? pageKey,
-    int? pageSize, [
-    _i9.MoodLogFilter? filter,
-  ]) =>
+  _i5.Future<List<_i3.MoodLogEntity>> getEntriesSince(
+    DateTime? lastSyncTimestamp, {
+    bool? includeDeleted = false,
+  }) =>
       (super.noSuchMethod(
         Invocation.method(
-          #getMoodLogsPage,
-          [
-            pageKey,
-            pageSize,
-            filter,
-          ],
-        ),
-        returnValue: _i5.Future<List<dynamic>>.value(<dynamic>[]),
-      ) as _i5.Future<List<dynamic>>);
-
-  @override
-  _i5.Future<void> addAttachmentToMoodLog(
-    String? moodLogId,
-    _i3.MoodLogAttachmentEntity? attachmentEntity,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #addAttachmentToMoodLog,
-          [
-            moodLogId,
-            attachmentEntity,
-          ],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<void> removeAttachmentFromMoodLog(
-    String? moodLogId,
-    String? attachmentId,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #removeAttachmentFromMoodLog,
-          [
-            moodLogId,
-            attachmentId,
-          ],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<void> updateMoodLogComment(
-    String? moodLogId,
-    String? comment,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #updateMoodLogComment,
-          [
-            moodLogId,
-            comment,
-          ],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<List<_i3.MoodLogEntity>> getMoodLogsForWeek(
-    DateTime? startDate,
-    DateTime? endDate,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getMoodLogsForWeek,
-          [
-            startDate,
-            endDate,
-          ],
+          #getEntriesSince,
+          [lastSyncTimestamp],
+          {#includeDeleted: includeDeleted},
         ),
         returnValue:
             _i5.Future<List<_i3.MoodLogEntity>>.value(<_i3.MoodLogEntity>[]),
       ) as _i5.Future<List<_i3.MoodLogEntity>>);
 
   @override
-  _i5.Future<Map<DateTime, double>> getAverageMoodLogsForWeek(
-    DateTime? startDate,
-    DateTime? endDate,
-  ) =>
+  _i5.Future<void> updateLastSyncTimestamp(int? timestamp) =>
       (super.noSuchMethod(
         Invocation.method(
-          #getAverageMoodLogsForWeek,
-          [
-            startDate,
-            endDate,
-          ],
-        ),
-        returnValue:
-            _i5.Future<Map<DateTime, double>>.value(<DateTime, double>{}),
-      ) as _i5.Future<Map<DateTime, double>>);
-
-  @override
-  _i5.Future<void> addOrUpdateMoodLog(_i8.MoodLog? moodLog) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #addOrUpdateMoodLog,
-          [moodLog],
+          #updateLastSyncTimestamp,
+          [timestamp],
         ),
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
 
   @override
-  _i5.Future<void> deleteMoodLogById(String? id) => (super.noSuchMethod(
+  _i5.Future<int> getLastSyncTimestamp() => (super.noSuchMethod(
         Invocation.method(
-          #deleteMoodLogById,
+          #getLastSyncTimestamp,
+          [],
+        ),
+        returnValue: _i5.Future<int>.value(0),
+      ) as _i5.Future<int>);
+
+  @override
+  _i5.Future<void> addOrUpdateMoodLogs(List<_i3.MoodLogEntity>? moodLogs) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #addOrUpdateMoodLogs,
+          [moodLogs],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> softDeleteMoodLog(String? id) => (super.noSuchMethod(
+        Invocation.method(
+          #softDeleteMoodLog,
           [id],
         ),
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<void> updateFeelingsForMoodLog(
-    String? moodLogId,
-    List<_i8.MoodLogFeeling>? updatedFeelings,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #updateFeelingsForMoodLog,
-          [
-            moodLogId,
-            updatedFeelings,
-          ],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<void> updateBroadFactorsForMoodLog(
-    String? moodLogId,
-    List<String>? broadFactors,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #updateBroadFactorsForMoodLog,
-          [
-            moodLogId,
-            broadFactors,
-          ],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<void> updateFactorsForFeeling(
-    String? moodLogId,
-    String? feelingSlug,
-    List<String>? factorSlugs,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #updateFactorsForFeeling,
-          [
-            moodLogId,
-            feelingSlug,
-            factorSlugs,
-          ],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<_i8.MoodLog?> getTodaysMoodLog() => (super.noSuchMethod(
-        Invocation.method(
-          #getTodaysMoodLog,
-          [],
-        ),
-        returnValue: _i5.Future<_i8.MoodLog?>.value(),
-      ) as _i5.Future<_i8.MoodLog?>);
-
-  @override
-  _i5.Future<List<_i8.MoodLog>> getMoodLogsInDateRange(
-    DateTime? start,
-    DateTime? end,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getMoodLogsInDateRange,
-          [
-            start,
-            end,
-          ],
-        ),
-        returnValue: _i5.Future<List<_i8.MoodLog>>.value(<_i8.MoodLog>[]),
-      ) as _i5.Future<List<_i8.MoodLog>>);
-
-  @override
-  _i5.Future<_i8.MoodLog?> getMoodLogByDate(DateTime? date) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getMoodLogByDate,
-          [date],
-        ),
-        returnValue: _i5.Future<_i8.MoodLog?>.value(),
-      ) as _i5.Future<_i8.MoodLog?>);
-
-  @override
-  _i5.Future<int> calculateCurrentStreak() => (super.noSuchMethod(
-        Invocation.method(
-          #calculateCurrentStreak,
-          [],
-        ),
-        returnValue: _i5.Future<int>.value(0),
-      ) as _i5.Future<int>);
 
   @override
   _i3.MoodLogEntity toEntity(_i8.MoodLog? moodLog) => (super.noSuchMethod(
@@ -406,84 +231,4 @@ class MockMoodLogRepository extends _i1.Mock implements _i7.MoodLogRepository {
           ),
         ),
       ) as _i3.MoodLogEntity);
-
-  @override
-  _i5.Future<void> updateAISuggestion(
-    String? moodLogId,
-    String? suggestion,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #updateAISuggestion,
-          [
-            moodLogId,
-            suggestion,
-          ],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<String?> fetchAISuggestion(String? moodLogId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchAISuggestion,
-          [moodLogId],
-        ),
-        returnValue: _i5.Future<String?>.value(),
-      ) as _i5.Future<String?>);
-
-  @override
-  _i5.Future<void> updateAITitle(
-    String? moodLogId,
-    String? title,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #updateAITitle,
-          [
-            moodLogId,
-            title,
-          ],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<void> updateAIAffirmation(
-    String? moodLogId,
-    String? affirmation,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #updateAIAffirmation,
-          [
-            moodLogId,
-            affirmation,
-          ],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<String?> fetchAITitle(String? moodLogId) => (super.noSuchMethod(
-        Invocation.method(
-          #fetchAITitle,
-          [moodLogId],
-        ),
-        returnValue: _i5.Future<String?>.value(),
-      ) as _i5.Future<String?>);
-
-  @override
-  _i5.Future<String?> fetchAIAffirmation(String? moodLogId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchAIAffirmation,
-          [moodLogId],
-        ),
-        returnValue: _i5.Future<String?>.value(),
-      ) as _i5.Future<String?>);
 }
