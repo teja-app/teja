@@ -1,7 +1,10 @@
 // lib/infrastructure/repositories/mood_log_repository.dart
+// ignore_for_file: constant_identifier_names
+
 import 'dart:io';
 
 import 'package:isar/isar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teja/domain/entities/feeling.dart';
 import 'package:teja/domain/entities/mood_log.dart';
 import 'package:teja/domain/redux/mood/list/state.dart';
@@ -13,13 +16,105 @@ class MoodLogRepository {
   final Isar isar;
 
   MoodLogRepository(this.isar);
+  static const String LAST_SYNC_KEY = 'last_mood_sync_timestamp';
+  static const String FAILED_CHUNKS_KEY = 'failed_mood_chunks';
+
+  Future<void> updateLastSyncTimestamp(DateTime timestamp) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(LAST_SYNC_KEY, timestamp.toIso8601String());
+  }
+
+  Future<DateTime?> getLastSyncTimestamp() async {
+    final prefs = await SharedPreferences.getInstance();
+    final timestampString = prefs.getString(LAST_SYNC_KEY);
+    return timestampString != null ? DateTime.parse(timestampString) : null;
+  }
+
+  Future<List<String>?> getPreviousFailedChunks() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getStringList(FAILED_CHUNKS_KEY);
+  }
+
+  Future<void> storeFailedChunks(List<String> failedChunks) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(FAILED_CHUNKS_KEY, failedChunks);
+  }
+
+  Future<void> clearFailedChunks() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(FAILED_CHUNKS_KEY);
+  }
+
+  Future<void> addOrUpdateMoodLogs(List<MoodLogEntity> moodLogs) async {
+    await isar.writeTxn(() async {
+      for (var moodLogEntity in moodLogs) {
+        final moodLog = MoodLog()
+          ..id = moodLogEntity.id
+          ..timestamp = moodLogEntity.timestamp
+          ..moodRating = moodLogEntity.moodRating
+          ..comment = moodLogEntity.comment
+          ..feelings = moodLogEntity.feelings
+              ?.map((f) => MoodLogFeeling()
+                ..feeling = f.feeling
+                ..comment = f.comment
+                ..factors = f.factors
+                ..detailed = f.detailed)
+              .toList()
+          ..factors = moodLogEntity.factors
+          ..attachments = moodLogEntity.attachments
+              ?.map((a) => MoodLogAttachment()
+                ..id = a.id
+                ..type = a.type
+                ..path = a.path)
+              .toList()
+          ..ai = moodLogEntity.ai != null
+              ? (MoodLogAI()
+                ..suggestion = moodLogEntity.ai!.suggestion
+                ..title = moodLogEntity.ai!.title
+                ..affirmation = moodLogEntity.ai!.affirmation)
+              : null
+          ..isDeleted = moodLogEntity.isDeleted
+          ..updatedAt = DateTime.now();
+
+        // Check if a mood log with this ID already exists
+        final existingMoodLog = await isar.moodLogs.getById(moodLog.id);
+
+        if (existingMoodLog != null) {
+          // If it exists, update it only if the new entry is more recent
+          if (moodLog.updatedAt.isAfter(existingMoodLog.updatedAt)) {
+            moodLog.isarId = existingMoodLog.isarId; // Preserve the Isar ID
+            await isar.moodLogs.put(moodLog);
+          }
+        } else {
+          // If it doesn't exist, add it as a new entry
+          await isar.moodLogs.put(moodLog);
+        }
+      }
+    });
+  }
+
+  Future<void> softDeleteMoodLog(String id) async {
+    await isar.writeTxn(() async {
+      final moodLog = await isar.moodLogs.filter().idEqualTo(id).findFirst();
+      if (moodLog != null) {
+        moodLog.isDeleted = true;
+        moodLog.updatedAt = DateTime.now();
+        await isar.moodLogs.put(moodLog);
+      }
+    });
+  }
 
   Future<MoodLog?> getMoodLogById(String? id) async {
     return isar.moodLogs.getById(id!);
   }
 
-  Future<List<MoodLog>> getAllMoodLogs() async {
-    return isar.moodLogs.where().findAll();
+  Future<List<MoodLogEntity>> getAllMoodLogs({bool includeDeleted = false}) async {
+    final query = isar.moodLogs.where();
+    if (!includeDeleted) {
+      query.filter().isDeletedEqualTo(false);
+    }
+    List<MoodLog> moodLogEntries = await query.findAll();
+    return moodLogEntries.map((entry) => toEntity(entry)).toList();
   }
 
   Future<List> getMoodLogsPage(int pageKey, int pageSize, [MoodLogFilter? filter]) async {
@@ -230,38 +325,37 @@ class MoodLogRepository {
   }
 
   MoodLogEntity toEntity(MoodLog moodLog) {
-    List<MoodLogAttachmentEntity>? attachments = moodLog.attachments
-        ?.map((attachment) => MoodLogAttachmentEntity(
-              id: attachment.id,
-              type: attachment.type,
-              path: attachment.path,
-            ))
-        .toList();
-
-    MoodLogAIEntity? ai = moodLog.ai != null
-        ? MoodLogAIEntity(
-            suggestion: moodLog.ai!.suggestion,
-            title: moodLog.ai!.title,
-            affirmation: moodLog.ai!.affirmation,
-          )
-        : null;
-
     return MoodLogEntity(
       id: moodLog.id,
       timestamp: moodLog.timestamp,
       moodRating: moodLog.moodRating,
       comment: moodLog.comment,
       feelings: moodLog.feelings
-          ?.map((feeling) => FeelingEntity(
-                feeling: feeling.feeling ?? '',
-                comment: feeling.comment,
-                factors: feeling.factors,
-                detailed: feeling.detailed,
+          ?.map((f) => FeelingEntity(
+                feeling: f.feeling ?? '',
+                comment: f.comment,
+                factors: f.factors,
+                detailed: f.detailed,
               ))
           .toList(),
       factors: moodLog.factors,
-      attachments: attachments,
-      ai: ai,
+      attachments: moodLog.attachments
+          ?.map((a) => MoodLogAttachmentEntity(
+                id: a.id,
+                type: a.type,
+                path: a.path,
+              ))
+          .toList(),
+      ai: moodLog.ai != null
+          ? MoodLogAIEntity(
+              suggestion: moodLog.ai!.suggestion,
+              title: moodLog.ai!.title,
+              affirmation: moodLog.ai!.affirmation,
+            )
+          : null,
+      isDeleted: moodLog.isDeleted,
+      createdAt: moodLog.createdAt,
+      updatedAt: moodLog.updatedAt,
     );
   }
 

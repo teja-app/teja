@@ -2,6 +2,7 @@ import 'package:isar/isar.dart';
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_actions.dart';
 import 'package:teja/domain/redux/mood/logs/mood_logs_actions.dart';
+import 'package:teja/domain/redux/mood/mood_sync/mood_sync_actions.dart';
 import 'package:teja/infrastructure/repositories/mood_log_repository.dart';
 import 'package:teja/infrastructure/database/isar_collections/mood_log.dart' as mood_collection;
 
@@ -30,6 +31,7 @@ class MoodDetailSaga {
       } else {
         yield Put(const LoadMoodDetailFailureAction('No mood log found.'));
       }
+      yield Put(const SyncMoodLogs());
     }, Catch: (e, s) sync* {
       yield Put(LoadMoodDetailFailureAction(e.toString()));
     });
@@ -45,6 +47,7 @@ class MoodDetailSaga {
     yield Try(() sync* {
       yield Call(moodLogRepository.deleteMoodLogById, args: [action.moodId]);
       yield Put(const DeleteMoodDetailSuccessAction());
+      yield Put(const SyncMoodLogs());
       yield Put(FetchMoodLogsAction());
     }, Catch: (e, s) sync* {
       yield Put(DeleteMoodDetailFailureAction(e.toString()));

@@ -44,4 +44,7 @@ class MoodLog {
   List<MoodLogFeeling>? feelings;
   List<String>? factors; // Broad level factors affecting mood
   List<MoodLogAttachment>? attachments; // For Image
+
+  @Index()
+  bool isDeleted = false; // New field for soft delete
 }

@@ -55,23 +55,28 @@ const MoodLogSchema = CollectionSchema(
       name: r'id',
       type: IsarType.string,
     ),
-    r'moodRating': PropertySchema(
+    r'isDeleted': PropertySchema(
       id: 7,
+      name: r'isDeleted',
+      type: IsarType.bool,
+    ),
+    r'moodRating': PropertySchema(
+      id: 8,
       name: r'moodRating',
       type: IsarType.long,
     ),
     r'senderId': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'senderId',
       type: IsarType.string,
     ),
     r'timestamp': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'timestamp',
       type: IsarType.dateTime,
     ),
     r'updatedAt': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'updatedAt',
       type: IsarType.dateTime,
     )
@@ -92,6 +97,19 @@ const MoodLogSchema = CollectionSchema(
           name: r'id',
           type: IndexType.hash,
           caseSensitive: true,
+        )
+      ],
+    ),
+    r'isDeleted': IndexSchema(
+      id: -786475870904832312,
+      name: r'isDeleted',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'isDeleted',
+          type: IndexType.value,
+          caseSensitive: false,
         )
       ],
     )
@@ -206,10 +224,11 @@ void _moodLogSerialize(
     object.feelings,
   );
   writer.writeString(offsets[6], object.id);
-  writer.writeLong(offsets[7], object.moodRating);
-  writer.writeString(offsets[8], object.senderId);
-  writer.writeDateTime(offsets[9], object.timestamp);
-  writer.writeDateTime(offsets[10], object.updatedAt);
+  writer.writeBool(offsets[7], object.isDeleted);
+  writer.writeLong(offsets[8], object.moodRating);
+  writer.writeString(offsets[9], object.senderId);
+  writer.writeDateTime(offsets[10], object.timestamp);
+  writer.writeDateTime(offsets[11], object.updatedAt);
 }
 
 MoodLog _moodLogDeserialize(
@@ -240,11 +259,12 @@ MoodLog _moodLogDeserialize(
     MoodLogFeeling(),
   );
   object.id = reader.readString(offsets[6]);
+  object.isDeleted = reader.readBool(offsets[7]);
   object.isarId = id;
-  object.moodRating = reader.readLong(offsets[7]);
-  object.senderId = reader.readStringOrNull(offsets[8]);
-  object.timestamp = reader.readDateTime(offsets[9]);
-  object.updatedAt = reader.readDateTime(offsets[10]);
+  object.moodRating = reader.readLong(offsets[8]);
+  object.senderId = reader.readStringOrNull(offsets[9]);
+  object.timestamp = reader.readDateTime(offsets[10]);
+  object.updatedAt = reader.readDateTime(offsets[11]);
   return object;
 }
 
@@ -284,12 +304,14 @@ P _moodLogDeserializeProp<P>(
     case 6:
       return (reader.readString(offset)) as P;
     case 7:
-      return (reader.readLong(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 8:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 9:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 10:
+      return (reader.readDateTime(offset)) as P;
+    case 11:
       return (reader.readDateTime(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -366,6 +388,14 @@ extension MoodLogQueryWhereSort on QueryBuilder<MoodLog, MoodLog, QWhere> {
   QueryBuilder<MoodLog, MoodLog, QAfterWhere> anyIsarId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterWhere> anyIsDeleted() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'isDeleted'),
+      );
     });
   }
 }
@@ -474,6 +504,51 @@ extension MoodLogQueryWhere on QueryBuilder<MoodLog, MoodLog, QWhereClause> {
               indexName: r'id',
               lower: [],
               upper: [id],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterWhereClause> isDeletedEqualTo(
+      bool isDeleted) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'isDeleted',
+        value: [isDeleted],
+      ));
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterWhereClause> isDeletedNotEqualTo(
+      bool isDeleted) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isDeleted',
+              lower: [],
+              upper: [isDeleted],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isDeleted',
+              lower: [isDeleted],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isDeleted',
+              lower: [isDeleted],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isDeleted',
+              lower: [],
+              upper: [isDeleted],
               includeUpper: false,
             ));
       }
@@ -1267,6 +1342,16 @@ extension MoodLogQueryFilter
     });
   }
 
+  QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> isDeletedEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isDeleted',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<MoodLog, MoodLog, QAfterFilterCondition> isarIdEqualTo(
       Id value) {
     return QueryBuilder.apply(this, (query) {
@@ -1690,6 +1775,18 @@ extension MoodLogQuerySortBy on QueryBuilder<MoodLog, MoodLog, QSortBy> {
     });
   }
 
+  QueryBuilder<MoodLog, MoodLog, QAfterSortBy> sortByIsDeleted() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDeleted', Sort.asc);
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterSortBy> sortByIsDeletedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDeleted', Sort.desc);
+    });
+  }
+
   QueryBuilder<MoodLog, MoodLog, QAfterSortBy> sortByMoodRating() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'moodRating', Sort.asc);
@@ -1774,6 +1871,18 @@ extension MoodLogQuerySortThenBy
   QueryBuilder<MoodLog, MoodLog, QAfterSortBy> thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterSortBy> thenByIsDeleted() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDeleted', Sort.asc);
+    });
+  }
+
+  QueryBuilder<MoodLog, MoodLog, QAfterSortBy> thenByIsDeletedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isDeleted', Sort.desc);
     });
   }
 
@@ -1866,6 +1975,12 @@ extension MoodLogQueryWhereDistinct
     });
   }
 
+  QueryBuilder<MoodLog, MoodLog, QDistinct> distinctByIsDeleted() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isDeleted');
+    });
+  }
+
   QueryBuilder<MoodLog, MoodLog, QDistinct> distinctByMoodRating() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'moodRating');
@@ -1941,6 +2056,12 @@ extension MoodLogQueryProperty
   QueryBuilder<MoodLog, String, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<MoodLog, bool, QQueryOperations> isDeletedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isDeleted');
     });
   }
 

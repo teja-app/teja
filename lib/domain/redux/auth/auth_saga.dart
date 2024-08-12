@@ -3,6 +3,7 @@ import 'package:redux/redux.dart';
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/journal_sync/journal_sync_actions.dart';
+import 'package:teja/domain/redux/mood/mood_sync/mood_sync_actions.dart';
 import 'package:teja/infrastructure/service/auth_service.dart';
 import 'package:teja/shared/helpers/logger.dart';
 import 'package:teja/shared/storage/secure_storage.dart'; // Add this import
@@ -56,6 +57,7 @@ class AuthSaga {
         yield Put(AuthenticateSuccessAction());
         yield Put(const SetHasExistingMnemonicAction(true));
         yield Put(const FetchInitialJournalEntriesAction());
+        yield Put(const FetchInitialMoodLogsAction());
       } else {
         yield Put(const AuthenticateFailedAction('Failed to retrieve tokens.'));
       }

@@ -22,6 +22,7 @@ import 'package:teja/domain/redux/mood/list/saga.dart';
 import 'package:teja/domain/redux/mood/logs/mood_logs_saga.dart';
 import 'package:teja/domain/redux/mood/master_feeling/saga.dart';
 import 'package:teja/domain/redux/mood/master_factor/saga.dart';
+import 'package:teja/domain/redux/mood/mood_sync/mood_sync_saga.dart';
 import 'package:teja/domain/redux/permission/permission_saga.dart';
 import 'package:teja/domain/redux/profile_page_sequence/profile_page_saga.dart';
 import 'package:teja/domain/redux/quotes/quote_saga.dart';
@@ -63,6 +64,7 @@ Iterable<void> rootSaga(Store<AppState> store) sync* {
     'YearlyMoodReportSaga': () => YearlyMoodReportSaga().saga(),
     'ProfilePageSaga': () => ProfilePageSaga().saga(),
     'journalSync': () => JournalSyncSaga().saga(),
+    'moodSync': () => MoodSyncSaga().saga(),
   };
 
   yield All(sagas.map((key, saga) => MapEntry(key, Spawn(() sync* {
