@@ -8,6 +8,7 @@ import 'package:teja/domain/redux/mood/detail/mood_detail_actions.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
 import 'package:teja/domain/redux/mood/list/actions.dart';
 import 'package:teja/domain/redux/mood/logs/mood_logs_actions.dart';
+import 'package:teja/domain/redux/mood/mood_sync/mood_sync_actions.dart';
 import 'package:teja/infrastructure/repositories/master_factor.dart';
 import 'package:teja/infrastructure/repositories/master_feeling.dart';
 import 'package:teja/infrastructure/repositories/mood_log_repository.dart';
@@ -24,10 +25,6 @@ class MoodEditorSaga {
       pattern: TriggerUpdateFeelingsAction,
     );
     yield TakeEvery(
-      _handleUpdateFactorsAction,
-      pattern: UpdateFactorsAction,
-    );
-    yield TakeEvery(
       _handleUpdateMoodLogComment,
       pattern: UpdateMoodLogCommentAction,
     );
@@ -40,8 +37,6 @@ class MoodEditorSaga {
       _handleUpdateBroadFactorsAction,
       pattern: UpdateBroadFactorsAction,
     );
-    yield TakeEvery(_handleAddAttachment, pattern: AddAttachmentAction);
-    yield TakeEvery(_handleRemoveAttachment, pattern: RemoveAttachmentAction);
   }
 
   _handleClearMoodEditorFormAction({required ClearMoodEditorFormAction action}) sync* {
@@ -87,6 +82,7 @@ class MoodEditorSaga {
 
       // Dispatch success action
       yield Put(UpdateBroadFactorsSuccessAction(moodLogId: action.moodLogId, factors: action.factors));
+      yield Put(const SyncMoodLogs());
     }, Catch: (e, s) sync* {
       yield Put(UpdateBroadFactorsFailureAction(e.toString()));
     });
@@ -105,6 +101,7 @@ class MoodEditorSaga {
 
       // Dispatch success action
       yield Put(UpdateMoodLogCommentSuccessAction(action.moodLogId, action.comment));
+      yield Put(const SyncMoodLogs());
     }, Catch: (e, s) sync* {
       yield Put(UpdateMoodLogCommentFailureAction(e.toString()));
     });
@@ -213,6 +210,7 @@ class MoodEditorSaga {
       // Dispatch an action to update the Redux state
       yield Put(SelectMoodSuccessAction(moodLogRepository.toEntity(newMoodLog)));
       yield Put(const ChangePageAction(1));
+      yield Put(const SyncMoodLogs());
     }
 
     yield Put(MoodUpdatedAction("Successful"));
@@ -272,82 +270,10 @@ class MoodEditorSaga {
         feelingsEntities,
         action.selectedFeelings,
       ));
+
+      yield Put(const SyncMoodLogs());
     }, Catch: (e, s) sync* {
       yield Put(MoodUpdateFailedAction(e.toString()));
-    });
-  }
-
-  _handleUpdateFactorsAction({required UpdateFactorsAction action}) sync* {
-    yield Try(() sync* {
-      var isarResult = Result<Isar>();
-      yield GetContext('isar', result: isarResult);
-      Isar isar = isarResult.value!;
-
-      var moodLogRepository = MoodLogRepository(isar);
-      var masterFeelingRepository = MasterFeelingRepository(isar);
-
-      // Get the slug for the feeling
-      var feelingSlugResult = Result<String>();
-      yield Call(masterFeelingRepository.convertIdToSlug, args: [action.feelingId], result: feelingSlugResult);
-      if (action.factors.isNotEmpty) {
-        List<String> factorSlugsValue = action.factors.map((factor) => factor!.slug).toList();
-        yield Call(moodLogRepository.updateFactorsForFeeling, args: [
-          action.moodLogId,
-          feelingSlugResult.value,
-          factorSlugsValue,
-        ]);
-      } else {
-        yield Call(moodLogRepository.updateFactorsForFeeling, args: [
-          action.moodLogId,
-          feelingSlugResult.value,
-          null,
-        ]);
-      }
-
-      // Dispatch success action
-      yield Put(UpdateFactorsSuccessAction(
-        moodLogId: action.moodLogId,
-        feelingId: action.feelingId,
-        factors: action.factors,
-      ));
-    }, Catch: (e, s) sync* {
-      yield Put(MoodUpdateFailedAction(e.toString()));
-    });
-  }
-
-  _handleAddAttachment({required AddAttachmentAction action}) sync* {
-    var isarResult = Result<Isar>();
-    yield GetContext('isar', result: isarResult);
-    Isar isar = isarResult.value!;
-    var moodLogRepository = MoodLogRepository(isar);
-
-    yield Try(() sync* {
-      // Call repository method to add attachment
-      yield Call(moodLogRepository.addAttachmentToMoodLog, args: [action.moodLogId, action.attachment]);
-
-      // Dispatch success action
-      yield Put(AddAttachmentSuccessAction(moodLogId: action.moodLogId, attachment: action.attachment));
-    }, Catch: (e, s) sync* {
-      // Dispatch failure action
-      yield Put(AddAttachmentFailureAction(e.toString()));
-    });
-  }
-
-  _handleRemoveAttachment({required RemoveAttachmentAction action}) sync* {
-    var isarResult = Result<Isar>();
-    yield GetContext('isar', result: isarResult);
-    Isar isar = isarResult.value!;
-    var moodLogRepository = MoodLogRepository(isar);
-
-    yield Try(() sync* {
-      // Call repository method to remove attachment
-      yield Call(moodLogRepository.removeAttachmentFromMoodLog, args: [action.moodLogId, action.attachmentId]);
-
-      // Dispatch success action
-      yield Put(RemoveAttachmentSuccessAction(moodLogId: action.moodLogId, attachmentId: action.attachmentId));
-    }, Catch: (e, s) sync* {
-      // Dispatch failure action
-      yield Put(RemoveAttachmentFailureAction(e.toString()));
     });
   }
 }

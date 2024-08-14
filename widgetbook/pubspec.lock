@@ -1283,10 +1283,10 @@ packages:
     dependency: transitive
     description:
       name: posthog_flutter
-      sha256: dd102340c74c53adeac8e575155245d22688d85309ed9004c56ea68a1a41993f
+      sha256: bd427331311d3a8c28bea00c37f4a66cb8cf694ddf783017d749936ef02e1b30
       url: "https://pub.dev"
     source: hosted
-    version: "3.3.0"
+    version: "4.5.0"
   pub_semver:
     dependency: transitive
     description:
@@ -1698,7 +1698,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.8.1+1"
+    version: "1.8.7+240808"
   term_glyph:
     dependency: transitive
     description:
@@ -1891,14 +1891,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.1"
-  video_thumbnail:
-    dependency: transitive
-    description:
-      name: video_thumbnail
-      sha256: "3455c189d3f0bb4e3fc2236475aa84fe598b9b2d0e08f43b9761f5bc44210016"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.5.3"
   vm_service:
     dependency: transitive
     description:

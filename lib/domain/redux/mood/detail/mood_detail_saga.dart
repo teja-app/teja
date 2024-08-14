@@ -31,7 +31,6 @@ class MoodDetailSaga {
       } else {
         yield Put(const LoadMoodDetailFailureAction('No mood log found.'));
       }
-      yield Put(const SyncMoodLogs());
     }, Catch: (e, s) sync* {
       yield Put(LoadMoodDetailFailureAction(e.toString()));
     });
