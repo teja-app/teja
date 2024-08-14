@@ -127,19 +127,6 @@ class UpdateMoodLogCommentFailureAction {
 }
 
 @immutable
-class UpdateFactorsAction {
-  final String? moodLogId;
-  final int feelingId;
-  final List<SubCategoryEntity?> factors;
-
-  const UpdateFactorsAction({
-    required this.moodLogId,
-    required this.feelingId,
-    required this.factors,
-  });
-}
-
-@immutable
 class UpdateFactorsSuccessAction {
   final String? moodLogId;
   final int feelingId;

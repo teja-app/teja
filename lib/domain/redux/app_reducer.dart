@@ -12,13 +12,13 @@ import 'package:teja/domain/redux/journal/journal_logs/journal_logs_reducer.dart
 import 'package:teja/domain/redux/journal/journal_template/reducer.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_reducer.dart';
 import 'package:teja/domain/redux/monthly_mood_report/monthly_mood_report_reducer.dart';
-import 'package:teja/domain/redux/mood/ai_suggestion/ai_suggestion_reducer.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_reducer.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_reducer.dart';
 import 'package:teja/domain/redux/mood/list/reducer.dart';
 import 'package:teja/domain/redux/mood/logs/mood_logs_reducer.dart';
 import 'package:teja/domain/redux/mood/master_factor/reducer.dart';
 import 'package:teja/domain/redux/mood/master_feeling/reducer.dart';
+import 'package:teja/domain/redux/mood/mood_analysis/mood_analysis_redux.dart';
 import 'package:teja/domain/redux/profile_page_sequence/profile_page_reducer.dart';
 import 'package:teja/domain/redux/permission/permission_reducer.dart';
 import 'package:teja/domain/redux/quotes/quote_reducer.dart';
@@ -160,9 +160,9 @@ AppState _permissionReducer(AppState state, action) {
   );
 }
 
-AppState _aiSuggestionReducer(AppState state, action) {
+AppState _moodAnalysisReducer(AppState state, action) {
   return state.copyWith(
-    aiSuggestionState: aiSuggestionReducer(state.aiSuggestionState, action),
+    moodAnalysisState: moodAnalysisReducer(state.moodAnalysisState, action),
   );
 }
 
@@ -208,7 +208,7 @@ Reducer<AppState> appReducer = combineReducers<AppState>([
   _featuredJournalTemplateReducer,
   _journalCategoryReducer,
   _journalListReducer,
-  _aiSuggestionReducer,
+  _moodAnalysisReducer,
   _yearlyMoodReportReducer,
   _permissionReducer,
   _profilePageReducer,

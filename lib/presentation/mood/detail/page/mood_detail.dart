@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -6,13 +7,10 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/master_factor.dart';
 import 'package:teja/domain/redux/app_state.dart';
-import 'package:teja/domain/redux/mood/ai_suggestion/ai_suggestion_actions.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_actions.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_state.dart';
 import 'package:teja/domain/redux/mood/editor/mood_editor_actions.dart';
-import 'package:teja/presentation/mood/detail/ui/buttons/ai_affirmation_button.dart';
 import 'package:teja/presentation/mood/detail/ui/buttons/ai_suggestion_button.dart';
-import 'package:teja/presentation/mood/detail/ui/buttons/ai_title_button.dart';
 import 'package:teja/presentation/mood/ui/attachement_image.dart';
 import 'package:teja/presentation/mood/detail/ui/feeling_list.dart';
 import 'package:teja/presentation/mood/detail/ui/mood_rating_widget.dart';
@@ -94,7 +92,6 @@ class MoodDetailPageState extends State<MoodDetailPage> {
 
   @override
   void dispose() {
-    store.dispatch(const ClearErrorMessagesAction());
     super.dispose();
   }
 
@@ -224,15 +221,13 @@ class MoodDetailPageState extends State<MoodDetailPage> {
                   'Affirmation',
                   style: textTheme.titleMedium,
                 ),
-                FlexibleHeightBox(
-                  gridWidth: 4,
-                  child: AIAffirmationButton(
-                    selectedMoodLog: viewModel.moodDetailPage.selectedMoodLog!,
+                if (viewModel.affirmation != null)
+                  FlexibleHeightBox(
+                    gridWidth: 4,
+                    child: MarkdownBody(
+                      data: viewModel.affirmation!,
+                    ),
                   ),
-                ),
-                AITitleButton(
-                  selectedMoodLog: viewModel.moodDetailPage.selectedMoodLog!,
-                ),
                 const SizedBox(height: 8),
               ],
             ),
@@ -319,16 +314,19 @@ class MoodDetailPageState extends State<MoodDetailPage> {
 
 class MoodDetailPageViewModel {
   final MoodDetailState moodDetailPage;
+  final String? affirmation;
   final List<MasterFactorEntity> masterFactors;
 
   MoodDetailPageViewModel({
     required this.moodDetailPage,
     required this.masterFactors,
+    this.affirmation,
   });
 
   static MoodDetailPageViewModel fromStore(Store<AppState> store) {
     return MoodDetailPageViewModel(
       moodDetailPage: store.state.moodDetailPage,
+      affirmation: store.state.moodDetailPage.selectedMoodLog?.ai?.affirmation,
       masterFactors: store.state.masterFactorState.masterFactors,
     );
   }

@@ -3,8 +3,8 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
-import 'package:teja/domain/redux/mood/ai_suggestion/ai_suggestion_actions.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_actions.dart';
+import 'package:teja/domain/redux/mood/mood_analysis/mood_analysis_actions.dart';
 import 'package:teja/domain/redux/permission/permissions_constants.dart';
 import 'package:teja/presentation/onboarding/widgets/feature_gate.dart';
 import 'package:teja/shared/common/button.dart';
@@ -17,15 +17,13 @@ class AISuggestionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, _AISuggestionButtonViewModel>(
-      converter: (store) =>
-          _AISuggestionButtonViewModel.fromStore(store, moodId),
+      converter: (store) => _AISuggestionButtonViewModel.fromStore(store, moodId),
       onInit: (store) => store.dispatch(LoadMoodDetailAction(moodId)),
       builder: (context, viewModel) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (viewModel.suggestions != null &&
-                viewModel.currentMoodId == moodId)
+            if (viewModel.suggestions != null && viewModel.currentMoodId == moodId)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: MarkdownBody(
@@ -43,8 +41,7 @@ class AISuggestionButton extends StatelessWidget {
                   // onPressed: () => viewModel.getSuggestions(moodId),
                 ),
               ),
-              if (viewModel.isLoading)
-                const Center(child: CircularProgressIndicator()),
+              if (viewModel.isLoading) const Center(child: CircularProgressIndicator()),
               if (viewModel.errorMessage != null)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -76,19 +73,16 @@ class _AISuggestionButtonViewModel {
     required this.currentMoodId,
   });
 
-  static _AISuggestionButtonViewModel fromStore(
-      Store<AppState> store, String moodId) {
-    final aiSuggestionState = store.state.aiSuggestionState;
+  static _AISuggestionButtonViewModel fromStore(Store<AppState> store, String moodId) {
+    final aiSuggestionState = store.state.moodAnalysisState;
     final selectedMoodLog = store.state.moodDetailPage.selectedMoodLog;
 
     return _AISuggestionButtonViewModel(
-      suggestions: selectedMoodLog?.id == moodId
-          ? selectedMoodLog?.ai?.suggestion
-          : null,
-      isLoading: aiSuggestionState.isLoading,
+      suggestions: selectedMoodLog?.id == moodId ? selectedMoodLog?.ai?.suggestion : null,
+      isLoading: aiSuggestionState.isAnalyzing,
       errorMessage: aiSuggestionState.errorMessage,
       getSuggestions: (moodId) {
-        store.dispatch(FetchAISuggestionAction(selectedMoodLog!));
+        store.dispatch(AnalyzeMoodAction(selectedMoodLog!.id));
       },
       currentMoodId: moodId,
     );
