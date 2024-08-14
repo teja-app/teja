@@ -17,6 +17,7 @@ import 'package:teja/presentation/mood/ui/attachement_image.dart';
 import 'package:teja/presentation/mood/detail/ui/feeling_list.dart';
 import 'package:teja/presentation/mood/detail/ui/mood_rating_widget.dart';
 import 'package:teja/presentation/mood/detail/ui/mood_setting_menu.dart';
+import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/bento_box.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
@@ -69,9 +70,12 @@ class MoodDetailPageState extends State<MoodDetailPage> {
     GoRouter.of(context).pushNamed(RootPath.moodEdit);
   }
 
-  List<SubCategoryEntity> getFactors(List<MasterFactorEntity> masterFactors, List<String> factors) {
+  List<SubCategoryEntity> getFactors(
+      List<MasterFactorEntity> masterFactors, List<String> factors) {
     return factors.map((slug) {
-          return masterFactors.expand((factor) => factor.subcategories).firstWhere(
+          return masterFactors
+              .expand((factor) => factor.subcategories)
+              .firstWhere(
                 (subCategory) => subCategory.slug == slug,
                 orElse: () => SubCategoryEntity(slug: slug, title: "Unknown"),
               );
@@ -110,8 +114,10 @@ class MoodDetailPageState extends State<MoodDetailPage> {
         if (moodDetailPage.selectedMoodLog != null) {
           final moodLog = moodDetailPage.selectedMoodLog;
           List<SubCategoryEntity> factors = [];
-          if (moodDetailPage.selectedMoodLog?.factors != null && moodDetailPage.selectedMoodLog!.factors!.isNotEmpty) {
-            factors = getFactors(viewModel.masterFactors, moodDetailPage.selectedMoodLog!.factors!);
+          if (moodDetailPage.selectedMoodLog?.factors != null &&
+              moodDetailPage.selectedMoodLog!.factors!.isNotEmpty) {
+            factors = getFactors(viewModel.masterFactors,
+                moodDetailPage.selectedMoodLog!.factors!);
           }
           bodyContent = Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -123,31 +129,40 @@ class MoodDetailPageState extends State<MoodDetailPage> {
                   gridWidth: 4,
                   gridHeight: 1,
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center, // Center the content vertically
-                    crossAxisAlignment: CrossAxisAlignment.start, // Align content to start horizontally
+                    mainAxisAlignment: MainAxisAlignment
+                        .center, // Center the content vertically
+                    crossAxisAlignment: CrossAxisAlignment
+                        .start, // Align content to start horizontally
                     children: [
                       MoodRatingWidget(
-                        moodRating: moodDetailPage.selectedMoodLog?.moodRating ?? 0,
+                        moodRating:
+                            moodDetailPage.selectedMoodLog?.moodRating ?? 0,
                       ),
                     ],
                   ),
                 ),
-                if (moodLog?.attachments != null && moodLog!.attachments!.isNotEmpty)
+                if (moodLog?.attachments != null &&
+                    moodLog!.attachments!.isNotEmpty)
                   BentoBox(
                     gridWidth: 4,
                     gridHeight: 1.3,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0), // Add some vertical padding
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8.0), // Add some vertical padding
                       child: GridView.builder(
                         shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(), // to disable GridView's scrolling
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        physics:
+                            const NeverScrollableScrollPhysics(), // to disable GridView's scrolling
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 4, // Adjust based on your design
                         ),
-                        itemCount: moodDetailPage.selectedMoodLog!.attachments!.length,
+                        itemCount:
+                            moodDetailPage.selectedMoodLog!.attachments!.length,
                         itemBuilder: (context, index) {
                           return AttachmentImage(
-                            relativeImagePath: moodDetailPage.selectedMoodLog!.attachments![index].path,
+                            relativeImagePath: moodDetailPage
+                                .selectedMoodLog!.attachments![index].path,
                           );
                         },
                       ),
@@ -181,7 +196,9 @@ class MoodDetailPageState extends State<MoodDetailPage> {
                         gridWidth: 4,
                         padding: 12,
                         child: Text(
-                          factors.map((subCategory) => subCategory.title).join(', '),
+                          factors
+                              .map((subCategory) => subCategory.title)
+                              .join(', '),
                           style: textTheme.titleSmall,
                         ),
                       ),
@@ -190,7 +207,8 @@ class MoodDetailPageState extends State<MoodDetailPage> {
 
                 if (moodDetailPage.selectedMoodLog!.feelings != null &&
                     moodDetailPage.selectedMoodLog!.feelings!.isNotEmpty)
-                  FeelingsListWidget(feelings: moodDetailPage.selectedMoodLog!.feelings!),
+                  FeelingsListWidget(
+                      feelings: moodDetailPage.selectedMoodLog!.feelings!),
                 const SizedBox(height: 16), // Add some spacing
                 Text(
                   'Suggestion',
@@ -260,7 +278,9 @@ class MoodDetailPageState extends State<MoodDetailPage> {
                           TextButton(
                             child: const Text('Delete'),
                             onPressed: () {
-                              StoreProvider.of<AppState>(dialogContext).dispatch(DeleteMoodDetailAction(widget.moodId));
+                              StoreProvider.of<AppState>(dialogContext)
+                                  .dispatch(
+                                      DeleteMoodDetailAction(widget.moodId));
                               Navigator.of(dialogContext).pop();
                               GoRouter.of(pageContext).pop();
                             },
@@ -279,8 +299,17 @@ class MoodDetailPageState extends State<MoodDetailPage> {
               ),
             ],
           ),
-          body: SingleChildScrollView(
-            child: bodyContent,
+          body: Align(
+            alignment: Alignment
+                .topCenter, // Aligns content to the top center of the page
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: isDesktop(context) ? 630 : double.infinity,
+              ),
+              child: SingleChildScrollView(
+                child: bodyContent,
+              ),
+            ),
           ),
         );
       },
