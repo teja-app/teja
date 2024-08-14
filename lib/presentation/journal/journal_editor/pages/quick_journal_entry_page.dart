@@ -17,8 +17,7 @@ class QuickJournalEntryScreen extends StatefulWidget {
   final String? entryId;
   final String? heroTag;
 
-  const QuickJournalEntryScreen({Key? key, this.entryId, this.heroTag})
-      : super(key: key);
+  const QuickJournalEntryScreen({Key? key, this.entryId, this.heroTag}) : super(key: key);
 
   @override
   QuickJournalEntryScreenState createState() => QuickJournalEntryScreenState();
@@ -39,8 +38,7 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
   }
 
   void _initializeJournalEntry() {
-    _store
-        .dispatch(InitializeQuickJournalEditor(journalEntryId: widget.entryId));
+    _store.dispatch(InitializeQuickJournalEditor(journalEntryId: widget.entryId));
   }
 
   @override
@@ -54,7 +52,7 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
     setState(() {
       _errorMessage = message;
     });
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
         setState(() {
           _errorMessage = null;
@@ -63,8 +61,7 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
     });
   }
 
-  Future<void> _saveEntry(
-      BuildContext context, JournalEntryEntity? currentEntry) async {
+  Future<void> _saveEntry(BuildContext context, JournalEntryEntity? currentEntry) async {
     if (_bodyController.text.trim().isEmpty) {
       _showError('Journal entry cannot be empty');
       return;
@@ -111,14 +108,13 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
   }
 
   void _navigateToDetailPage(BuildContext context, String entryId) {
-    GoRouter.of(context).pushNamed(
+    GoRouter.of(context).goNamed(
       RootPath.journalDetail,
       queryParameters: {"id": entryId},
     );
   }
 
-  Future<void> _saveAndContinue(
-      BuildContext context, JournalEntryEntity? currentEntry) async {
+  Future<void> _saveAndContinue(BuildContext context, JournalEntryEntity? currentEntry) async {
     if (_bodyController.text.isEmpty) {
       _showError('Journal entry cannot be empty');
       return;
@@ -170,19 +166,18 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
         context: context,
         builder: (BuildContext dialogContext) {
           return AlertDialog(
-            title: Text('Unsaved Changes'),
-            content: Text(
-                'You have unsaved changes. Do you want to save before leaving?'),
+            title: const Text('Unsaved Changes'),
+            content: const Text('You have unsaved changes. Do you want to save before leaving?'),
             actions: <Widget>[
               TextButton(
-                child: Text('Discard'),
+                child: const Text('Discard'),
                 onPressed: () {
                   Navigator.of(dialogContext).pop();
                   _discardAndGoBack(context, currentEntry);
                 },
               ),
               TextButton(
-                child: Text('Save'),
+                child: const Text('Save'),
                 onPressed: () {
                   Navigator.of(dialogContext).pop();
                   _saveEntry(context, currentEntry);
@@ -197,10 +192,8 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
     }
   }
 
-  void _discardAndGoBack(
-      BuildContext context, JournalEntryEntity? currentEntry) {
-    if (currentEntry != null &&
-        (currentEntry.body == null || currentEntry.body!.isEmpty)) {
+  void _discardAndGoBack(BuildContext context, JournalEntryEntity? currentEntry) {
+    if (currentEntry != null && (currentEntry.body == null || currentEntry.body!.isEmpty)) {
       _store.dispatch(DeleteJournalDetailAction(currentEntry.id));
     }
     if (context.mounted) {
@@ -213,11 +206,9 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     Color primary = colorScheme.primary;
 
-    return WillPopScope(
-      onWillPop: () async {
-        _handleBack(
-            context, _store.state.journalEditorState.currentJournalEntry);
-        return false;
+    return PopScope(
+      onPopInvoked: (didPop) async {
+        _handleBack(context, _store.state.journalEditorState.currentJournalEntry);
       },
       child: StoreConnector<AppState, QuickJournalEditViewModel>(
         converter: (store) => QuickJournalEditViewModel.fromStore(store),
@@ -239,17 +230,12 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
               title: const Text("Quick Journal Entry"),
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
-                onPressed: _isSaving
-                    ? null
-                    : () => _handleBack(context, viewModel.currentJournalEntry),
+                onPressed: _isSaving ? null : () => _handleBack(context, viewModel.currentJournalEntry),
               ),
               actions: [
                 IconButton(
                   icon: const Icon(Icons.done),
-                  onPressed: _isSaving
-                      ? null
-                      : () =>
-                          _saveEntry(context, viewModel.currentJournalEntry),
+                  onPressed: _isSaving ? null : () => _saveEntry(context, viewModel.currentJournalEntry),
                 ),
               ],
             ),
@@ -284,10 +270,7 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
                     children: [
                       Expanded(
                         child: Button(
-                            onPressed: _isSaving
-                                ? null
-                                : () => _saveEntry(
-                                    context, viewModel.currentJournalEntry),
+                            onPressed: _isSaving ? null : () => _saveEntry(context, viewModel.currentJournalEntry),
                             text: 'Save',
                             buttonType: ButtonType.secondary),
                       ),
@@ -298,10 +281,7 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
                         child: Button(
                           width: isDesktop(context) ? 330 : 120,
                           buttonType: ButtonType.primary,
-                          onPressed: _isSaving
-                              ? null
-                              : () => _saveAndContinue(
-                                  context, viewModel.currentJournalEntry),
+                          onPressed: _isSaving ? null : () => _saveAndContinue(context, viewModel.currentJournalEntry),
                           text: 'Continue',
                         ),
                       )),

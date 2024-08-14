@@ -79,7 +79,7 @@ class MonthlyMoodReportSaga {
 
       final scatterStepSpots = scatterStepSpotsResult.value;
 
-      if (scatterStepSpots == null || scatterStepSpots.isEmpty) {
+      if (scatterStepSpots == null) {
         yield Put(RemovePermissionAction(ACTIVITY_MONTHLY));
         throw Exception("Failed to calculate scatter spots");
       }

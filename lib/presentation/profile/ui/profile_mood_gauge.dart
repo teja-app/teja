@@ -22,7 +22,7 @@ class _MoodSemiCircleChartScreenState extends State<MoodSemiCircleChartScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final DateTime now = DateTime.now();
-      final DateTime today = DateTime(now.year, now.month, now.day);
+      final DateTime today = DateTime(now.year, now.month, now.day,23, 59, 59, 999);
       StoreProvider.of<AppState>(context).dispatch(FetchMonthlyMoodReportAction(today));
     });
   }

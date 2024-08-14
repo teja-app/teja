@@ -7,6 +7,7 @@ import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/auth/auth_action.dart';
 import 'package:teja/domain/redux/auth/auth_state.dart';
+import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/presentation/registration/ui/RecoveryCodeDisplay.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/button.dart';
@@ -196,6 +197,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     String missingWord = '';
 
     final colorScheme = Theme.of(context).colorScheme;
+
     // Initialize the mnemonic words and select a random missing word
     void initializeMnemonic() {
       missingWord = mnemonicWords[blankIndex];
@@ -209,77 +211,87 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         final textTheme = Theme.of(context).textTheme;
 
         return SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FlexibleHeightBox(
-                gridWidth: 4,
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    childAspectRatio: 2.5,
+          child: Center(
+            child: Container(
+              constraints: BoxConstraints(
+                maxWidth: isDesktop(context) ? 630 : double.infinity,
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  FlexibleHeightBox(
+                    gridWidth: 4,
+                    child: GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        childAspectRatio: 2.5,
+                      ),
+                      itemCount: mnemonicWords.length,
+                      itemBuilder: (context, index) {
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 15,
+                              padding: const EdgeInsets.symmetric(vertical: 4),
+                              child: Text('${index + 1}',
+                                  style: textTheme.bodySmall),
+                            ),
+                            Container(
+                              width: 80,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              child: Text(
+                                mnemonicWords[index],
+                                style: textTheme.bodySmall,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
                   ),
-                  itemCount: mnemonicWords.length,
-                  itemBuilder: (context, index) {
-                    return Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 15,
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          child:
-                              Text('${index + 1}', style: textTheme.bodySmall),
-                        ),
-                        Container(
-                          width: 80,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
-                          child: Text(
-                            mnemonicWords[index],
-                            style: textTheme.bodySmall,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
+                  TextField(
+                    controller: _textController,
+                    decoration: InputDecoration(
+                      labelText:
+                          'Enter the missing word at position ${blankIndex + 1}',
+                      errorText:
+                          _errorMessage.isNotEmpty ? _errorMessage : null,
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  Button(
+                    onPressed: () {
+                      if (_textController.text.trim().toLowerCase() ==
+                          missingWord.toLowerCase()) {
+                        setState(() {
+                          mnemonicWords[blankIndex] = missingWord;
+                          _errorMessage = ''; // Clear the error message
+                          _isConfirmed = true; // Update the confirmation status
+                        });
+                        _confirmAndRegister(); // Proceed with the registration
+                      } else {
+                        setState(() {
+                          _errorMessage =
+                              'Wrong word entered. Please try again.'; // Set the error message
+                        });
+                      }
+                    },
+                    buttonType: ButtonType.primary,
+                    text: 'Register',
+                  ),
+                ],
               ),
-              TextField(
-                controller: _textController,
-                decoration: InputDecoration(
-                  labelText:
-                      'Enter the missing word at position ${blankIndex + 1}',
-                  errorText: _errorMessage.isNotEmpty ? _errorMessage : null,
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              Button(
-                onPressed: () {
-                  if (_textController.text.trim().toLowerCase() ==
-                      missingWord.toLowerCase()) {
-                    setState(() {
-                      mnemonicWords[blankIndex] = missingWord;
-                      _errorMessage = ''; // Clear the error message
-                      _isConfirmed = true; // Update the confirmation status
-                    });
-                    _confirmAndRegister(); // Proceed with the registration
-                  } else {
-                    setState(() {
-                      _errorMessage =
-                          'Wrong word entered. Please try again.'; // Set the error message
-                    });
-                  }
-                },
-                buttonType: ButtonType.primary,
-                text: 'Register',
-              ),
-            ],
+            ),
           ),
         );
       },

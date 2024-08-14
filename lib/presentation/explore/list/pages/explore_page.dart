@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
@@ -6,21 +7,20 @@ import 'package:teja/domain/entities/featured_journal_template_entity.dart';
 import 'package:teja/domain/entities/journal_category_entity.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
-import 'package:teja/presentation/home/ui/journal/frequently_used_template.dart';
-import 'package:teja/presentation/home/ui/journal/last_used_template.dart';
-import 'package:teja/presentation/journal/ui/journal_template_card.dart';
-import 'package:teja/presentation/navigation/mobile_navigation_bar.dart';
-import 'package:teja/presentation/navigation/isDesktop.dart';
-import 'package:teja/router.dart';
-import 'package:teja/theme/padding.dart';
 import 'package:teja/presentation/explore/widgets/clipper.dart';
 import 'package:teja/presentation/explore/widgets/custom_categories_button.dart';
 import 'package:teja/presentation/explore/widgets/custom_category_card.dart';
-import 'package:teja/presentation/explore/widgets/custom_promotion_card.dart';
 import 'package:teja/presentation/explore/widgets/custom_search_field.dart';
 import 'package:teja/presentation/explore/widgets/custom_title.dart';
-import 'package:flutter/material.dart';
-import 'dart:ui';
+import 'package:teja/presentation/home/ui/journal/frequently_used_template.dart';
+import 'package:teja/presentation/home/ui/journal/last_used_template.dart';
+import 'package:teja/presentation/journal/ui/journal_template_card.dart';
+import 'package:teja/presentation/navigation/buildDesktopDrawer.dart';
+import 'package:teja/presentation/navigation/isDesktop.dart';
+import 'package:teja/presentation/navigation/leadingContainer.dart';
+import 'package:teja/presentation/navigation/mobile_navigation_bar.dart';
+import 'package:teja/router.dart';
+import 'package:teja/theme/padding.dart';
 
 class ExplorePage extends StatefulWidget {
   const ExplorePage({
@@ -35,6 +35,13 @@ class ExplorePageState extends State<ExplorePage> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final mainBody = StoreConnector<AppState, ExplorePageViewModel>(
+      converter: (store) => ExplorePageViewModel.fromStore(store),
+      builder: (context, viewModel) {
+        return getBody(viewModel);
+      },
+    );
+
     return Scaffold(
       bottomNavigationBar: isDesktop(context) ? null : MobileNavigationBar(),
       backgroundColor: colorScheme.surface,
@@ -44,21 +51,28 @@ class ExplorePageState extends State<ExplorePage> {
         child: AppBar(
           elevation: 0.0,
           backgroundColor: Colors.transparent,
-          systemOverlayStyle: SystemUiOverlayStyle.light,
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
         ),
       ),
-      body: StoreConnector<AppState, ExplorePageViewModel>(
-        converter: (store) => ExplorePageViewModel.fromStore(store),
-        builder: (context, viewModel) {
-          return getBody(viewModel);
-        },
-      ),
+      body: isDesktop(context)
+          ? Row(
+              children: [
+                buildDesktopNavigationBar(context),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: mainBody,
+                  ),
+                ),
+              ],
+            )
+          : mainBody,
     );
   }
 
   void navigateToCategoryDetail(BuildContext context, String categoryId) {
     GoRouter.of(context).pushNamed(
-      RootPath.journalCategoryDetail, // Assuming you've defined this path in your router
+      RootPath.journalCategoryDetail,
       queryParameters: {
         "id": categoryId,
       },
@@ -87,7 +101,8 @@ class ExplorePageState extends State<ExplorePage> {
                     )),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: appPadding, right: appPadding),
+                padding:
+                    const EdgeInsets.only(left: appPadding, right: appPadding),
                 child: Column(
                   children: <Widget>[
                     const SizedBox(height: spacer + 24),
@@ -111,7 +126,8 @@ class ExplorePageState extends State<ExplorePage> {
               // Convert the map entries to a list for easier manipulation
               var categoriesList = vm.categoriesById.entries.toList();
               // Calculate the split index based on the total number of categories
-              int splitIndex = categoriesList.length ~/ 2 + categoriesList.length % 2;
+              int splitIndex =
+                  categoriesList.length ~/ 2 + categoriesList.length % 2;
 
               return SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -123,10 +139,12 @@ class ExplorePageState extends State<ExplorePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
-                      children: categoriesList.sublist(0, splitIndex).map((entry) {
+                      children:
+                          categoriesList.sublist(0, splitIndex).map((entry) {
                         return CustomCategoriesButton(
                           title: entry.value.name,
-                          onTap: () => navigateToCategoryDetail(context, entry.key),
+                          onTap: () =>
+                              navigateToCategoryDetail(context, entry.key),
                         );
                       }).toList(),
                     ),
@@ -134,7 +152,8 @@ class ExplorePageState extends State<ExplorePage> {
                       children: categoriesList.sublist(splitIndex).map((entry) {
                         return CustomCategoriesButton(
                           title: entry.value.name,
-                          onTap: () => navigateToCategoryDetail(context, entry.key),
+                          onTap: () =>
+                              navigateToCategoryDetail(context, entry.key),
                         );
                       }).toList(),
                     ),
@@ -154,7 +173,8 @@ class ExplorePageState extends State<ExplorePage> {
           ),
           const SizedBox(height: smallSpacer),
           StoreConnector<AppState, List<JournalTemplateEntity>>(
-            converter: (store) => store.state.journalTemplateState.templates.take(5).toList(),
+            converter: (store) =>
+                store.state.journalTemplateState.templates.take(5).toList(),
             builder: (context, templates) {
               return SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -163,9 +183,11 @@ class ExplorePageState extends State<ExplorePage> {
                   right: appPadding - 10.0,
                 ),
                 child: Wrap(
-                  children: List.generate(viewModel.featuredTemplates.length, (index) {
+                  children: List.generate(viewModel.featuredTemplates.length,
+                      (index) {
                     var data = viewModel.featuredTemplates[index];
-                    JournalTemplateEntity? journalTemplateEntity = viewModel.templatesById[data.template];
+                    JournalTemplateEntity? journalTemplateEntity =
+                        viewModel.templatesById[data.template];
                     return GestureDetector(
                       onTap: () {},
                       child: JournalTemplateCard(
