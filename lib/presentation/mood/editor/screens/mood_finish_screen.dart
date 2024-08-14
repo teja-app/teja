@@ -84,43 +84,40 @@ class FinishScreen extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 20),
+                    if (viewModel.moodRating >= 4) // Conditional Rendering based on moodRating
+                      Column(
+                        children: [
+                          const SizedBox(height: 8),
+                          // Feedback Prompt
+                          Text(
+                            'How was your experience so far?',
+                            style: textTheme.titleSmall,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              // Dislike Button
+                              IconButton(
+                                icon: const Icon(AntDesign.like1),
+                                onPressed: () => {_handleSurveyResponse(context, "Yes")},
+                              ),
+                              // Like Button
+                              IconButton(
+                                icon: const Icon(AntDesign.dislike1),
+                                onPressed: () => {_handleSurveyResponse(context, "No")},
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                   ],
                 ),
               ),
               Center(
                 child: AISuggestionButton(moodId: viewModel.currentMoodLog!.id),
               ),
-              if (viewModel.moodRating >= 4) // Conditional Rendering based on moodRating
-                FlexibleHeightBox(
-                  gridWidth: 4,
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 8),
-                      // Feedback Prompt
-                      Text(
-                        'Did you enjoy this mood check-in?',
-                        style: textTheme.titleSmall,
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          // Dislike Button
-                          IconButton(
-                            icon: const Icon(AntDesign.like1),
-                            onPressed: () => {_handleSurveyResponse(context, "Yes")},
-                          ),
-                          // Like Button
-                          IconButton(
-                            icon: const Icon(AntDesign.dislike1),
-                            onPressed: () => {_handleSurveyResponse(context, "No")},
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
               const SizedBox(height: smallSpacer),
               Button(
                 text: 'Skip  & Finish',
