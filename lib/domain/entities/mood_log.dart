@@ -135,7 +135,7 @@ class MoodLogEntity {
       comment: json['comment'] as String?,
       feelings:
           (json['feelings'] as List<dynamic>?)?.map((e) => FeelingEntity.fromJson(e as Map<String, dynamic>)).toList(),
-      factors: (json['factors'] as List<dynamic>?)?.cast<String>(),
+      factors: (json['factors'] as List<dynamic>?)?.map((e) => e as String).toList(),
       attachments: (json['attachments'] as List<dynamic>?)
           ?.map((e) => MoodLogAttachmentEntity.fromJson(e as Map<String, dynamic>))
           .toList(),
