@@ -60,7 +60,7 @@ class MoodLogRepository {
                 ..factors = f.factors
                 ..detailed = f.detailed)
               .toList()
-          ..factors = moodLogEntity.factors
+          ..factors = moodLogEntity.factors?.toList()
           ..attachments = moodLogEntity.attachments
               ?.map((a) => MoodLogAttachment()
                 ..id = a.id
@@ -248,6 +248,7 @@ class MoodLogRepository {
       MoodLog? moodLog = await isar.moodLogs.where().idEqualTo(moodLogId).findFirst();
       if (moodLog != null) {
         moodLog.factors = broadFactors; // Update the broad factors field
+        moodLog.updatedAt = DateTime.now();
         await isar.moodLogs.put(moodLog);
       } else {}
     });
@@ -338,7 +339,7 @@ class MoodLogRepository {
                 detailed: f.detailed,
               ))
           .toList(),
-      factors: moodLog.factors,
+      factors: moodLog.factors?.toList(),
       attachments: moodLog.attachments
           ?.map((a) => MoodLogAttachmentEntity(
                 id: a.id,
