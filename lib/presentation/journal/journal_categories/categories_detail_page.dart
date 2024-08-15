@@ -12,19 +12,17 @@ import 'package:teja/theme/padding.dart';
 class CategoryDetailPage extends StatelessWidget {
   final String categoryId;
 
-  const CategoryDetailPage({Key? key, required this.categoryId})
-      : super(key: key);
+  const CategoryDetailPage({Key? key, required this.categoryId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, _CategoryDetailViewModel>(
-      converter: (store) =>
-          _CategoryDetailViewModel.fromStore(store, categoryId),
+      converter: (store) => _CategoryDetailViewModel.fromStore(store, categoryId),
       builder: (context, vm) {
         if (vm.category == null) {
           return Scaffold(
             appBar: AppBar(),
-            body: Center(child: Text('Category not found')),
+            body: const Center(child: Text('Category not found')),
           );
         }
 
@@ -37,19 +35,15 @@ class CategoryDetailPage extends StatelessWidget {
             backgroundColor: Colors.transparent,
             systemOverlayStyle: SystemUiOverlayStyle.light,
             leading: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.white),
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
           ),
           body: SingleChildScrollView(
-            padding: tablet
-                ? const EdgeInsets.symmetric(horizontal: 32.0)
-                : const EdgeInsets.all(0.0),
-            child: tablet
-                ? _buildTabletLayout(context, vm)
-                : _buildMobileLayout(context, vm),
+            padding: tablet ? const EdgeInsets.symmetric(horizontal: 32.0) : const EdgeInsets.all(0.0),
+            child: tablet ? _buildTabletLayout(context, vm) : _buildMobileLayout(context, vm),
           ),
         );
       },
@@ -139,8 +133,7 @@ class CategoryDetailPage extends StatelessWidget {
     final double maxWidth = screenWidth > 630 ? 630 : screenWidth * 0.75;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
-          16.0, 80.0, 16.0, 16.0), // Added top padding
+      padding: const EdgeInsets.fromLTRB(16.0, 80.0, 16.0, 16.0), // Added top padding
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -226,14 +219,11 @@ class _CategoryDetailViewModel {
 
   _CategoryDetailViewModel({this.category, required this.templates});
 
-  static _CategoryDetailViewModel fromStore(
-      Store<AppState> store, String categoryId) {
+  static _CategoryDetailViewModel fromStore(Store<AppState> store, String categoryId) {
     // Fetch the category by its ID
-    final category =
-        store.state.journalCategoryState.categoriesById[categoryId];
+    final category = store.state.journalCategoryState.categoriesById[categoryId];
     // Fetch templates for the category
-    final templates =
-        store.state.journalTemplateState.templatesByCategory[categoryId] ?? [];
+    final templates = store.state.journalTemplateState.templatesByCategory[categoryId] ?? [];
 
     return _CategoryDetailViewModel(
       category: category,
