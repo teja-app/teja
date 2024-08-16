@@ -34,7 +34,7 @@ class _SimplePlayerScreenState extends State<SimplePlayerScreen> {
   }
 
   Future<void> _loadBackgroundAudio() async {
-    const backgroundUrl = 'https://cdn1.suno.ai/810e8168-807f-479f-abd9-75eb848def4f.mp3';
+    const backgroundUrl = 'https://f000.backblazeb2.com/file/platfom-static/Meditative.mp3';
     final backgroundSource = AudioSource.uri(Uri.parse(backgroundUrl));
     await _backgroundPlayer.setAudioSource(backgroundSource);
   }
@@ -114,11 +114,13 @@ class _SimplePlayerScreenState extends State<SimplePlayerScreen> {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: Text(durationText),
+        foregroundColor: Colors.white,
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
+            color: Colors.white,
             onPressed: () {
               _scaffoldKey.currentState?.openEndDrawer();
             },
@@ -164,6 +166,7 @@ class _SimplePlayerScreenState extends State<SimplePlayerScreen> {
                   IconButton(
                     iconSize: 42,
                     icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow),
+                    color: Colors.white,
                     onPressed: _togglePlayPause,
                   ),
                   const SizedBox(width: 16),
@@ -171,6 +174,7 @@ class _SimplePlayerScreenState extends State<SimplePlayerScreen> {
                     iconSize: 42,
                     icon: const Icon(Icons.stop),
                     onPressed: _stopAudio,
+                    color: Colors.white,
                   ),
                 ],
               ),
