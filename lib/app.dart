@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
-import 'package:teja/router.dart';
 import 'package:teja/theme/dark_theme.dart';
 import 'package:teja/theme/light_theme.dart';
 import 'package:toastification/toastification.dart';
@@ -11,8 +11,9 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 
 class App extends StatelessWidget {
   final Store<AppState> store;
+  final GoRouter router;
 
-  const App({Key? key, required this.store}) : super(key: key);
+  const App({Key? key, required this.store, required this.router}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

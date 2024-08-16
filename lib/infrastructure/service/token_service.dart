@@ -61,7 +61,6 @@ class TokenService {
     final userId = response.data['id'];
     await _secureStorage.writeUserId(userId);
     await _secureStorage.writeAccessDetails(newAccessDetails);
-    await setPosthogContext();
   }
 
   Future<String> getRefreshToken(String refreshToken) async {
