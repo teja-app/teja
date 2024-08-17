@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
@@ -16,6 +18,7 @@ import 'package:teja/presentation/navigation/buildDesktopDrawer.dart';
 import 'package:teja/presentation/navigation/mobile_navigation_bar.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/presentation/navigation/leadingContainer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:teja/router.dart';
 
 class HomePage extends StatefulWidget {
@@ -107,116 +110,143 @@ class _HomePageState extends State<HomePage> {
     posthog.screen(
       screenName: 'Home Page',
     );
-    DateTime today = DateTime.now();
-    DateTime tomorrow = today.add(const Duration(days: 1));
     DateTime now = DateTime.now();
-    Duration oneMonth = const Duration(days: 31);
-    DateTime oneMonthFromNow = now.add(oneMonth);
-    Duration tenMonths = oneMonth * 10; // Calculate the duration for 3 weeks
-    DateTime tenMonthsAgo = now.subtract(tenMonths); // Subtract the duration to get the past date
 
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
-    final Widget mainBody = StoreConnector<AppState, _ViewModel>(
+
+    return StoreConnector<AppState, _ViewModel>(
       converter: _ViewModel.fromStore,
       builder: (context, store) {
-        return SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Text(
-                  getGreetingMessage(),
-                  style: textTheme.titleSmall,
-                ),
-              ),
-              const SizedBox(height: 20),
-              ExampleStreakEntriesDashboard(),
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 0),
-                child: Hero(
-                  tag: 'quickInputHero',
-                  child: QuickInputWidget(
-                    onTap: () {
-                      context.pushNamed(
-                        'quickJournalEntry',
-                        extra: {'heroTag': 'quickInputHero'},
-                      );
-                    },
-                    onMoodTap: () {
-                      context.pushNamed(RootPath.moodEdit);
-                    },
-                    onAudioTap: () {
-                      context.pushNamed(RootPath.moodEdit);
-                    },
-                    onGuidedJournal: () {
-                      context.pushNamed(RootPath.journalCategory);
-                    },
+        return Stack(
+          children: [
+            // Background Image with Opacity and Blur
+            Positioned.fill(
+              child: ImageFiltered(
+                imageFilter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                child: Opacity(
+                  opacity: 1, // Adjust this value to change the opacity
+                  child: Image(
+                    image: CachedNetworkImageProvider(store.backgroundImageUrl),
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
-              Center(
-                child: Text(
-                  "Today's Journal",
-                  style: textTheme.titleSmall,
-                ),
+            ),
+            // Semi-transparent overlay for better readability
+            Positioned.fill(
+              child: Container(
+                color: Colors.white.withOpacity(0.9),
               ),
-              const Column(
-                children: [
-                  JournalEntriesWidget(),
-                  MoodTrackerWidget(),
-                ],
+            ),
+            // Scaffold
+            Scaffold(
+              backgroundColor: Colors.transparent,
+              appBar: AppBar(
+                elevation: 0.0,
+                backgroundColor: Colors.transparent,
+                forceMaterialTransparency: true,
+                leading: leadingNavBar(context),
+                leadingWidth: 72,
               ),
-              if (store.selectedDate != null && now.compareTo(store.selectedDate!) < 0)
-                const Center(child: CountdownTimer()),
-              const SizedBox(height: 10),
-            ],
-          ),
+              bottomNavigationBar: isDesktop(context) ? null : const MobileNavigationBar(),
+              body: isDesktop(context)
+                  ? Row(
+                      children: [
+                        buildDesktopNavigationBar(context),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.topCenter,
+                            child: SizedBox(
+                              width: 630,
+                              child: _buildMainBody(context, store, textTheme, now),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : _buildMainBody(context, store, textTheme, now),
+            ),
+          ],
         );
       },
     );
-    return Scaffold(
-      bottomNavigationBar: isDesktop(context) ? null : const MobileNavigationBar(),
-      appBar: AppBar(
-        elevation: 0.0,
-        forceMaterialTransparency: true,
-        leading: leadingNavBar(context),
-        leadingWidth: 72,
-        // actions: const [TokenWidget()],
+  }
+
+  Widget _buildMainBody(BuildContext context, _ViewModel store, TextTheme textTheme, DateTime now) {
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Text(
+              getGreetingMessage(),
+              style: textTheme.titleSmall,
+            ),
+          ),
+          const SizedBox(height: 20),
+          ExampleStreakEntriesDashboard(),
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0),
+            child: Hero(
+              tag: 'quickInputHero',
+              child: QuickInputWidget(
+                onTap: () {
+                  context.pushNamed(
+                    'quickJournalEntry',
+                    extra: {'heroTag': 'quickInputHero'},
+                  );
+                },
+                onMoodTap: () {
+                  context.pushNamed(RootPath.moodEdit);
+                },
+                onAudioTap: () {
+                  context.pushNamed(RootPath.moodEdit);
+                },
+                onGuidedJournal: () {
+                  context.pushNamed(RootPath.journalCategory);
+                },
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          Center(
+            child: Text(
+              "Today's Journal",
+              style: textTheme.titleSmall,
+            ),
+          ),
+          const Column(
+            children: [
+              JournalEntriesWidget(),
+              MoodTrackerWidget(),
+            ],
+          ),
+          if (store.selectedDate != null && now.compareTo(store.selectedDate!) < 0)
+            const Center(child: CountdownTimer()),
+          const SizedBox(height: 10),
+        ],
       ),
-      body: isDesktop(context)
-          ? Row(
-              children: [
-                buildDesktopNavigationBar(context), // The NavigationRail
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.topCenter, // Adjust this as needed
-                    child: SizedBox(
-                      width: 630,
-                      child: mainBody,
-                    ),
-                  ),
-                ), // Main content area
-              ],
-            )
-          : mainBody, // If not desktop, just show the main body
     );
   }
 }
 
 class _ViewModel {
   final DateTime? selectedDate;
+  final String backgroundImageUrl;
 
   _ViewModel({
     this.selectedDate,
+    required this.backgroundImageUrl,
   });
 
   static _ViewModel fromStore(Store<AppState> store) {
     return _ViewModel(
       selectedDate: store.state.homeState.selectedDate,
+      backgroundImageUrl:
+          'https://cdn.leonardo.ai/users/289152d8-6132-4fd8-b895-28a873a1f7d9/generations/22d788e9-c344-4f8a-8ecc-f645c548eae2/variations/alchemyrefiner_alchemymagic_0_22d788e9-c344-4f8a-8ecc-f645c548eae2_0.jpg',
     );
   }
 }
