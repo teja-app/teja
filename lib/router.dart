@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:teja/infrastructure/analytics/analytics_service.dart';
-import 'package:teja/presentation/edit_habit/pages/edig_habit_page.dart';
 import 'package:teja/presentation/explore/list/pages/explore_page.dart';
 import 'package:teja/presentation/explore/list/pages/search_page.dart';
 import 'package:teja/presentation/goal_editor/page/vision_picker_page.dart';
@@ -21,6 +20,7 @@ import 'package:teja/presentation/registration/page/RegistrationScreen.dart';
 import 'package:teja/presentation/profile/page/profile_page.dart';
 import 'package:teja/presentation/settings/pages/recovery_code_page.dart';
 import 'package:teja/presentation/settings/pages/notification_settings_page.dart';
+import 'package:teja/presentation/task/page/task_list.dart';
 import 'package:teja/presentation/timeline/pages/timeline_list_page.dart';
 import 'package:teja/presentation/mood/share/pages/mood_share.dart';
 import 'package:teja/presentation/note_editor/note_editor_page.dart';
@@ -66,15 +66,14 @@ class RootPath {
   static const signIn = "signIn";
   static const home = "home";
   static const music = "music";
+  static const habit = "habit";
   static const profile = "profile";
   static const explore = "explore";
   static const exploreSearch = "explore_search";
   static const guide = "guide";
   static const journal = "journal";
   static const echo = "echo";
-  static const habit = "habit";
   static const comingSoon = "coming_soon";
-  static const editHabit = "edit_habit";
   static const inspiration = "inspiration";
   static const settings = "settings";
   static const moodEdit = "mood_edit";
@@ -236,6 +235,12 @@ GoRouter createRouter(AnalyticsService analyticsService) {
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
+        name: RootPath.habit,
+        path: '/habit',
+        builder: (context, state) => TaskList(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
         name: RootPath.music,
         path: '/music',
         builder: (context, state) => const SimplePlayerScreen(),
@@ -251,12 +256,6 @@ GoRouter createRouter(AnalyticsService analyticsService) {
         name: RootPath.exploreSearch,
         path: '/explore_search',
         builder: (context, state) => const SearchPage(),
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        name: RootPath.editHabit,
-        path: '/edit_habit',
-        builder: (context, state) => const EditHabitPage(),
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
