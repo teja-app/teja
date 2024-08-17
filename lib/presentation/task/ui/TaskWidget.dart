@@ -110,7 +110,8 @@ class TaskWidget extends StatelessWidget {
                 onChanged: (_) => toggleTask(task.id),
                 priorityColor: _getPriorityColor(),
               )
-            else if (task.habitDirection == HabitDirection.positive || task.habitDirection == HabitDirection.both)
+            else if (task.habitDirection == HabitDirection.positive ||
+                task.habitDirection == HabitDirection.both)
               _buildHabitButton(HabitDirection.positive),
             const SizedBox(width: 12),
             Expanded(
@@ -122,19 +123,25 @@ class TaskWidget extends StatelessWidget {
                     style: textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       decoration:
-                          task.type == TaskType.todo && task.completedAt != null ? TextDecoration.lineThrough : null,
-                      color: task.type == TaskType.todo && task.completedAt != null
-                          ? colorScheme.onSurfaceVariant
-                          : colorScheme.onSurface,
+                          task.type == TaskType.todo && task.completedAt != null
+                              ? TextDecoration.lineThrough
+                              : null,
+                      color:
+                          task.type == TaskType.todo && task.completedAt != null
+                              ? colorScheme.onSurfaceVariant
+                              : colorScheme.onSurface,
                     ),
                   ),
-                  if ((task.description?.isNotEmpty ?? false) && task.type == TaskType.todo)
+                  if ((task.description?.isNotEmpty ?? false) &&
+                      task.type == TaskType.todo)
                     Text(
                       task.description!,
                       style: textTheme.bodySmall?.copyWith(
                         color: colorScheme.onSurfaceVariant,
-                        decoration:
-                            task.type == TaskType.todo && task.completedAt != null ? TextDecoration.lineThrough : null,
+                        decoration: task.type == TaskType.todo &&
+                                task.completedAt != null
+                            ? TextDecoration.lineThrough
+                            : null,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -143,9 +150,12 @@ class TaskWidget extends StatelessWidget {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        const Icon(Icons.calendar_today, size: 12, color: Colors.grey),
+                        const Icon(Icons.calendar_today,
+                            size: 12, color: Colors.grey),
                         const SizedBox(width: 4),
-                        Text(_getShortDueDate(), style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                        Text(_getShortDueDate(),
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.grey)),
                         const SizedBox(width: 8),
                         // const Icon(Icons.label, size: 12, color: Colors.grey),
                         // const SizedBox(width: 4),
@@ -175,12 +185,15 @@ class TaskWidget extends StatelessWidget {
               ),
             ),
             if (task.type == TaskType.habit &&
-                (task.habitDirection == HabitDirection.negative || task.habitDirection == HabitDirection.both))
+                (task.habitDirection == HabitDirection.negative ||
+                    task.habitDirection == HabitDirection.both))
               _buildHabitButton(HabitDirection.negative)
             else if (task.type != TaskType.habit)
               IconButton(
                 icon: Icon(
-                  activePomodoro == task.id && isRunning ? Icons.pause : Icons.play_arrow,
+                  activePomodoro == task.id && isRunning
+                      ? Icons.pause
+                      : Icons.play_arrow,
                   size: 18,
                 ),
                 onPressed: () => togglePomodoro(task.id),

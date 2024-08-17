@@ -35,19 +35,24 @@ class PomodoroOverlay extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               formatTime(pomodoroTime),
-              style: const TextStyle(fontSize: 48, color: Colors.white, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                  fontSize: 48,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
-                  icon: Icon(isRunning ? Icons.pause : Icons.play_arrow, color: Colors.white, size: 32),
+                  icon: Icon(isRunning ? Icons.pause : Icons.play_arrow,
+                      color: Colors.white, size: 32),
                   onPressed: () => togglePomodoro(activeTask.id),
                 ),
                 const SizedBox(width: 16),
                 IconButton(
-                  icon: const Icon(Icons.refresh, color: Colors.white, size: 32),
+                  icon:
+                      const Icon(Icons.refresh, color: Colors.white, size: 32),
                   onPressed: resetPomodoro,
                 ),
                 const SizedBox(width: 16),

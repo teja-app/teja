@@ -32,11 +32,14 @@ class MobileNavigationBar extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildNavItem(Icons.home_outlined, 0, selectedIndex, goRouter, theme),
+              _buildNavItem(
+                  Icons.home_outlined, 0, selectedIndex, goRouter, theme),
               _buildNavItem(Icons.search, 1, selectedIndex, goRouter, theme),
-              _buildNavItem(Icons.task_alt_outlined, 2, selectedIndex, goRouter, theme),
+              _buildNavItem(
+                  Icons.task_alt_outlined, 2, selectedIndex, goRouter, theme),
               _buildNavItem(Icons.book, 3, selectedIndex, goRouter, theme),
-              _buildNavItem(Icons.person_outline, 4, selectedIndex, goRouter, theme),
+              _buildNavItem(
+                  Icons.person_outline, 4, selectedIndex, goRouter, theme),
             ],
           ),
         ),
@@ -44,7 +47,8 @@ class MobileNavigationBar extends StatelessWidget {
     );
   }
 
-  Widget _buildNavItem(IconData icon, int index, int selectedIndex, GoRouter goRouter, ThemeData theme) {
+  Widget _buildNavItem(IconData icon, int index, int selectedIndex,
+      GoRouter goRouter, ThemeData theme) {
     final bool isSelected = selectedIndex == index;
     final colorScheme = theme.colorScheme;
 
@@ -77,7 +81,9 @@ class MobileNavigationBar extends StatelessWidget {
         ),
         child: Icon(
           icon,
-          color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface.withOpacity(0.6),
+          color: isSelected
+              ? colorScheme.onPrimary
+              : colorScheme.onSurface.withOpacity(0.6),
           size: 24,
         ),
       ),

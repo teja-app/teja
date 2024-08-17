@@ -31,13 +31,22 @@ class _TaskEditorPageState extends State<TaskEditorPage> {
   late HabitDirection? _habitDirection;
   late List<int> _daysOfWeek;
 
-  final List<String> _weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  final List<String> _weekdays = [
+    'Sun',
+    'Mon',
+    'Tue',
+    'Wed',
+    'Thu',
+    'Fri',
+    'Sat'
+  ];
 
   @override
   void initState() {
     super.initState();
     _titleController = TextEditingController(text: widget.task?.title ?? '');
-    _descriptionController = TextEditingController(text: widget.task?.description ?? '');
+    _descriptionController =
+        TextEditingController(text: widget.task?.description ?? '');
     _dueDate = widget.task?.due?.date ?? DateTime.now();
     _dueTime = TimeOfDay.fromDateTime(widget.task?.due?.date ?? DateTime.now());
     // _labels = List.from(widget.task?.labels ?? []);
@@ -51,7 +60,8 @@ class _TaskEditorPageState extends State<TaskEditorPage> {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, TaskEditorViewModel>(
-        converter: (store) => TaskEditorViewModel.fromStore(store, task: widget.task),
+        converter: (store) =>
+            TaskEditorViewModel.fromStore(store, task: widget.task),
         builder: (context, viewModel) {
           return Scaffold(
             appBar: AppBar(
@@ -107,8 +117,10 @@ class _TaskEditorPageState extends State<TaskEditorPage> {
                           child: InkWell(
                             onTap: _selectDueDate,
                             child: InputDecorator(
-                              decoration: const InputDecoration(labelText: 'Due Date'),
-                              child: Text('${_dueDate.toLocal()}'.split(' ')[0]),
+                              decoration:
+                                  const InputDecoration(labelText: 'Due Date'),
+                              child:
+                                  Text('${_dueDate.toLocal()}'.split(' ')[0]),
                             ),
                           ),
                         ),
@@ -117,7 +129,8 @@ class _TaskEditorPageState extends State<TaskEditorPage> {
                           child: InkWell(
                             onTap: _selectDueTime,
                             child: InputDecorator(
-                              decoration: const InputDecoration(labelText: 'Due Time'),
+                              decoration:
+                                  const InputDecoration(labelText: 'Due Time'),
                               child: Text(_dueTime.format(context)),
                             ),
                           ),
@@ -129,8 +142,10 @@ class _TaskEditorPageState extends State<TaskEditorPage> {
                   if (_taskType == TaskType.habit)
                     DropdownButtonFormField<HabitDirection>(
                       value: _habitDirection,
-                      decoration: const InputDecoration(labelText: 'Habit Direction'),
-                      items: HabitDirection.values.map((HabitDirection direction) {
+                      decoration:
+                          const InputDecoration(labelText: 'Habit Direction'),
+                      items:
+                          HabitDirection.values.map((HabitDirection direction) {
                         return DropdownMenuItem<HabitDirection>(
                           value: direction,
                           child: Text(direction.toString().split('.').last),
@@ -240,13 +255,16 @@ class _TaskEditorPageState extends State<TaskEditorPage> {
       description: _descriptionController.text,
       due: _taskType != TaskType.habit
           ? TaskDueEntity(
-              date: DateTime(_dueDate.year, _dueDate.month, _dueDate.day, _dueTime.hour, _dueTime.minute),
+              date: DateTime(_dueDate.year, _dueDate.month, _dueDate.day,
+                  _dueTime.hour, _dueTime.minute),
             )
           : null,
       // labels: [],
       priority: _priority,
       duration: _taskType != TaskType.habit ? _duration : null,
-      pomodoros: _taskType != TaskType.habit ? (_duration.inMinutes / 25).ceil() : null,
+      pomodoros: _taskType != TaskType.habit
+          ? (_duration.inMinutes / 25).ceil()
+          : null,
       type: _taskType,
       habitDirection: _taskType == TaskType.habit ? _habitDirection : null,
       daysOfWeek: _taskType == TaskType.daily ? _daysOfWeek : [],
@@ -326,7 +344,8 @@ class TaskEditorViewModel {
     required this.saveTask,
   });
 
-  static TaskEditorViewModel fromStore(Store<AppState> store, {TaskEntity? task}) {
+  static TaskEditorViewModel fromStore(Store<AppState> store,
+      {TaskEntity? task}) {
     return TaskEditorViewModel(
       task: task,
       saveTask: (TaskEntity updatedTask) {

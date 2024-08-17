@@ -54,7 +54,15 @@ List<TaskEntity> mockTasks = [
     priority: 1,
     duration: const Duration(minutes: 5),
     type: TaskType.daily,
-    daysOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+    daysOfWeek: [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday"
+    ],
   )..completedDates = _generateCompletedDates(0.9), // 90% completion rate
 
   TaskEntity(
@@ -90,7 +98,8 @@ List<TaskEntity> mockTasks = [
     duration: const Duration(minutes: 30),
     type: TaskType.habit,
     habitDirection: HabitDirection.positive,
-  )..habitEntries = _generateHabitEntries(HabitDirection.positive, 0.6), // 60% success rate
+  )..habitEntries =
+      _generateHabitEntries(HabitDirection.positive, 0.6), // 60% success rate
 
   TaskEntity(
     id: "4008",
@@ -101,7 +110,8 @@ List<TaskEntity> mockTasks = [
     duration: const Duration(minutes: 20),
     type: TaskType.habit,
     habitDirection: HabitDirection.positive,
-  )..habitEntries = _generateHabitEntries(HabitDirection.positive, 0.8), // 80% success rate
+  )..habitEntries =
+      _generateHabitEntries(HabitDirection.positive, 0.8), // 80% success rate
 
   TaskEntity(
     id: "4009",
@@ -111,7 +121,8 @@ List<TaskEntity> mockTasks = [
     priority: 3,
     type: TaskType.habit,
     habitDirection: HabitDirection.negative,
-  )..habitEntries = _generateHabitEntries(HabitDirection.negative, 0.7), // 70% success rate
+  )..habitEntries =
+      _generateHabitEntries(HabitDirection.negative, 0.7), // 70% success rate
 
   TaskEntity(
     id: "4010",
@@ -121,7 +132,8 @@ List<TaskEntity> mockTasks = [
     priority: 2,
     type: TaskType.habit,
     habitDirection: HabitDirection.negative,
-  )..habitEntries = _generateHabitEntries(HabitDirection.negative, 0.5), // 50% success rate
+  )..habitEntries =
+      _generateHabitEntries(HabitDirection.negative, 0.5), // 50% success rate
 ];
 
 List<DateTime> _generateCompletedDates(double completionRate) {
@@ -136,14 +148,16 @@ List<DateTime> _generateCompletedDates(double completionRate) {
   return completedDates;
 }
 
-List<HabitEntryEntity> _generateHabitEntries(HabitDirection direction, double successRate) {
+List<HabitEntryEntity> _generateHabitEntries(
+    HabitDirection direction, double successRate) {
   final now = DateTime.now();
   final habitEntries = <HabitEntryEntity>[];
   for (var i = 0; i < 30; i++) {
     final date = now.subtract(Duration(days: i));
     if (i == 0 || i == 1 || (Random().nextDouble() < successRate)) {
       habitEntries.add(HabitEntryEntity(
-        timestamp: DateTime(date.year, date.month, date.day, Random().nextInt(24), Random().nextInt(60)),
+        timestamp: DateTime(date.year, date.month, date.day,
+            Random().nextInt(24), Random().nextInt(60)),
         direction: direction,
       ));
     }

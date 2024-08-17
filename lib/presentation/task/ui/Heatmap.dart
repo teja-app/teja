@@ -19,8 +19,10 @@ class HeatMapComponent extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
     final brightness = Theme.of(context).brightness;
-    final textColor = brightness == Brightness.dark ? Colors.white : Colors.black;
-    final defaultColor = brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[200];
+    final textColor =
+        brightness == Brightness.dark ? Colors.white : Colors.black;
+    final defaultColor =
+        brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[200];
 
     Map<int, Color> colorsets;
     if (habitDirection == HabitDirection.negative) {
@@ -46,10 +48,12 @@ class HeatMapComponent extends StatelessWidget {
       children: [
         Center(
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            padding:
+                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
             child: Text(
               title,
-              style: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface),
+              style:
+                  textTheme.titleLarge?.copyWith(color: colorScheme.onSurface),
             ),
           ),
         ),
@@ -69,7 +73,9 @@ class HeatMapComponent extends StatelessWidget {
             colorsets: colorsets,
             onClick: (value) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Selected date: ${value.toString().split(' ')[0]}')),
+                SnackBar(
+                    content: Text(
+                        'Selected date: ${value.toString().split(' ')[0]}')),
               );
             },
             margin: const EdgeInsets.all(4),
