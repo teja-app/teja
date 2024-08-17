@@ -34,8 +34,9 @@ class MobileNavigationBar extends StatelessWidget {
             children: [
               _buildNavItem(Icons.home_outlined, 0, selectedIndex, goRouter, theme),
               _buildNavItem(Icons.search, 1, selectedIndex, goRouter, theme),
-              _buildNavItem(Icons.book, 2, selectedIndex, goRouter, theme),
-              _buildNavItem(Icons.person_outline, 3, selectedIndex, goRouter, theme),
+              _buildNavItem(Icons.task_alt_outlined, 2, selectedIndex, goRouter, theme),
+              _buildNavItem(Icons.book, 3, selectedIndex, goRouter, theme),
+              _buildNavItem(Icons.person_outline, 4, selectedIndex, goRouter, theme),
             ],
           ),
         ),
@@ -57,9 +58,12 @@ class MobileNavigationBar extends StatelessWidget {
             goRouter.goNamed(RootPath.explore);
             break;
           case 2:
-            goRouter.goNamed(RootPath.timeLine);
+            goRouter.goNamed(RootPath.habit);
             break;
           case 3:
+            goRouter.goNamed(RootPath.timeLine);
+            break;
+          case 5:
             goRouter.goNamed(RootPath.profile);
             break;
         }
@@ -86,10 +90,12 @@ class MobileNavigationBar extends StatelessWidget {
         return 0;
       case '/explore':
         return 1;
-      case '/timeline':
+      case '/habit':
         return 2;
-      case '/profile':
+      case '/timeline':
         return 3;
+      case '/profile':
+        return 4;
       default:
         return 0;
     }
