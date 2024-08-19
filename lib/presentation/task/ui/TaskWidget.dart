@@ -147,12 +147,12 @@ class TaskWidget extends StatelessWidget {
                         const SizedBox(width: 4),
                         Text(_getShortDueDate(), style: const TextStyle(fontSize: 12, color: Colors.grey)),
                         const SizedBox(width: 8),
-                        const Icon(Icons.label, size: 12, color: Colors.grey),
-                        const SizedBox(width: 4),
-                        Text(
-                          task.labels.isNotEmpty ? task.labels[0] : 'No label',
-                          style: const TextStyle(fontSize: 12, color: Colors.grey),
-                        ),
+                        // const Icon(Icons.label, size: 12, color: Colors.grey),
+                        // const SizedBox(width: 4),
+                        // Text(
+                        //   task.labels.isNotEmpty ? task.labels[0] : 'No label',
+                        //   style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        // ),
                       ],
                     ),
                   ],

@@ -24,7 +24,7 @@ class _TaskEditorPageState extends State<TaskEditorPage> {
   late TextEditingController _descriptionController;
   late DateTime _dueDate;
   late TimeOfDay _dueTime;
-  late List<String> _labels;
+  // late List<String> _labels;
   late int _priority;
   late Duration _duration;
   late TaskType _taskType;
@@ -40,7 +40,7 @@ class _TaskEditorPageState extends State<TaskEditorPage> {
     _descriptionController = TextEditingController(text: widget.task?.description ?? '');
     _dueDate = widget.task?.due?.date ?? DateTime.now();
     _dueTime = TimeOfDay.fromDateTime(widget.task?.due?.date ?? DateTime.now());
-    _labels = List.from(widget.task?.labels ?? []);
+    // _labels = List.from(widget.task?.labels ?? []);
     _priority = widget.task?.priority ?? 1;
     _duration = widget.task?.duration ?? const Duration(minutes: 25);
     _taskType = widget.task?.type ?? widget.initialTaskType;
@@ -163,20 +163,20 @@ class _TaskEditorPageState extends State<TaskEditorPage> {
                               )),
                     ),
                   ],
-                  const SizedBox(height: 16),
-                  Wrap(
-                    spacing: 8,
-                    children: [
-                      ..._labels.map((label) => Chip(
-                            label: Text(label),
-                            onDeleted: () => _removeLabel(label),
-                          )),
-                      ActionChip(
-                        label: const Icon(Icons.add),
-                        onPressed: _addLabel,
-                      ),
-                    ],
-                  ),
+                  // const SizedBox(height: 16),
+                  // Wrap(
+                  //   spacing: 8,
+                  //   children: [
+                  //     ..._labels.map((label) => Chip(
+                  //           label: Text(label),
+                  //           onDeleted: () => _removeLabel(label),
+                  //         )),
+                  //     ActionChip(
+                  //       label: const Icon(Icons.add),
+                  //       onPressed: _addLabel,
+                  //     ),
+                  //   ],
+                  // ),
                   const SizedBox(height: 16),
                   Row(
                     children: [
@@ -243,7 +243,7 @@ class _TaskEditorPageState extends State<TaskEditorPage> {
               date: DateTime(_dueDate.year, _dueDate.month, _dueDate.day, _dueTime.hour, _dueTime.minute),
             )
           : null,
-      labels: _labels,
+      // labels: [],
       priority: _priority,
       duration: _taskType != TaskType.habit ? _duration : null,
       pomodoros: _taskType != TaskType.habit ? (_duration.inMinutes / 25).ceil() : null,
@@ -282,40 +282,39 @@ class _TaskEditorPageState extends State<TaskEditorPage> {
     }
   }
 
-  void _addLabel() async {
-    final label = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Add Label'),
-        content: const TextField(
-          autofocus: true,
-          decoration: const InputDecoration(hintText: 'Enter label'),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(
-                context, (context as Element).findAncestorWidgetOfExactType<TextField>()?.controller?.text),
-            child: const Text('Add'),
-          ),
-        ],
-      ),
-    );
-    if (label != null && label.isNotEmpty) {
-      setState(() {
-        _labels.add(label);
-      });
-    }
-  }
-
-  void _removeLabel(String label) {
-    setState(() {
-      _labels.remove(label);
-    });
-  }
+  // void _addLabel() async {
+  //   final label = await showDialog<String>(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       title: const Text('Add Label'),
+  //       content: const TextField(
+  //         autofocus: true,
+  //         decoration: const InputDecoration(hintText: 'Enter label'),
+  //       ),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () => Navigator.pop(context),
+  //           child: const Text('Cancel'),
+  //         ),
+  //         TextButton(
+  //           onPressed: () => Navigator.pop(
+  //               context, (context as Element).findAncestorWidgetOfExactType<TextField>()?.controller?.text),
+  //           child: const Text('Add'),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  //   if (label != null && label.isNotEmpty) {
+  //     setState(() {
+  //       _labels.add(label);
+  //     });
+  //   }
+  // }
+  // void _removeLabel(String label) {
+  //   setState(() {
+  //     _labels.remove(label);
+  //   });
+  // }
 }
 
 class TaskEditorViewModel {
