@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:teja/presentation/task/interface/task.dart';
+import 'package:teja/domain/entities/task_entity.dart';
 
 class PomodoroOverlay extends StatelessWidget {
-  final Task activeTask;
+  final TaskEntity activeTask;
   final int pomodoroTime;
   final bool isRunning;
   final bool isBreak;

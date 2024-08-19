@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:teja/presentation/task/interface/task.dart';
+import 'package:teja/domain/entities/task_entity.dart';
 import 'package:teja/presentation/task/page/task_edit.dart';
 import 'package:teja/presentation/task/page/task_detail.dart';
 import 'package:teja/presentation/task/ui/PriorityCheckbox.dart';
 
 class TaskWidget extends StatelessWidget {
-  final Task task;
-  final Function(Task) updateTask;
+  final TaskEntity task;
+  final Function(TaskEntity) updateTask;
   final Function(String) toggleTask;
   final Function(String, HabitDirection) incrementHabit;
   final String? activePomodoro;
@@ -69,7 +69,6 @@ class TaskWidget extends StatelessWidget {
         MaterialPageRoute(
           builder: (context) => TaskEditorPage(
             task: task,
-            onSave: updateTask,
             initialTaskType: task.type,
           ),
         ),
@@ -78,9 +77,7 @@ class TaskWidget extends StatelessWidget {
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => TaskDetailPage(
-            task: task,
-            updateTask: updateTask,
-            toggleTask: toggleTask,
+            taskId: task.id,
           ),
         ),
       );
@@ -124,8 +121,9 @@ class TaskWidget extends StatelessWidget {
                     task.title,
                     style: textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      decoration: task.type == TaskType.todo && task.isCompleted ? TextDecoration.lineThrough : null,
-                      color: task.type == TaskType.todo && task.isCompleted
+                      decoration:
+                          task.type == TaskType.todo && task.completedAt != null ? TextDecoration.lineThrough : null,
+                      color: task.type == TaskType.todo && task.completedAt != null
                           ? colorScheme.onSurfaceVariant
                           : colorScheme.onSurface,
                     ),
@@ -157,14 +155,15 @@ class TaskWidget extends StatelessWidget {
                   if (task.type == TaskType.habit) ...[
                     const SizedBox(height: 4),
                     Text(
-                      'Positive: ${task.getHabitCount(HabitDirection.positive)}, Negative: ${task.getHabitCount(HabitDirection.negative)}',
+                      'Positive: ${task.habitEntries.where((e) => e.direction == HabitDirection.positive).length}, '
+                      'Negative: ${task.habitEntries.where((e) => e.direction == HabitDirection.negative).length}',
                       style: const TextStyle(fontSize: 12, color: Colors.grey),
                     ),
                   ],
                   if (task.type == TaskType.daily) ...[
                     const SizedBox(height: 4),
                     Text(
-                      'Last completed: ${task.getLastCompletedDate()}',
+                      'Last completed: ${task.completedDates.isNotEmpty ? "${task.completedDates.last.month}/${task.completedDates.last.day}" : "Never"}',
                       style: const TextStyle(fontSize: 12, color: Colors.grey),
                     ),
                   ],

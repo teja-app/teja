@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
-import 'package:teja/presentation/task/interface/task.dart';
+import 'package:teja/domain/entities/task_entity.dart';
 
 class HeatMapComponent extends StatelessWidget {
   final String title;
