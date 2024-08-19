@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:teja/infrastructure/database/isar_collections/task.dart';
 
 enum TaskType { todo, daily, habit }
@@ -16,7 +18,7 @@ class TaskEntity {
   final int? pomodoros;
   final TaskType type;
   final HabitDirection? habitDirection;
-  final List<String>? daysOfWeek;
+  final List<int>? daysOfWeek;
 
   // Tracking properties
   DateTime? completedAt;
@@ -93,7 +95,7 @@ class TaskEntity {
     int? pomodoros,
     TaskType? type,
     HabitDirection? habitDirection,
-    List<String>? daysOfWeek,
+    List<int>? daysOfWeek,
     DateTime? completedAt,
     List<DateTime>? completedDates,
     List<HabitEntryEntity>? habitEntries,

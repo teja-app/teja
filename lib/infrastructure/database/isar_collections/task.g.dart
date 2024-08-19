@@ -30,7 +30,7 @@ const TaskSchema = CollectionSchema(
     r'daysOfWeek': PropertySchema(
       id: 2,
       name: r'daysOfWeek',
-      type: IsarType.stringList,
+      type: IsarType.longList,
     ),
     r'description': PropertySchema(
       id: 3,
@@ -136,15 +136,9 @@ int _taskEstimateSize(
   var bytesCount = offsets.last;
   bytesCount += 3 + object.completedDates.length * 8;
   {
-    final list = object.daysOfWeek;
-    if (list != null) {
-      bytesCount += 3 + list.length * 3;
-      {
-        for (var i = 0; i < list.length; i++) {
-          final value = list[i];
-          bytesCount += value.length * 3;
-        }
-      }
+    final value = object.daysOfWeek;
+    if (value != null) {
+      bytesCount += 3 + value.length * 8;
     }
   }
   {
@@ -203,7 +197,7 @@ void _taskSerialize(
 ) {
   writer.writeDateTime(offsets[0], object.completedAt);
   writer.writeDateTimeList(offsets[1], object.completedDates);
-  writer.writeStringList(offsets[2], object.daysOfWeek);
+  writer.writeLongList(offsets[2], object.daysOfWeek);
   writer.writeString(offsets[3], object.description);
   writer.writeObject<TaskDue>(
     offsets[4],
@@ -242,7 +236,7 @@ Task _taskDeserialize(
   final object = Task();
   object.completedAt = reader.readDateTimeOrNull(offsets[0]);
   object.completedDates = reader.readDateTimeList(offsets[1]) ?? [];
-  object.daysOfWeek = reader.readStringList(offsets[2]);
+  object.daysOfWeek = reader.readLongList(offsets[2]);
   object.description = reader.readStringOrNull(offsets[3]);
   object.due = reader.readObjectOrNull<TaskDue>(
     offsets[4],
@@ -287,7 +281,7 @@ P _taskDeserializeProp<P>(
     case 1:
       return (reader.readDateTimeList(offset) ?? []) as P;
     case 2:
-      return (reader.readStringList(offset)) as P;
+      return (reader.readLongList(offset)) as P;
     case 3:
       return (reader.readStringOrNull(offset)) as P;
     case 4:
@@ -743,54 +737,46 @@ extension TaskQueryFilter on QueryBuilder<Task, Task, QFilterCondition> {
   }
 
   QueryBuilder<Task, Task, QAfterFilterCondition> daysOfWeekElementEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+      int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'daysOfWeek',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Task, Task, QAfterFilterCondition> daysOfWeekElementGreaterThan(
-    String value, {
+    int value, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'daysOfWeek',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Task, Task, QAfterFilterCondition> daysOfWeekElementLessThan(
-    String value, {
+    int value, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'daysOfWeek',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Task, Task, QAfterFilterCondition> daysOfWeekElementBetween(
-    String lower,
-    String upper, {
+    int lower,
+    int upper, {
     bool includeLower = true,
     bool includeUpper = true,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -799,76 +785,6 @@ extension TaskQueryFilter on QueryBuilder<Task, Task, QFilterCondition> {
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Task, Task, QAfterFilterCondition> daysOfWeekElementStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'daysOfWeek',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Task, Task, QAfterFilterCondition> daysOfWeekElementEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'daysOfWeek',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Task, Task, QAfterFilterCondition> daysOfWeekElementContains(
-      String value,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'daysOfWeek',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Task, Task, QAfterFilterCondition> daysOfWeekElementMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'daysOfWeek',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Task, Task, QAfterFilterCondition> daysOfWeekElementIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'daysOfWeek',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Task, Task, QAfterFilterCondition>
-      daysOfWeekElementIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'daysOfWeek',
-        value: '',
       ));
     });
   }
@@ -2629,7 +2545,7 @@ extension TaskQueryProperty on QueryBuilder<Task, Task, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Task, List<String>?, QQueryOperations> daysOfWeekProperty() {
+  QueryBuilder<Task, List<int>?, QQueryOperations> daysOfWeekProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'daysOfWeek');
     });

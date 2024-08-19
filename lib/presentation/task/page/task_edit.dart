@@ -29,7 +29,9 @@ class _TaskEditorPageState extends State<TaskEditorPage> {
   late Duration _duration;
   late TaskType _taskType;
   late HabitDirection? _habitDirection;
-  late List<String> _daysOfWeek;
+  late List<int> _daysOfWeek;
+
+  final List<String> _weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   @override
   void initState() {
@@ -38,12 +40,12 @@ class _TaskEditorPageState extends State<TaskEditorPage> {
     _descriptionController = TextEditingController(text: widget.task?.description ?? '');
     _dueDate = widget.task?.due?.date ?? DateTime.now();
     _dueTime = TimeOfDay.fromDateTime(widget.task?.due?.date ?? DateTime.now());
-    _labels = widget.task?.labels ?? [];
+    _labels = List.from(widget.task?.labels ?? []);
     _priority = widget.task?.priority ?? 1;
     _duration = widget.task?.duration ?? const Duration(minutes: 25);
     _taskType = widget.task?.type ?? widget.initialTaskType;
     _habitDirection = widget.task?.habitDirection;
-    _daysOfWeek = widget.task?.daysOfWeek ?? [];
+    _daysOfWeek = List.from(widget.task?.daysOfWeek ?? []);
   }
 
   @override
@@ -144,21 +146,21 @@ class _TaskEditorPageState extends State<TaskEditorPage> {
                     const SizedBox(height: 16),
                     Wrap(
                       spacing: 8,
-                      children: [
-                        ...['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => FilterChip(
-                              label: Text(day),
-                              selected: _daysOfWeek.contains(day),
-                              onSelected: (selected) {
-                                setState(() {
-                                  if (selected) {
-                                    _daysOfWeek.add(day);
-                                  } else {
-                                    _daysOfWeek.remove(day);
-                                  }
-                                });
-                              },
-                            )),
-                      ],
+                      children: List.generate(
+                          7,
+                          (index) => FilterChip(
+                                label: Text(_weekdays[index]),
+                                selected: _daysOfWeek.contains(index),
+                                onSelected: (selected) {
+                                  setState(() {
+                                    if (selected) {
+                                      _daysOfWeek.add(index);
+                                    } else {
+                                      _daysOfWeek.remove(index);
+                                    }
+                                  });
+                                },
+                              )),
                     ),
                   ],
                   const SizedBox(height: 16),
@@ -247,7 +249,7 @@ class _TaskEditorPageState extends State<TaskEditorPage> {
       pomodoros: _taskType != TaskType.habit ? (_duration.inMinutes / 25).ceil() : null,
       type: _taskType,
       habitDirection: _taskType == TaskType.habit ? _habitDirection : null,
-      daysOfWeek: _taskType == TaskType.daily ? _daysOfWeek : null,
+      daysOfWeek: _taskType == TaskType.daily ? _daysOfWeek : [],
     );
 
     viewModel.saveTask(newTask);

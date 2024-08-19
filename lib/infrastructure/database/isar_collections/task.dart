@@ -22,7 +22,7 @@ class Task {
 
   String? habitDirection;
 
-  List<String>? daysOfWeek;
+  List<int>? daysOfWeek;
 
   // Tracking properties
   DateTime? completedAt;
