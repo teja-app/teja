@@ -16,6 +16,8 @@ class HeatMapComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
     final brightness = Theme.of(context).brightness;
     final textColor = brightness == Brightness.dark ? Colors.white : Colors.black;
     final defaultColor = brightness == Brightness.dark ? Colors.grey[800] : Colors.grey[200];
@@ -23,19 +25,19 @@ class HeatMapComponent extends StatelessWidget {
     Map<int, Color> colorsets;
     if (habitDirection == HabitDirection.negative) {
       colorsets = {
-        1: Colors.red[100]!,
-        3: Colors.red[300]!,
-        5: Colors.red[500]!,
-        7: Colors.red[700]!,
-        9: Colors.red[900]!,
+        1: colorScheme.error.withOpacity(0.2),
+        3: colorScheme.error.withOpacity(0.4),
+        5: colorScheme.error.withOpacity(0.6),
+        7: colorScheme.error.withOpacity(0.8),
+        9: colorScheme.error,
       };
     } else {
       colorsets = {
-        1: Colors.blue[100]!,
-        3: Colors.blue[300]!,
-        5: Colors.blue[500]!,
-        7: Colors.blue[700]!,
-        9: Colors.blue[900]!,
+        1: colorScheme.primary.withOpacity(0.2),
+        3: colorScheme.primary.withOpacity(0.4),
+        5: colorScheme.primary.withOpacity(0.6),
+        7: colorScheme.primary.withOpacity(0.8),
+        9: colorScheme.primary,
       };
     }
 
@@ -47,7 +49,7 @@ class HeatMapComponent extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
             child: Text(
               title,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
+              style: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface),
             ),
           ),
         ),

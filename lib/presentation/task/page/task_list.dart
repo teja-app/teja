@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:icons_flutter/icons_flutter.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/presentation/navigation/leadingContainer.dart';
 import 'package:teja/presentation/navigation/mobile_navigation_bar.dart';
@@ -9,6 +11,7 @@ import 'package:teja/presentation/task/mock/mock.dart';
 import 'package:teja/presentation/task/page/task_edit.dart';
 import 'package:teja/presentation/task/ui/TaskWidget.dart';
 import 'package:teja/presentation/task/ui/PomodoroOverlay.dart';
+import 'package:teja/router.dart';
 
 class TaskList extends StatefulWidget {
   const TaskList({super.key});
@@ -121,14 +124,12 @@ class TaskListState extends State<TaskList> {
     );
   }
 
-  Widget _buildTaskTypeSection(TaskType taskType) {
+  Widget _buildTaskTypeSection(TaskType taskType, BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     List<Task> filteredTasks = allTasks.where((task) => task.type == taskType).toList();
     return ExpansionTile(
       initiallyExpanded: taskType == TaskType.todo,
-      title: Text(
-        '${taskType.toString().split('.').last} (${filteredTasks.length})',
-        style: const TextStyle(fontWeight: FontWeight.bold),
-      ),
+      title: Text('${taskType.toString().split('.').last} (${filteredTasks.length})', style: textTheme.titleMedium),
       children: filteredTasks
           .map((task) => TaskWidget(
                 task: task,
@@ -157,6 +158,14 @@ class TaskListState extends State<TaskList> {
         title: const Text('Tasks'),
         actions: [
           IconButton(
+            icon: const Icon(AntDesign.heart),
+            onPressed: () {
+              GoRouter.of(context).pushNamed(
+                RootPath.goalSettings,
+              );
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.add),
             onPressed: () => _openTaskEditor(context, initialTaskType: TaskType.todo),
           ),
@@ -165,7 +174,7 @@ class TaskListState extends State<TaskList> {
       body: Stack(
         children: [
           ListView(
-            children: TaskType.values.map(_buildTaskTypeSection).toList(),
+            children: TaskType.values.map((type) => _buildTaskTypeSection(type, context)).toList(),
           ),
           if (activePomodoro != null)
             PomodoroOverlay(
