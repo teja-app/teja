@@ -32,15 +32,19 @@ class TaskRepository {
     });
   }
 
-  Future<void> toggleTaskCompletion(String taskId) async {
+  Future<TaskEntity> toggleTaskCompletion(String taskId) async {
+    late TaskEntity updatedTask;
     await isar.writeTxn(() async {
       final task = await isar.tasks.filter().taskIdEqualTo(taskId).findFirst();
       if (task != null) {
         final taskEntity = TaskEntity.fromIsar(task);
-        final updatedTaskEntity = _toggleCompletion(taskEntity);
-        await isar.tasks.put(updatedTaskEntity.toIsar());
+        updatedTask = _toggleCompletion(taskEntity);
+        await isar.tasks.put(updatedTask.toIsar());
+      } else {
+        throw Exception('Task not found');
       }
     });
+    return updatedTask;
   }
 
   Future<void> incrementHabit(String taskId, HabitDirection direction) async {
@@ -54,23 +58,24 @@ class TaskRepository {
     });
   }
 
-  TaskEntity _toggleCompletion(TaskEntity task) {
-    switch (task.type) {
+  TaskEntity _toggleCompletion(TaskEntity taskEntity) {
+    switch (taskEntity.type) {
       case TaskType.todo:
-        return task.copyWith(completedAt: task.completedAt == null ? DateTime.now() : null);
+        final newCompletedAt = taskEntity.completedAt == null ? DateTime.now() : null;
+        return taskEntity.copyWith(completedAt: newCompletedAt);
       case TaskType.daily:
         final today = DateTime.now();
         final todayDate = DateTime(today.year, today.month, today.day);
-        List<DateTime> updatedCompletedDates = List.from(task.completedDates);
+        List<DateTime> updatedCompletedDates = List.from(taskEntity.completedDates);
         if (updatedCompletedDates.contains(todayDate)) {
           updatedCompletedDates.remove(todayDate);
         } else {
           updatedCompletedDates.add(todayDate);
         }
-        return task.copyWith(completedDates: updatedCompletedDates);
+        return taskEntity.copyWith(completedDates: updatedCompletedDates);
       case TaskType.habit:
         // Habits are not toggled
-        return task;
+        return taskEntity;
     }
   }
 

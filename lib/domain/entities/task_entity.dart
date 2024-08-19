@@ -113,7 +113,7 @@ class TaskEntity {
       type: type ?? this.type,
       habitDirection: habitDirection ?? this.habitDirection,
       daysOfWeek: daysOfWeek ?? this.daysOfWeek,
-      completedAt: completedAt ?? this.completedAt,
+      completedAt: completedAt,
       completedDates: completedDates ?? this.completedDates,
       habitEntries: habitEntries ?? this.habitEntries,
     );

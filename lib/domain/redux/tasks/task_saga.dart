@@ -121,12 +121,16 @@ class TaskSaga {
         Isar isar = isarResult.value!;
         var taskRepo = TaskRepository(isar);
 
-        var toggleResult = Result<void>();
+        var toggleResult = Result<TaskEntity?>();
         yield Call(
           taskRepo.toggleTaskCompletion,
           args: [action.taskId],
           result: toggleResult,
         );
+
+        if (toggleResult.value != null) {
+          yield Put(UpdateTaskAction(toggleResult.value!));
+        }
 
         yield Call(_fetchTasksFromDatabase);
       }, Catch: (e, s) sync* {

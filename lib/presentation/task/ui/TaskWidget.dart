@@ -131,7 +131,11 @@ class TaskWidget extends StatelessWidget {
                   if ((task.description?.isNotEmpty ?? false) && task.type == TaskType.todo)
                     Text(
                       task.description!,
-                      style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
+                      style: textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                        decoration:
+                            task.type == TaskType.todo && task.completedAt != null ? TextDecoration.lineThrough : null,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
