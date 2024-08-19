@@ -21,11 +21,13 @@ import 'package:teja/domain/redux/mood/mood_analysis/mood_analysis_state.dart';
 import 'package:teja/domain/redux/permission/permission_state.dart';
 import 'package:teja/domain/redux/profile_page_sequence/profile_page_state.dart';
 import 'package:teja/domain/redux/quotes/quote_state.dart';
+import 'package:teja/domain/redux/tasks/task_state.dart';
 import 'package:teja/domain/redux/token/token_state.dart';
 import 'package:teja/domain/redux/visions/vision_state.dart';
 import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_state.dart';
 import 'package:teja/domain/redux/yearly_mood_report/yearly_mood_report_state.dart';
 import 'package:teja/domain/redux/yearly_sleep_report/yearly_sleep_report_state.dart';
+import 'package:teja/presentation/task/page/task_list.dart';
 
 @immutable
 class AppState {
@@ -61,6 +63,9 @@ class AppState {
   final FeaturedJournalTemplateState featuredJournalTemplateState;
   final MoodAnalysisState moodAnalysisState;
 
+  // Task
+  final TaskState taskState;
+
   const AppState({
     required this.authState,
     required this.appErrorState,
@@ -89,6 +94,7 @@ class AppState {
     required this.yearlyMoodReportState,
     required this.permissionState,
     required this.profilePageState,
+    required this.taskState,
   });
 
   AppState copyWith({
@@ -119,6 +125,7 @@ class AppState {
     YearlyMoodReportState? yearlyMoodReportState,
     PermissionState? permissionState,
     ProfilePageState? profilePageState,
+    TaskState? taskState,
   }) {
     return AppState(
       authState: authState ?? this.authState,
@@ -148,6 +155,7 @@ class AppState {
       moodAnalysisState: moodAnalysisState ?? this.moodAnalysisState,
       yearlyMoodReportState: yearlyMoodReportState ?? this.yearlyMoodReportState,
       profilePageState: profilePageState ?? this.profilePageState,
+      taskState: taskState ?? this.taskState,
     );
   }
 
@@ -180,6 +188,7 @@ class AppState {
       moodAnalysisState: MoodAnalysisState.initialState(),
       yearlyMoodReportState: YearlyMoodReportState.initial(),
       profilePageState: ProfilePageState.initial(),
+      taskState: TaskState.initial(),
     );
   }
 }

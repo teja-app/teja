@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:teja/presentation/task/interface/task.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
+import 'package:teja/domain/entities/task_entity.dart';
+import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/domain/redux/tasks/task_action.dart';
+import 'package:teja/domain/redux/tasks/task_state.dart';
 import 'package:teja/presentation/task/page/task_edit.dart';
 import 'package:teja/presentation/task/ui/Heatmap.dart';
 
 class TaskDetailPage extends StatefulWidget {
-  final Task task;
-  final Function(Task) updateTask;
-  final Function(String) toggleTask;
+  final String taskId;
 
   const TaskDetailPage({
     Key? key,
-    required this.task,
-    required this.updateTask,
-    required this.toggleTask,
+    required this.taskId,
   }) : super(key: key);
 
   @override
@@ -21,13 +22,11 @@ class TaskDetailPage extends StatefulWidget {
 
 class _TaskDetailPageState extends State<TaskDetailPage> {
   late TextEditingController _newNoteController;
-  late Task _currentTask;
 
   @override
   void initState() {
     super.initState();
     _newNoteController = TextEditingController();
-    _currentTask = widget.task;
   }
 
   @override
@@ -38,54 +37,55 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_currentTask.title),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () => _openEditPage(context),
+    return StoreConnector<AppState, TaskDetailViewModel>(
+      converter: (store) => TaskDetailViewModel.fromStore(store, widget.taskId),
+      builder: (context, viewModel) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(viewModel.task.title),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.edit),
+                onPressed: () => _openEditPage(context, viewModel),
+              ),
+            ],
           ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeatMap(),
-            _buildNotes(),
-          ],
-        ),
-      ),
+          body: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeatMap(viewModel.task),
+                _buildNotes(viewModel),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
-  void _addNote() {
+  void _addNote(TaskDetailViewModel viewModel) {
     if (_newNoteController.text.isNotEmpty) {
-      final newNote = TaskNote(
+      final newNote = TaskNoteEntity(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         content: _newNoteController.text,
         createdAt: DateTime.now(),
       );
-      setState(() {
-        _currentTask = _currentTask.copyWith(
-          notes: [...(_currentTask.notes ?? []), newNote],
-        );
-      });
-      widget.updateTask(_currentTask);
+      final updatedTask = viewModel.task.copyWith(
+        notes: [...(viewModel.task.notes ?? []), newNote],
+      );
+      viewModel.updateTask(updatedTask);
       _newNoteController.clear();
     }
   }
 
-  void _deleteNote(String noteId) {
-    setState(() {
-      final updatedNotes = _currentTask.notes?.where((note) => note.id != noteId).toList();
-      _currentTask = _currentTask.copyWith(notes: updatedNotes);
-    });
-    widget.updateTask(_currentTask);
+  void _deleteNote(TaskDetailViewModel viewModel, String noteId) {
+    final updatedNotes = viewModel.task.notes?.where((note) => note.id != noteId).toList();
+    final updatedTask = viewModel.task.copyWith(notes: updatedNotes);
+    viewModel.updateTask(updatedTask);
   }
 
-  Widget _buildNotes() {
+  Widget _buildNotes(TaskDetailViewModel viewModel) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -96,40 +96,40 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
-          if (_currentTask.notes != null && _currentTask.notes!.isNotEmpty)
+          if (viewModel.task.notes != null && viewModel.task.notes!.isNotEmpty)
             ListView.builder(
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: _currentTask.notes!.length,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: viewModel.task.notes!.length,
               itemBuilder: (context, index) {
-                final note = _currentTask.notes![index];
+                final note = viewModel.task.notes![index];
                 return Card(
                   child: ListTile(
                     title: Text(note.content),
                     subtitle: Text(
                       '${note.createdAt.day}/${note.createdAt.month}/${note.createdAt.year}',
-                      style: TextStyle(fontSize: 12),
+                      style: const TextStyle(fontSize: 12),
                     ),
                     trailing: IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () => _deleteNote(note.id),
+                      icon: const Icon(Icons.delete),
+                      onPressed: () => _deleteNote(viewModel, note.id),
                     ),
                   ),
                 );
               },
             )
           else
-            Text('No notes yet.', style: TextStyle(fontStyle: FontStyle.italic)),
+            const Text('No notes yet.', style: TextStyle(fontStyle: FontStyle.italic)),
           const SizedBox(height: 16),
           TextField(
             controller: _newNoteController,
             maxLength: 180,
             decoration: InputDecoration(
               hintText: 'Add a new note...',
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
               suffixIcon: IconButton(
-                icon: Icon(Icons.add),
-                onPressed: _addNote,
+                icon: const Icon(Icons.add),
+                onPressed: () => _addNote(viewModel),
               ),
             ),
           ),
@@ -138,22 +138,21 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
     );
   }
 
-  Widget _buildHeatMap() {
+  Widget _buildHeatMap(TaskEntity task) {
     final Map<DateTime, int> dataset = {};
     final now = DateTime.now();
     final oneYearAgo = now.subtract(const Duration(days: 365));
 
-    if (widget.task.type == TaskType.daily) {
+    if (task.type == TaskType.daily) {
       for (var date = oneYearAgo; date.isBefore(now); date = date.add(const Duration(days: 1))) {
-        final count = widget.task.completedDates
-            .where((d) => d.year == date.year && d.month == date.month && d.day == date.day)
-            .length;
+        final count =
+            task.completedDates.where((d) => d.year == date.year && d.month == date.month && d.day == date.day).length;
         if (count > 0) {
           dataset[DateTime(date.year, date.month, date.day)] = count;
         }
       }
-    } else if (widget.task.type == TaskType.habit) {
-      for (var entry in widget.task.habitEntries) {
+    } else if (task.type == TaskType.habit) {
+      for (var entry in task.habitEntries) {
         final date = DateTime(entry.timestamp.year, entry.timestamp.month, entry.timestamp.day);
         dataset[date] = (dataset[date] ?? 0) + 1;
       }
@@ -162,24 +161,39 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
     return HeatMapComponent(
       title: 'Activity History',
       dataset: dataset,
-      habitDirection: widget.task.type == TaskType.habit ? widget.task.habitDirection : null,
+      habitDirection: task.type == TaskType.habit ? task.habitDirection : null,
     );
   }
 
-  void _openEditPage(BuildContext context) {
+  void _openEditPage(BuildContext context, TaskDetailViewModel viewModel) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => TaskEditorPage(
-          task: _currentTask,
-          onSave: (updatedTask) {
-            setState(() {
-              _currentTask = updatedTask;
-            });
-            widget.updateTask(_currentTask);
-          },
-          initialTaskType: _currentTask.type,
+          task: viewModel.task,
+          initialTaskType: viewModel.task.type,
         ),
       ),
+    );
+  }
+}
+
+class TaskDetailViewModel {
+  final TaskEntity task;
+  final Function(TaskEntity) updateTask;
+  final Function(String) toggleTask;
+
+  TaskDetailViewModel({
+    required this.task,
+    required this.updateTask,
+    required this.toggleTask,
+  });
+
+  static TaskDetailViewModel fromStore(Store<AppState> store, String taskId) {
+    final task = store.state.taskState.tasks.firstWhere((t) => t.id == taskId);
+    return TaskDetailViewModel(
+      task: task,
+      updateTask: (TaskEntity updatedTask) => store.dispatch(UpdateTaskAction(updatedTask)),
+      toggleTask: (String taskId) => store.dispatch(ToggleTaskCompletionAction(taskId)),
     );
   }
 }

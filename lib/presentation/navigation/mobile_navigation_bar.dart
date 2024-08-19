@@ -63,7 +63,7 @@ class MobileNavigationBar extends StatelessWidget {
           case 3:
             goRouter.goNamed(RootPath.timeLine);
             break;
-          case 5:
+          case 4:
             goRouter.goNamed(RootPath.profile);
             break;
         }

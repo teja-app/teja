@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:teja/presentation/task/interface/task.dart';
+import 'package:teja/domain/entities/task_entity.dart';
 
 class PriorityCheckbox extends StatelessWidget {
-  final Task task;
+  final TaskEntity task;
   final ValueChanged<bool?> onChanged;
   final Color priorityColor;
 
@@ -19,8 +19,16 @@ class PriorityCheckbox extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
+    bool isCompleted = task.type == TaskType.todo
+        ? task.completedAt != null
+        : task.completedDates.contains(DateTime(
+            DateTime.now().year,
+            DateTime.now().month,
+            DateTime.now().day,
+          ));
+
     return GestureDetector(
-      onTap: () => onChanged(!task.isCompleted),
+      onTap: () => onChanged(!isCompleted),
       child: Container(
         width: 24,
         height: 24,
@@ -30,9 +38,9 @@ class PriorityCheckbox extends StatelessWidget {
             color: priorityColor,
             width: 2,
           ),
-          color: task.isCompleted ? priorityColor : Colors.transparent,
+          color: isCompleted ? priorityColor : Colors.transparent,
         ),
-        child: task.isCompleted
+        child: isCompleted
             ? const Icon(
                 Icons.check,
                 size: 16,
