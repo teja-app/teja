@@ -99,6 +99,8 @@ class TaskWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
     return InkWell(
       onTap: () => _openTaskPage(context),
       child: Padding(
@@ -120,17 +122,18 @@ class TaskWidget extends StatelessWidget {
                 children: [
                   Text(
                     task.title,
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       decoration: task.type == TaskType.todo && task.isCompleted ? TextDecoration.lineThrough : null,
-                      color: task.type == TaskType.todo && task.isCompleted ? Colors.grey : Colors.black,
+                      color: task.type == TaskType.todo && task.isCompleted
+                          ? colorScheme.onSurfaceVariant
+                          : colorScheme.onSurface,
                     ),
                   ),
-                  if (task.description?.isNotEmpty ?? false)
+                  if ((task.description?.isNotEmpty ?? false) && task.type == TaskType.todo)
                     Text(
                       task.description!,
-                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                      style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),

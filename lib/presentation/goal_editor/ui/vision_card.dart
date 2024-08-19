@@ -50,7 +50,7 @@ class VisionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorSchema = Theme.of(context).colorScheme;
     return Card(
-      color: vision.isSelected ? colorSchema.surface : colorSchema.background, // Change color to indicate selection
+      color: vision.isSelected ? colorSchema.primary : colorSchema.secondary, // Change color to indicate selection
       child: InkWell(
         onTap: onTap,
         child: Padding(
@@ -61,7 +61,7 @@ class VisionCard extends StatelessWidget {
               Icon(
                 vision.iconData,
                 size: 48,
-                color: vision.isSelected ? colorSchema.background : colorSchema.surface,
+                color: colorSchema.surface,
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -71,7 +71,7 @@ class VisionCard extends StatelessWidget {
                     Text(
                       vision.title,
                       style: TextStyle(
-                        color: vision.isSelected ? colorSchema.background : colorSchema.surface,
+                        color: colorSchema.surface,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -80,7 +80,7 @@ class VisionCard extends StatelessWidget {
                     Text(
                       vision.description,
                       style: TextStyle(
-                        color: vision.isSelected ? colorSchema.background : colorSchema.surface,
+                        color: colorSchema.surface,
                       ),
                     ),
                   ],
