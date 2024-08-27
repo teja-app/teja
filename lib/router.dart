@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:teja/infrastructure/analytics/analytics_service.dart';
 import 'package:teja/presentation/explore/list/pages/explore_page.dart';
 import 'package:teja/presentation/explore/list/pages/search_page.dart';
@@ -122,7 +123,8 @@ class AnalyticsRouteObserver extends NavigatorObserver {
   }
 
   @override
-  void didStartUserGesture(Route<dynamic> route, Route<dynamic>? previousRoute) {
+  void didStartUserGesture(
+      Route<dynamic> route, Route<dynamic>? previousRoute) {
     _analyticsService.track('didStartUserGesture', {
       'currentRoute': route.settings.name ?? 'Unknown',
       'previousRoute': previousRoute?.settings.name ?? 'Unknown',
@@ -181,6 +183,7 @@ GoRouter createRouter(AnalyticsService analyticsService) {
     observers: [
       RouteLoggingObserver(),
       AnalyticsRouteObserver(analyticsService),
+      PosthogObserver(),
     ],
     navigatorKey: _rootNavigatorKey,
     routes: [
@@ -300,7 +303,9 @@ GoRouter createRouter(AnalyticsService analyticsService) {
         path: '/quick-journal-entry',
         pageBuilder: (context, state) {
           final String? entryId = state.uri.queryParameters['id'];
-          final String heroTag = (state.extra as Map<String, dynamic>?)?['heroTag'] ?? 'defaultHeroTag';
+          final String heroTag =
+              (state.extra as Map<String, dynamic>?)?['heroTag'] ??
+                  'defaultHeroTag';
           return HeroPageRoute(
             heroTag: heroTag,
             child: QuickJournalEntryScreen(entryId: entryId, heroTag: heroTag),
@@ -309,7 +314,8 @@ GoRouter createRouter(AnalyticsService analyticsService) {
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
-        name: RootPath.journalCategoryDetail, // Make sure you have this constant defined
+        name: RootPath
+            .journalCategoryDetail, // Make sure you have this constant defined
         path: '/category_detail',
         builder: (context, state) {
           final String? categoryId = state.uri.queryParameters['id'];
@@ -317,7 +323,8 @@ GoRouter createRouter(AnalyticsService analyticsService) {
             return CategoryDetailPage(categoryId: categoryId);
           } else {
             // Handle the case where categoryId is null, maybe navigate back or show an error
-            return const Scaffold(body: Center(child: Text('Category not found')));
+            return const Scaffold(
+                body: Center(child: Text('Category not found')));
           }
         },
       ),

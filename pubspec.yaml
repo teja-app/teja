@@ -102,6 +102,8 @@ dependencies:
   toastification: ^2.0.0
   palette_generator: ^0.3.3+4
   in_app_purchase: ^3.0.2
+  provider: ^6.0.5 # Replace this with the latest version if needed
+
 
 dev_dependencies:
   flutter_test:

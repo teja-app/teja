@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/presentation/home/ui/master_fetch/fetch_master_view.dart';
 import 'package:teja/presentation/settings/pages/widgets/settings_authenticate.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
+import 'package:teja/theme/theme_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -24,8 +26,14 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final GoRouter goRouter = GoRouter.of(context);
+    // final ThemeService themeService = ThemeService();
+    final ThemeService themeService =
+        Provider.of<ThemeService>(context, listen: false);
+
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double contentWidth = (screenWidth > 500) ? 500 : screenWidth; // Assuming 500 is the max width for content
+    final double contentWidth = (screenWidth > 500)
+        ? 500
+        : screenWidth; // Assuming 500 is the max width for content
 
     return StoreConnector<AppState, ViewModel>(
       converter: ViewModel.fromStore,
@@ -76,7 +84,9 @@ class SettingsPage extends StatelessWidget {
                   const Divider(),
                   const Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: Text('Data', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    child: Text('Data',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold)),
                   ),
                   ListTile(
                     title: const Text('Data Sync - Export & Import'),
@@ -110,10 +120,30 @@ class SettingsPage extends StatelessWidget {
                     },
                   ),
                   const Divider(),
+                  ExpansionTile(
+                    title: const Text('Theme'),
+                    children: <Widget>[
+                      ListTile(
+                        title: const Text('White theme'),
+                        onTap: () {
+                          themeService.setThemeMode(ThemeMode.light);
+                        },
+                      ),
+                      ListTile(
+                        title: const Text('Dark theme'),
+                        onTap: () {
+                          themeService.setThemeMode(ThemeMode.dark);
+                        },
+                      ),
+                    ],
+                  ),
                   // Community Section
+                  const Divider(),
                   const Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: Text('Community', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    child: Text('Community',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold)),
                   ),
                   ListTile(
                     title: const Text('Share Teja'),
@@ -131,24 +161,29 @@ class SettingsPage extends StatelessWidget {
                   // Help and Support Section
                   const Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: Text('Help and Support', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    child: Text('Help and Support',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold)),
                   ),
                   ListTile(
                     title: const Text('Report a bug'),
                     onTap: () {
-                      _launchURL('https://swayamapp.atlassian.net/servicedesk/customer/portal/1/group/1/create/11');
+                      _launchURL(
+                          'https://swayamapp.atlassian.net/servicedesk/customer/portal/1/group/1/create/11');
                     },
                   ),
                   ListTile(
                     title: const Text('Suggest Imporvements'),
                     onTap: () {
-                      _launchURL('https://swayamapp.atlassian.net/servicedesk/customer/portal/1/group/1/create/9');
+                      _launchURL(
+                          'https://swayamapp.atlassian.net/servicedesk/customer/portal/1/group/1/create/9');
                     },
                   ),
                   ListTile(
                     title: const Text('Suggest New Feature'),
                     onTap: () {
-                      _launchURL('https://swayamapp.atlassian.net/servicedesk/customer/portal/1/group/1/create/12');
+                      _launchURL(
+                          'https://swayamapp.atlassian.net/servicedesk/customer/portal/1/group/1/create/12');
                     },
                   ),
                   const Divider(),
@@ -156,7 +191,9 @@ class SettingsPage extends StatelessWidget {
                   // Application Section
                   const Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: Text('Application', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    child: Text('Application',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold)),
                   ),
                   ListTile(
                     title: const Text('Terms of Service'),

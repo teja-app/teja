@@ -1287,6 +1287,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.5.0"
+  provider:
+    dependency: transitive
+    description:
+      name: provider
+      sha256: c8a055ee5ce3fd98d6fc872478b03823ffdb448699c6ebdbbc71d59b596fd48c
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.1.2"
   pub_semver:
     dependency: transitive
     description:
@@ -1698,7 +1706,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.8.8+240816"
+    version: "1.8.8+2408161"
   term_glyph:
     dependency: transitive
     description:
