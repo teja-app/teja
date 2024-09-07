@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teja/infrastructure/utils/notification_service.dart';
 import 'package:teja/infrastructure/utils/time_storage_helper.dart';
+import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/shared/common/button.dart';
 
 class NotificationSettingsPage extends StatefulWidget {
@@ -38,8 +39,7 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
       context: context,
       initialTime: initialTime,
       builder: (BuildContext context, Widget? child) {
-        // Apply your custom theme here
-        final theme = Theme.of(context).timePickerTheme; // Get default theme
+        final theme = Theme.of(context).timePickerTheme;
 
         return Theme(
           data: ThemeData.from(
@@ -75,6 +75,7 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
         );
       },
     );
+
     final TimeStorage timeStorage = TimeStorage();
     if (picked != null && picked != initialTime) {
       onTimeSelected(picked);
@@ -88,11 +89,12 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
 
       final int notificationId = _getNotificationId(title);
       widget.notificationService.cancelNotification(notificationId);
-      // Schedule new notification
+
       await _handleToggle(title, picked, isEnabled);
 
-      // Save selected time to Hive
+      // Save selected time and status to Hive
       await timeStorage.saveTimeSlot(title, picked);
+      await timeStorage.saveEnabledStatus(title, isEnabled);
     }
   }
 
@@ -101,7 +103,9 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
       final TimeStorage timeStorage = TimeStorage();
       final Map<String, TimeOfDay> savedTimes =
           await timeStorage.getTimeSlots();
-      print('Saved times: $savedTimes');
+      final Map<String, bool> savedStatuses =
+          await timeStorage.getEnabledStatuses();
+
       setState(() {
         if (savedTimes.containsKey('Morning Kickstart')) {
           morningPreparationTime = savedTimes['Morning Kickstart']!;
@@ -115,18 +119,24 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
         if (savedTimes.containsKey('Journaling Cue')) {
           dailyJournalingPromptTime = savedTimes['Journaling Cue']!;
         }
+
+        morningPreparationEnabled = savedStatuses['Morning Kickstart'] ?? false;
+        eveningReflectionEnabled = savedStatuses['Evening Wind-down'] ?? false;
+        dailyFocusEnabled = savedStatuses['Focus Reminder'] ?? false;
+        dailyJournalingPromptEnabled = savedStatuses['Journaling Cue'] ?? false;
       });
     } catch (e) {
-      print('Error retrieving saved times: $e');
+      print('Error retrieving saved times and statuses: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double contentWidth = (screenWidth > 500)
-        ? 500
+    final double contentWidth = isDesktop(context)
+        ? 630
         : screenWidth; // Assuming 500 is the max width for content
+    final TimeStorage timeStorage = TimeStorage();
 
     return Scaffold(
       appBar: AppBar(
@@ -135,7 +145,10 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
       body: Center(
         child: SizedBox(
           width: contentWidth, // Set the content width
+
           child: ListView(
+            padding: const EdgeInsets.symmetric(
+                horizontal: 8.0), // Padding from left and right
             children: <Widget>[
               const Padding(
                 padding: EdgeInsets.all(8.0),
@@ -156,6 +169,7 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
                 notificationEnabled: morningPreparationEnabled,
                 onToggle: (bool value) {
                   setState(() {
+                    timeStorage.saveEnabledStatus('Morning Kickstart', value);
                     morningPreparationEnabled = value;
                   });
                 },
@@ -174,6 +188,7 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
                 onToggle: (bool value) {
                   setState(() {
                     eveningReflectionEnabled = value;
+                    timeStorage.saveEnabledStatus('Evening Wind-down', value);
                   });
                 },
               ),
@@ -198,6 +213,7 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
                 onToggle: (bool value) {
                   setState(() {
                     dailyFocusEnabled = value;
+                    timeStorage.saveEnabledStatus('Focus Reminder', value);
                   });
                 },
               ),
@@ -214,6 +230,7 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
                 onToggle: (bool value) {
                   setState(() {
                     dailyJournalingPromptEnabled = value;
+                    timeStorage.saveEnabledStatus('Journaling Cue', value);
                   });
                 },
               ),
@@ -233,6 +250,7 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
 
     if (isEnabled) {
       await widget.notificationService.scheduleNotification(
+        uniqueId: notificationId,
         title: title,
         body: 'Reminder: $title',
         hour: hour,
@@ -246,13 +264,13 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
   int _getNotificationId(String title) {
     switch (title) {
       case 'Morning Kickstart':
-        return 1;
+        return 100;
       case 'Evening Wind-down':
-        return 2;
+        return 200;
       case 'Focus Reminder':
-        return 3;
+        return 300;
       case 'Journaling Cue':
-        return 4;
+        return 400;
       default:
         return 0; // Default ID for unknown titles
     }
