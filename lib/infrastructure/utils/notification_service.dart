@@ -2,6 +2,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:teja/shared/helpers/logger.dart';
 
 import 'dart:io' show Platform;
 
@@ -14,9 +15,9 @@ class NotificationService {
 
     final DarwinInitializationSettings initializationSettingsIOS =
         DarwinInitializationSettings(
-      requestSoundPermission: false,
-      requestBadgePermission: false,
-      requestAlertPermission: false,
+      requestSoundPermission: true,
+      requestBadgePermission: true,
+      requestAlertPermission: true,
       onDidReceiveLocalNotification: onDidReceiveLocalNotification,
     );
 
@@ -48,6 +49,7 @@ class NotificationService {
 
   Future<void> requestIOSPermissions() async {
     if (Platform.isIOS) {
+      logger.i("resolvePlatformSpecificImplementation");
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
@@ -77,29 +79,43 @@ class NotificationService {
     required String body,
     required int hour,
     required int minute,
-    int daysAhead = 30, // Number of days to schedule notifications for
+    int daysAhead = 30,
     String channelId = 'default_channel_id',
     String channelName = 'Default Channel',
     String channelDescription = 'Default channel description',
     AndroidScheduleMode scheduleMode = AndroidScheduleMode.exact,
-    bool isTestMode = false, // Add a flag for test mode
+    bool isTestMode = false,
   }) async {
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+
     for (int i = 0; i < daysAhead; i++) {
       final int currentNotificationId = uniqueId + i;
 
       try {
-        final tz.TZDateTime scheduledTime = isTestMode
-            ? tz.TZDateTime.now(tz.local).add(Duration(seconds: 10 * i))
-            : _nextInstanceOfSpecificTime(hour, minute, daysAhead: 1);
+        tz.TZDateTime scheduledTime;
+        if (isTestMode) {
+          scheduledTime = now.add(Duration(seconds: 10 * (i + 1)));
+        } else {
+          scheduledTime = tz.TZDateTime(
+            tz.local,
+            now.year,
+            now.month,
+            now.day + i,
+            hour,
+            minute,
+          );
+
+          // If the calculated time is in the past, schedule it for the next day
+          if (scheduledTime.isBefore(now)) {
+            scheduledTime = scheduledTime.add(const Duration(days: 1));
+          }
+        }
 
         await flutterLocalNotificationsPlugin.zonedSchedule(
           currentNotificationId,
-          // uniqueId,
           title,
           body,
           scheduledTime,
-          // _nextInstanceOfSpecificTime(hour, minute),
-          // tz.TZDateTime.now(tz.local).add(const Duration(seconds: 10 * 1)),
           NotificationDetails(
             android: AndroidNotificationDetails(channelId, channelName),
             iOS: const DarwinNotificationDetails(),
@@ -110,6 +126,7 @@ class NotificationService {
         );
       } catch (e) {
         // Handle scheduling error
+        print('Error scheduling notification: $e');
       }
     }
   }

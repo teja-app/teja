@@ -32,6 +32,7 @@ Future<Store<AppState>> configureCommonDependencies() async {
   logger.i("Notification Service Connected");
 
   if (Platform.isIOS) {
+    logger.i("Notification Service Connected on iOS");
     await notificationService.requestIOSPermissions();
   }
 
