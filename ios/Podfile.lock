@@ -225,7 +225,7 @@ SPEC CHECKSUMS:
   image_picker_ios: c560581cceedb403a6ff17f2f816d7fea1421fc1
   in_app_purchase_storekit: 8c3b0b3eb1b0f04efbff401c3de6266d4258d433
   in_app_review: 318597b3a06c22bb46dc454d56828c85f444f99d
-  integration_test: ce0a3ffa1de96d1a89ca0ac26fca7ea18a749ef4
+  integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
   isar_flutter_libs: b69f437aeab9c521821c3f376198c4371fa21073
   just_audio: baa7252489dbcf47a4c7cc9ca663e9661c99aafa
   local_auth_darwin: 4d56c90c2683319835a61274b57620df9c4520ab

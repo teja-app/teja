@@ -41,6 +41,7 @@ Future<Store<AppState>> configureCommonDependencies() async {
   Hive.registerAdapter(JournalCategoryAdapter());
   await Hive.openBox(FeaturedJournalTemplate.boxKey);
   await Hive.openBox(JournalCategory.boxKey);
+  await Hive.openBox(TimeStorage.boxName);
 
   final store = await createStore(isarInstance);
   logger.i("Connected to local data store");

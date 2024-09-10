@@ -2,20 +2,20 @@ import 'package:hive/hive.dart';
 import 'package:flutter/material.dart';
 
 class TimeStorage {
-  static const _boxName = 'time_box';
+  static const boxName = 'time_box';
 
   Future<void> saveTimeSlot(String activity, TimeOfDay timeOfDay) async {
-    final box = await Hive.openBox(_boxName);
+    final box = Hive.box(boxName);
     await box.put('${activity}_time', timeOfDay.toString());
   }
 
   Future<void> saveEnabledStatus(String activity, bool isEnabled) async {
-    final box = await Hive.openBox(_boxName);
+    final box = Hive.box(boxName);
     await box.put('${activity}_enabled', isEnabled);
   }
 
   Future<Map<String, TimeOfDay>> getTimeSlots() async {
-    final box = await Hive.openBox(_boxName);
+    final box = Hive.box(boxName);
     final Map<String, TimeOfDay> timeSlots = {};
     for (var key in box.keys) {
       if (key != null && key is String && key.endsWith('_time')) {
@@ -33,7 +33,7 @@ class TimeStorage {
   }
 
   Future<Map<String, bool>> getEnabledStatuses() async {
-    final box = await Hive.openBox(_boxName);
+    final box = Hive.box(boxName);
     final Map<String, bool> enabledStatuses = {};
     for (var key in box.keys) {
       if (key != null && key is String && key.endsWith('_enabled')) {
