@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/infrastructure/database/hive_collections/featured_journal_template.dart';
 import 'package:teja/infrastructure/database/hive_collections/journal_category.dart';
+import 'package:teja/infrastructure/database/hive_collections/notification_time_slot.dart';
 import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart';
 import 'package:teja/infrastructure/database/isar_collections/journal_template.dart';
 import 'package:teja/infrastructure/database/isar_collections/master_factor.dart';
@@ -39,9 +40,10 @@ Future<Store<AppState>> configureCommonDependencies() async {
   await Hive.initFlutter();
   Hive.registerAdapter(FeaturedJournalTemplateAdapter());
   Hive.registerAdapter(JournalCategoryAdapter());
+  Hive.registerAdapter(TimeSlotAdapter());
   await Hive.openBox(FeaturedJournalTemplate.boxKey);
   await Hive.openBox(JournalCategory.boxKey);
-  await Hive.openBox(TimeStorage.boxName);
+  await Hive.openBox(TimeSlot.boxKey);
 
   final store = await createStore(isarInstance);
   logger.i("Connected to local data store");
@@ -77,7 +79,7 @@ Future<void> handleNotificationInitialize(
   debugPrint("Executing background task");
 
   // Retrieve saved times and statuses
-  final Map<String, TimeOfDay> timeSlots = await timeStorage.getTimeSlots();
+  final Map<String, TimeOfDay> timeSlots = await timeStorage.getAllTimeSlots();
   final Map<String, bool> enabledStatuses =
       await timeStorage.getEnabledStatuses();
 

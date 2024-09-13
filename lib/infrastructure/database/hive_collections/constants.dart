@@ -3,3 +3,6 @@ const int featuredJournalTemplate = 201;
 
 // 50 to 60 is for cateogories
 const int journalCategoryTypeId = 50;
+
+// 1 to 100 is for time slots
+const int timeSlotTypeId = 1;
