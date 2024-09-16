@@ -102,7 +102,7 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
     try {
       final TimeStorage timeStorage = TimeStorage();
       final Map<String, TimeOfDay> savedTimes =
-          await timeStorage.getTimeSlots();
+          await timeStorage.getAllTimeSlots();
       final Map<String, bool> savedStatuses =
           await timeStorage.getEnabledStatuses();
 
