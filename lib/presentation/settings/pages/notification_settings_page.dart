@@ -107,23 +107,22 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
           await timeStorage.getEnabledStatuses();
 
       setState(() {
-        if (savedTimes.containsKey('Morning Kickstart')) {
-          morningPreparationTime = savedTimes['Morning Kickstart']!;
-        }
-        if (savedTimes.containsKey('Evening Wind-down')) {
-          eveningReflectionTime = savedTimes['Evening Wind-down']!;
-        }
-        if (savedTimes.containsKey('Focus Reminder')) {
-          dailyFocusTime = savedTimes['Focus Reminder']!;
-        }
-        if (savedTimes.containsKey('Journaling Cue')) {
-          dailyJournalingPromptTime = savedTimes['Journaling Cue']!;
-        }
+        morningPreparationTime =
+            savedTimes['Morning Kickstart'] ?? morningPreparationTime;
+        eveningReflectionTime =
+            savedTimes['Evening Wind-down'] ?? eveningReflectionTime;
+        dailyFocusTime = savedTimes['Focus Reminder'] ?? dailyFocusTime;
+        dailyJournalingPromptTime =
+            savedTimes['Journaling Cue'] ?? dailyJournalingPromptTime;
 
-        morningPreparationEnabled = savedStatuses['Morning Kickstart'] ?? false;
-        eveningReflectionEnabled = savedStatuses['Evening Wind-down'] ?? false;
-        dailyFocusEnabled = savedStatuses['Focus Reminder'] ?? false;
-        dailyJournalingPromptEnabled = savedStatuses['Journaling Cue'] ?? false;
+        morningPreparationEnabled =
+            savedStatuses['Morning Kickstart'] ?? morningPreparationEnabled;
+        eveningReflectionEnabled =
+            savedStatuses['Evening Wind-down'] ?? eveningReflectionEnabled;
+        dailyFocusEnabled =
+            savedStatuses['Focus Reminder'] ?? dailyFocusEnabled;
+        dailyJournalingPromptEnabled =
+            savedStatuses['Journaling Cue'] ?? dailyJournalingPromptEnabled;
       });
     } catch (e) {
       print('Error retrieving saved times and statuses: $e');
@@ -167,11 +166,14 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
                   });
                 },
                 notificationEnabled: morningPreparationEnabled,
-                onToggle: (bool value) {
+                onToggle: (bool value) async {
                   setState(() {
-                    timeStorage.saveEnabledStatus('Morning Kickstart', value);
                     morningPreparationEnabled = value;
                   });
+                  await _handleToggle(
+                      'Morning Kickstart', morningPreparationTime, value);
+                  await timeStorage.saveEnabledStatus(
+                      'Morning Kickstart', value);
                 },
               ),
               _buildNotificationTile(
@@ -185,11 +187,14 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
                   });
                 },
                 notificationEnabled: eveningReflectionEnabled,
-                onToggle: (bool value) {
+                onToggle: (bool value) async {
                   setState(() {
                     eveningReflectionEnabled = value;
-                    timeStorage.saveEnabledStatus('Evening Wind-down', value);
                   });
+                  await _handleToggle(
+                      'Evening Wind-down', eveningReflectionTime, value);
+                  await timeStorage.saveEnabledStatus(
+                      'Evening Wind-down', value);
                 },
               ),
               const Divider(),
@@ -210,11 +215,12 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
                   });
                 },
                 notificationEnabled: dailyFocusEnabled,
-                onToggle: (bool value) {
+                onToggle: (bool value) async {
                   setState(() {
                     dailyFocusEnabled = value;
-                    timeStorage.saveEnabledStatus('Focus Reminder', value);
                   });
+                  await _handleToggle('Focus Reminder', dailyFocusTime, value);
+                  await timeStorage.saveEnabledStatus('Focus Reminder', value);
                 },
               ),
               _buildNotificationTile(
@@ -227,11 +233,13 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
                   });
                 },
                 notificationEnabled: dailyJournalingPromptEnabled,
-                onToggle: (bool value) {
+                onToggle: (bool value) async {
                   setState(() {
                     dailyJournalingPromptEnabled = value;
-                    timeStorage.saveEnabledStatus('Journaling Cue', value);
                   });
+                  await _handleToggle(
+                      'Journaling Cue', dailyJournalingPromptTime, value);
+                  await timeStorage.saveEnabledStatus('Journaling Cue', value);
                 },
               ),
             ],
@@ -245,8 +253,7 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
       String title, TimeOfDay time, bool isEnabled) async {
     final int hour = time.hour;
     final int minute = time.minute;
-    final int notificationId = _getNotificationId(
-        title); // A method to map titles to unique notification IDs
+    final int notificationId = _getNotificationId(title);
 
     if (isEnabled) {
       await widget.notificationService.scheduleNotification(
@@ -305,7 +312,7 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
                 value: notificationEnabled,
                 onChanged: (bool value) async {
                   onToggle(value);
-                  await _handleToggle(title, time, value);
+                  // await _handleToggle(title, time, value);
                 },
               ),
               Button(
