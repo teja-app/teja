@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/presentation/home/ui/master_fetch/fetch_master_view.dart';
 import 'package:teja/presentation/settings/pages/widgets/settings_authenticate.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
+import 'package:teja/theme/theme_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -24,6 +26,10 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final GoRouter goRouter = GoRouter.of(context);
+    // final ThemeService themeService = ThemeService();
+    final ThemeService themeService =
+        Provider.of<ThemeService>(context, listen: false);
+
     final double screenWidth = MediaQuery.of(context).size.width;
     final double contentWidth = (screenWidth > 500)
         ? 500
@@ -76,13 +82,6 @@ class SettingsPage extends StatelessWidget {
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold)),
                   ),
-                  ListTile(
-                    title: const Text('Lock the app'),
-                    onTap: () {
-                      goRouter.goNamed(RootPath.root);
-                    },
-                  ),
-                  const Divider(),
                   const Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Text('Notifications',
@@ -93,6 +92,13 @@ class SettingsPage extends StatelessWidget {
                     title: const Text('Notification Settings'),
                     onTap: () =>
                         GoRouter.of(context).push('/settings/notification'),
+                  ),
+                  const Divider(),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('Data',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold)),
                   ),
                   const Divider(),
                   const Padding(
@@ -126,8 +132,32 @@ class SettingsPage extends StatelessWidget {
                     },
                   ),
                   const Divider(),
-
+                  ListTile(
+                    title: const Text('Lock the app'),
+                    onTap: () {
+                      goRouter.goNamed(RootPath.root);
+                    },
+                  ),
+                  const Divider(),
+                  ExpansionTile(
+                    title: const Text('Theme'),
+                    children: <Widget>[
+                      ListTile(
+                        title: const Text('White theme'),
+                        onTap: () {
+                          themeService.setThemeMode(ThemeMode.light);
+                        },
+                      ),
+                      ListTile(
+                        title: const Text('Dark theme'),
+                        onTap: () {
+                          themeService.setThemeMode(ThemeMode.dark);
+                        },
+                      ),
+                    ],
+                  ),
                   // Community Section
+                  const Divider(),
                   const Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Text('Community',
