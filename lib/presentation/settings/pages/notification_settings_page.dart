@@ -106,6 +106,9 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
       final Map<String, bool> savedStatuses =
           await timeStorage.getEnabledStatuses();
 
+      print('Saved times: $savedTimes');
+      print('Saved statuses: $savedStatuses');
+
       setState(() {
         morningPreparationTime =
             savedTimes['Morning Kickstart'] ?? morningPreparationTime;
@@ -251,6 +254,7 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
 
   Future<void> _handleToggle(
       String title, TimeOfDay time, bool isEnabled) async {
+    print('Handling toggle for $title: $isEnabled');
     final int hour = time.hour;
     final int minute = time.minute;
     final int notificationId = _getNotificationId(title);
@@ -291,6 +295,8 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
     required bool notificationEnabled,
     required Function(bool) onToggle,
   }) {
+    final TimeStorage timeStorage = TimeStorage();
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
@@ -312,7 +318,9 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
                 value: notificationEnabled,
                 onChanged: (bool value) async {
                   onToggle(value);
-                  // await _handleToggle(title, time, value);
+                  await _handleToggle(title, time, value);
+                  await timeStorage.saveTimeSlot(title, time);
+                  await timeStorage.saveEnabledStatus(title, value);
                 },
               ),
               Button(
