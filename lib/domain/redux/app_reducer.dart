@@ -22,6 +22,7 @@ import 'package:teja/domain/redux/mood/mood_analysis/mood_analysis_redux.dart';
 import 'package:teja/domain/redux/profile_page_sequence/profile_page_reducer.dart';
 import 'package:teja/domain/redux/permission/permission_reducer.dart';
 import 'package:teja/domain/redux/quotes/quote_reducer.dart';
+import 'package:teja/domain/redux/tasks/task_reducer.dart';
 import 'package:teja/domain/redux/token/token_reducer.dart';
 import 'package:teja/domain/redux/visions/vision_reducer.dart';
 import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_reducer.dart';
@@ -178,6 +179,12 @@ AppState _profilePageReducer(AppState state, action) {
   );
 }
 
+AppState _taskReducer(AppState state, action) {
+  return state.copyWith(
+    taskState: taskReducer(state.taskState, action),
+  );
+}
+
 AppState _appErrorReducer(AppState state, action) {
   return state.copyWith(
     appErrorState: appErrorReducer(state.appErrorState, action),
@@ -212,4 +219,5 @@ Reducer<AppState> appReducer = combineReducers<AppState>([
   _yearlyMoodReportReducer,
   _permissionReducer,
   _profilePageReducer,
+  _taskReducer
 ]);

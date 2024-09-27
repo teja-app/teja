@@ -1,36 +1,70 @@
-import 'package:hive/hive.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:teja/infrastructure/database/hive_collections/notification_time_slot.dart';
 
 class TimeStorage {
-  static const _boxName = 'time_box';
+  static const String boxKey = TimeSlot.boxKey;
 
-  Future<void> saveTimeSlot(String activity, TimeOfDay timeOfDay) async {
-    final box = await Hive.openBox(_boxName);
-    await box.put(activity, timeOfDay.toString());
+  Future<Map<String, TimeOfDay>> getAllTimeSlots() async {
+    final box = Hive.box(boxKey);
+    final timeSlots = box.values.toList();
+
+    // Ensure only TimeSlot objects are processed
+    Map<String, TimeOfDay> timeSlotMap = {
+      for (var timeSlot in timeSlots)
+        if (timeSlot is TimeSlot) timeSlot.activity: timeSlot.timeOfDay,
+    };
+
+    return timeSlotMap;
   }
 
-  Future<Map<String, TimeOfDay>> getTimeSlots() async {
-    try {
-      final box = await Hive.openBox(_boxName);
-      final Map<String, TimeOfDay> timeSlots = {};
-      for (var key in box.keys) {
-        if (key != null && key is String) {
-          final timeString = box.get(key);
+  Future<Map<String, bool>> getEnabledStatuses() async {
+    final box = Hive.box(boxKey);
+    final timeSlots = box.values.toList();
 
-          if (timeString != null) {
-            final cleanTimeString =
-                timeString.replaceAll('TimeOfDay(', '').replaceAll(')', '');
-            final timeOfDayParts = cleanTimeString.split(":");
-            final hour = int.parse(timeOfDayParts[0]);
-            final minute = int.parse(timeOfDayParts[1]);
-            timeSlots[key] = TimeOfDay(hour: hour, minute: minute);
-          }
-        }
-      }
-      return timeSlots;
-    } catch (e) {
-      print('Error getting time slots: $e');
-      rethrow;
+    // Ensure only TimeSlot objects are processed
+    Map<String, bool> enabledStatuses = {
+      for (var timeSlot in timeSlots)
+        if (timeSlot is TimeSlot) timeSlot.activity: timeSlot.enabled,
+    };
+
+    return enabledStatuses;
+  }
+
+  Future<void> addOrUpdateTimeSlots(List<TimeSlot> timeSlots) async {
+    var box = Hive.box(boxKey); // Ensure the box is initialized
+    for (var timeSlot in timeSlots) {
+      await box.put(timeSlot.activity, timeSlot); // Use activity as the key
     }
+  }
+
+  Future<void> clearTimeSlots() async {
+    await Hive.box(boxKey).clear();
+  }
+
+  Future<void> saveTimeSlot(String activity, TimeOfDay timeOfDay) async {
+    var box = Hive.box(boxKey);
+    final timeSlot = TimeSlot()
+      ..activity = activity
+      ..timeOfDay = timeOfDay
+      ..enabled = true; // Default to enabled
+    await box.put(activity, timeSlot);
+  }
+
+  Future<void> saveEnabledStatus(String activity, bool isEnabled) async {
+    print('Handling toggle for $activity: $isEnabled');
+
+    var box = Hive.box(boxKey);
+    var timeSlot = box.get(activity);
+    if (timeSlot != null && timeSlot is TimeSlot) {
+      timeSlot.enabled = isEnabled;
+      await box.put(activity, timeSlot); // Update the existing time slot
+    }
+  }
+
+  Future<TimeSlot?> getTimeSlot(String activity) async {
+    var box = Hive.box(boxKey);
+    var timeSlot = box.get(activity);
+    return timeSlot is TimeSlot ? timeSlot : null;
   }
 }

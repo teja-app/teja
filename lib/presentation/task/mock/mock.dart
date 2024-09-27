@@ -1,13 +1,13 @@
 import 'dart:math';
-import 'package:teja/presentation/task/interface/task.dart';
+import 'package:teja/domain/entities/task_entity.dart';
 
-List<Task> mockTasks = [
+List<TaskEntity> mockTasks = [
   // To-Do Tasks (unchanged)
-  Task(
+  TaskEntity(
     id: "4001",
     title: "Schedule annual health check-up",
     description: "Call Dr. Johnson's office to set up yearly physical",
-    due: TaskDue(
+    due: TaskDueEntity(
       date: DateTime(2024, 9, 1, 12, 0),
     ),
     labels: ["Health", "Personal"],
@@ -17,11 +17,11 @@ List<Task> mockTasks = [
     type: TaskType.todo,
   )..completedAt = null,
 
-  Task(
+  TaskEntity(
     id: "4002",
     title: "Renew driver's license",
     description: "Visit DMV with required documents",
-    due: TaskDue(
+    due: TaskDueEntity(
       date: DateTime(2024, 8, 25, 10, 0),
     ),
     labels: ["Personal", "Administrative"],
@@ -31,11 +31,11 @@ List<Task> mockTasks = [
     type: TaskType.todo,
   )..completedAt = null,
 
-  Task(
+  TaskEntity(
     id: "4003",
     title: "Research and book flights for vacation",
     description: "Compare prices for round-trip to Bali in October",
-    due: TaskDue(
+    due: TaskDueEntity(
       date: DateTime(2024, 8, 20, 20, 0),
     ),
     labels: ["Travel", "Personal"],
@@ -46,7 +46,7 @@ List<Task> mockTasks = [
   )..completedAt = null,
 
   // Daily Tasks (improved)
-  Task(
+  TaskEntity(
     id: "4004",
     title: "Make bed",
     description: "Straighten sheets and arrange pillows",
@@ -57,7 +57,7 @@ List<Task> mockTasks = [
     daysOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
   )..completedDates = _generateCompletedDates(0.9), // 90% completion rate
 
-  Task(
+  TaskEntity(
     id: "4005",
     title: "Check and respond to important emails",
     description: "Focus on high-priority messages",
@@ -69,7 +69,7 @@ List<Task> mockTasks = [
     daysOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
   )..completedDates = _generateCompletedDates(0.7), // 70% completion rate
 
-  Task(
+  TaskEntity(
     id: "4006",
     title: "Take out trash",
     description: "Remember to separate recyclables",
@@ -81,7 +81,7 @@ List<Task> mockTasks = [
   )..completedDates = _generateCompletedDates(0.8), // 80% completion rate
 
   // Habit Tasks (improved)
-  Task(
+  TaskEntity(
     id: "4007",
     title: "Exercise for 30 minutes",
     description: "Mix of cardio and strength training",
@@ -92,7 +92,7 @@ List<Task> mockTasks = [
     habitDirection: HabitDirection.positive,
   )..habitEntries = _generateHabitEntries(HabitDirection.positive, 0.6), // 60% success rate
 
-  Task(
+  TaskEntity(
     id: "4008",
     title: "Read for 20 minutes",
     description: "Focus on non-fiction or educational material",
@@ -103,7 +103,7 @@ List<Task> mockTasks = [
     habitDirection: HabitDirection.positive,
   )..habitEntries = _generateHabitEntries(HabitDirection.positive, 0.8), // 80% success rate
 
-  Task(
+  TaskEntity(
     id: "4009",
     title: "Avoid smoking",
     description: "Track days without smoking",
@@ -113,7 +113,7 @@ List<Task> mockTasks = [
     habitDirection: HabitDirection.negative,
   )..habitEntries = _generateHabitEntries(HabitDirection.negative, 0.7), // 70% success rate
 
-  Task(
+  TaskEntity(
     id: "4010",
     title: "Limit social media use",
     description: "Avoid scrolling for more than 30 minutes daily",
@@ -136,13 +136,13 @@ List<DateTime> _generateCompletedDates(double completionRate) {
   return completedDates;
 }
 
-List<HabitEntry> _generateHabitEntries(HabitDirection direction, double successRate) {
+List<HabitEntryEntity> _generateHabitEntries(HabitDirection direction, double successRate) {
   final now = DateTime.now();
-  final habitEntries = <HabitEntry>[];
+  final habitEntries = <HabitEntryEntity>[];
   for (var i = 0; i < 30; i++) {
     final date = now.subtract(Duration(days: i));
     if (i == 0 || i == 1 || (Random().nextDouble() < successRate)) {
-      habitEntries.add(HabitEntry(
+      habitEntries.add(HabitEntryEntity(
         timestamp: DateTime(date.year, date.month, date.day, Random().nextInt(24), Random().nextInt(60)),
         direction: direction,
       ));

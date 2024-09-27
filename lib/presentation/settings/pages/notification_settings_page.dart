@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:teja/infrastructure/utils/notification_service.dart';
 import 'package:teja/infrastructure/utils/time_storage_helper.dart';
+import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/shared/common/button.dart';
+import 'package:teja/infrastructure/constants/notification_types.dart';
 
 class NotificationSettingsPage extends StatefulWidget {
   final NotificationService notificationService;
@@ -15,10 +17,19 @@ class NotificationSettingsPage extends StatefulWidget {
 }
 
 class NotificationSettingsPageState extends State<NotificationSettingsPage> {
-  TimeOfDay morningPreparationTime = const TimeOfDay(hour: 9, minute: 0);
-  TimeOfDay eveningReflectionTime = const TimeOfDay(hour: 21, minute: 0);
-  TimeOfDay dailyFocusTime = const TimeOfDay(hour: 14, minute: 30);
-  TimeOfDay dailyJournalingPromptTime = const TimeOfDay(hour: 12, minute: 0);
+  Map<String, TimeOfDay> notificationTimes = {
+    NotificationType.MORNING_KICKSTART: const TimeOfDay(hour: 9, minute: 0),
+    NotificationType.EVENING_WIND_DOWN: const TimeOfDay(hour: 21, minute: 0),
+    NotificationType.FOCUS_REMINDER: const TimeOfDay(hour: 14, minute: 30),
+    NotificationType.JOURNALING_CUE: const TimeOfDay(hour: 12, minute: 0),
+  };
+
+  Map<String, bool> notificationEnabled = {
+    NotificationType.MORNING_KICKSTART: true,
+    NotificationType.EVENING_WIND_DOWN: true,
+    NotificationType.FOCUS_REMINDER: true,
+    NotificationType.JOURNALING_CUE: true,
+  };
 
   @override
   void initState() {
@@ -32,14 +43,13 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
   bool dailyFocusEnabled = true;
   bool dailyJournalingPromptEnabled = true;
 
-  Future<void> _selectTime(BuildContext context, TimeOfDay initialTime,
-      Function(TimeOfDay) onTimeSelected, String title, bool isEnabled) async {
+  Future<void> _selectTime(
+      BuildContext context, String notificationType) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
-      initialTime: initialTime,
+      initialTime: notificationTimes[notificationType]!,
       builder: (BuildContext context, Widget? child) {
-        // Apply your custom theme here
-        final theme = Theme.of(context).timePickerTheme; // Get default theme
+        final theme = Theme.of(context).timePickerTheme;
 
         return Theme(
           data: ThemeData.from(
@@ -75,24 +85,29 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
         );
       },
     );
+
     final TimeStorage timeStorage = TimeStorage();
-    if (picked != null && picked != initialTime) {
-      onTimeSelected(picked);
+    if (picked != null && picked != notificationTimes[notificationType]) {
+      setState(() {
+        notificationTimes[notificationType] = picked;
+      });
+      await timeStorage.saveTimeSlot(notificationType, picked);
+      await timeStorage.saveEnabledStatus(
+          notificationType, notificationEnabled[notificationType]!);
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-              "Notification time for ${initialTime.format(context)} changed to ${picked.format(context)}."),
+              "Notification time for ${NotificationType.toReadableString(notificationType)} changed to ${picked.format(context)}."),
           duration: Duration(seconds: 3),
         ),
       );
 
-      final int notificationId = _getNotificationId(title);
+      final int notificationId = _getNotificationId(notificationType);
       widget.notificationService.cancelNotification(notificationId);
-      // Schedule new notification
-      await _handleToggle(title, picked, isEnabled);
 
-      // Save selected time to Hive
-      await timeStorage.saveTimeSlot(title, picked);
+      await _handleToggle(
+          notificationType, picked, notificationEnabled[notificationType]!);
     }
   }
 
@@ -100,33 +115,38 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
     try {
       final TimeStorage timeStorage = TimeStorage();
       final Map<String, TimeOfDay> savedTimes =
-          await timeStorage.getTimeSlots();
-      print('Saved times: $savedTimes');
+          await timeStorage.getAllTimeSlots();
+      final Map<String, bool> savedStatuses =
+          await timeStorage.getEnabledStatuses();
+
       setState(() {
-        if (savedTimes.containsKey('Morning Kickstart')) {
-          morningPreparationTime = savedTimes['Morning Kickstart']!;
-        }
-        if (savedTimes.containsKey('Evening Wind-down')) {
-          eveningReflectionTime = savedTimes['Evening Wind-down']!;
-        }
-        if (savedTimes.containsKey('Focus Reminder')) {
-          dailyFocusTime = savedTimes['Focus Reminder']!;
-        }
-        if (savedTimes.containsKey('Journaling Cue')) {
-          dailyJournalingPromptTime = savedTimes['Journaling Cue']!;
+        for (var type in NotificationType.all) {
+          if (savedTimes.containsKey(type)) {
+            notificationTimes[type] = savedTimes[type]!;
+          }
+          if (savedStatuses.containsKey(type)) {
+            notificationEnabled[type] = savedStatuses[type]!;
+          }
         }
       });
+
+      await _scheduleDefaultNotifications();
     } catch (e) {
-      print('Error retrieving saved times: $e');
+      print('Error retrieving saved times and statuses: $e');
+    }
+  }
+
+  Future<void> _scheduleDefaultNotifications() async {
+    for (var type in NotificationType.all) {
+      await _handleToggle(
+          type, notificationTimes[type]!, notificationEnabled[type]!);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double contentWidth = (screenWidth > 500)
-        ? 500
-        : screenWidth; // Assuming 500 is the max width for content
+    final double contentWidth = isDesktop(context) ? 630 : screenWidth;
 
     return Scaffold(
       appBar: AppBar(
@@ -134,8 +154,9 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
       ),
       body: Center(
         child: SizedBox(
-          width: contentWidth, // Set the content width
+          width: contentWidth,
           child: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
             children: <Widget>[
               const Padding(
                 padding: EdgeInsets.all(8.0),
@@ -147,35 +168,13 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
               _buildNotificationTile(
                 title: 'Morning Kickstart',
                 subtitle: 'Begin your day with focus and clarity.',
-                time: morningPreparationTime,
-                onTimeSelected: (TimeOfDay time) {
-                  setState(() {
-                    morningPreparationTime = time;
-                  });
-                },
-                notificationEnabled: morningPreparationEnabled,
-                onToggle: (bool value) {
-                  setState(() {
-                    morningPreparationEnabled = value;
-                  });
-                },
+                notificationType: NotificationType.MORNING_KICKSTART,
               ),
               _buildNotificationTile(
                 title: 'Evening Wind-down',
                 subtitle:
                     'Reflect on your day and set the tone for a restful evening.',
-                time: eveningReflectionTime,
-                onTimeSelected: (TimeOfDay time) {
-                  setState(() {
-                    eveningReflectionTime = time;
-                  });
-                },
-                notificationEnabled: eveningReflectionEnabled,
-                onToggle: (bool value) {
-                  setState(() {
-                    eveningReflectionEnabled = value;
-                  });
-                },
+                notificationType: NotificationType.EVENING_WIND_DOWN,
               ),
               const Divider(),
               const Padding(
@@ -188,34 +187,12 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
               _buildNotificationTile(
                 title: 'Focus Reminder',
                 subtitle: 'A nudge to realign with your morning focus goal.',
-                time: dailyFocusTime,
-                onTimeSelected: (TimeOfDay time) {
-                  setState(() {
-                    dailyFocusTime = time;
-                  });
-                },
-                notificationEnabled: dailyFocusEnabled,
-                onToggle: (bool value) {
-                  setState(() {
-                    dailyFocusEnabled = value;
-                  });
-                },
+                notificationType: NotificationType.FOCUS_REMINDER,
               ),
               _buildNotificationTile(
                 title: 'Journaling Cue',
                 subtitle: 'A prompt to engage your reflective thoughts.',
-                time: dailyJournalingPromptTime,
-                onTimeSelected: (TimeOfDay time) {
-                  setState(() {
-                    dailyJournalingPromptTime = time;
-                  });
-                },
-                notificationEnabled: dailyJournalingPromptEnabled,
-                onToggle: (bool value) {
-                  setState(() {
-                    dailyJournalingPromptEnabled = value;
-                  });
-                },
+                notificationType: NotificationType.JOURNALING_CUE,
               ),
             ],
           ),
@@ -225,16 +202,16 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
   }
 
   Future<void> _handleToggle(
-      String title, TimeOfDay time, bool isEnabled) async {
+      String notificationType, TimeOfDay time, bool isEnabled) async {
+    print('Handling toggle for $notificationType: $isEnabled');
     final int hour = time.hour;
     final int minute = time.minute;
-    final int notificationId = _getNotificationId(
-        title); // A method to map titles to unique notification IDs
+    final int notificationId = _getNotificationId(notificationType);
 
     if (isEnabled) {
       await widget.notificationService.scheduleNotification(
-        title: title,
-        body: 'Reminder: $title',
+        uniqueId: notificationId,
+        activity: notificationType,
         hour: hour,
         minute: minute,
       );
@@ -243,29 +220,28 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
     }
   }
 
-  int _getNotificationId(String title) {
-    switch (title) {
-      case 'Morning Kickstart':
-        return 1;
-      case 'Evening Wind-down':
-        return 2;
-      case 'Focus Reminder':
-        return 3;
-      case 'Journaling Cue':
-        return 4;
+  int _getNotificationId(String notificationType) {
+    switch (notificationType) {
+      case NotificationType.MORNING_KICKSTART:
+        return 100;
+      case NotificationType.EVENING_WIND_DOWN:
+        return 200;
+      case NotificationType.FOCUS_REMINDER:
+        return 300;
+      case NotificationType.JOURNALING_CUE:
+        return 400;
       default:
-        return 0; // Default ID for unknown titles
+        return 0;
     }
   }
 
   Widget _buildNotificationTile({
     required String title,
     required String subtitle,
-    required TimeOfDay time,
-    required Function(TimeOfDay) onTimeSelected,
-    required bool notificationEnabled,
-    required Function(bool) onToggle,
+    required String notificationType,
   }) {
+    final TimeStorage timeStorage = TimeStorage();
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
@@ -284,16 +260,19 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
           Column(
             children: [
               Switch(
-                value: notificationEnabled,
+                value: notificationEnabled[notificationType]!,
                 onChanged: (bool value) async {
-                  onToggle(value);
-                  await _handleToggle(title, time, value);
+                  setState(() {
+                    notificationEnabled[notificationType] = value;
+                  });
+                  await _handleToggle(notificationType,
+                      notificationTimes[notificationType]!, value);
+                  await timeStorage.saveEnabledStatus(notificationType, value);
                 },
               ),
               Button(
-                onPressed: () => _selectTime(
-                    context, time, onTimeSelected, title, notificationEnabled),
-                text: time.format(context),
+                onPressed: () => _selectTime(context, notificationType),
+                text: notificationTimes[notificationType]!.format(context),
               ),
             ],
           ),
