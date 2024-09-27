@@ -136,7 +136,7 @@ class _HomePageState extends State<HomePage> {
             // Semi-transparent overlay for better readability
             Positioned.fill(
               child: Container(
-                color: Colors.white.withOpacity(0.9),
+                color: Colors.white.withOpacity(0.7),
               ),
             ),
             // Scaffold
