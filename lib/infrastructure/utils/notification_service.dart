@@ -3,6 +3,7 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:teja/shared/helpers/logger.dart';
+import 'package:teja/infrastructure/data/notification_messages.dart';
 
 import 'dart:io' show Platform;
 
@@ -75,8 +76,7 @@ class NotificationService {
 
   Future<void> scheduleNotification({
     required int uniqueId,
-    required String title,
-    required String body,
+    required String activity,
     required int hour,
     required int minute,
     int daysAhead = 30,
@@ -90,31 +90,31 @@ class NotificationService {
 
     for (int i = 0; i < daysAhead; i++) {
       final int currentNotificationId = uniqueId + i;
+      final message = NotificationMessages.getRandomMessage(activity);
+      tz.TZDateTime scheduledTime;
+      if (isTestMode) {
+        scheduledTime = now.add(Duration(seconds: 10 * (i + 1)));
+      } else {
+        scheduledTime = tz.TZDateTime(
+          tz.local,
+          now.year,
+          now.month,
+          now.day + i,
+          hour,
+          minute,
+        );
+
+        // If the calculated time is in the past, schedule it for the next day
+        if (scheduledTime.isBefore(now)) {
+          scheduledTime = scheduledTime.add(const Duration(days: 1));
+        }
+      }
 
       try {
-        tz.TZDateTime scheduledTime;
-        if (isTestMode) {
-          scheduledTime = now.add(Duration(seconds: 10 * (i + 1)));
-        } else {
-          scheduledTime = tz.TZDateTime(
-            tz.local,
-            now.year,
-            now.month,
-            now.day + i,
-            hour,
-            minute,
-          );
-
-          // If the calculated time is in the past, schedule it for the next day
-          if (scheduledTime.isBefore(now)) {
-            scheduledTime = scheduledTime.add(const Duration(days: 1));
-          }
-        }
-
         await flutterLocalNotificationsPlugin.zonedSchedule(
           currentNotificationId,
-          title,
-          body,
+          message['title'],
+          message['body'],
           scheduledTime,
           NotificationDetails(
             android: AndroidNotificationDetails(channelId, channelName),
@@ -147,27 +147,6 @@ class NotificationService {
     } catch (e) {
       // Handle cancellation failure
     }
-  }
-
-  Future<void> refreshDailyNotifications({
-    required int uniqueId,
-    required String title,
-    required String body,
-    required int hour,
-    required int minute,
-  }) async {
-    // Cancel all existing notifications
-    await cancelAllNotifications();
-
-    // Schedule notifications for the next 30 days
-    await scheduleNotification(
-      uniqueId: uniqueId,
-      title: title,
-      body: body,
-      hour: hour,
-      minute: minute,
-      // daysAhead: 30,
-    );
   }
 
   Future<void> _configureTimeZone() async {
