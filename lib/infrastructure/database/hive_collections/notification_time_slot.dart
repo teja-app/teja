@@ -15,7 +15,7 @@ class TimeSlot {
   late String time; // Store as String to keep consistency with Hive
 
   @HiveField(2)
-  late bool enabled;
+  late bool enabled = true; // Default to true
 
   TimeOfDay get timeOfDay {
     final parts = time.split(":");
