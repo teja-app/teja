@@ -10,4 +10,19 @@ class NotificationType {
         FOCUS_REMINDER,
         JOURNALING_CUE,
       ];
+
+  static String toReadableString(String type) {
+    switch (type) {
+      case MORNING_KICKSTART:
+        return "Morning Kickstart";
+      case EVENING_WIND_DOWN:
+        return "Evening Wind-down";
+      case FOCUS_REMINDER:
+        return "Focus Reminder";
+      case JOURNALING_CUE:
+        return "Journaling Cue";
+      default:
+        return type;
+    }
+  }
 }

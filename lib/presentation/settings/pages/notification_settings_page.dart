@@ -98,7 +98,7 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-              "Notification time for $notificationType changed to ${picked.format(context)}."),
+              "Notification time for ${NotificationType.toReadableString(notificationType)} changed to ${picked.format(context)}."),
           duration: Duration(seconds: 3),
         ),
       );
