@@ -123,12 +123,12 @@ class _HomePageState extends State<HomePage> {
             // Background Image with Opacity and Blur
             Positioned.fill(
               child: ImageFiltered(
-                imageFilter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                imageFilter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
                 child: Opacity(
                   opacity: 1, // Adjust this value to change the opacity
                   child: Image(
                     image: CachedNetworkImageProvider(store.backgroundImageUrl),
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fill,
                   ),
                 ),
               ),
@@ -149,7 +149,8 @@ class _HomePageState extends State<HomePage> {
                 leading: leadingNavBar(context),
                 leadingWidth: 72,
               ),
-              bottomNavigationBar: isDesktop(context) ? null : const MobileNavigationBar(),
+              bottomNavigationBar:
+                  isDesktop(context) ? null : const MobileNavigationBar(),
               body: isDesktop(context)
                   ? Row(
                       children: [
@@ -159,7 +160,8 @@ class _HomePageState extends State<HomePage> {
                             alignment: Alignment.topCenter,
                             child: SizedBox(
                               width: 630,
-                              child: _buildMainBody(context, store, textTheme, now),
+                              child: _buildMainBody(
+                                  context, store, textTheme, now),
                             ),
                           ),
                         ),
@@ -173,7 +175,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildMainBody(BuildContext context, _ViewModel store, TextTheme textTheme, DateTime now) {
+  Widget _buildMainBody(BuildContext context, _ViewModel store,
+      TextTheme textTheme, DateTime now) {
     return SingleChildScrollView(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -224,7 +227,8 @@ class _HomePageState extends State<HomePage> {
               MoodTrackerWidget(),
             ],
           ),
-          if (store.selectedDate != null && now.compareTo(store.selectedDate!) < 0)
+          if (store.selectedDate != null &&
+              now.compareTo(store.selectedDate!) < 0)
             const Center(child: CountdownTimer()),
           const SizedBox(height: 10),
         ],
@@ -243,10 +247,10 @@ class _ViewModel {
   });
 
   static _ViewModel fromStore(Store<AppState> store) {
+    print('store.backgroundImageUrl 1 ${store.state.themeState.selectedImage}');
     return _ViewModel(
       selectedDate: store.state.homeState.selectedDate,
-      backgroundImageUrl:
-          'https://cdn.leonardo.ai/users/289152d8-6132-4fd8-b895-28a873a1f7d9/generations/22d788e9-c344-4f8a-8ecc-f645c548eae2/variations/alchemyrefiner_alchemymagic_0_22d788e9-c344-4f8a-8ecc-f645c548eae2_0.jpg',
+      backgroundImageUrl: store.state.themeState.selectedImage ?? '',
     );
   }
 }

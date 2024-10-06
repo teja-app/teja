@@ -22,6 +22,7 @@ import 'package:teja/domain/redux/permission/permission_state.dart';
 import 'package:teja/domain/redux/profile_page_sequence/profile_page_state.dart';
 import 'package:teja/domain/redux/quotes/quote_state.dart';
 import 'package:teja/domain/redux/tasks/task_state.dart';
+import 'package:teja/domain/redux/theme/theme_state.dart';
 import 'package:teja/domain/redux/token/token_state.dart';
 import 'package:teja/domain/redux/visions/vision_state.dart';
 import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_state.dart';
@@ -66,6 +67,9 @@ class AppState {
   // Task
   final TaskState taskState;
 
+  // theme
+  final ThemeState themeState;
+
   const AppState({
     required this.authState,
     required this.appErrorState,
@@ -95,6 +99,7 @@ class AppState {
     required this.permissionState,
     required this.profilePageState,
     required this.taskState,
+    required this.themeState,
   });
 
   AppState copyWith({
@@ -126,6 +131,7 @@ class AppState {
     PermissionState? permissionState,
     ProfilePageState? profilePageState,
     TaskState? taskState,
+    ThemeState? themeState,
   }) {
     return AppState(
       authState: authState ?? this.authState,
@@ -137,9 +143,12 @@ class AppState {
       masterFeelingState: masterFeelingState ?? this.masterFeelingState,
       masterFactorState: masterFactorState ?? this.masterFactorState,
       moodLogListState: moodLogListState ?? this.moodLogListState,
-      weeklyMoodReportState: weeklyMoodReportState ?? this.weeklyMoodReportState,
-      monthlyMoodReportState: monthlyMoodReportState ?? this.monthlyMoodReportState,
-      yearlySleepReportState: yearlySleepReportState ?? this.yearlySleepReportState,
+      weeklyMoodReportState:
+          weeklyMoodReportState ?? this.weeklyMoodReportState,
+      monthlyMoodReportState:
+          monthlyMoodReportState ?? this.monthlyMoodReportState,
+      yearlySleepReportState:
+          yearlySleepReportState ?? this.yearlySleepReportState,
       quoteState: quoteState ?? this.quoteState,
       visionState: visionState ?? this.visionState,
       tokenState: tokenState ?? this.tokenState,
@@ -148,14 +157,17 @@ class AppState {
       journalAnalysisState: journalAnalysisState ?? this.journalAnalysisState,
       journalLogsState: journalLogsState ?? this.journalLogsState,
       journalDetailState: journalDetailState ?? this.journalDetailState,
-      featuredJournalTemplateState: featuredJournalTemplateState ?? this.featuredJournalTemplateState,
+      featuredJournalTemplateState:
+          featuredJournalTemplateState ?? this.featuredJournalTemplateState,
       journalCategoryState: journalCategoryState ?? this.journalCategoryState,
       journalListState: journalListState ?? this.journalListState,
       permissionState: permissionState ?? this.permissionState,
       moodAnalysisState: moodAnalysisState ?? this.moodAnalysisState,
-      yearlyMoodReportState: yearlyMoodReportState ?? this.yearlyMoodReportState,
+      yearlyMoodReportState:
+          yearlyMoodReportState ?? this.yearlyMoodReportState,
       profilePageState: profilePageState ?? this.profilePageState,
       taskState: taskState ?? this.taskState,
+      themeState: themeState ?? this.themeState,
     );
   }
 
@@ -189,6 +201,7 @@ class AppState {
       yearlyMoodReportState: YearlyMoodReportState.initial(),
       profilePageState: ProfilePageState.initial(),
       taskState: TaskState.initial(),
+      themeState: ThemeState.initial(),
     );
   }
 }

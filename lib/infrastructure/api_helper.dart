@@ -18,9 +18,10 @@ class ApiHelper {
   }
 
   // Unsafe methods with improved error handling
-  Future<Response> unsafeGet(String path) async {
+  Future<Response> unsafeGet(String path,
+      {Map<String, dynamic>? queryParameters}) async {
     try {
-      final response = await _dio.get(path);
+      final response = await _dio.get(path, queryParameters: queryParameters);
       return response;
     } catch (e) {
       throw _handleError(e);
@@ -56,10 +57,12 @@ class ApiHelper {
 
   Future<String> refreshToken(String refreshToken) async {
     try {
-      final response = await unsafePost('/auth/refresh-token', data: {'refreshToken': refreshToken});
+      final response = await unsafePost('/auth/refresh-token',
+          data: {'refreshToken': refreshToken});
       return response.data['accessToken'];
     } catch (e) {
-      throw AppError(code: 'REFRESH_TOKEN_ERROR', message: 'Failed to refresh token');
+      throw AppError(
+          code: 'REFRESH_TOKEN_ERROR', message: 'Failed to refresh token');
     }
   }
 
@@ -143,22 +146,27 @@ class ApiHelper {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
-        return AppError(code: 'TIMEOUT_ERROR', message: 'The request timed out');
+        return AppError(
+            code: 'TIMEOUT_ERROR', message: 'The request timed out');
       case DioExceptionType.badResponse:
         return _handleHttpStatusCode(e.response?.statusCode, e.response?.data);
       case DioExceptionType.cancel:
-        return AppError(code: 'REQUEST_CANCELLED', message: 'The request was cancelled');
+        return AppError(
+            code: 'REQUEST_CANCELLED', message: 'The request was cancelled');
       case DioExceptionType.connectionError:
-        return AppError(code: 'NETWORK_ERROR', message: 'Check your internet connection');
+        return AppError(
+            code: 'NETWORK_ERROR', message: 'Check your internet connection');
       case DioExceptionType.unknown:
       default:
-        return AppError(code: 'UNKNOWN_ERROR', message: 'An unknown error occurred');
+        return AppError(
+            code: 'UNKNOWN_ERROR', message: 'An unknown error occurred');
     }
   }
 
   AppError _handleHttpStatusCode(int? statusCode, dynamic responseData) {
     // First, try to parse the error from the response data
-    if (responseData is Map<String, dynamic> && responseData.containsKey('error')) {
+    if (responseData is Map<String, dynamic> &&
+        responseData.containsKey('error')) {
       final errorData = responseData['error'] as Map<String, dynamic>;
       return AppError(
         code: errorData['code'] ?? 'UNKNOWN_ERROR',
@@ -169,16 +177,25 @@ class ApiHelper {
     // If we couldn't parse the error from the response, use default messages
     switch (statusCode) {
       case 400:
-        return AppError(code: 'VALIDATION_ERROR', message: 'The request data is invalid.');
+        return AppError(
+            code: 'VALIDATION_ERROR', message: 'The request data is invalid.');
       case 401:
-        return AppError(code: 'AUTHENTICATION_ERROR', message: 'Authentication failed. Make sure you are logged in');
+        return AppError(
+            code: 'AUTHENTICATION_ERROR',
+            message: 'Authentication failed. Make sure you are logged in');
       case 403:
-        return AppError(code: 'AUTHORIZATION_ERROR', message: 'You don\'t have permission to perform this action.');
+        return AppError(
+            code: 'AUTHORIZATION_ERROR',
+            message: 'You don\'t have permission to perform this action.');
       case 404:
-        return AppError(code: 'NOT_FOUND_ERROR', message: 'The requested resource was not found.');
+        return AppError(
+            code: 'NOT_FOUND_ERROR',
+            message: 'The requested resource was not found.');
       case 500:
       default:
-        return AppError(code: 'SERVER_ERROR', message: 'An unexpected error occurred. Please try again later.');
+        return AppError(
+            code: 'SERVER_ERROR',
+            message: 'An unexpected error occurred. Please try again later.');
     }
   }
 
@@ -190,14 +207,16 @@ class ApiHelper {
       return e;
     }
     logger.e("Unknown error", error: e, stackTrace: StackTrace.current);
-    return AppError(code: 'UNKNOWN_ERROR', message: 'An unexpected error occurred');
+    return AppError(
+        code: 'UNKNOWN_ERROR', message: 'An unexpected error occurred');
   }
 
   Future<void> _handleReAuthentication() async {
     await _tokenService.clearTokens();
   }
 
-  Future<Response> get(String path, {Map<String, dynamic>? queryParameters}) async {
+  Future<Response> get(String path,
+      {Map<String, dynamic>? queryParameters}) async {
     return _safeRequest(() => _dio.get(path, queryParameters: queryParameters));
   }
 

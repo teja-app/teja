@@ -28,6 +28,7 @@ import 'package:teja/domain/redux/profile_page_sequence/profile_page_saga.dart';
 import 'package:teja/domain/redux/quotes/quote_saga.dart';
 import 'package:teja/domain/redux/sync/saga.dart';
 import 'package:teja/domain/redux/tasks/task_saga.dart';
+import 'package:teja/domain/redux/theme/theme_saga.dart';
 import 'package:teja/domain/redux/token/token_saga.dart';
 import 'package:teja/domain/redux/visions/vision_saga.dart';
 import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_saga.dart';
@@ -67,6 +68,7 @@ Iterable<void> rootSaga(Store<AppState> store) sync* {
     'journalSync': () => JournalSyncSaga().saga(),
     'moodSync': () => MoodSyncSaga().saga(),
     'taskSaga': () => TaskSaga().saga(),
+    'themeSaga': () => ThemeSaga().saga(),
   };
 
   yield All(sagas.map((key, saga) => MapEntry(key, Spawn(() sync* {
@@ -76,10 +78,14 @@ Iterable<void> rootSaga(Store<AppState> store) sync* {
           }, Catch: (error, stackTrace) sync* {
             print("error ${error}");
             if (error is AppError) {
-              yield Put(AddAppErrorAction(
-                  createAppError({'code': error.code, 'message': error.message, 'details': error.details})));
+              yield Put(AddAppErrorAction(createAppError({
+                'code': error.code,
+                'message': error.message,
+                'details': error.details
+              })));
             } else {
-              yield Call(_handleSagaError, args: [store, key, error, stackTrace]);
+              yield Call(_handleSagaError,
+                  args: [store, key, error, stackTrace]);
             }
           });
           // Small delay before restarting the saga
@@ -88,7 +94,8 @@ Iterable<void> rootSaga(Store<AppState> store) sync* {
       }))));
 }
 
-void _handleSagaError(Store<AppState> store, String sagaName, dynamic error, StackTrace? stackTrace) {
+void _handleSagaError(Store<AppState> store, String sagaName, dynamic error,
+    StackTrace? stackTrace) {
   logger.e('Saga error in $sagaName', error: error, stackTrace: stackTrace);
 
   final appError = AppError(
