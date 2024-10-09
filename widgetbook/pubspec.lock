@@ -1719,7 +1719,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.9.2+2409131"
+    version: "1.9.4+2409271"
   term_glyph:
     dependency: transitive
     description:

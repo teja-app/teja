@@ -3,6 +3,7 @@ import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/entities/task_entity.dart';
 import 'package:teja/domain/redux/tasks/task_action.dart';
 import 'package:teja/infrastructure/repositories/task_repository.dart';
+import 'package:teja/infrastructure/api/task_api.dart';
 
 class TaskSaga {
   Iterable<void> saga() sync* {
@@ -12,31 +13,28 @@ class TaskSaga {
     yield TakeEvery(_deleteTask, pattern: DeleteTaskAction);
     yield TakeEvery(_toggleTaskCompletion, pattern: ToggleTaskCompletionAction);
     yield TakeEvery(_incrementHabit, pattern: IncrementHabitAction);
+    yield TakeEvery(_syncTasks, pattern: SyncTasksAction);
   }
 
   _fetchTasksFromDatabase({dynamic action}) sync* {
-    yield Try(() sync* {
-      yield Put(TaskUpdateInProgressAction());
+    yield Put(TaskUpdateInProgressAction());
 
-      var isarResult = Result<Isar>();
-      yield GetContext('isar', result: isarResult);
-      Isar isar = isarResult.value!;
-      var taskRepo = TaskRepository(isar);
+    var isarResult = Result<Isar>();
+    yield GetContext('isar', result: isarResult);
+    Isar isar = isarResult.value!;
+    var taskRepo = TaskRepository(isar);
 
-      var tasksResult = Result<List<TaskEntity>>();
-      yield Call(
-        taskRepo.getAllTasks,
-        result: tasksResult,
-      );
+    var tasksResult = Result<List<TaskEntity>>();
+    yield Call(
+      taskRepo.getAllTasks,
+      result: tasksResult,
+    );
 
-      if (tasksResult.value != null) {
-        yield Put(TaskUpdateSuccessAction(tasksResult.value!));
-      } else {
-        yield Put(const TaskUpdateFailedAction('Failed to load tasks'));
-      }
-    }, Catch: (e, s) sync* {
-      yield Put(TaskUpdateFailedAction(e.toString()));
-    });
+    if (tasksResult.value != null) {
+      yield Put(TaskUpdateSuccessAction(tasksResult.value!));
+    } else {
+      yield Put(const TaskUpdateFailedAction('Failed to load tasks'));
+    }
   }
 
   _addTask({dynamic action}) sync* {
@@ -57,6 +55,7 @@ class TaskSaga {
         );
 
         yield Call(_fetchTasksFromDatabase);
+        yield Put(SyncTasksAction());
       }, Catch: (e, s) sync* {
         yield Put(TaskUpdateFailedAction(e.toString()));
       });
@@ -81,6 +80,7 @@ class TaskSaga {
         );
 
         yield Call(_fetchTasksFromDatabase);
+        yield Put(SyncTasksAction());
       }, Catch: (e, s) sync* {
         yield Put(TaskUpdateFailedAction(e.toString()));
       });
@@ -105,6 +105,7 @@ class TaskSaga {
         );
 
         yield Call(_fetchTasksFromDatabase);
+        yield Put(SyncTasksAction());
       }, Catch: (e, s) sync* {
         yield Put(TaskUpdateFailedAction(e.toString()));
       });
@@ -133,6 +134,7 @@ class TaskSaga {
         }
 
         yield Call(_fetchTasksFromDatabase);
+        yield Put(SyncTasksAction());
       }, Catch: (e, s) sync* {
         yield Put(TaskUpdateFailedAction(e.toString()));
       });
@@ -157,9 +159,71 @@ class TaskSaga {
         );
 
         yield Call(_fetchTasksFromDatabase);
+        yield Put(SyncTasksAction());
       }, Catch: (e, s) sync* {
         yield Put(TaskUpdateFailedAction(e.toString()));
       });
     }
+  }
+
+  _syncTasks({dynamic action}) sync* {
+    yield Put(TaskUpdateInProgressAction());
+
+    var isarResult = Result<Isar>();
+    yield GetContext('isar', result: isarResult);
+    Isar isar = isarResult.value!;
+    var taskRepo = TaskRepository(isar);
+
+    var lastSyncTimestampResult = Result<DateTime?>();
+    yield Call(taskRepo.getLastSyncTimestamp, result: lastSyncTimestampResult);
+    DateTime lastSyncTimestamp =
+        lastSyncTimestampResult.value ?? DateTime.fromMillisecondsSinceEpoch(0);
+
+    var localTasksResult = Result<List<TaskEntity>>();
+    yield Call(() => taskRepo.getAllTasks(includeDeleted: true),
+        result: localTasksResult);
+    List<TaskEntity> localTasks = localTasksResult.value!;
+
+    var previousFailedChunksResult = Result<List<String>?>();
+    yield Call(taskRepo.getPreviousFailedChunks,
+        result: previousFailedChunksResult);
+    List<String>? previousFailedChunks = previousFailedChunksResult.value;
+
+    TaskApiService api = TaskApiService();
+
+    var syncResultResult = Result<Map<String, dynamic>>();
+    yield Call(
+      api.syncTasks,
+      args: [localTasks, lastSyncTimestamp, previousFailedChunks],
+      result: syncResultResult,
+    );
+    var syncResult = syncResultResult.value!;
+
+    if (syncResult['serverChanges'].isNotEmpty) {
+      yield Call(taskRepo.addOrUpdateTasks,
+          args: [syncResult['serverChanges']]);
+    }
+
+    if (syncResult['clientChanges'].isNotEmpty) {
+      yield Call(taskRepo.addOrUpdateTasks,
+          args: [syncResult['clientChanges']]);
+    }
+
+    // Update lastSyncTimestamp to the latest successfully synced task
+    DateTime newSyncTimestamp =
+        syncResult['lastSuccessfulSyncTimestamp'] ?? lastSyncTimestamp;
+    yield Call(taskRepo.updateLastSyncTimestamp, args: [newSyncTimestamp]);
+
+    if (syncResult['failedChunks'].isEmpty) {
+      yield Call(taskRepo.clearFailedChunks);
+      yield Put(SyncTasksSuccessAction(
+          syncResult['serverChanges'] + syncResult['clientChanges']));
+    } else {
+      yield Call(taskRepo.storeFailedChunks,
+          args: [syncResult['failedChunks']]);
+      yield Put(SyncTasksFailureAction(
+          'Sync partially failed. Some changes were not synced.'));
+    }
+    yield Call(_fetchTasksFromDatabase);
   }
 }

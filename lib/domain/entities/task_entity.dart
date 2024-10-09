@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:teja/infrastructure/database/isar_collections/task.dart';
 
 enum TaskType { todo, daily, habit }
@@ -25,6 +23,11 @@ class TaskEntity {
   List<DateTime> completedDates;
   List<HabitEntryEntity> habitEntries;
 
+  // New fields for sync
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final bool isDeleted;
+
   TaskEntity({
     required this.id,
     required this.title,
@@ -41,6 +44,9 @@ class TaskEntity {
     this.completedAt,
     List<DateTime>? completedDates,
     List<HabitEntryEntity>? habitEntries,
+    required this.createdAt,
+    required this.updatedAt,
+    this.isDeleted = false,
   })  : this.completedDates = completedDates ?? [],
         this.habitEntries = habitEntries ?? [];
 
@@ -53,14 +59,22 @@ class TaskEntity {
       due: task.due != null ? TaskDueEntity.fromIsar(task.due!) : null,
       labels: task.labels,
       priority: task.priority,
-      duration: task.durationInMinutes != null ? Duration(minutes: task.durationInMinutes!) : null,
+      duration: task.durationInMinutes != null
+          ? Duration(minutes: task.durationInMinutes!)
+          : null,
       pomodoros: task.pomodoros,
       type: _stringToTaskType(task.type),
-      habitDirection: task.habitDirection != null ? _stringToHabitDirection(task.habitDirection!) : null,
+      habitDirection: task.habitDirection != null
+          ? _stringToHabitDirection(task.habitDirection!)
+          : null,
       daysOfWeek: task.daysOfWeek,
       completedAt: task.completedAt,
       completedDates: task.completedDates,
-      habitEntries: task.habitEntries.map((e) => HabitEntryEntity.fromIsar(e)).toList(),
+      habitEntries:
+          task.habitEntries.map((e) => HabitEntryEntity.fromIsar(e)).toList(),
+      createdAt: task.createdAt,
+      updatedAt: task.updatedAt,
+      isDeleted: task.isDeleted,
     );
   }
 
@@ -76,11 +90,82 @@ class TaskEntity {
       ..durationInMinutes = duration?.inMinutes
       ..pomodoros = pomodoros
       ..type = _taskTypeToString(type)
-      ..habitDirection = habitDirection != null ? _habitDirectionToString(habitDirection!) : null
+      ..habitDirection = habitDirection != null
+          ? _habitDirectionToString(habitDirection!)
+          : null
       ..daysOfWeek = daysOfWeek
       ..completedAt = completedAt
       ..completedDates = completedDates
-      ..habitEntries = habitEntries.map((e) => e.toIsar()).toList();
+      ..habitEntries = habitEntries.map((e) => e.toIsar()).toList()
+      ..createdAt = createdAt
+      ..updatedAt = updatedAt
+      ..isDeleted = isDeleted;
+  }
+
+  factory TaskEntity.fromJson(Map<String, dynamic> json) {
+    return TaskEntity(
+      id: json['id'] ?? '',
+      title: json['title'] ?? '',
+      description: json['description'],
+      notes: (json['notes'] as List<dynamic>?)
+          ?.map((n) => TaskNoteEntity.fromJson(n))
+          .toList(),
+      due: json['due'] != null ? TaskDueEntity.fromJson(json['due']) : null,
+      labels: List<String>.from(json['labels'] ?? []),
+      priority: json['priority'] ?? 0,
+      duration: json['durationInMinutes'] != null
+          ? Duration(minutes: json['durationInMinutes'])
+          : null,
+      pomodoros: json['pomodoros'],
+      type: _stringToTaskType(json['type'] ?? 'todo'),
+      habitDirection: json['habitDirection'] != null
+          ? _stringToHabitDirection(json['habitDirection'])
+          : null,
+      daysOfWeek: json['daysOfWeek'] != null
+          ? List<int>.from(json['daysOfWeek'])
+          : null,
+      completedAt: json['completedAt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(json['completedAt'])
+          : null,
+      completedDates: (json['completedDates'] as List<dynamic>?)
+              ?.map((date) => DateTime.fromMillisecondsSinceEpoch(date))
+              .toList() ??
+          [],
+      habitEntries: (json['habitEntries'] as List<dynamic>?)
+              ?.map((e) => HabitEntryEntity.fromJson(e))
+              .where((entry) => entry != null)
+              .toList() ??
+          [],
+      createdAt: DateTime.fromMillisecondsSinceEpoch(json['createdAt'] ?? 0),
+      updatedAt: DateTime.fromMillisecondsSinceEpoch(json['updatedAt'] ?? 0),
+      isDeleted: json['isDeleted'] ?? false,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'notes': notes?.map((n) => n.toJson()).toList(),
+      'due': due?.toJson(),
+      'labels': labels,
+      'priority': priority,
+      'durationInMinutes': duration?.inMinutes,
+      'pomodoros': pomodoros,
+      'type': _taskTypeToString(type),
+      'habitDirection': habitDirection != null
+          ? _habitDirectionToString(habitDirection!)
+          : null,
+      'daysOfWeek': daysOfWeek,
+      'completedAt': completedAt?.millisecondsSinceEpoch,
+      'completedDates':
+          completedDates.map((date) => date.millisecondsSinceEpoch).toList(),
+      'habitEntries': habitEntries.map((e) => e.toJson()).toList(),
+      'createdAt': createdAt.millisecondsSinceEpoch,
+      'updatedAt': updatedAt.millisecondsSinceEpoch,
+      'isDeleted': isDeleted,
+    };
   }
 
   TaskEntity copyWith({
@@ -99,6 +184,9 @@ class TaskEntity {
     DateTime? completedAt,
     List<DateTime>? completedDates,
     List<HabitEntryEntity>? habitEntries,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    bool? isDeleted,
   }) {
     return TaskEntity(
       id: id ?? this.id,
@@ -113,9 +201,12 @@ class TaskEntity {
       type: type ?? this.type,
       habitDirection: habitDirection ?? this.habitDirection,
       daysOfWeek: daysOfWeek ?? this.daysOfWeek,
-      completedAt: completedAt,
+      completedAt: completedAt ?? this.completedAt,
       completedDates: completedDates ?? this.completedDates,
       habitEntries: habitEntries ?? this.habitEntries,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      isDeleted: isDeleted ?? this.isDeleted,
     );
   }
 
@@ -173,6 +264,34 @@ class TaskNoteEntity {
     );
   }
 
+  factory TaskNoteEntity.fromJson(Map<String, dynamic> json) {
+    return TaskNoteEntity(
+      id: json['noteId'] ?? '',
+      content: json['content'] ?? '',
+      createdAt: DateTime.fromMillisecondsSinceEpoch(json['createdAt'] ?? 0),
+    );
+  }
+
+  TaskNoteEntity copyWith({
+    String? id,
+    String? content,
+    DateTime? createdAt,
+  }) {
+    return TaskNoteEntity(
+      id: id ?? this.id,
+      content: content ?? this.content,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'noteId': id,
+      'content': content,
+      'createdAt': createdAt.millisecondsSinceEpoch,
+    };
+  }
+
   TaskNote toIsar() {
     return TaskNote()
       ..noteId = id
@@ -194,6 +313,18 @@ class TaskDueEntity {
 
   TaskDue toIsar() {
     return TaskDue()..date = date;
+  }
+
+  factory TaskDueEntity.fromJson(Map<String, dynamic> json) {
+    return TaskDueEntity(
+      date: DateTime.fromMillisecondsSinceEpoch(json['date'] ?? 0),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'date': date.millisecondsSinceEpoch,
+    };
   }
 }
 
@@ -217,5 +348,20 @@ class HabitEntryEntity {
     return HabitEntry()
       ..timestamp = timestamp
       ..direction = TaskEntity._habitDirectionToString(direction);
+  }
+
+  factory HabitEntryEntity.fromJson(Map<String, dynamic> json) {
+    return HabitEntryEntity(
+      timestamp: DateTime.fromMillisecondsSinceEpoch(json['timestamp'] ?? 0),
+      direction:
+          TaskEntity._stringToHabitDirection(json['direction'] ?? 'positive'),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'timestamp': timestamp.millisecondsSinceEpoch,
+      'direction': TaskEntity._habitDirectionToString(direction),
+    };
   }
 }

@@ -48,6 +48,23 @@ class IncrementHabitAction {
 }
 
 @immutable
+class SyncTasksAction {}
+
+@immutable
+class SyncTasksSuccessAction {
+  final List<TaskEntity> updatedTasks;
+
+  const SyncTasksSuccessAction(this.updatedTasks);
+}
+
+@immutable
+class SyncTasksFailureAction {
+  final String error;
+
+  const SyncTasksFailureAction(this.error);
+}
+
+@immutable
 class TaskUpdateInProgressAction {}
 
 @immutable
