@@ -5,7 +5,7 @@ import 'theme_state.dart';
 Reducer<ThemeState> themeReducer = combineReducers<ThemeState>([
   TypedReducer<ThemeState, ThemeImagesReceivedAction>(_themeImagesReceived),
   TypedReducer<ThemeState, ThemeImagesFailedAction>(_themeImagesFailed),
-  TypedReducer<ThemeState, SelectThemeImageAction>(_selectThemeImage),
+  // TypedReducer<ThemeState, SelectThemeImageAction>(_selectThemeImage),
 ]);
 
 ThemeState _themeImagesReceived(
@@ -27,9 +27,9 @@ ThemeState _themeImagesFailed(
   return state.copyWith(errorMessage: action.error);
 }
 
-ThemeState _selectThemeImage(ThemeState state, SelectThemeImageAction action) {
-  return state.copyWith(
-    selectedImage: action.imageUrl,
-    selectedOpacity: action.opacity,
-  );
-}
+// ThemeState _selectThemeImage(ThemeState state, SelectThemeImageAction action) {
+//   return state.copyWith(
+//     selectedImage: action.imageUrl,
+//     selectedOpacity: action.opacity,
+//   );
+// }

@@ -5,10 +5,12 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
 import 'package:teja/domain/redux/mood/list/actions.dart';
+import 'package:teja/infrastructure/utils/user_preference_helper.dart';
 import 'package:teja/presentation/home/ui/QuickInputWidget.dart';
 import 'package:teja/presentation/home/ui/StreakDashboardWidget.dart';
 import 'package:teja/presentation/home/ui/count_down_timer.dart';
@@ -20,6 +22,7 @@ import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/presentation/navigation/leadingContainer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:teja/router.dart';
+import 'package:teja/theme/theme_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -118,19 +121,37 @@ class _HomePageState extends State<HomePage> {
     return StoreConnector<AppState, _ViewModel>(
       converter: _ViewModel.fromStore,
       builder: (context, store) {
+        Provider.of<ThemeService>(context, listen: true);
+        final UserPreferenceStorage _preferenceStorage =
+            UserPreferenceStorage();
+
         return Stack(
           children: [
-            // Background Image with Opacity and Blur
             Positioned.fill(
-              child: ImageFiltered(
-                imageFilter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
-                child: Opacity(
-                  opacity: 1, // Adjust this value to change the opacity
-                  child: Image(
-                    image: CachedNetworkImageProvider(store.backgroundImageUrl),
-                    fit: BoxFit.fill,
-                  ),
-                ),
+              child: FutureBuilder<String?>(
+                future: _preferenceStorage
+                    .getSelectedImageUrl(), // Await the Future here
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return const Center(child: Text('Error loading image'));
+                  } else if (!snapshot.hasData || snapshot.data == null) {
+                    return const Center(child: Text('No image selected'));
+                  }
+
+                  final selectedImage = snapshot.data!;
+                  return ImageFiltered(
+                    imageFilter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                    child: Opacity(
+                      opacity: 1, // Adjust this value to change the opacity
+                      child: Image(
+                        image: CachedNetworkImageProvider(selectedImage),
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
             // Semi-transparent overlay for better readability
@@ -239,18 +260,12 @@ class _HomePageState extends State<HomePage> {
 
 class _ViewModel {
   final DateTime? selectedDate;
-  final String backgroundImageUrl;
 
   _ViewModel({
     this.selectedDate,
-    required this.backgroundImageUrl,
   });
 
   static _ViewModel fromStore(Store<AppState> store) {
-    print('store.backgroundImageUrl 1 ${store.state.themeState.selectedImage}');
-    return _ViewModel(
-      selectedDate: store.state.homeState.selectedDate,
-      backgroundImageUrl: store.state.themeState.selectedImage ?? '',
-    );
+    return _ViewModel(selectedDate: store.state.homeState.selectedDate);
   }
 }

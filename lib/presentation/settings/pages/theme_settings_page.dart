@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/theme/theme_actions.dart';
+import 'package:teja/infrastructure/utils/user_preference_helper.dart';
 import 'package:teja/theme/theme_service.dart';
 
 class ThemeSettingsPage extends StatefulWidget {
@@ -134,13 +135,15 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
       List<Map<String, dynamic>> imageList, String theme, _ViewModel vm) {
     final ThemeService themeService =
         Provider.of<ThemeService>(context, listen: false);
-
+    final UserPreferenceStorage _preferenceStorage = UserPreferenceStorage();
     if (imageList.isEmpty) {
       return const Padding(
         padding: EdgeInsets.all(16.0),
         child: Text('No images available for this theme.'),
       );
     }
+
+    final selectedImage = _preferenceStorage.getSelectedImageUrl();
 
     return GridView.builder(
       shrinkWrap: true,
@@ -153,15 +156,11 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
       itemCount: imageList.length,
       itemBuilder: (context, index) {
         final image = imageList[index];
-        bool isSelected = image['url'] == vm.selectedImage;
+        print('Selected Image: $selectedImage');
+        print('Image URL: ${image['url']}');
+        bool isSelected = image['url'] == selectedImage;
 
         return GestureDetector(
-          // onTap: () {
-          //   // Dispatch action to select this image and opacity
-          //   StoreProvider.of<AppState>(context).dispatch(
-          //     SelectThemeImageAction(image['url'], image['opacity'] ?? 1.0),
-          //   );
-          // },
           onTap: () {
             final currentTheme = themeService.themeMode;
             if ((theme == 'DAY' && currentTheme == ThemeMode.light) ||
@@ -170,6 +169,7 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
               StoreProvider.of<AppState>(context).dispatch(
                 SelectThemeImageAction(image['url'], image['opacity'] ?? 1.0),
               );
+              _preferenceStorage.setSelectedImageUrl(image['url']);
             } else {
               // Optionally show a message or do nothing
               ScaffoldMessenger.of(context).showSnackBar(
@@ -178,7 +178,6 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
               );
             }
           },
-
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -213,13 +212,13 @@ class _ViewModel {
   final List<Map<String, dynamic>> lightThemeImages;
   final List<Map<String, dynamic>> darkThemeImages;
   final List<Map<String, dynamic>> systemThemeImages;
-  final String? selectedImage;
+  // final String? selectedImage;
 
   _ViewModel({
     required this.lightThemeImages,
     required this.darkThemeImages,
     required this.systemThemeImages,
-    this.selectedImage,
+    // this.selectedImage,
   });
 
   static _ViewModel fromStore(Store<AppState> store) {
@@ -228,7 +227,7 @@ class _ViewModel {
       lightThemeImages: themeState.lightThemeImages,
       darkThemeImages: themeState.darkThemeImages,
       systemThemeImages: themeState.systemThemeImages,
-      selectedImage: themeState.selectedImage,
+      // selectedImage: themeState.selectedImage,
     );
   }
 }
