@@ -30,7 +30,6 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
     final store = StoreProvider.of<AppState>(context);
     store.dispatch(const FetchLightThemeImagesAction());
     store.dispatch(const FetchDarkThemeImagesAction());
-    store.dispatch(const FetchSystemThemeImagesAction());
   }
 
   @override
@@ -51,7 +50,7 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
             children: [
               _buildThemeSelector('Light Theme', 'DAY', themeService),
               _buildThemeSelector('Dark Theme', 'NIGHT', themeService),
-              _buildThemeSelector('System Theme', '', themeService),
+              _buildSystemThemeSelector(themeService),
             ],
           ),
         ),
@@ -65,24 +64,12 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
       converter: _ViewModel.fromStore,
       builder: (context, vm) {
         bool isExpanded = _expandedTheme == title;
-        bool isSelected = (theme == 'DAY' &&
-                themeService.themeMode == ThemeMode.light) ||
-            (theme == 'NIGHT' && themeService.themeMode == ThemeMode.dark) ||
-            (theme.isEmpty && themeService.themeMode == ThemeMode.system);
-        Brightness systemBrightness = MediaQuery.of(context).platformBrightness;
+        bool isSelected =
+            (theme == 'DAY' && themeService.themeMode == ThemeMode.light) ||
+                (theme == 'NIGHT' && themeService.themeMode == ThemeMode.dark);
 
-        List<Map<String, dynamic>> images;
-        if (theme == 'DAY') {
-          images = vm.lightThemeImages;
-        } else if (theme == 'NIGHT') {
-          images = vm.darkThemeImages;
-        } else {
-          if (systemBrightness == Brightness.dark) {
-            images = vm.darkThemeImages;
-          } else {
-            images = vm.lightThemeImages;
-          }
-        }
+        List<Map<String, dynamic>> images =
+            theme == 'DAY' ? vm.lightThemeImages : vm.darkThemeImages;
 
         return Column(
           children: [
@@ -98,10 +85,9 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
                 onChanged: (String? value) {
                   setState(() {
                     themeService.setThemeMode(
-                      theme.isEmpty
-                          ? ThemeMode.system
-                          : (theme == 'DAY' ? ThemeMode.light : ThemeMode.dark),
+                      theme == 'DAY' ? ThemeMode.light : ThemeMode.dark,
                     );
+                    _clearSelectedImage();
                   });
                 },
               ),
@@ -117,10 +103,9 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
               onTap: () {
                 setState(() {
                   themeService.setThemeMode(
-                    theme.isEmpty
-                        ? ThemeMode.system
-                        : (theme == 'DAY' ? ThemeMode.light : ThemeMode.dark),
+                    theme == 'DAY' ? ThemeMode.light : ThemeMode.dark,
                   );
+                  _clearSelectedImage();
                 });
               },
             ),
@@ -128,6 +113,36 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
           ],
         );
       },
+    );
+  }
+
+  Widget _buildSystemThemeSelector(ThemeService themeService) {
+    return ListTile(
+      title: const Text('System Theme'),
+      leading: Radio<ThemeMode>(
+        value: ThemeMode.system,
+        groupValue: themeService.themeMode,
+        onChanged: (ThemeMode? value) {
+          setState(() {
+            themeService.setThemeMode(ThemeMode.system);
+            _clearSelectedImage();
+          });
+        },
+      ),
+      onTap: () {
+        setState(() {
+          themeService.setThemeMode(ThemeMode.system);
+          _clearSelectedImage();
+        });
+      },
+    );
+  }
+
+  void _clearSelectedImage() {
+    final UserPreferenceStorage _preferenceStorage = UserPreferenceStorage();
+    _preferenceStorage.setSelectedImageUrl('');
+    StoreProvider.of<AppState>(context).dispatch(
+      SelectThemeImageAction('', 1.0),
     );
   }
 
@@ -143,65 +158,74 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
       );
     }
 
-    final selectedImage = _preferenceStorage.getSelectedImageUrl();
+    return FutureBuilder<String?>(
+      future: _preferenceStorage.getSelectedImageUrl(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const CircularProgressIndicator();
+        }
+        final selectedImage = snapshot.data;
 
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        crossAxisSpacing: 4,
-        mainAxisSpacing: 4,
-      ),
-      itemCount: imageList.length,
-      itemBuilder: (context, index) {
-        final image = imageList[index];
-        print('Selected Image: $selectedImage');
-        print('Image URL: ${image['url']}');
-        bool isSelected = image['url'] == selectedImage;
-
-        return GestureDetector(
-          onTap: () {
-            final currentTheme = themeService.themeMode;
-            if ((theme == 'DAY' && currentTheme == ThemeMode.light) ||
-                (theme == 'NIGHT' && currentTheme == ThemeMode.dark) ||
-                (theme.isEmpty && currentTheme == ThemeMode.system)) {
-              StoreProvider.of<AppState>(context).dispatch(
-                SelectThemeImageAction(image['url'], image['opacity'] ?? 1.0),
-              );
-              _preferenceStorage.setSelectedImageUrl(image['url']);
-            } else {
-              // Optionally show a message or do nothing
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content: Text('Please select the appropriate theme first')),
-              );
-            }
-          },
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              CachedNetworkImage(
-                imageUrl: image['url'],
-                fit: BoxFit.cover,
-                placeholder: (context, url) => CircularProgressIndicator(),
-                errorWidget: (context, url, error) => Icon(Icons.error),
-              ),
-              if (isSelected)
-                const Positioned(
-                  top: 8,
-                  right: 8,
-                  child:
-                      Icon(Icons.check_circle, color: Colors.green, size: 24),
-                ),
-              if (isSelected)
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.green, width: 2),
-                  ),
-                ),
-            ],
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            crossAxisSpacing: 4,
+            mainAxisSpacing: 4,
           ),
+          itemCount: imageList.length,
+          itemBuilder: (context, index) {
+            final image = imageList[index];
+            bool isSelected = image['url'] == selectedImage;
+
+            return GestureDetector(
+              onTap: () {
+                final currentTheme = themeService.themeMode;
+                if ((theme == 'DAY' && currentTheme == ThemeMode.light) ||
+                    (theme == 'NIGHT' && currentTheme == ThemeMode.dark)) {
+                  StoreProvider.of<AppState>(context).dispatch(
+                    SelectThemeImageAction(
+                        image['url'], image['opacity'] ?? 1.0),
+                  );
+                  _preferenceStorage.setSelectedImageUrl(image['url']);
+                  setState(() {}); // Trigger a rebuild to update the UI
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content:
+                            Text('Please select the appropriate theme first')),
+                  );
+                }
+              },
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  CachedNetworkImage(
+                    imageUrl: image['url'],
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) =>
+                        const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
+                  ),
+                  if (isSelected)
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.green, width: 3),
+                      ),
+                    ),
+                  if (isSelected)
+                    const Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Icon(Icons.check_circle,
+                          color: Colors.green, size: 24),
+                    ),
+                ],
+              ),
+            );
+          },
         );
       },
     );

@@ -10,7 +10,7 @@ import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
 import 'package:teja/domain/redux/mood/list/actions.dart';
-import 'package:teja/infrastructure/utils/user_preference_helper.dart';
+import 'package:teja/presentation/home/ui/background_image_wrapper.dart';
 import 'package:teja/presentation/home/ui/QuickInputWidget.dart';
 import 'package:teja/presentation/home/ui/StreakDashboardWidget.dart';
 import 'package:teja/presentation/home/ui/count_down_timer.dart';
@@ -20,9 +20,8 @@ import 'package:teja/presentation/navigation/buildDesktopDrawer.dart';
 import 'package:teja/presentation/navigation/mobile_navigation_bar.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/presentation/navigation/leadingContainer.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:teja/router.dart';
-import 'package:teja/theme/theme_service.dart';
+import 'package:teja/infrastructure/utils/user_preference_helper.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -34,9 +33,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool showCalendar = false;
   static const int pageSize = 3000;
-
+  final UserPreferenceStorage _preferenceStorage = UserPreferenceStorage();
+  ThemeMode _currentThemeMode = ThemeMode.system;
+  String? _backgroundImageUrl;
   get bottomNavigationBar => null;
-  int _selectedSegment = 0;
 
   String getGreetingMessage() {
     final now = DateTime.now();
@@ -103,117 +103,79 @@ class _HomePageState extends State<HomePage> {
         store.dispatch(LoadMoodLogsListAction(0, pageSize));
         store.dispatch(LoadJournalEntriesListAction(0, pageSize));
       }
+      _loadPreferences();
+    });
+  }
+
+  Future<void> _loadPreferences() async {
+    final themeMode = await _preferenceStorage.getThemeMode();
+    final imageUrl = await _preferenceStorage.getSelectedImageUrl();
+    setState(() {
+      _currentThemeMode = themeMode;
+      _backgroundImageUrl = imageUrl;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final GoRouter goRouter = GoRouter.of(context);
-    Posthog posthog = Posthog();
-    posthog.screen(
-      screenName: 'Home Page',
-    );
-    DateTime now = DateTime.now();
-
-    final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
-
     return StoreConnector<AppState, _ViewModel>(
       converter: _ViewModel.fromStore,
       builder: (context, store) {
-        Provider.of<ThemeService>(context, listen: true);
-        final UserPreferenceStorage _preferenceStorage =
-            UserPreferenceStorage();
-        return Stack(
-          children: [
-            Positioned.fill(
-              child: FutureBuilder<String?>(
-                future: _preferenceStorage
-                    .getSelectedImageUrl(), // Await the Future here
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return const Center(child: Text('Error loading image'));
-                  } else if (!snapshot.hasData || snapshot.data == null) {
-                    return const Center(child: Text('No image selected'));
-                  }
-
-                  final selectedImage = snapshot.data!;
-                  return ImageFiltered(
-                    imageFilter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                    child: Opacity(
-                      opacity: 1, // Adjust this value to change the opacity
-                      child: Image(
-                        image: CachedNetworkImageProvider(selectedImage),
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            // Semi-transparent overlay for better readability
-            Positioned.fill(
-              child: FutureBuilder<ThemeMode>(
-                future: UserPreferenceStorage().getThemeMode(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Container(); // Or a loading indicator if you prefer
-                  }
-
-                  final themeMode = snapshot.data ?? ThemeMode.system;
-                  final isDarkMode = themeMode == ThemeMode.dark ||
-                      (themeMode == ThemeMode.system &&
-                          MediaQuery.of(context).platformBrightness ==
-                              Brightness.dark);
-
-                  return Container(
-                    color: isDarkMode
-                        ? Colors.black.withOpacity(0.7)
-                        : Colors.white.withOpacity(0.7),
-                  );
-                },
-              ),
-            ),
-            // Scaffold
-            Scaffold(
-              backgroundColor: Colors.transparent,
-              appBar: AppBar(
-                elevation: 0.0,
-                backgroundColor: Colors.transparent,
-                forceMaterialTransparency: true,
-                leading: leadingNavBar(context),
-                leadingWidth: 72,
-              ),
-              bottomNavigationBar:
-                  isDesktop(context) ? null : const MobileNavigationBar(),
-              body: isDesktop(context)
-                  ? Row(
-                      children: [
-                        buildDesktopNavigationBar(context),
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            child: SizedBox(
-                              width: 630,
-                              child: _buildMainBody(
-                                  context, store, textTheme, now),
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
-                  : _buildMainBody(context, store, textTheme, now),
-            ),
-          ],
+        return BackgroundImageWrapper(
+          themeMode: _currentThemeMode,
+          backgroundImageUrl: _backgroundImageUrl,
+          child: _buildScaffold(context, store),
         );
       },
     );
   }
 
-  Widget _buildMainBody(BuildContext context, _ViewModel store,
-      TextTheme textTheme, DateTime now) {
+  void _navigateToSettings() async {
+    await GoRouter.of(context).push("/settings");
+    // Reload preferences when returning from settings
+    _loadPreferences();
+  }
+
+  Widget _buildScaffold(BuildContext context, _ViewModel store) {
+    final bool isCustomTheme = _currentThemeMode != ThemeMode.system;
+
+    return Scaffold(
+      backgroundColor: isCustomTheme ? Colors.transparent : null,
+      appBar: AppBar(
+        elevation: 0.0,
+        backgroundColor: isCustomTheme ? Colors.transparent : null,
+        forceMaterialTransparency: isCustomTheme,
+        leading: leadingNavBar(context),
+        leadingWidth: 72,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: _navigateToSettings,
+          ),
+        ],
+      ),
+      bottomNavigationBar:
+          isDesktop(context) ? null : const MobileNavigationBar(),
+      body: isDesktop(context)
+          ? Row(
+              children: [
+                buildDesktopNavigationBar(context),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: SizedBox(
+                      width: 630,
+                      child: _buildMainBody(context, store),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          : _buildMainBody(context, store),
+    );
+  }
+
+  Widget _buildMainBody(BuildContext context, _ViewModel store) {
     return SingleChildScrollView(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -222,53 +184,48 @@ class _HomePageState extends State<HomePage> {
           Center(
             child: Text(
               getGreetingMessage(),
-              style: textTheme.titleSmall,
+              style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
           const SizedBox(height: 20),
           ExampleStreakEntriesDashboard(),
           const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 0),
-            child: Hero(
-              tag: 'quickInputHero',
-              child: QuickInputWidget(
-                onTap: () {
-                  context.pushNamed(
-                    'quickJournalEntry',
-                    extra: {'heroTag': 'quickInputHero'},
-                  );
-                },
-                onMoodTap: () {
-                  context.pushNamed(RootPath.moodEdit);
-                },
-                onAudioTap: () {
-                  context.pushNamed(RootPath.moodEdit);
-                },
-                onGuidedJournal: () {
-                  context.pushNamed(RootPath.journalCategory);
-                },
-              ),
-            ),
-          ),
+          const QuickInputWidgetWrapper(),
           const SizedBox(height: 20),
           Center(
             child: Text(
               "Today's Journal",
-              style: textTheme.titleSmall,
+              style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
-          const Column(
-            children: [
-              JournalEntriesWidget(),
-              MoodTrackerWidget(),
-            ],
-          ),
+          const JournalEntriesWidget(),
+          const MoodTrackerWidget(),
           if (store.selectedDate != null &&
-              now.compareTo(store.selectedDate!) < 0)
+              DateTime.now().compareTo(store.selectedDate!) < 0)
             const Center(child: CountdownTimer()),
           const SizedBox(height: 10),
         ],
+      ),
+    );
+  }
+}
+
+class QuickInputWidgetWrapper extends StatelessWidget {
+  const QuickInputWidgetWrapper({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 0),
+      child: Hero(
+        tag: 'quickInputHero',
+        child: QuickInputWidget(
+          onTap: () => context.pushNamed('quickJournalEntry',
+              extra: {'heroTag': 'quickInputHero'}),
+          onMoodTap: () => context.pushNamed(RootPath.moodEdit),
+          onAudioTap: () => context.pushNamed(RootPath.moodEdit),
+          onGuidedJournal: () => context.pushNamed(RootPath.journalCategory),
+        ),
       ),
     );
   }
