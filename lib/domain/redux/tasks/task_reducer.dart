@@ -12,9 +12,12 @@ Reducer<TaskState> taskReducer = combineReducers<TaskState>([
   TypedReducer<TaskState, DeleteTaskAction>(_deleteTask),
   TypedReducer<TaskState, ToggleTaskCompletionAction>(_toggleTaskCompletion),
   TypedReducer<TaskState, IncrementHabitAction>(_incrementHabit),
+  TypedReducer<TaskState, SyncTasksSuccessAction>(_syncTasksSuccess),
+  TypedReducer<TaskState, SyncTasksFailureAction>(_syncTasksFailure),
 ]);
 
-TaskState _taskUpdateInProgress(TaskState state, TaskUpdateInProgressAction action) {
+TaskState _taskUpdateInProgress(
+    TaskState state, TaskUpdateInProgressAction action) {
   return state.copyWith(isLoading: true, errorMessage: null);
 }
 
@@ -46,16 +49,19 @@ TaskState _updateTask(TaskState state, UpdateTaskAction action) {
 }
 
 TaskState _deleteTask(TaskState state, DeleteTaskAction action) {
-  List<TaskEntity> updatedTasks = state.tasks.where((task) => task.id != action.taskId).toList();
+  List<TaskEntity> updatedTasks =
+      state.tasks.where((task) => task.id != action.taskId).toList();
   return state.copyWith(tasks: updatedTasks);
 }
 
-TaskState _toggleTaskCompletion(TaskState state, ToggleTaskCompletionAction action) {
+TaskState _toggleTaskCompletion(
+    TaskState state, ToggleTaskCompletionAction action) {
   List<TaskEntity> updatedTasks = state.tasks.map((task) {
     if (task.id == action.taskId) {
       switch (task.type) {
         case TaskType.todo:
-          return task.copyWith(completedAt: task.completedAt == null ? DateTime.now() : null);
+          return task.copyWith(
+              completedAt: task.completedAt == null ? DateTime.now() : null);
         case TaskType.daily:
           final today = DateTime.now();
           final todayDate = DateTime(today.year, today.month, today.day);
@@ -80,10 +86,26 @@ TaskState _incrementHabit(TaskState state, IncrementHabitAction action) {
   List<TaskEntity> updatedTasks = state.tasks.map((task) {
     if (task.id == action.taskId && task.type == TaskType.habit) {
       List<HabitEntryEntity> updatedEntries = List.from(task.habitEntries)
-        ..add(HabitEntryEntity(timestamp: DateTime.now(), direction: action.direction));
+        ..add(HabitEntryEntity(
+            timestamp: DateTime.now(), direction: action.direction));
       return task.copyWith(habitEntries: updatedEntries);
     }
     return task;
   }).toList();
   return state.copyWith(tasks: updatedTasks);
+}
+
+TaskState _syncTasksSuccess(TaskState state, SyncTasksSuccessAction action) {
+  return state.copyWith(
+    tasks: action.updatedTasks,
+    isLoading: false,
+    errorMessage: null,
+  );
+}
+
+TaskState _syncTasksFailure(TaskState state, SyncTasksFailureAction action) {
+  return state.copyWith(
+    isLoading: false,
+    errorMessage: action.error,
+  );
 }

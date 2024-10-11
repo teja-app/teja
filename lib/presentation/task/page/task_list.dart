@@ -47,6 +47,7 @@ class TaskListState extends State<TaskList> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       StoreProvider.of<AppState>(context).dispatch(LoadTasksAction());
+      StoreProvider.of<AppState>(context).dispatch(SyncTasksAction());
     });
   }
 
@@ -120,16 +121,21 @@ class TaskListState extends State<TaskList> {
     );
   }
 
-  Widget _buildTaskTypeSection(TaskType taskType, BuildContext context, TaskListViewModel viewModel) {
+  Widget _buildTaskTypeSection(
+      TaskType taskType, BuildContext context, TaskListViewModel viewModel) {
     final textTheme = Theme.of(context).textTheme;
-    List<TaskEntity> filteredTasks = _getFilteredTasks(taskType, viewModel.tasks);
+    List<TaskEntity> filteredTasks =
+        _getFilteredTasks(taskType, viewModel.tasks);
     return ExpansionTile(
       initiallyExpanded: taskType == TaskType.todo,
-      title: Text('${taskType.toString().split('.').last} (${filteredTasks.length})', style: textTheme.titleMedium),
+      title: Text(
+          '${taskType.toString().split('.').last} (${filteredTasks.length})',
+          style: textTheme.titleMedium),
       children: filteredTasks
           .map((task) => TaskWidget(
                 task: task,
-                updateTask: (task) => _openTaskEditor(context, viewModel, task: task, initialTaskType: taskType),
+                updateTask: (task) => _openTaskEditor(context, viewModel,
+                    task: task, initialTaskType: taskType),
                 toggleTask: viewModel.toggleTask,
                 activePomodoro: activePomodoro,
                 incrementHabit: viewModel.incrementHabit,
@@ -142,12 +148,14 @@ class TaskListState extends State<TaskList> {
     );
   }
 
-  List<TaskEntity> _getFilteredTasks(TaskType taskType, List<TaskEntity> allTasks) {
+  List<TaskEntity> _getFilteredTasks(
+      TaskType taskType, List<TaskEntity> allTasks) {
     if (_showAllTasks) {
       return allTasks.where((task) => task.type == taskType).toList();
     }
     final now = DateTime.now();
-    final currentDayOfWeek = now.weekday % 7; // 0 for Sunday, 1 for Monday, ..., 6 for Saturday
+    final currentDayOfWeek =
+        now.weekday % 7; // 0 for Sunday, 1 for Monday, ..., 6 for Saturday
 
     return allTasks.where((task) {
       if (task.type != taskType) return false;
@@ -159,8 +167,9 @@ class TaskListState extends State<TaskList> {
         }
         // Show daily task if it's scheduled for today or if it's overdue
         bool isScheduledToday = task.daysOfWeek!.contains(currentDayOfWeek);
-        bool isOverdue =
-            task.completedDates.isEmpty || task.completedDates.last.isBefore(DateTime(now.year, now.month, now.day));
+        bool isOverdue = task.completedDates.isEmpty ||
+            task.completedDates.last
+                .isBefore(DateTime(now.year, now.month, now.day));
         return isScheduledToday || isOverdue;
       }
 
@@ -175,7 +184,8 @@ class TaskListState extends State<TaskList> {
       converter: (store) => TaskListViewModel.fromStore(store),
       builder: (context, viewModel) {
         return Scaffold(
-          bottomNavigationBar: isDesktop(context) ? null : const MobileNavigationBar(),
+          bottomNavigationBar:
+              isDesktop(context) ? null : const MobileNavigationBar(),
           appBar: AppBar(
             elevation: 0.0,
             forceMaterialTransparency: true,
@@ -187,14 +197,17 @@ class TaskListState extends State<TaskList> {
               IconButton(
                 icon: const Icon(AntDesign.heart),
                 onPressed: () {
-                  GoRouter.of(context).pushNamed(
-                    RootPath.goalSettings,
-                  );
+                  GoRouter.of(context).pushNamed(RootPath.goalSettings);
                 },
               ),
               IconButton(
                 icon: const Icon(Icons.add),
-                onPressed: () => _openTaskEditor(context, viewModel, initialTaskType: TaskType.todo),
+                onPressed: () => _openTaskEditor(context, viewModel,
+                    initialTaskType: TaskType.todo),
+              ),
+              IconButton(
+                icon: const Icon(Icons.sync),
+                onPressed: viewModel.syncTasks,
               ),
             ],
           ),
@@ -205,17 +218,24 @@ class TaskListState extends State<TaskList> {
               else if (viewModel.errorMessage != null)
                 Center(child: Text('Error: ${viewModel.errorMessage}'))
               else if (viewModel.tasks.isEmpty)
-                Center(child: Text('No tasks yet. Add some!'))
+                const Center(child: Text('No tasks yet. Add some!'))
               else
                 RefreshIndicator(
-                  onRefresh: () async => viewModel.loadTasks(),
+                  onRefresh: () async {
+                    viewModel.loadTasks();
+                    viewModel.syncTasks();
+                  },
                   child: ListView(
-                    children: TaskType.values.map((type) => _buildTaskTypeSection(type, context, viewModel)).toList(),
+                    children: TaskType.values
+                        .map((type) =>
+                            _buildTaskTypeSection(type, context, viewModel))
+                        .toList(),
                   ),
                 ),
               if (activePomodoro != null)
                 PomodoroOverlay(
-                  activeTask: viewModel.tasks.firstWhere((t) => t.id == activePomodoro),
+                  activeTask:
+                      viewModel.tasks.firstWhere((t) => t.id == activePomodoro),
                   pomodoroTime: pomodoroTime,
                   isRunning: isRunning,
                   isBreak: isBreak,
@@ -244,6 +264,7 @@ class TaskListViewModel {
   final Function(TaskEntity) addTask;
   final Function(TaskEntity) updateTask;
   final Function() loadTasks;
+  final Function() syncTasks;
 
   TaskListViewModel({
     required this.tasks,
@@ -254,6 +275,7 @@ class TaskListViewModel {
     required this.addTask,
     required this.updateTask,
     required this.loadTasks,
+    required this.syncTasks,
   });
 
   static TaskListViewModel fromStore(Store<AppState> store) {
@@ -261,12 +283,14 @@ class TaskListViewModel {
       tasks: store.state.taskState.tasks,
       isLoading: store.state.taskState.isLoading,
       errorMessage: store.state.taskState.errorMessage,
-      toggleTask: (String taskId) => store.dispatch(ToggleTaskCompletionAction(taskId)),
+      toggleTask: (String taskId) =>
+          store.dispatch(ToggleTaskCompletionAction(taskId)),
       incrementHabit: (String taskId, HabitDirection direction) =>
           store.dispatch(IncrementHabitAction(taskId, direction)),
       addTask: (TaskEntity task) => store.dispatch(AddTaskAction(task)),
       updateTask: (TaskEntity task) => store.dispatch(UpdateTaskAction(task)),
       loadTasks: () => store.dispatch(LoadTasksAction()),
+      syncTasks: () => store.dispatch(SyncTasksAction()),
     );
   }
 }

@@ -28,6 +28,10 @@ class Task {
   DateTime? completedAt;
   List<DateTime> completedDates = [];
   List<HabitEntry> habitEntries = [];
+
+  late DateTime createdAt;
+  late DateTime updatedAt;
+  bool isDeleted = false;
 }
 
 @embedded

@@ -4,17 +4,14 @@ import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/task_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/tasks/task_action.dart';
-import 'package:teja/domain/redux/tasks/task_state.dart';
 import 'package:teja/presentation/task/page/task_edit.dart';
 import 'package:teja/presentation/task/ui/Heatmap.dart';
+import 'package:uuid/uuid.dart';
 
 class TaskDetailPage extends StatefulWidget {
   final String taskId;
 
-  const TaskDetailPage({
-    Key? key,
-    required this.taskId,
-  }) : super(key: key);
+  const TaskDetailPage({Key? key, required this.taskId}) : super(key: key);
 
   @override
   _TaskDetailPageState createState() => _TaskDetailPageState();
@@ -67,12 +64,16 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
   void _addNote(TaskDetailViewModel viewModel) {
     if (_newNoteController.text.isNotEmpty) {
       final newNote = TaskNoteEntity(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        id: const Uuid().v7(),
         content: _newNoteController.text,
         createdAt: DateTime.now(),
       );
+      final updatedNotes =
+          List<TaskNoteEntity>.from(viewModel.task.notes ?? []);
+      updatedNotes.add(newNote);
       final updatedTask = viewModel.task.copyWith(
-        notes: [...(viewModel.task.notes ?? []), newNote],
+        notes: updatedNotes,
+        updatedAt: DateTime.now(),
       );
       viewModel.updateTask(updatedTask);
       _newNoteController.clear();
@@ -80,8 +81,12 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
   }
 
   void _deleteNote(TaskDetailViewModel viewModel, String noteId) {
-    final updatedNotes = viewModel.task.notes?.where((note) => note.id != noteId).toList();
-    final updatedTask = viewModel.task.copyWith(notes: updatedNotes);
+    final updatedNotes =
+        viewModel.task.notes?.where((note) => note.id != noteId).toList() ?? [];
+    final updatedTask = viewModel.task.copyWith(
+      notes: updatedNotes,
+      updatedAt: DateTime.now(),
+    );
     viewModel.updateTask(updatedTask);
   }
 
@@ -119,7 +124,8 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
               },
             )
           else
-            const Text('No notes yet.', style: TextStyle(fontStyle: FontStyle.italic)),
+            const Text('No notes yet.',
+                style: TextStyle(fontStyle: FontStyle.italic)),
           const SizedBox(height: 16),
           TextField(
             controller: _newNoteController,
@@ -144,16 +150,23 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
     final oneYearAgo = now.subtract(const Duration(days: 365));
 
     if (task.type == TaskType.daily) {
-      for (var date = oneYearAgo; date.isBefore(now); date = date.add(const Duration(days: 1))) {
-        final count =
-            task.completedDates.where((d) => d.year == date.year && d.month == date.month && d.day == date.day).length;
+      for (var date = oneYearAgo;
+          date.isBefore(now);
+          date = date.add(const Duration(days: 1))) {
+        final count = task.completedDates
+            .where((d) =>
+                d.year == date.year &&
+                d.month == date.month &&
+                d.day == date.day)
+            .length;
         if (count > 0) {
           dataset[DateTime(date.year, date.month, date.day)] = count;
         }
       }
     } else if (task.type == TaskType.habit) {
       for (var entry in task.habitEntries) {
-        final date = DateTime(entry.timestamp.year, entry.timestamp.month, entry.timestamp.day);
+        final date = DateTime(
+            entry.timestamp.year, entry.timestamp.month, entry.timestamp.day);
         dataset[date] = (dataset[date] ?? 0) + 1;
       }
     }
@@ -192,8 +205,10 @@ class TaskDetailViewModel {
     final task = store.state.taskState.tasks.firstWhere((t) => t.id == taskId);
     return TaskDetailViewModel(
       task: task,
-      updateTask: (TaskEntity updatedTask) => store.dispatch(UpdateTaskAction(updatedTask)),
-      toggleTask: (String taskId) => store.dispatch(ToggleTaskCompletionAction(taskId)),
+      updateTask: (TaskEntity updatedTask) =>
+          store.dispatch(UpdateTaskAction(updatedTask)),
+      toggleTask: (String taskId) =>
+          store.dispatch(ToggleTaskCompletionAction(taskId)),
     );
   }
 }
