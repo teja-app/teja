@@ -24,7 +24,7 @@ class TaskList extends StatefulWidget {
 }
 
 class TaskListState extends State<TaskList> {
-  bool _showAllTasks = false;
+  bool _showAllTasks = true;
 
   static const int POMODORO_DURATION = 25 * 60;
   static const int BREAK_DURATION = 5 * 60;
@@ -51,16 +51,13 @@ class TaskListState extends State<TaskList> {
     });
   }
 
-  Widget _buildToggleButton() {
+  Widget _buildToggleButton(TaskListViewModel viewModel) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: IconButton(
-        onPressed: () {
-          setState(() {
-            _showAllTasks = !_showAllTasks;
-          });
-        },
-        icon: Icon(_showAllTasks ? Icons.visibility_off : Icons.visibility),
+        onPressed: viewModel.toggleShowAllTasks,
+        icon: Icon(
+            viewModel.showAllTasks ? Icons.visibility_off : Icons.visibility),
       ),
     );
   }
@@ -122,12 +119,22 @@ class TaskListState extends State<TaskList> {
   }
 
   Widget _buildTaskTypeSection(
-      TaskType taskType, BuildContext context, TaskListViewModel viewModel) {
+    TaskType taskType,
+    BuildContext context,
+    TaskListViewModel viewModel,
+    bool showAllTasks,
+  ) {
     final textTheme = Theme.of(context).textTheme;
-    List<TaskEntity> filteredTasks =
-        _getFilteredTasks(taskType, viewModel.tasks);
+    List<TaskEntity> filteredTasks = _getFilteredTasks(
+      taskType,
+      viewModel.tasks,
+      showAllTasks,
+    );
     return ExpansionTile(
-      initiallyExpanded: taskType == TaskType.todo,
+      initiallyExpanded: viewModel.expandedSections[taskType]!,
+      onExpansionChanged: (expanded) {
+        viewModel.toggleExpandedSection(taskType);
+      },
       title: Text(
           '${taskType.toString().split('.').last} (${filteredTasks.length})',
           style: textTheme.titleMedium),
@@ -149,8 +156,8 @@ class TaskListState extends State<TaskList> {
   }
 
   List<TaskEntity> _getFilteredTasks(
-      TaskType taskType, List<TaskEntity> allTasks) {
-    if (_showAllTasks) {
+      TaskType taskType, List<TaskEntity> allTasks, bool showAllTasks) {
+    if (showAllTasks) {
       return allTasks.where((task) => task.type == taskType).toList();
     }
     final now = DateTime.now();
@@ -193,7 +200,7 @@ class TaskListState extends State<TaskList> {
             leadingWidth: 72,
             title: const Text('Tasks'),
             actions: [
-              _buildToggleButton(),
+              _buildToggleButton(viewModel),
               IconButton(
                 icon: const Icon(AntDesign.dotchart),
                 onPressed: () {
@@ -227,8 +234,12 @@ class TaskListState extends State<TaskList> {
                   },
                   child: ListView(
                     children: TaskType.values
-                        .map((type) =>
-                            _buildTaskTypeSection(type, context, viewModel))
+                        .map((type) => _buildTaskTypeSection(
+                              type,
+                              context,
+                              viewModel,
+                              viewModel.showAllTasks,
+                            ))
                         .toList(),
                   ),
                 ),
@@ -265,6 +276,10 @@ class TaskListViewModel {
   final Function(TaskEntity) updateTask;
   final Function() loadTasks;
   final Function() syncTasks;
+  final bool showAllTasks;
+  final Function() toggleShowAllTasks;
+  final Map<TaskType, bool> expandedSections;
+  final Function(TaskType) toggleExpandedSection;
 
   TaskListViewModel({
     required this.tasks,
@@ -276,6 +291,10 @@ class TaskListViewModel {
     required this.updateTask,
     required this.loadTasks,
     required this.syncTasks,
+    required this.showAllTasks,
+    required this.toggleShowAllTasks,
+    required this.expandedSections,
+    required this.toggleExpandedSection,
   });
 
   static TaskListViewModel fromStore(Store<AppState> store) {
@@ -291,6 +310,11 @@ class TaskListViewModel {
       updateTask: (TaskEntity task) => store.dispatch(UpdateTaskAction(task)),
       loadTasks: () => store.dispatch(LoadTasksAction()),
       syncTasks: () => store.dispatch(SyncTasksAction()),
+      showAllTasks: store.state.taskState.showAllTasks,
+      toggleShowAllTasks: () => store.dispatch(ToggleShowAllTasksAction()),
+      expandedSections: store.state.taskState.expandedSections,
+      toggleExpandedSection: (TaskType taskType) =>
+          store.dispatch(ToggleExpandedSectionAction(taskType)),
     );
   }
 }
