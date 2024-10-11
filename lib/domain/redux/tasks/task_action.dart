@@ -80,3 +80,13 @@ class TaskUpdateFailedAction {
 
   const TaskUpdateFailedAction(this.error);
 }
+
+@immutable
+class ToggleShowAllTasksAction {}
+
+@immutable
+class ToggleExpandedSectionAction {
+  final TaskType taskType;
+
+  const ToggleExpandedSectionAction(this.taskType);
+}
