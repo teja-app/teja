@@ -24,8 +24,6 @@ class TaskList extends StatefulWidget {
 }
 
 class TaskListState extends State<TaskList> {
-  bool _showAllTasks = true;
-
   static const int POMODORO_DURATION = 25 * 60;
   static const int BREAK_DURATION = 5 * 60;
 
