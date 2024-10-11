@@ -124,7 +124,6 @@ class _HomePageState extends State<HomePage> {
         Provider.of<ThemeService>(context, listen: true);
         final UserPreferenceStorage _preferenceStorage =
             UserPreferenceStorage();
-
         return Stack(
           children: [
             Positioned.fill(
@@ -156,8 +155,25 @@ class _HomePageState extends State<HomePage> {
             ),
             // Semi-transparent overlay for better readability
             Positioned.fill(
-              child: Container(
-                color: Colors.white.withOpacity(0.7),
+              child: FutureBuilder<ThemeMode>(
+                future: UserPreferenceStorage().getThemeMode(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Container(); // Or a loading indicator if you prefer
+                  }
+
+                  final themeMode = snapshot.data ?? ThemeMode.system;
+                  final isDarkMode = themeMode == ThemeMode.dark ||
+                      (themeMode == ThemeMode.system &&
+                          MediaQuery.of(context).platformBrightness ==
+                              Brightness.dark);
+
+                  return Container(
+                    color: isDarkMode
+                        ? Colors.black.withOpacity(0.7)
+                        : Colors.white.withOpacity(0.7),
+                  );
+                },
               ),
             ),
             // Scaffold

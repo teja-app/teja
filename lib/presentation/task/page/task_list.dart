@@ -195,7 +195,7 @@ class TaskListState extends State<TaskList> {
             actions: [
               _buildToggleButton(),
               IconButton(
-                icon: const Icon(AntDesign.heart),
+                icon: const Icon(AntDesign.dotchart),
                 onPressed: () {
                   GoRouter.of(context).pushNamed(RootPath.goalSettings);
                 },
