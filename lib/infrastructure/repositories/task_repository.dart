@@ -70,7 +70,9 @@ class TaskRepository {
         // Convert existing Isar task to TaskEntity
         final existingTaskEntity = TaskEntity.fromIsar(existingTask);
         // Create a map of existing notes using noteId as the key
-        final existingNotes = {for (var note in existingTaskEntity.notes ?? []) note.id: note};
+        final existingNotes = {
+          for (var note in existingTaskEntity.notes ?? []) note.id: note
+        };
 
         final updatedNotes = <TaskNoteEntity>[];
 
@@ -87,7 +89,6 @@ class TaskRepository {
             updatedNotes.add(newNote);
           }
         }
-
 
         // Create updated TaskEntity
         final updatedTaskEntity = existingTaskEntity.copyWith(
@@ -120,6 +121,17 @@ class TaskRepository {
   Future<void> deleteTask(String taskId) async {
     await isar.writeTxn(() async {
       await isar.tasks.filter().taskIdEqualTo(taskId).deleteAll();
+    });
+  }
+
+  Future<void> softDeleteTask(String taskId) async {
+    await isar.writeTxn(() async {
+      final task = await isar.tasks.filter().taskIdEqualTo(taskId).findFirst();
+      if (task != null) {
+        task.isDeleted = true;
+        task.updatedAt = DateTime.now();
+        await isar.tasks.put(task);
+      }
     });
   }
 

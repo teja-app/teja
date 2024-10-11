@@ -99,7 +99,7 @@ class TaskSaga {
 
         var deleteResult = Result<void>();
         yield Call(
-          taskRepo.deleteTask,
+          taskRepo.softDeleteTask, // Change this to softDeleteTask
           args: [action.taskId],
           result: deleteResult,
         );
