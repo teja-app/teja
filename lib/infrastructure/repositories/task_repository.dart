@@ -38,12 +38,36 @@ class TaskRepository {
   }
 
   Future<List<TaskEntity>> getAllTasks({bool includeDeleted = false}) async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
     final query = isar.tasks.where();
     if (!includeDeleted) {
       query.filter().isDeletedEqualTo(false);
     }
+
     final tasks = await query.findAll();
-    return tasks.map((task) => TaskEntity.fromIsar(task)).toList();
+    return tasks
+        .where((task) {
+          final taskEntity = TaskEntity.fromIsar(task);
+
+          switch (taskEntity.type) {
+            case TaskType.todo:
+              print("taskEntity.completedAt ${taskEntity.completedAt}");
+              // Show todos if they're not completed or completed today
+              return taskEntity.completedAt == null ||
+                  taskEntity.completedAt!
+                      .isAfter(today.subtract(Duration(days: 1)));
+            case TaskType.daily:
+              // Show dailies if they're not completed today
+              return true;
+            case TaskType.habit:
+              // Always show habits
+              return true;
+          }
+        })
+        .map((task) => TaskEntity.fromIsar(task))
+        .toList();
   }
 
   Future<void> addOrUpdateTasks(List<TaskEntity> tasks) async {
