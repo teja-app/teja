@@ -21,6 +21,7 @@ import 'package:teja/presentation/registration/page/RegistrationScreen.dart';
 import 'package:teja/presentation/profile/page/profile_page.dart';
 import 'package:teja/presentation/settings/pages/recovery_code_page.dart';
 import 'package:teja/presentation/settings/pages/notification_settings_page.dart';
+import 'package:teja/presentation/settings/pages/theme_settings_page.dart';
 import 'package:teja/presentation/task/page/task_list.dart';
 import 'package:teja/presentation/timeline/pages/timeline_list_page.dart';
 import 'package:teja/presentation/mood/share/pages/mood_share.dart';
@@ -58,6 +59,7 @@ class SettingPath {
   static const security = "security";
   static const advanced = "advanced";
   static const recoveryCode = "recovery-code";
+  static const theme = "theme";
 }
 
 class RootPath {
@@ -371,6 +373,11 @@ GoRouter createRouter(AnalyticsService analyticsService) {
             builder: (context, state) => NotificationSettingsPage(
               notificationService: notificationService,
             ),
+          ),
+          GoRoute(
+            name: SettingPath.theme,
+            path: 'theme',
+            builder: (context, state) => const ThemeSettingsPage(),
           ),
           GoRoute(
             name: SettingPath.basic,

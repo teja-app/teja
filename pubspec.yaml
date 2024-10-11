@@ -102,8 +102,9 @@ dependencies:
   syncfusion_flutter_gauges: ^20.2.47
   toastification: ^2.0.0
   palette_generator: ^0.3.3+4
+  cached_network_image: ^3.4.0
   in_app_purchase: ^3.2.0
-  provider: ^6.0.5 # Replace this with the latest version if needed
+  provider: ^6.0.5
 
 dev_dependencies:
   flutter_test:

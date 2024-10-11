@@ -50,10 +50,15 @@ class SettingsPage extends StatelessWidget {
                       child: FetchMasterView(),
                     ),
                   _buildSection('Personalization', [
+                    // _buildListTile(
+                    //   'Theme',
+                    //   Icons.palette,
+                    //   () => _showThemeOptions(context, themeService),
+                    // ),
                     _buildListTile(
                       'Theme',
                       Icons.palette,
-                      () => _showThemeOptions(context, themeService),
+                      () => GoRouter.of(context).push('/settings/theme'),
                     ),
                     _buildListTile(
                       'Notification Settings',
