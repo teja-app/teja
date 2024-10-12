@@ -90,3 +90,27 @@ class ToggleExpandedSectionAction {
 
   const ToggleExpandedSectionAction(this.taskType);
 }
+
+@immutable
+class FetchInitialTasksAction {
+  const FetchInitialTasksAction();
+}
+
+@immutable
+class FetchInitialTasksSuccessAction {
+  final List<TaskEntity> tasks;
+
+  const FetchInitialTasksSuccessAction(this.tasks);
+}
+
+@immutable
+class FetchInitialTasksFailureAction {
+  final String error;
+
+  const FetchInitialTasksFailureAction(this.error);
+}
+
+@immutable
+class ResetTasksAction {
+  const ResetTasksAction();
+}

@@ -199,12 +199,12 @@ class TaskListState extends State<TaskList> {
             title: const Text('Tasks'),
             actions: [
               _buildToggleButton(viewModel),
-              IconButton(
-                icon: const Icon(AntDesign.dotchart),
-                onPressed: () {
-                  GoRouter.of(context).pushNamed(RootPath.goalSettings);
-                },
-              ),
+              // IconButton(
+              //   icon: const Icon(AntDesign.dotchart),
+              //   onPressed: () {
+              //     GoRouter.of(context).pushNamed(RootPath.goalSettings);
+              //   },
+              // ),
               IconButton(
                 icon: const Icon(Icons.add),
                 onPressed: () => _openTaskEditor(context, viewModel,

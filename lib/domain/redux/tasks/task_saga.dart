@@ -14,6 +14,7 @@ class TaskSaga {
     yield TakeEvery(_toggleTaskCompletion, pattern: ToggleTaskCompletionAction);
     yield TakeEvery(_incrementHabit, pattern: IncrementHabitAction);
     yield TakeEvery(_syncTasks, pattern: SyncTasksAction);
+    yield TakeEvery(_handleFetchInitialTasks, pattern: FetchInitialTasksAction);
   }
 
   _fetchTasksFromDatabase({dynamic action}) sync* {
@@ -225,5 +226,34 @@ class TaskSaga {
           'Sync partially failed. Some changes were not synced.'));
     }
     yield Call(_fetchTasksFromDatabase);
+  }
+
+  _handleFetchInitialTasks({required FetchInitialTasksAction action}) sync* {
+    try {
+      var isarResult = Result<Isar>();
+      yield GetContext('isar', result: isarResult);
+      Isar isar = isarResult.value!;
+
+      var taskRepository = TaskRepository(isar);
+      TaskApiService api = TaskApiService();
+
+      // Fetch all tasks from the server
+      var tasksResult = Result<List<TaskEntity>>();
+      yield Call(api.getAllTasks,
+          args: [], namedArgs: {#includeDeleted: true}, result: tasksResult);
+      List<TaskEntity> tasks = tasksResult.value!;
+
+      // Save all tasks to local storage
+      yield Call(taskRepository.addOrUpdateTasks, args: [tasks]);
+
+      // Update the last sync timestamp
+      DateTime newSyncTimestamp = DateTime.now();
+      yield Call(taskRepository.updateLastSyncTimestamp,
+          args: [newSyncTimestamp]);
+
+      yield Put(FetchInitialTasksSuccessAction(tasks));
+    } catch (error) {
+      yield Put(FetchInitialTasksFailureAction(error.toString()));
+    }
   }
 }

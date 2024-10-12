@@ -16,6 +16,7 @@ Reducer<TaskState> taskReducer = combineReducers<TaskState>([
   TypedReducer<TaskState, SyncTasksFailureAction>(_syncTasksFailure),
   TypedReducer<TaskState, ToggleShowAllTasksAction>(_toggleShowAllTasks),
   TypedReducer<TaskState, ToggleExpandedSectionAction>(_toggleExpandedSection),
+  TypedReducer<TaskState, ResetTasksAction>(_resetTasks),
 ]);
 
 TaskState _taskUpdateInProgress(
@@ -124,4 +125,8 @@ TaskState _toggleExpandedSection(
   updatedExpandedSections[action.taskType] =
       !updatedExpandedSections[action.taskType]!;
   return state.copyWith(expandedSections: updatedExpandedSections);
+}
+
+TaskState _resetTasks(TaskState state, ResetTasksAction action) {
+  return TaskState.initial();
 }

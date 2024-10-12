@@ -14,7 +14,10 @@ import 'package:teja/domain/redux/mood/list/actions.dart';
 import 'package:teja/domain/redux/sync/actions.dart';
 import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart';
 import 'package:teja/infrastructure/database/isar_collections/mood_log.dart';
+import 'package:teja/infrastructure/database/isar_collections/task.dart';
 import 'package:teja/shared/storage/secure_storage.dart';
+
+import 'package:teja/domain/redux/tasks/task_action.dart';
 
 class SyncSaga {
   Iterable<void> saga() sync* {
@@ -31,12 +34,14 @@ class SyncSaga {
 
       // Simulate account deletion with an async operation
       var deleteAccountResult = Result<bool>();
-      yield Call(_performAccountDeletion, args: [isar], result: deleteAccountResult);
+      yield Call(_performAccountDeletion,
+          args: [isar], result: deleteAccountResult);
 
       if (deleteAccountResult.value == true) {
         yield Put(const DeleteAccountActionSuccess());
         yield Put(ResetMoodLogsListAction());
         yield Put(ResetJournalEntriesListAction());
+        yield Put(const ResetTasksAction());
         yield Put(SecureStorage().deleteAll());
       } else {
         yield Put(const DeleteAccountActionFailed('Account deletion failed'));
@@ -56,6 +61,11 @@ class SyncSaga {
       // Delete journals
       await isar.writeTxn(() async {
         await isar.journalEntrys.clear();
+      });
+
+      // Delete tasks
+      await isar.writeTxn(() async {
+        await isar.tasks.clear();
       });
 
       // Delete files
@@ -86,14 +96,18 @@ class SyncSaga {
       yield GetContext('isar', result: isarResult);
       Isar isar = isarResult.value!;
 
-      List<String> collectionNames = ['journalEntrys', 'moodLogs']; // Add more as needed
+      List<String> collectionNames = [
+        'journalEntrys',
+        'moodLogs'
+      ]; // Add more as needed
       var tempDirResult = Result<Directory>();
       yield Call(getTemporaryDirectory, result: tempDirResult);
       Directory directory = tempDirResult.value!;
 
       // Use 'Call' to invoke the async function and wait for the result
       var zipFilePathResult = Result<String>();
-      yield Call(prepareAndZipCollections, args: [collectionNames, isar, directory], result: zipFilePathResult);
+      yield Call(prepareAndZipCollections,
+          args: [collectionNames, isar, directory], result: zipFilePathResult);
 
       // Use the result to share the zip file
       if (zipFilePathResult.value != null) {
@@ -109,7 +123,8 @@ class SyncSaga {
   }
 
   // Helper function to process zip file and extract attachments
-  Future<void> _processZipFileAndExtractAttachments(File file, Isar isar) async {
+  Future<void> _processZipFileAndExtractAttachments(
+      File file, Isar isar) async {
     final bytes = await file.readAsBytes();
     final archive = ZipDecoder().decodeBytes(bytes);
 
@@ -145,7 +160,8 @@ class SyncSaga {
 
       // Check if the file already exists
       if (await outputFile.exists()) {
-        print('File already exists. Considering handling logic such as renaming or replacing.');
+        print(
+            'File already exists. Considering handling logic such as renaming or replacing.');
       }
 
       // Write data to the file
@@ -207,7 +223,8 @@ class SyncSaga {
   }
 
 // This is now an async function outside of your class that returns a Future<String>
-  Future<String> prepareAndZipCollections(List<String> collectionNames, Isar isar, Directory directory) async {
+  Future<String> prepareAndZipCollections(
+      List<String> collectionNames, Isar isar, Directory directory) async {
     var encoder = ZipFileEncoder();
     String zipFilePath = '${directory.path}/tejaBackup.zip';
     encoder.create(zipFilePath);
@@ -228,11 +245,14 @@ class SyncSaga {
     final documentsDirectory = await getApplicationDocumentsDirectory();
     final files = documentsDirectory.listSync().where((item) {
       // Exclude files with extensions .isar and .hive
-      return !item.path.contains('.isar') && !item.path.contains('.hive') && !item.path.contains('.lock');
+      return !item.path.contains('.isar') &&
+          !item.path.contains('.hive') &&
+          !item.path.contains('.lock');
     }).toList();
     for (var file in files) {
       if (file is File) {
-        encoder.addFile(file, file.path.substring(documentsDirectory.path.length));
+        encoder.addFile(
+            file, file.path.substring(documentsDirectory.path.length));
       }
     }
 
@@ -255,7 +275,8 @@ class SyncSaga {
 // Corrected snippet for an async operation outside of Redux-Saga's generator functions
   static Future<void> _shareFile(String filePath) async {
     XFile xfile = XFile(filePath, mimeType: 'application/zip');
-    Rect sharePositionOrigin = Rect.fromLTWH(0, 0, 100, 100); // Adjust as needed
+    Rect sharePositionOrigin =
+        Rect.fromLTWH(0, 0, 100, 100); // Adjust as needed
     await Share.shareXFiles([xfile], sharePositionOrigin: sharePositionOrigin);
   }
 }
