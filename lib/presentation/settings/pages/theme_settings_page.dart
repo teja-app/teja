@@ -75,14 +75,10 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
           children: [
             ListTile(
               title: Text(title),
-              leading: Radio<String>(
-                value: theme,
-                groupValue: themeService.themeMode == ThemeMode.light
-                    ? 'DAY'
-                    : themeService.themeMode == ThemeMode.dark
-                        ? 'NIGHT'
-                        : '',
-                onChanged: (String? value) {
+              leading: Radio<ThemeMode>(
+                value: theme == "DAY" ? ThemeMode.light : ThemeMode.dark,
+                groupValue: themeService.themeMode,
+                onChanged: (ThemeMode? value) {
                   setState(() {
                     themeService.setThemeMode(
                       theme == 'DAY' ? ThemeMode.light : ThemeMode.dark,

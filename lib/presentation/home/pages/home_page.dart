@@ -137,8 +137,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildScaffold(BuildContext context, _ViewModel store) {
-    final bool isCustomTheme = _currentThemeMode != ThemeMode.system;
-
+    final bool isCustomTheme = _currentThemeMode != ThemeMode.system &&
+        _backgroundImageUrl != null &&
+        _backgroundImageUrl!.isNotEmpty;
     return Scaffold(
       backgroundColor: isCustomTheme ? Colors.transparent : null,
       appBar: AppBar(
