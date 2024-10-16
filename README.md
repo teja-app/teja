@@ -2,6 +2,16 @@
 
 Join a growing community of people turning a new page this year, improving their mental health and living happier lives with Teja - your personal AI-powered self-care companion.
 
+## Connect With Us
+
+[![Website](https://img.shields.io/badge/Visit_Our_Website-4285F4?style=for-the-badge&logo=google-chrome&logoColor=white)](https://teja.app)
+
+[![App Store](https://img.shields.io/badge/Download_on_the_App_Store-000000?style=for-the-badge&logo=apple&logoColor=white)](https://apps.apple.com/us/app/teja-journal-selfcare/id6473733799)
+
+[![Google Play](https://img.shields.io/badge/Get_it_on_Google_Play-414141?style=for-the-badge&logo=google-play&logoColor=white)](https://play.google.com/store/apps/details?id=app.teja.app)
+
+[![Discord](https://img.shields.io/badge/Join_Our_Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/hK9yznQD9X)
+
 ## Transform Your Mental Wellness Journey
 
 Life can be challenging, but you don't have to face it alone. Teja combines cutting-edge AI technology with proven journaling techniques to provide a personalized path to better mental health. Our secure, privacy-focused app is here to support you every step of the way:
@@ -9,7 +19,6 @@ Life can be challenging, but you don't have to face it alone. Teja combines cutt
 - AI-Enhanced Journaling: Gain deeper self-understanding with personalized prompts and insights that evolve with you.
 - Smart Mood Tracking: Identify emotional patterns and triggers to boost your emotional intelligence and find balance.
 - Tailored Wellness Guidance: Receive compassionate, AI-generated advice customized to your unique journey.
-- Uncompromising Privacy: Feel safe expressing your thoughts with our end-to-end encryption and anonymous registration.
 - Daily Motivation: Start each day inspired with curated quotes and affirmations that speak to your heart.
 
 ## Key Features
@@ -24,10 +33,10 @@ Watch your progress unfold with our comprehensive mood analytics. Intuitive char
 Our AI doesn't just read your entries – it understands them. Discover meaningful connections and interpretations you might have missed, helping you see your experiences in a new light.
 
 ### 🔒 Your Thoughts, Safely Guarded
-We believe your inner world deserves the utmost protection. With bank-level encryption and a unique mnemonic recovery system, your private reflections stay private. Express yourself freely, knowing your journey is yours alone.
+We believe your inner world deserves the utmost protection. With a unique mnemonic recovery system, your private reflections stay private. Express yourself freely, knowing your journey is yours alone.
 
 ### 🔄 Your Journey, Seamlessly Connected
-Access your encrypted journal entries and mood data across all your iOS devices. Your safe space travels with you, ready whenever inspiration (or frustration) strikes.
+Access your journal entries and mood data across all your iOS devices. Your safe space travels with you, ready whenever inspiration (or frustration) strikes.
 
 ### 💡 Guidance That Grows With You
 Receive AI-powered advice that adapts to your changing needs. Whether you're facing a tough decision or celebrating a victory, Teja offers personalized strategies to help you navigate life's ups and downs.
@@ -50,7 +59,6 @@ Start your transformative journey with Teja today. Download now and take the fir
 Your thoughts are personal, and we take that seriously. With Teja, you can express yourself freely:
 
 - Anonymous Registration: Use a mnemonic recovery code to sign up without sharing personal information.
-- End-to-End Encryption: All your journal entries and mood data are fully encrypted.
 - Local Processing: AI insights are generated on your device, ensuring your data stays private.
 
 We never sell or share your data. Your journey is yours alone, and we're honored to be a part of it.
