@@ -57,7 +57,7 @@ We never sell or share your data. Your journey is yours alone, and we're honored
 
 Begin your journey to self-discovery and emotional growth with Teja. Download now and embrace a happier, more fulfilling life – one reflection at a time.
 
-Read our Terms & Conditions at [Your Terms & Conditions URL](https://teja.app/terms)
+Read our [Terms & Conditions](https://teja.app/terms)
 
 ## Upcoming Features
 
