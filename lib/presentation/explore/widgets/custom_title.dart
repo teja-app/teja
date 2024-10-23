@@ -28,7 +28,7 @@ class CustomTitle extends StatelessWidget {
       children: [
         Text(
           title,
-          style: textTheme.titleLarge,
+          style: textTheme.headlineSmall,
         ),
         (extend)
             ? GestureDetector(

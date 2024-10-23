@@ -15,6 +15,7 @@ JournalCategoryDto _$JournalCategoryDtoFromJson(Map<String, dynamic> json) =>
           ? null
           : FeaturedImageDto.fromJson(
               json['featureImage'] as Map<String, dynamic>),
+      isFeatured: json['isFeatured'] as bool,
     );
 
 Map<String, dynamic> _$JournalCategoryDtoToJson(JournalCategoryDto instance) =>
@@ -23,20 +24,17 @@ Map<String, dynamic> _$JournalCategoryDtoToJson(JournalCategoryDto instance) =>
       'name': instance.name,
       'description': instance.description,
       'featureImage': instance.featureImage,
+      'isFeatured': instance.isFeatured,
     };
 
 FeaturedImageDto _$FeaturedImageDtoFromJson(Map<String, dynamic> json) =>
     FeaturedImageDto(
       sizes: ImageSizesDto.fromJson(json['sizes'] as Map<String, dynamic>),
-      alt: json['alt'] as String,
-      filename: json['filename'] as String,
     );
 
 Map<String, dynamic> _$FeaturedImageDtoToJson(FeaturedImageDto instance) =>
     <String, dynamic>{
       'sizes': instance.sizes,
-      'alt': instance.alt,
-      'filename': instance.filename,
     };
 
 ImageSizesDto _$ImageSizesDtoFromJson(Map<String, dynamic> json) =>
@@ -59,6 +57,7 @@ ImageDetailDto _$ImageDetailDtoFromJson(Map<String, dynamic> json) =>
       mimeType: json['mimeType'] as String?,
       filesize: (json['filesize'] as num?)?.toInt(),
       filename: json['filename'] as String?,
+      url: json['url'] as String?,
     );
 
 Map<String, dynamic> _$ImageDetailDtoToJson(ImageDetailDto instance) =>
@@ -68,4 +67,5 @@ Map<String, dynamic> _$ImageDetailDtoToJson(ImageDetailDto instance) =>
       'mimeType': instance.mimeType,
       'filesize': instance.filesize,
       'filename': instance.filename,
+      'url': instance.url,
     };

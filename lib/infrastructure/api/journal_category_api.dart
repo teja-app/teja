@@ -23,6 +23,7 @@ class JournalCategoryApi {
             mimeType: dto.featureImage!.sizes.thumbnail.mimeType,
             filesize: dto.featureImage!.sizes.thumbnail.filesize,
             filename: dto.featureImage!.sizes.thumbnail.filename,
+            url: dto.featureImage!.sizes.thumbnail.url,
           ),
           card: ImageDetail(
             width: dto.featureImage!.sizes.card.width,
@@ -30,6 +31,7 @@ class JournalCategoryApi {
             mimeType: dto.featureImage!.sizes.card.mimeType,
             filesize: dto.featureImage!.sizes.card.filesize,
             filename: dto.featureImage!.sizes.card.filename,
+            url: dto.featureImage!.sizes.card.url,
           ),
         );
       }
@@ -41,10 +43,9 @@ class JournalCategoryApi {
         featureImage: dto.featureImage != null
             ? FeaturedImage(
                 sizes: sizes!,
-                alt: dto.featureImage!.alt,
-                filename: dto.featureImage!.filename,
               )
             : null,
+        isFeatured: dto.isFeatured,
       );
     }).toList();
 
