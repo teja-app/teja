@@ -9,31 +9,49 @@ class JournalCategoryDto {
   final String name;
   final String description;
   final FeaturedImageDto? featureImage;
+  final bool isFeatured;
 
   JournalCategoryDto({
     required this.id,
     required this.name,
     required this.description,
     this.featureImage,
+    required this.isFeatured,
   });
 
-  factory JournalCategoryDto.fromJson(Map<String, dynamic> json) => _$JournalCategoryDtoFromJson(json);
-  Map<String, dynamic> toJson() => _$JournalCategoryDtoToJson(this);
+  factory JournalCategoryDto.fromJson(Map<String, dynamic> json) {
+    return JournalCategoryDto(
+      id: json['_id'],
+      name: json['name'],
+      description: json['description'],
+      featureImage: json['featureImage'] != null
+          ? FeaturedImageDto.fromJson(json['featureImage'])
+          : null,
+      isFeatured: json['isFeatured'] ?? false,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'description': description,
+      'featureImage': featureImage?.toJson(),
+      'isFeatured': isFeatured,
+    };
+  }
 }
 
 @JsonSerializable()
 class FeaturedImageDto {
   final ImageSizesDto sizes;
-  final String alt;
-  final String filename;
 
   FeaturedImageDto({
     required this.sizes,
-    required this.alt,
-    required this.filename,
   });
 
-  factory FeaturedImageDto.fromJson(Map<String, dynamic> json) => _$FeaturedImageDtoFromJson(json);
+  factory FeaturedImageDto.fromJson(Map<String, dynamic> json) =>
+      _$FeaturedImageDtoFromJson(json);
   Map<String, dynamic> toJson() => _$FeaturedImageDtoToJson(this);
 }
 
@@ -47,7 +65,8 @@ class ImageSizesDto {
     required this.card,
   });
 
-  factory ImageSizesDto.fromJson(Map<String, dynamic> json) => _$ImageSizesDtoFromJson(json);
+  factory ImageSizesDto.fromJson(Map<String, dynamic> json) =>
+      _$ImageSizesDtoFromJson(json);
   Map<String, dynamic> toJson() => _$ImageSizesDtoToJson(this);
 }
 
@@ -58,6 +77,7 @@ class ImageDetailDto {
   final String? mimeType;
   final int? filesize;
   final String? filename;
+  final String? url;
 
   ImageDetailDto({
     this.width,
@@ -65,6 +85,7 @@ class ImageDetailDto {
     this.mimeType,
     this.filesize,
     this.filename,
+    this.url,
   });
 
   factory ImageDetailDto.fromJson(Map<String, dynamic> json) {
@@ -74,6 +95,7 @@ class ImageDetailDto {
       mimeType: json['mimeType'] as String? ?? 'image/png',
       filesize: json['filesize'] as int? ?? 0,
       filename: json['filename'] as String? ?? '',
+      url: json['url'] as String? ?? '',
     );
   }
 

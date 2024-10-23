@@ -9,11 +9,52 @@ class JournalCategoryRepository {
     final box = Hive.box(JournalCategory.boxKey);
     return box.values.map((hiveCategoryString) {
       final hiveCategory = json.decode(hiveCategoryString);
-      final key = box.keyAt(box.values.toList().indexOf(hiveCategoryString)).toString();
+      final key =
+          box.keyAt(box.values.toList().indexOf(hiveCategoryString)).toString();
       return JournalCategoryEntity(
         id: key,
         name: hiveCategory['name'],
         description: hiveCategory['description'],
+        featureImage: hiveCategory['featureImage'] != null
+            ? FeaturedImage(
+                sizes: ImageSizes(
+                  thumbnail:
+                      hiveCategory['featureImage']['sizes']['thumbnail'] != null
+                          ? ImageDetail(
+                              width: hiveCategory['featureImage']['sizes']
+                                  ['thumbnail']['width'],
+                              height: hiveCategory['featureImage']['sizes']
+                                  ['thumbnail']['height'],
+                              mimeType: hiveCategory['featureImage']['sizes']
+                                  ['thumbnail']['mimeType'],
+                              filesize: hiveCategory['featureImage']['sizes']
+                                  ['thumbnail']['filesize'],
+                              filename: hiveCategory['featureImage']['sizes']
+                                  ['thumbnail']['filename'],
+                              url: hiveCategory['featureImage']['sizes']
+                                  ['thumbnail']['url'],
+                            )
+                          : null,
+                  card: hiveCategory['featureImage']['sizes']['card'] != null
+                      ? ImageDetail(
+                          width: hiveCategory['featureImage']['sizes']['card']
+                              ['width'],
+                          height: hiveCategory['featureImage']['sizes']['card']
+                              ['height'],
+                          mimeType: hiveCategory['featureImage']['sizes']
+                              ['card']['mimeType'],
+                          filesize: hiveCategory['featureImage']['sizes']
+                              ['card']['filesize'],
+                          filename: hiveCategory['featureImage']['sizes']
+                              ['card']['filename'],
+                          url: hiveCategory['featureImage']['sizes']['card']
+                              ['url'],
+                        )
+                      : null,
+                ),
+              )
+            : null,
+        isFeatured: hiveCategory['isFeatured'] ?? false,
       );
     }).toList();
   }
@@ -23,10 +64,10 @@ class JournalCategoryRepository {
     await box.clear();
   }
 
-  Future<void> addOrUpdateJournalCategories(List<JournalCategoryEntity> categories) async {
+  Future<void> addOrUpdateJournalCategories(
+      List<JournalCategoryEntity> categories) async {
     final box = Hive.box(JournalCategory.boxKey);
     for (var categoryEntity in categories) {
-      // Convert the entity to a DTO
       JournalCategoryDto categoryDto = JournalCategoryDto(
         id: categoryEntity.id,
         name: categoryEntity.name,
@@ -36,10 +77,15 @@ class JournalCategoryRepository {
                 sizes: ImageSizesDto(
                   thumbnail: ImageDetailDto(
                     width: categoryEntity.featureImage!.sizes.thumbnail?.width,
-                    height: categoryEntity.featureImage!.sizes.thumbnail?.height,
-                    mimeType: categoryEntity.featureImage!.sizes.thumbnail?.mimeType,
-                    filesize: categoryEntity.featureImage!.sizes.thumbnail?.filesize,
-                    filename: categoryEntity.featureImage!.sizes.thumbnail?.filename,
+                    height:
+                        categoryEntity.featureImage!.sizes.thumbnail?.height,
+                    mimeType:
+                        categoryEntity.featureImage!.sizes.thumbnail?.mimeType,
+                    filesize:
+                        categoryEntity.featureImage!.sizes.thumbnail?.filesize,
+                    filename:
+                        categoryEntity.featureImage!.sizes.thumbnail?.filename,
+                    url: categoryEntity.featureImage!.sizes.thumbnail?.url,
                   ),
                   card: ImageDetailDto(
                     width: categoryEntity.featureImage!.sizes.card?.width,
@@ -47,15 +93,14 @@ class JournalCategoryRepository {
                     mimeType: categoryEntity.featureImage!.sizes.card?.mimeType,
                     filesize: categoryEntity.featureImage!.sizes.card?.filesize,
                     filename: categoryEntity.featureImage!.sizes.card?.filename,
+                    url: categoryEntity.featureImage!.sizes.card?.url,
                   ),
                 ),
-                alt: categoryEntity.featureImage!.alt,
-                filename: categoryEntity.featureImage!.filename,
               )
             : null,
+        isFeatured: categoryEntity.isFeatured,
       );
 
-      // Serialize the DTO to JSON string
       String jsonString = jsonEncode(categoryDto.toJson());
       await box.put(categoryEntity.id, jsonString);
     }
