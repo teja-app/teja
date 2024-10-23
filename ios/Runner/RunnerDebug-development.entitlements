@@ -4,7 +4,7 @@
 <dict>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:app.teja.app.dev</string>
+		<string>app.teja.app.dev</string>
 	</array>
 	<key>com.apple.developer.healthkit</key>
 	<true/>
