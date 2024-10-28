@@ -32,6 +32,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.1005896869288-m7cgusjf80rt6sn0u6ctpf90geujkida</string>
+				<string>ShareMedia-$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 			</array>
 		</dict>
 	</array>

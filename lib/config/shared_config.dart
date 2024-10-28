@@ -17,6 +17,7 @@ import 'package:teja/infrastructure/database/isar_collections/quote.dart';
 import 'package:teja/infrastructure/database/isar_collections/task.dart';
 import 'package:teja/infrastructure/database/isar_collections/vision.dart';
 import 'package:teja/infrastructure/utils/notification_service.dart';
+import 'package:teja/infrastructure/utils/share_handler_service.dart';
 import 'package:teja/infrastructure/utils/time_storage_helper.dart';
 import 'package:teja/shared/helpers/logger.dart';
 import 'package:teja/domain/redux/app_state.dart';
@@ -24,10 +25,10 @@ import 'package:teja/domain/redux/store.dart';
 import 'package:teja/infrastructure/constants/notification_types.dart';
 
 final notificationService = NotificationService();
+final shareHandler = ShareHandlerService();
 
 Future<Store<AppState>> configureCommonDependencies() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   final Isar isarInstance = await openIsar();
   logger.i("Database Instance is ready");
 
@@ -54,6 +55,8 @@ Future<Store<AppState>> configureCommonDependencies() async {
 
   await notificationService.cancelAllNotifications();
   await handleNotificationInitialize(notificationService);
+  await shareHandler.init();
+  logger.i("Share Handler Service Connected");
 
   return store;
 }
