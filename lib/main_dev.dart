@@ -21,7 +21,7 @@ void main() async {
       options.dsn = AppConfig.instance.sentryDsnUrl;
       options.environment = AppConfig.instance.environment;
     },
-    appRunner: () => runApp(const HomePage()),
+    appRunner: () => runApp(App(store: store, router: router)),
   );
 
   logger.i("App initialized in ${AppConfig.instance.environment} mode");
