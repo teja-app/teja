@@ -8,6 +8,8 @@ import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.
 import 'package:teja/domain/redux/journal/journal_editor/quick_journal_editor_actions.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_actions.dart';
 import 'package:teja/domain/redux/permission/permissions_constants.dart';
+import 'package:teja/infrastructure/service/link_preview_service.dart';
+import 'package:teja/infrastructure/utils/share_handler_service.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/presentation/onboarding/widgets/feature_gate.dart';
 import 'package:teja/router.dart';
@@ -16,8 +18,16 @@ import 'package:teja/shared/common/button.dart';
 class QuickJournalEntryScreen extends StatefulWidget {
   final String? entryId;
   final String? heroTag;
+  final bool? sharedContent;
+  final String? url;
 
-  const QuickJournalEntryScreen({Key? key, this.entryId, this.heroTag}) : super(key: key);
+  const QuickJournalEntryScreen({
+    Key? key,
+    this.entryId,
+    this.heroTag,
+    this.sharedContent,
+    this.url,
+  }) : super(key: key);
 
   @override
   QuickJournalEntryScreenState createState() => QuickJournalEntryScreenState();
@@ -29,16 +39,69 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
   bool _isSaving = false;
   bool _isInitialized = false;
   String? _errorMessage;
+  bool _isLoadingLinkMetadata = false;
+  LinkMetadata? _linkMetadata;
 
   @override
   void initState() {
     super.initState();
     _store = StoreProvider.of<AppState>(context, listen: false);
     _initializeJournalEntry();
+    if (widget.url != null) {
+      _fetchLinkMetadata(widget.url!);
+    }
+  }
+
+  Future<void> _fetchLinkMetadata(String url) async {
+    setState(() {
+      _isLoadingLinkMetadata = true;
+    });
+
+    final linkPreviewService = LinkPreviewService();
+    _linkMetadata = await linkPreviewService.fetchMetadata(url);
+
+    setState(() {
+      _isLoadingLinkMetadata = false;
+    });
+  }
+
+  Widget _buildLinkPreview() {
+    if (_isLoadingLinkMetadata) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(
+              child: Text(
+                widget.url ?? '',
+                style: Theme.of(context).textTheme.bodyMedium,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const CircularProgressIndicator(),
+          ],
+        ),
+      );
+    }
+
+    if (_linkMetadata == null) {
+      return const SizedBox.shrink();
+    }
+
+    return LinkPreviewWidget(
+      metadata: _linkMetadata!,
+      onRemove: () {
+        setState(() {
+          _linkMetadata = null;
+        });
+      },
+    );
   }
 
   void _initializeJournalEntry() {
-    _store.dispatch(InitializeQuickJournalEditor(journalEntryId: widget.entryId));
+    _store
+        .dispatch(InitializeQuickJournalEditor(journalEntryId: widget.entryId));
   }
 
   @override
@@ -61,7 +124,8 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
     });
   }
 
-  Future<void> _saveEntry(BuildContext context, JournalEntryEntity? currentEntry) async {
+  Future<void> _saveEntry(
+      BuildContext context, JournalEntryEntity? currentEntry) async {
     if (_bodyController.text.trim().isEmpty) {
       _showError('Journal entry cannot be empty');
       return;
@@ -114,7 +178,8 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
     );
   }
 
-  Future<void> _saveAndContinue(BuildContext context, JournalEntryEntity? currentEntry) async {
+  Future<void> _saveAndContinue(
+      BuildContext context, JournalEntryEntity? currentEntry) async {
     if (_bodyController.text.isEmpty) {
       _showError('Journal entry cannot be empty');
       return;
@@ -167,7 +232,8 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
         builder: (BuildContext dialogContext) {
           return AlertDialog(
             title: const Text('Unsaved Changes'),
-            content: const Text('You have unsaved changes. Do you want to save before leaving?'),
+            content: const Text(
+                'You have unsaved changes. Do you want to save before leaving?'),
             actions: <Widget>[
               TextButton(
                 child: const Text('Discard'),
@@ -192,8 +258,10 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
     }
   }
 
-  void _discardAndGoBack(BuildContext context, JournalEntryEntity? currentEntry) {
-    if (currentEntry != null && (currentEntry.body == null || currentEntry.body!.isEmpty)) {
+  void _discardAndGoBack(
+      BuildContext context, JournalEntryEntity? currentEntry) {
+    if (currentEntry != null &&
+        (currentEntry.body == null || currentEntry.body!.isEmpty)) {
       _store.dispatch(DeleteJournalDetailAction(currentEntry.id));
     }
     if (context.mounted) {
@@ -208,7 +276,8 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
 
     return PopScope(
       onPopInvoked: (didPop) async {
-        _handleBack(context, _store.state.journalEditorState.currentJournalEntry);
+        _handleBack(
+            context, _store.state.journalEditorState.currentJournalEntry);
       },
       child: StoreConnector<AppState, QuickJournalEditViewModel>(
         converter: (store) => QuickJournalEditViewModel.fromStore(store),
@@ -230,17 +299,23 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
               title: const Text("Quick Journal Entry"),
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
-                onPressed: _isSaving ? null : () => _handleBack(context, viewModel.currentJournalEntry),
+                onPressed: _isSaving
+                    ? null
+                    : () => _handleBack(context, viewModel.currentJournalEntry),
               ),
               actions: [
                 IconButton(
                   icon: const Icon(Icons.done),
-                  onPressed: _isSaving ? null : () => _saveEntry(context, viewModel.currentJournalEntry),
+                  onPressed: _isSaving
+                      ? null
+                      : () =>
+                          _saveEntry(context, viewModel.currentJournalEntry),
                 ),
               ],
             ),
             body: Column(
               children: [
+                _buildLinkPreview(), // Add this line before the TextField
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -270,7 +345,10 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
                     children: [
                       Expanded(
                         child: Button(
-                            onPressed: _isSaving ? null : () => _saveEntry(context, viewModel.currentJournalEntry),
+                            onPressed: _isSaving
+                                ? null
+                                : () => _saveEntry(
+                                    context, viewModel.currentJournalEntry),
                             text: 'Save',
                             buttonType: ButtonType.secondary),
                       ),
@@ -281,7 +359,10 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
                         child: Button(
                           width: isDesktop(context) ? 330 : 120,
                           buttonType: ButtonType.primary,
-                          onPressed: _isSaving ? null : () => _saveAndContinue(context, viewModel.currentJournalEntry),
+                          onPressed: _isSaving
+                              ? null
+                              : () => _saveAndContinue(
+                                  context, viewModel.currentJournalEntry),
                           text: 'Continue',
                         ),
                       )),
@@ -308,6 +389,88 @@ class QuickJournalEditViewModel {
   static QuickJournalEditViewModel fromStore(Store<AppState> store) {
     return QuickJournalEditViewModel(
       currentJournalEntry: store.state.journalEditorState.currentJournalEntry,
+    );
+  }
+}
+
+class LinkPreviewWidget extends StatelessWidget {
+  final LinkMetadata metadata;
+  final VoidCallback? onRemove;
+
+  const LinkPreviewWidget({
+    Key? key,
+    required this.metadata,
+    this.onRemove,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.all(8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (metadata.image != null)
+            Expanded(
+              flex: 2,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(4.0),
+                child: Image.network(
+                  metadata.image!,
+                  height: 127,
+                  width: double.infinity,
+                  fit: BoxFit.fill,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const SizedBox(),
+                ),
+              ),
+            ),
+          Expanded(
+            flex: 3,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          metadata.title ?? 'No Title',
+                          style: Theme.of(context).textTheme.titleMedium,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      if (onRemove != null)
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: onRemove,
+                        ),
+                    ],
+                  ),
+                  if (metadata.description != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      metadata.description!,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                  const SizedBox(height: 4),
+                  Text(
+                    metadata.url,
+                    style: Theme.of(context).textTheme.bodySmall,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

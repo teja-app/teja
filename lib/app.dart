@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
+import 'package:teja/infrastructure/utils/share_handler_service.dart';
 import 'package:teja/presentation/error_handler/error_handler.dart';
 import 'package:teja/theme/dark_theme.dart';
 import 'package:teja/theme/light_theme.dart';
@@ -22,6 +23,12 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ShareHandlerService _shareHandlerService = ShareHandlerService();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _shareHandlerService.setContext(context);
+    });
+
     return StoreProvider<AppState>(
       store: store,
       child: ChangeNotifierProvider(

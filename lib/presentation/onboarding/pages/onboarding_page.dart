@@ -7,6 +7,7 @@ import 'package:rive/rive.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:teja/domain/redux/auth/auth_action.dart';
 import 'package:teja/infrastructure/service/auth_service.dart';
+import 'package:teja/infrastructure/utils/share_handler_service.dart';
 import 'package:teja/presentation/onboarding/actions/init_state_actions.dart';
 import 'package:teja/presentation/onboarding/ui/onboarding_description.dart';
 import 'package:teja/presentation/onboarding/ui/onboarding_header_image.dart';
@@ -30,7 +31,8 @@ class OnboardingPageState extends State<OnboardingPage> {
   Color _buttonBackgroundColor = Colors.black;
   Color _buttonTextColor = Colors.white;
   Color _borderColor = Colors.white;
-  String _affirmation = "You are capable, worthy, and have the strength to overcome challenges.";
+  String _affirmation =
+      "You are capable, worthy, and have the strength to overcome challenges.";
 
   final String _imageUrl =
       'https://cdn.leonardo.ai/users/289152d8-6132-4fd8-b895-28a873a1f7d9/generations/cb138ac0-a863-452e-a971-045121441bf9/Default_A_delicate_serene_landscape_artwork_meticulously_craft_3.jpg?w=512';
@@ -41,7 +43,8 @@ class OnboardingPageState extends State<OnboardingPage> {
     _updateButtonColors();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final store = StoreProvider.of<AppState>(context);
-      bool _hasExistingMnemonic = await store.state.authState.hasExistingMnemonic;
+      bool _hasExistingMnemonic =
+          await store.state.authState.hasExistingMnemonic;
       performInitStateActions(store);
       if (_isPressed != null) {
         _isPressed!.value = false;
@@ -54,8 +57,8 @@ class OnboardingPageState extends State<OnboardingPage> {
 
       final recoverCode = await SecureStorage().readRecoveryCode();
 
-      _hasExistingMnemonic =
-          await store.dispatch(SetHasExistingMnemonicAction(_hasExistingMnemonic = recoverCode != null));
+      _hasExistingMnemonic = await store.dispatch(SetHasExistingMnemonicAction(
+          _hasExistingMnemonic = recoverCode != null));
 
       final authService = AuthService();
       await authService.validateAndAuthenticate(store);
@@ -63,13 +66,17 @@ class OnboardingPageState extends State<OnboardingPage> {
   }
 
   Future<void> _updateButtonColors() async {
-    final PaletteGenerator paletteGenerator = await PaletteGenerator.fromImageProvider(
+    final PaletteGenerator paletteGenerator =
+        await PaletteGenerator.fromImageProvider(
       NetworkImage(_imageUrl),
     );
     setState(() {
-      _buttonBackgroundColor = paletteGenerator.dominantColor?.color ?? Colors.black;
-      _buttonTextColor = paletteGenerator.dominantColor?.bodyTextColor ?? Colors.white;
-      _borderColor = paletteGenerator.dominantColor?.bodyTextColor ?? Colors.white;
+      _buttonBackgroundColor =
+          paletteGenerator.dominantColor?.color ?? Colors.black;
+      _buttonTextColor =
+          paletteGenerator.dominantColor?.bodyTextColor ?? Colors.white;
+      _borderColor =
+          paletteGenerator.dominantColor?.bodyTextColor ?? Colors.white;
     });
   }
 
@@ -118,6 +125,10 @@ class OnboardingPageState extends State<OnboardingPage> {
   Widget build(BuildContext context) {
     final Brightness themeBrightness = Theme.of(context).brightness;
     final colorScheme = Theme.of(context).colorScheme;
+    final _shareHandlerService = ShareHandlerService();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _shareHandlerService.setContext(context);
+    });
     return StoreConnector<AppState, Store<AppState>>(
       converter: (store) => store,
       builder: (context, store) {
@@ -149,7 +160,9 @@ class OnboardingPageState extends State<OnboardingPage> {
           body: Stack(
             fit: StackFit.expand,
             children: [
-              _isProUser ? _buildProUserView(context) : _buildDefaultView(context, store, themeBrightness),
+              _isProUser
+                  ? _buildProUserView(context)
+                  : _buildDefaultView(context, store, themeBrightness),
             ],
           ),
         );
@@ -220,7 +233,8 @@ class OnboardingPageState extends State<OnboardingPage> {
     );
   }
 
-  Widget _buildDefaultView(BuildContext context, Store<AppState> store, Brightness themeBrightness) {
+  Widget _buildDefaultView(
+      BuildContext context, Store<AppState> store, Brightness themeBrightness) {
     return Center(
       child: SingleChildScrollView(
         child: Column(

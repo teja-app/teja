@@ -1,28 +1,73 @@
 import 'dart:async';
 import 'package:share_handler/share_handler.dart';
+import 'package:go_router/go_router.dart';
+import 'package:flutter/material.dart';
 
 class ShareHandlerService {
   StreamSubscription<SharedMedia>? _streamSubscription;
   SharedMedia? media;
+  BuildContext? _context;
 
-  // Singleton pattern
   static final ShareHandlerService _instance = ShareHandlerService._internal();
   factory ShareHandlerService() => _instance;
   ShareHandlerService._internal();
 
+  // Add this method to set context
+  void setContext(BuildContext context) {
+    _context = context;
+  }
+
   Future<void> init() async {
     final handler = ShareHandlerPlatform.instance;
     media = await handler.getInitialSharedMedia();
+    if (media != null) {
+      _processSharedMedia(media!);
+    }
+
     _streamSubscription = handler.sharedMediaStream.listen((SharedMedia media) {
       this.media = media;
+      _processSharedMedia(media);
     });
   }
 
-  // Clean up
+  Future<void> _processSharedMedia(SharedMedia media) async {
+    print('Processing shared media');
+    print(media.content);
+    if (media.content != null && _isValidUrl(media.content!)) {
+      _navigateToQuickJournal(media.content!);
+    } else if (media.content != null) {
+      _navigateToQuickJournal(null);
+    }
+  }
+
+  void _navigateToQuickJournal(
+    String? url,
+  ) {
+    try {
+      if (_context != null && _context!.mounted) {
+        GoRouter.of(_context!).pushNamed('quickJournalEntry', extra: {
+          'heroTag': 'quickInputHero',
+          'sharedContent': true,
+          'url': url,
+        });
+      }
+    } catch (e) {
+      print('Error navigating to quick journal: $e');
+    }
+  }
+
+  bool _isValidUrl(String text) {
+    try {
+      final uri = Uri.parse(text);
+      return uri.scheme == 'http' || uri.scheme == 'https';
+    } catch (e) {
+      return false;
+    }
+  }
+
   void dispose() {
     _streamSubscription?.cancel();
   }
 
-  // Retrieve shared content details
   SharedMedia? get sharedMedia => media;
 }
