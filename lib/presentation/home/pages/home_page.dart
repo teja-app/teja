@@ -10,6 +10,7 @@ import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
 import 'package:teja/domain/redux/mood/list/actions.dart';
+import 'package:teja/infrastructure/utils/share_handler_service.dart';
 import 'package:teja/presentation/home/ui/background_image_wrapper.dart';
 import 'package:teja/presentation/home/ui/QuickInputWidget.dart';
 import 'package:teja/presentation/home/ui/StreakDashboardWidget.dart';
@@ -216,6 +217,11 @@ class QuickInputWidgetWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _shareHandlerService = ShareHandlerService();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _shareHandlerService.setContext(context);
+    });
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0),
       child: Hero(

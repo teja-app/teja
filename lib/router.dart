@@ -308,9 +308,17 @@ GoRouter createRouter(AnalyticsService analyticsService) {
           final String heroTag =
               (state.extra as Map<String, dynamic>?)?['heroTag'] ??
                   'defaultHeroTag';
+          final bool sharedContent =
+              (state.extra as Map<String, dynamic>?)?['sharedContent'] ?? false;
+          final String? url = (state.extra as Map<String, dynamic>?)?['url'];
           return HeroPageRoute(
             heroTag: heroTag,
-            child: QuickJournalEntryScreen(entryId: entryId, heroTag: heroTag),
+            child: QuickJournalEntryScreen(
+              entryId: entryId,
+              heroTag: heroTag,
+              sharedContent: sharedContent,
+              url: url,
+            ),
           );
         },
       ),
