@@ -1,6 +1,4 @@
-// lib/infrastructure/services/link_preview_service.dart
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 
 class LinkMetadata {
   final String? title;
@@ -31,17 +29,25 @@ class LinkMetadata {
 
 class LinkPreviewService {
   static const String _microlinkApiEndpoint = 'https://api.microlink.io';
+  final Dio _dio;
+
+  LinkPreviewService({Dio? dio}) : _dio = dio ?? Dio();
 
   Future<LinkMetadata?> fetchMetadata(String url) async {
     try {
-      final response = await http.get(
-        Uri.parse(
-            '$_microlinkApiEndpoint/?url=$url&palette=true&audio=true&video=true&iframe=true'),
+      final response = await _dio.get(
+        '$_microlinkApiEndpoint/',
+        queryParameters: {
+          'url': url,
+          'palette': true,
+          'audio': true,
+          'video': true,
+          'iframe': true,
+        },
       );
 
       if (response.statusCode == 200) {
-        final json = jsonDecode(response.body);
-        return LinkMetadata.fromJson(json);
+        return LinkMetadata.fromJson(response.data);
       }
       return null;
     } catch (e) {
