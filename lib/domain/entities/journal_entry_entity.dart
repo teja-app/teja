@@ -22,6 +22,7 @@ class JournalEntryEntity {
   final List<JournalFeelingEntity>? feelings;
   final String? body;
   final bool isDeleted; // New field for soft delete
+  final List<UrlMetadataEntity>? urlMetadata;
 
   JournalEntryEntity({
     required this.id,
@@ -47,6 +48,7 @@ class JournalEntryEntity {
     this.feelings,
     this.body,
     this.isDeleted = false, // Default to false
+    this.urlMetadata,
   });
 
   JournalEntryEntity copyWith({
@@ -73,6 +75,7 @@ class JournalEntryEntity {
     List<PainNoteEntryEntity>? painNoteEntries,
     JournalEntryMetadataEntity? metadata,
     bool? isDeleted,
+    List<UrlMetadataEntity>? urlMetadata,
   }) {
     return JournalEntryEntity(
       id: id ?? this.id,
@@ -97,6 +100,7 @@ class JournalEntryEntity {
       lock: lock ?? this.lock,
       body: body ?? this.body,
       isDeleted: isDeleted ?? this.isDeleted,
+      urlMetadata: urlMetadata ?? this.urlMetadata,
     );
   }
 
@@ -108,27 +112,43 @@ class JournalEntryEntity {
       createdAt: DateTime.fromMillisecondsSinceEpoch(json['createdAt']),
       updatedAt: DateTime.fromMillisecondsSinceEpoch(json['updatedAt']),
       questions: json['questions'] != null
-          ? (json['questions'] as List).map((q) => QuestionAnswerPairEntity.fromJson(q)).toList()
+          ? (json['questions'] as List)
+              .map((q) => QuestionAnswerPairEntity.fromJson(q))
+              .toList()
           : null,
       textEntries: json['textEntries'] != null
-          ? (json['textEntries'] as List).map((t) => TextEntryEntity.fromJson(t)).toList()
+          ? (json['textEntries'] as List)
+              .map((t) => TextEntryEntity.fromJson(t))
+              .toList()
           : null,
       voiceEntries: json['voiceEntries'] != null
-          ? (json['voiceEntries'] as List).map((v) => VoiceEntryEntity.fromJson(v)).toList()
+          ? (json['voiceEntries'] as List)
+              .map((v) => VoiceEntryEntity.fromJson(v))
+              .toList()
           : null,
       videoEntries: json['videoEntries'] != null
-          ? (json['videoEntries'] as List).map((v) => VideoEntryEntity.fromJson(v)).toList()
+          ? (json['videoEntries'] as List)
+              .map((v) => VideoEntryEntity.fromJson(v))
+              .toList()
           : null,
       imageEntries: json['imageEntries'] != null
-          ? (json['imageEntries'] as List).map((i) => ImageEntryEntity.fromJson(i)).toList()
+          ? (json['imageEntries'] as List)
+              .map((i) => ImageEntryEntity.fromJson(i))
+              .toList()
           : null,
       bulletPointEntries: json['bulletPointEntries'] != null
-          ? (json['bulletPointEntries'] as List).map((b) => BulletPointEntryEntity.fromJson(b)).toList()
+          ? (json['bulletPointEntries'] as List)
+              .map((b) => BulletPointEntryEntity.fromJson(b))
+              .toList()
           : null,
       painNoteEntries: json['painNoteEntries'] != null
-          ? (json['painNoteEntries'] as List).map((p) => PainNoteEntryEntity.fromJson(p)).toList()
+          ? (json['painNoteEntries'] as List)
+              .map((p) => PainNoteEntryEntity.fromJson(p))
+              .toList()
           : null,
-      metadata: json['metadata'] != null ? JournalEntryMetadataEntity.fromJson(json['metadata']) : null,
+      metadata: json['metadata'] != null
+          ? JournalEntryMetadataEntity.fromJson(json['metadata'])
+          : null,
       lock: json['lock'],
       emoticon: json['emoticon'],
       title: json['title'],
@@ -137,10 +157,17 @@ class JournalEntryEntity {
       affirmation: json['affirmation'],
       topics: json['topics'] != null ? List<String>.from(json['topics']) : null,
       feelings: json['feelings'] != null
-          ? (json['feelings'] as List).map((f) => JournalFeelingEntity.fromJson(f)).toList()
+          ? (json['feelings'] as List)
+              .map((f) => JournalFeelingEntity.fromJson(f))
+              .toList()
           : null,
       body: json['body'],
       isDeleted: json['isDeleted'] ?? false,
+      urlMetadata: json['urlMetadata'] != null
+          ? (json['urlMetadata'] as List)
+              .map((u) => UrlMetadataEntity.fromJson(u))
+              .toList()
+          : null,
     );
   }
 
@@ -169,6 +196,7 @@ class JournalEntryEntity {
       'feelings': feelings?.map((f) => f.toJson()).toList(),
       'body': body,
       'isDeleted': isDeleted,
+      'urlMetadata': urlMetadata?.map((u) => u.toJson()).toList(),
     };
   }
 }
@@ -251,9 +279,15 @@ class QuestionAnswerPairEntity {
       questionId: json['questionId'],
       questionText: json['questionText'],
       answerText: json['answerText'],
-      imageEntryIds: json['imageEntryIds'] != null ? List<String>.from(json['imageEntryIds']) : null,
-      videoEntryIds: json['videoEntryIds'] != null ? List<String>.from(json['videoEntryIds']) : null,
-      voiceEntryIds: json['voiceEntryIds'] != null ? List<String>.from(json['voiceEntryIds']) : null,
+      imageEntryIds: json['imageEntryIds'] != null
+          ? List<String>.from(json['imageEntryIds'])
+          : null,
+      videoEntryIds: json['videoEntryIds'] != null
+          ? List<String>.from(json['videoEntryIds'])
+          : null,
+      voiceEntryIds: json['voiceEntryIds'] != null
+          ? List<String>.from(json['voiceEntryIds'])
+          : null,
     );
   }
 
@@ -540,6 +574,70 @@ class JournalEntryMetadataEntity {
   Map<String, dynamic> toJson() {
     return {
       'tags': tags,
+    };
+  }
+}
+
+class UrlMetadataEntity {
+  final String id;
+  final String url;
+  final String? title;
+  final String? description;
+  final String? image;
+  final String? logo;
+  final String? body;
+
+  UrlMetadataEntity({
+    required this.id,
+    required this.url,
+    this.title,
+    this.description,
+    this.image,
+    this.logo,
+    this.body,
+  });
+
+  UrlMetadataEntity copyWith({
+    String? id,
+    String? url,
+    String? title,
+    String? description,
+    String? image,
+    String? logo,
+    String? body,
+  }) {
+    return UrlMetadataEntity(
+      id: id ?? this.id,
+      url: url ?? this.url,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      image: image ?? this.image,
+      logo: logo ?? this.logo,
+      body: body ?? this.body,
+    );
+  }
+
+  static UrlMetadataEntity fromJson(Map<String, dynamic> json) {
+    return UrlMetadataEntity(
+      id: json['id'],
+      url: json['url'],
+      title: json['title'],
+      description: json['description'],
+      image: json['image'],
+      logo: json['logo'],
+      body: json['body'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'url': url,
+      'title': title,
+      'description': description,
+      'image': image,
+      'logo': logo,
+      'body': body,
     };
   }
 }

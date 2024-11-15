@@ -29,6 +29,17 @@ class ImageEntry {
 }
 
 @Embedded()
+class UrlMetadata {
+  String id = Helpers.generateUniqueId();
+  String? url;
+  String? title;
+  String? description;
+  String? image;
+  String? logo;
+  String? body;
+}
+
+@Embedded()
 class VideoEntry {
   String id = Helpers.generateUniqueId();
   String? filePath;
@@ -87,6 +98,7 @@ class JournalEntry {
   List<ImageEntry>? imageEntries;
   List<BulletPointEntry>? bulletPointEntries;
   List<PainNoteEntry>? painNoteEntries;
+  List<UrlMetadata>? urlMetadata;
 
   JournalEntryMetadata? metadata;
 
