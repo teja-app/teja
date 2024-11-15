@@ -142,6 +142,15 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
       );
       if (updatedEntry != null) {
         await _store.dispatch(SaveJournalEntry(updatedEntry));
+        await _store.dispatch(AddUrlMetadataToJournalEntry(
+          journalEntryId: updatedEntry.id,
+          url: _linkMetadata!.url,
+          title: _linkMetadata!.title ?? '',
+          description: _linkMetadata!.description ?? '',
+          image: _linkMetadata!.image ?? '',
+          logo: _linkMetadata!.logo ?? '',
+          body: _linkMetadata!.body ?? '',
+        ));
         await Future.delayed(const Duration(milliseconds: 100));
         await _store.dispatch(LoadJournalDetailAction(updatedEntry.id));
 

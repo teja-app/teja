@@ -5,11 +5,13 @@ import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_state.dart';
 import 'package:teja/domain/redux/journal/journal_editor/quick_journal_editor_actions.dart';
 
-JournalEditorState _updateJournalEntry(JournalEditorState state, SaveJournalEntry action) {
+JournalEditorState _updateJournalEntry(
+    JournalEditorState state, SaveJournalEntry action) {
   return state.copyWith(currentJournalEntry: action.journalEntry);
 }
 
-JournalEditorState _updateQuestionAnswer(JournalEditorState state, UpdateQuestionAnswer action) {
+JournalEditorState _updateQuestionAnswer(
+    JournalEditorState state, UpdateQuestionAnswer action) {
   var updatedQuestions = state.currentJournalEntry?.questions?.map((q) {
     if (q.questionId == action.questionId) {
       return q.copyWith(
@@ -21,10 +23,13 @@ JournalEditorState _updateQuestionAnswer(JournalEditorState state, UpdateQuestio
     return q;
   }).toList();
 
-  return state.copyWith(currentJournalEntry: state.currentJournalEntry?.copyWith(questions: updatedQuestions));
+  return state.copyWith(
+      currentJournalEntry:
+          state.currentJournalEntry?.copyWith(questions: updatedQuestions));
 }
 
-JournalEditorState _clearMoodEditorFormSuccess(JournalEditorState state, ClearJournalEditorSuccess action) {
+JournalEditorState _clearMoodEditorFormSuccess(
+    JournalEditorState state, ClearJournalEditorSuccess action) {
   return JournalEditorState.initialState();
 }
 
@@ -38,129 +43,222 @@ JournalEditorState _initializeJournalEditorFailure(
   return state.copyWith(error: action.error);
 }
 
-JournalEditorState _changeJournalPage(JournalEditorState state, ChangeJournalPageAction action) {
+JournalEditorState _changeJournalPage(
+    JournalEditorState state, ChangeJournalPageAction action) {
   return state.copyWith(currentPageIndex: action.pageIndex);
 }
 
-JournalEditorState _addOrUpdateImageFailure(JournalEditorState state, AddOrUpdateImageFailureAction action) {
+JournalEditorState _addOrUpdateImageFailure(
+    JournalEditorState state, AddOrUpdateImageFailureAction action) {
   return state.copyWith(error: action.error);
 }
 
-JournalEditorState _removeImageFailure(JournalEditorState state, RemoveImageFailureAction action) {
+JournalEditorState _removeImageFailure(
+    JournalEditorState state, RemoveImageFailureAction action) {
   return state.copyWith(error: action.error);
 }
 
 JournalEditorState _addImageToQuestionAnswerPairFailure(
-    JournalEditorState state, AddImageToQuestionAnswerPairFailureAction action) {
+    JournalEditorState state,
+    AddImageToQuestionAnswerPairFailureAction action) {
   return state.copyWith(error: action.error);
 }
 
 JournalEditorState _removeImageFromQuestionAnswerPairFailure(
-    JournalEditorState state, RemoveImageFromQuestionAnswerPairFailureAction action) {
+    JournalEditorState state,
+    RemoveImageFromQuestionAnswerPairFailureAction action) {
   return state.copyWith(error: action.error);
 }
 
-JournalEditorState _addOrUpdateImageSuccess(JournalEditorState state, AddOrUpdateImageSuccessAction action) {
+JournalEditorState _addOrUpdateImageSuccess(
+    JournalEditorState state, AddOrUpdateImageSuccessAction action) {
   return state.copyWith(currentJournalEntry: state.currentJournalEntry);
 }
 
-JournalEditorState _removeImageSuccess(JournalEditorState state, RemoveImageSuccessAction action) {
+JournalEditorState _removeImageSuccess(
+    JournalEditorState state, RemoveImageSuccessAction action) {
   return state.copyWith(currentJournalEntry: state.currentJournalEntry);
 }
 
 JournalEditorState _addImageToQuestionAnswerPairSuccess(
-    JournalEditorState state, AddImageToQuestionAnswerPairSuccessAction action) {
+    JournalEditorState state,
+    AddImageToQuestionAnswerPairSuccessAction action) {
   return state.copyWith(currentJournalEntry: state.currentJournalEntry);
 }
 
 JournalEditorState _removeImageFromQuestionAnswerPairSuccess(
-    JournalEditorState state, RemoveImageFromQuestionAnswerPairSuccessAction action) {
+    JournalEditorState state,
+    RemoveImageFromQuestionAnswerPairSuccessAction action) {
   return state.copyWith(currentJournalEntry: state.currentJournalEntry);
 }
 
-JournalEditorState _updateJournalEntryWithImages(JournalEditorState state, UpdateJournalEntryWithImages action) {
+JournalEditorState _updateJournalEntryWithImages(
+    JournalEditorState state, UpdateJournalEntryWithImages action) {
   return state.copyWith(currentJournalEntry: action.journalEntry);
 }
 
-JournalEditorState _addOrUpdateVideoSuccess(JournalEditorState state, AddOrUpdateVideoSuccessAction action) {
+JournalEditorState _addOrUpdateVideoSuccess(
+    JournalEditorState state, AddOrUpdateVideoSuccessAction action) {
   return state.copyWith(currentJournalEntry: state.currentJournalEntry);
 }
 
-JournalEditorState _addOrUpdateVideoFailure(JournalEditorState state, AddOrUpdateVideoFailureAction action) {
+JournalEditorState _addOrUpdateVideoFailure(
+    JournalEditorState state, AddOrUpdateVideoFailureAction action) {
   return state.copyWith(error: action.error);
 }
 
-JournalEditorState _removeVideoSuccess(JournalEditorState state, RemoveVideoSuccessAction action) {
+JournalEditorState _removeVideoSuccess(
+    JournalEditorState state, RemoveVideoSuccessAction action) {
   return state.copyWith(currentJournalEntry: state.currentJournalEntry);
 }
 
-JournalEditorState _removeVideoFailure(JournalEditorState state, RemoveVideoFailureAction action) {
+JournalEditorState _removeVideoFailure(
+    JournalEditorState state, RemoveVideoFailureAction action) {
   return state.copyWith(error: action.error);
 }
 
 JournalEditorState _addVideoToQuestionAnswerPairSuccess(
-    JournalEditorState state, AddVideoToQuestionAnswerPairSuccessAction action) {
+    JournalEditorState state,
+    AddVideoToQuestionAnswerPairSuccessAction action) {
   return state.copyWith(currentJournalEntry: state.currentJournalEntry);
 }
 
 JournalEditorState _addVideoToQuestionAnswerPairFailure(
-    JournalEditorState state, AddVideoToQuestionAnswerPairFailureAction action) {
+    JournalEditorState state,
+    AddVideoToQuestionAnswerPairFailureAction action) {
   return state.copyWith(error: action.error);
 }
 
 JournalEditorState _removeVideoFromQuestionAnswerPairSuccess(
-    JournalEditorState state, RemoveVideoFromQuestionAnswerPairSuccessAction action) {
+    JournalEditorState state,
+    RemoveVideoFromQuestionAnswerPairSuccessAction action) {
   return state.copyWith(currentJournalEntry: state.currentJournalEntry);
 }
 
 JournalEditorState _removeVideoFromQuestionAnswerPairFailure(
-    JournalEditorState state, RemoveVideoFromQuestionAnswerPairFailureAction action) {
+    JournalEditorState state,
+    RemoveVideoFromQuestionAnswerPairFailureAction action) {
   return state.copyWith(error: action.error);
 }
 
-JournalEditorState _updateJournalEntryWithVideos(JournalEditorState state, UpdateJournalEntryWithVideos action) {
+JournalEditorState _updateJournalEntryWithVideos(
+    JournalEditorState state, UpdateJournalEntryWithVideos action) {
   return state.copyWith(currentJournalEntry: action.journalEntry);
 }
 
 JournalEditorState _initializeQuickJournalEditorSuccess(
-    JournalEditorState state, InitializeQuickJournalEditorSuccessAction action) {
+    JournalEditorState state,
+    InitializeQuickJournalEditorSuccessAction action) {
   return state.copyWith(currentJournalEntry: action.journalEntry);
 }
 
 JournalEditorState _initializeQuickJournalEditorFailure(
-    JournalEditorState state, InitializeQuickJournalEditorFailureAction action) {
+    JournalEditorState state,
+    InitializeQuickJournalEditorFailureAction action) {
   return state;
+}
+
+// AddUrlMetadataToJournalEntry
+// AddUrlMetadataToJournalEntrySuccess
+// AddUrlMetadataToJournalEntryFailure
+// RemoveUrlMetadataFromJournalEntry
+// RemoveUrlMetadataFromJournalEntrySuccess
+// RemoveUrlMetadataFromJournalEntryFailure
+
+JournalEditorState _addUrlMetadataToJournalEntry(
+    JournalEditorState state, AddUrlMetadataToJournalEntry action) {
+  return state.copyWith(currentJournalEntry: state.currentJournalEntry);
+}
+
+JournalEditorState _addUrlMetadataToJournalEntrySuccess(
+    JournalEditorState state, AddUrlMetadataToJournalEntrySuccess action) {
+  return state.copyWith(currentJournalEntry: state.currentJournalEntry);
+}
+
+JournalEditorState _addUrlMetadataToJournalEntryFailure(
+    JournalEditorState state, AddUrlMetadataToJournalEntryFailure action) {
+  return state.copyWith(error: action.error);
+}
+
+JournalEditorState _removeUrlMetadataFromJournalEntry(
+    JournalEditorState state, RemoveUrlMetadataFromJournalEntry action) {
+  return state.copyWith(currentJournalEntry: state.currentJournalEntry);
+}
+
+JournalEditorState _removeUrlMetadataFromJournalEntrySuccess(
+    JournalEditorState state, RemoveUrlMetadataFromJournalEntrySuccess action) {
+  return state.copyWith(currentJournalEntry: state.currentJournalEntry);
+}
+
+JournalEditorState _removeUrlMetadataFromJournalEntryFailure(
+    JournalEditorState state, RemoveUrlMetadataFromJournalEntryFailure action) {
+  return state.copyWith(error: action.error);
 }
 
 final journalEditorReducer = combineReducers<JournalEditorState>([
   TypedReducer<JournalEditorState, SaveJournalEntry>(_updateJournalEntry),
   TypedReducer<JournalEditorState, UpdateQuestionAnswer>(_updateQuestionAnswer),
-  TypedReducer<JournalEditorState, ClearJournalEditorSuccess>(_clearMoodEditorFormSuccess),
-  TypedReducer<JournalEditorState, InitializeJournalEditorSuccessAction>(_initializeJournalEditorSuccess),
-  TypedReducer<JournalEditorState, InitializeJournalEditorFailureAction>(_initializeJournalEditorFailure),
+  TypedReducer<JournalEditorState, ClearJournalEditorSuccess>(
+      _clearMoodEditorFormSuccess),
+  TypedReducer<JournalEditorState, InitializeJournalEditorSuccessAction>(
+      _initializeJournalEditorSuccess),
+  TypedReducer<JournalEditorState, InitializeJournalEditorFailureAction>(
+      _initializeJournalEditorFailure),
   TypedReducer<JournalEditorState, ChangeJournalPageAction>(_changeJournalPage),
-  TypedReducer<JournalEditorState, AddOrUpdateImageSuccessAction>(_addOrUpdateImageSuccess),
-  TypedReducer<JournalEditorState, AddOrUpdateImageFailureAction>(_addOrUpdateImageFailure),
-  TypedReducer<JournalEditorState, RemoveImageSuccessAction>(_removeImageSuccess),
-  TypedReducer<JournalEditorState, RemoveImageFailureAction>(_removeImageFailure),
-  TypedReducer<JournalEditorState, AddImageToQuestionAnswerPairSuccessAction>(_addImageToQuestionAnswerPairSuccess),
-  TypedReducer<JournalEditorState, AddImageToQuestionAnswerPairFailureAction>(_addImageToQuestionAnswerPairFailure),
-  TypedReducer<JournalEditorState, RemoveImageFromQuestionAnswerPairSuccessAction>(
+  TypedReducer<JournalEditorState, AddOrUpdateImageSuccessAction>(
+      _addOrUpdateImageSuccess),
+  TypedReducer<JournalEditorState, AddOrUpdateImageFailureAction>(
+      _addOrUpdateImageFailure),
+  TypedReducer<JournalEditorState, RemoveImageSuccessAction>(
+      _removeImageSuccess),
+  TypedReducer<JournalEditorState, RemoveImageFailureAction>(
+      _removeImageFailure),
+  TypedReducer<JournalEditorState, AddImageToQuestionAnswerPairSuccessAction>(
+      _addImageToQuestionAnswerPairSuccess),
+  TypedReducer<JournalEditorState, AddImageToQuestionAnswerPairFailureAction>(
+      _addImageToQuestionAnswerPairFailure),
+  TypedReducer<JournalEditorState,
+          RemoveImageFromQuestionAnswerPairSuccessAction>(
       _removeImageFromQuestionAnswerPairSuccess),
-  TypedReducer<JournalEditorState, RemoveImageFromQuestionAnswerPairFailureAction>(
+  TypedReducer<JournalEditorState,
+          RemoveImageFromQuestionAnswerPairFailureAction>(
       _removeImageFromQuestionAnswerPairFailure),
-  TypedReducer<JournalEditorState, UpdateJournalEntryWithImages>(_updateJournalEntryWithImages),
-  TypedReducer<JournalEditorState, AddOrUpdateVideoSuccessAction>(_addOrUpdateVideoSuccess),
-  TypedReducer<JournalEditorState, AddOrUpdateVideoFailureAction>(_addOrUpdateVideoFailure),
-  TypedReducer<JournalEditorState, RemoveVideoSuccessAction>(_removeVideoSuccess),
-  TypedReducer<JournalEditorState, RemoveVideoFailureAction>(_removeVideoFailure),
-  TypedReducer<JournalEditorState, AddVideoToQuestionAnswerPairSuccessAction>(_addVideoToQuestionAnswerPairSuccess),
-  TypedReducer<JournalEditorState, AddVideoToQuestionAnswerPairFailureAction>(_addVideoToQuestionAnswerPairFailure),
-  TypedReducer<JournalEditorState, RemoveVideoFromQuestionAnswerPairSuccessAction>(
+  TypedReducer<JournalEditorState, UpdateJournalEntryWithImages>(
+      _updateJournalEntryWithImages),
+  TypedReducer<JournalEditorState, AddOrUpdateVideoSuccessAction>(
+      _addOrUpdateVideoSuccess),
+  TypedReducer<JournalEditorState, AddOrUpdateVideoFailureAction>(
+      _addOrUpdateVideoFailure),
+  TypedReducer<JournalEditorState, RemoveVideoSuccessAction>(
+      _removeVideoSuccess),
+  TypedReducer<JournalEditorState, RemoveVideoFailureAction>(
+      _removeVideoFailure),
+  TypedReducer<JournalEditorState, AddVideoToQuestionAnswerPairSuccessAction>(
+      _addVideoToQuestionAnswerPairSuccess),
+  TypedReducer<JournalEditorState, AddVideoToQuestionAnswerPairFailureAction>(
+      _addVideoToQuestionAnswerPairFailure),
+  TypedReducer<JournalEditorState,
+          RemoveVideoFromQuestionAnswerPairSuccessAction>(
       _removeVideoFromQuestionAnswerPairSuccess),
-  TypedReducer<JournalEditorState, RemoveVideoFromQuestionAnswerPairFailureAction>(
+  TypedReducer<JournalEditorState,
+          RemoveVideoFromQuestionAnswerPairFailureAction>(
       _removeVideoFromQuestionAnswerPairFailure),
-  TypedReducer<JournalEditorState, UpdateJournalEntryWithVideos>(_updateJournalEntryWithVideos),
-  TypedReducer<JournalEditorState, InitializeQuickJournalEditorSuccessAction>(_initializeQuickJournalEditorSuccess),
-  TypedReducer<JournalEditorState, InitializeQuickJournalEditorFailureAction>(_initializeQuickJournalEditorFailure),
+  TypedReducer<JournalEditorState, UpdateJournalEntryWithVideos>(
+      _updateJournalEntryWithVideos),
+  TypedReducer<JournalEditorState, InitializeQuickJournalEditorSuccessAction>(
+      _initializeQuickJournalEditorSuccess),
+  TypedReducer<JournalEditorState, InitializeQuickJournalEditorFailureAction>(
+      _initializeQuickJournalEditorFailure),
+  TypedReducer<JournalEditorState, AddUrlMetadataToJournalEntry>(
+      _addUrlMetadataToJournalEntry),
+  TypedReducer<JournalEditorState, AddUrlMetadataToJournalEntrySuccess>(
+      _addUrlMetadataToJournalEntrySuccess),
+  TypedReducer<JournalEditorState, AddUrlMetadataToJournalEntryFailure>(
+      _addUrlMetadataToJournalEntryFailure),
+  TypedReducer<JournalEditorState, RemoveUrlMetadataFromJournalEntry>(
+      _removeUrlMetadataFromJournalEntry),
+  TypedReducer<JournalEditorState, RemoveUrlMetadataFromJournalEntrySuccess>(
+      _removeUrlMetadataFromJournalEntrySuccess),
+  TypedReducer<JournalEditorState, RemoveUrlMetadataFromJournalEntryFailure>(
+      _removeUrlMetadataFromJournalEntryFailure),
 ]);

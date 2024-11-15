@@ -31,7 +31,8 @@ Future<List<JournalEntryEntity>> getJournalEntriesPageHelper(
   }
 
   final query = isar.journalEntrys.buildQuery(
-    filter: filterConditions.isNotEmpty ? FilterGroup.and(filterConditions) : null,
+    filter:
+        filterConditions.isNotEmpty ? FilterGroup.and(filterConditions) : null,
     sortBy: [const SortProperty(property: 'timestamp', sort: Sort.desc)],
     offset: startIndex,
     limit: pageSize,
@@ -73,7 +74,8 @@ Future<List<JournalEntryEntity>> getJournalEntriesInDateRangeHelper(
 
     final journalEntries = await query.findAll();
 
-    print("Query parameters: start=$start, end=$end, includeDeleted=$includeDeleted");
+    print(
+        "Query parameters: start=$start, end=$end, includeDeleted=$includeDeleted");
     print("Number of entries found: ${journalEntries.length}");
 
     return journalEntries.map((entry) => toEntityHelper(entry)).toList();
@@ -151,85 +153,112 @@ JournalEntry fromEntity(JournalEntryEntity entity) {
           ..painLevel = p.painLevel
           ..notes = p.notes)
         .toList()
-    ..metadata = entity.metadata != null ? (JournalEntryMetadata()..tags = entity.metadata?.tags) : null;
+    ..metadata = entity.metadata != null
+        ? (JournalEntryMetadata()..tags = entity.metadata?.tags)
+        : null
+    ..urlMetadata = entity.urlMetadata
+        ?.map((u) => UrlMetadata()
+          ..id = u.id
+          ..url = u.url
+          ..title = u.title
+          ..description = u.description
+          ..image = u.image
+          ..logo = u.logo
+          ..body = u.body)
+        .toList();
 }
 
 JournalEntryEntity toEntityHelper(JournalEntry journalEntry) {
   return JournalEntryEntity(
-    id: journalEntry.id,
-    templateId: journalEntry.templateId,
-    timestamp: journalEntry.timestamp,
-    createdAt: journalEntry.createdAt,
-    updatedAt: journalEntry.updatedAt,
-    lock: journalEntry.lock,
-    emoticon: journalEntry.emoticon,
-    title: journalEntry.title,
-    body: journalEntry.body,
-    summary: journalEntry.summary,
-    keyInsight: journalEntry.keyInsight,
-    affirmation: journalEntry.affirmation,
-    topics: journalEntry.topics,
-    isDeleted: journalEntry.isDeleted,
-    feelings: journalEntry.feelings
-        ?.map((f) => JournalFeelingEntity(
-              emoticon: f.emoticon ?? '',
-              title: f.title ?? '',
-            ))
-        .toList(),
-    questions: journalEntry.questions
-        ?.map((q) => QuestionAnswerPairEntity(
-              id: q.id,
-              questionId: q.questionId,
-              questionText: q.questionText,
-              answerText: q.answerText,
-              imageEntryIds: q.imageEntryIds,
-              videoEntryIds: q.videoEntryIds,
-              voiceEntryIds: q.voiceEntryIds,
-            ))
-        .toList(),
-    textEntries: journalEntry.textEntries
-        ?.map((t) => TextEntryEntity(
-              id: t.id,
-              content: t.content,
-            ))
-        .toList(),
-    voiceEntries: journalEntry.voiceEntries
-        ?.map((v) => VoiceEntryEntity(
-              id: v.id,
-              filePath: v.filePath,
-              duration: v.duration,
-              hash: v.hash,
-            ))
-        .toList(),
-    videoEntries: journalEntry.videoEntries
-        ?.map((v) => VideoEntryEntity(
-              id: v.id,
-              filePath: v.filePath,
-              duration: v.duration,
-              hash: v.hash,
-            ))
-        .toList(),
-    imageEntries: journalEntry.imageEntries
-        ?.map((i) => ImageEntryEntity(
-              id: i.id,
-              filePath: i.filePath,
-              caption: i.caption,
-              hash: i.hash,
-            ))
-        .toList(),
-    bulletPointEntries: journalEntry.bulletPointEntries
-        ?.map((b) => BulletPointEntryEntity(
-              id: b.id,
-              points: b.points,
-            ))
-        .toList(),
-    painNoteEntries: journalEntry.painNoteEntries
-        ?.map((p) => PainNoteEntryEntity(
-              id: p.id,
-              painLevel: p.painLevel,
-              notes: p.notes,
-            ))
-        .toList(),
-    metadata: journalEntry.metadata != null ? JournalEntryMetadataEntity(tags: journalEntry.metadata?.tags) : null,
-  );
+      id: journalEntry.id,
+      templateId: journalEntry.templateId,
+      timestamp: journalEntry.timestamp,
+      createdAt: journalEntry.createdAt,
+      updatedAt: journalEntry.updatedAt,
+      lock: journalEntry.lock,
+      emoticon: journalEntry.emoticon,
+      title: journalEntry.title,
+      body: journalEntry.body,
+      summary: journalEntry.summary,
+      keyInsight: journalEntry.keyInsight,
+      affirmation: journalEntry.affirmation,
+      topics: journalEntry.topics,
+      isDeleted: journalEntry.isDeleted,
+      feelings: journalEntry.feelings
+          ?.map((f) => JournalFeelingEntity(
+                emoticon: f.emoticon ?? '',
+                title: f.title ?? '',
+              ))
+          .toList(),
+      questions: journalEntry.questions
+          ?.map((q) => QuestionAnswerPairEntity(
+                id: q.id,
+                questionId: q.questionId,
+                questionText: q.questionText,
+                answerText: q.answerText,
+                imageEntryIds: q.imageEntryIds,
+                videoEntryIds: q.videoEntryIds,
+                voiceEntryIds: q.voiceEntryIds,
+              ))
+          .toList(),
+      textEntries: journalEntry.textEntries
+          ?.map((t) => TextEntryEntity(
+                id: t.id,
+                content: t.content,
+              ))
+          .toList(),
+      voiceEntries: journalEntry.voiceEntries
+          ?.map((v) => VoiceEntryEntity(
+                id: v.id,
+                filePath: v.filePath,
+                duration: v.duration,
+                hash: v.hash,
+              ))
+          .toList(),
+      videoEntries: journalEntry.videoEntries
+          ?.map((v) => VideoEntryEntity(
+                id: v.id,
+                filePath: v.filePath,
+                duration: v.duration,
+                hash: v.hash,
+              ))
+          .toList(),
+      imageEntries: journalEntry.imageEntries
+          ?.map((i) => ImageEntryEntity(
+                id: i.id,
+                filePath: i.filePath,
+                caption: i.caption,
+                hash: i.hash,
+              ))
+          .toList(),
+      bulletPointEntries: journalEntry.bulletPointEntries
+          ?.map((b) => BulletPointEntryEntity(
+                id: b.id,
+                points: b.points,
+              ))
+          .toList(),
+      painNoteEntries: journalEntry.painNoteEntries
+          ?.map((p) => PainNoteEntryEntity(
+                id: p.id,
+                painLevel: p.painLevel,
+                notes: p.notes,
+              ))
+          .toList(),
+      metadata: journalEntry.metadata != null
+          ? JournalEntryMetadataEntity(tags: journalEntry.metadata?.tags)
+          : null,
+      urlMetadata: journalEntry.urlMetadata
+              ?.map(
+                (u) => UrlMetadataEntity(
+                  id: u.id,
+                  url: u.url ?? '',
+                  title: u.title ?? '',
+                  description: u.description ?? '',
+                  image: u.image ?? '',
+                  logo: u.logo ?? '',
+                  body: u.body ?? '',
+                ),
+              )
+              .toList() ??
+          []);
 }

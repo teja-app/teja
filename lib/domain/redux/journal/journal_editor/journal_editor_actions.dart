@@ -9,7 +9,8 @@ class InitializeJournalEditor {
   final JournalTemplateEntity? template; // Make templateId optional
   final DateTime? timestamp;
 
-  const InitializeJournalEditor({this.journalEntryId, this.template, this.timestamp});
+  const InitializeJournalEditor(
+      {this.journalEntryId, this.template, this.timestamp});
 }
 
 @immutable
@@ -106,4 +107,60 @@ class InitializeJournalEditorFailureAction {
   final String error;
 
   const InitializeJournalEditorFailureAction(this.error);
+}
+
+@immutable
+class AddUrlMetadataToJournalEntry {
+  final String journalEntryId;
+  final String url;
+  final String title;
+  final String description;
+  final String image;
+  final String logo;
+  final String body;
+
+  const AddUrlMetadataToJournalEntry({
+    required this.journalEntryId,
+    required this.url,
+    required this.title,
+    required this.description,
+    required this.image,
+    required this.logo,
+    required this.body,
+  });
+}
+
+@immutable
+class AddUrlMetadataToJournalEntrySuccess {
+  const AddUrlMetadataToJournalEntrySuccess();
+}
+
+@immutable
+class AddUrlMetadataToJournalEntryFailure {
+  final String error;
+
+  const AddUrlMetadataToJournalEntryFailure(this.error);
+}
+
+@immutable
+class RemoveUrlMetadataFromJournalEntry {
+  final String journalEntryId;
+  final String url;
+
+  const RemoveUrlMetadataFromJournalEntry({
+    required this.journalEntryId,
+    required this.url,
+  });
+}
+
+@immutable
+class RemoveUrlMetadataFromJournalEntrySuccess {
+  const RemoveUrlMetadataFromJournalEntrySuccess();
+}
+
+@immutable
+class RemoveUrlMetadataFromJournalEntryFailure {
+  final String error;
+
+  const RemoveUrlMetadataFromJournalEntryFailure(this.error);
 }
