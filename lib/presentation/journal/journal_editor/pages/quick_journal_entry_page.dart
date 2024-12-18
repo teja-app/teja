@@ -1,4 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart' as quill;
+import 'package:flutter_quill/quill_delta.dart';
+import 'package:flutter_quill/flutter_quill.dart' show Document, ChangeSource;
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
@@ -9,7 +13,8 @@ import 'package:teja/domain/redux/journal/journal_editor/quick_journal_editor_ac
 import 'package:teja/domain/redux/journal/detail/journal_detail_actions.dart';
 import 'package:teja/domain/redux/permission/permissions_constants.dart';
 import 'package:teja/infrastructure/service/link_preview_service.dart';
-import 'package:teja/infrastructure/utils/share_handler_service.dart';
+import 'package:teja/presentation/journal/widgets/editor/custom_quill_editor.dart';
+import 'package:teja/presentation/journal/widgets/view/link_preview.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/presentation/onboarding/widgets/feature_gate.dart';
 import 'package:teja/router.dart';
@@ -35,7 +40,7 @@ class QuickJournalEntryScreen extends StatefulWidget {
 
 class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
   late final Store<AppState> _store;
-  final TextEditingController _bodyController = TextEditingController();
+  late final quill.QuillController _quillController;
   bool _isSaving = false;
   bool _isInitialized = false;
   String? _errorMessage;
@@ -46,6 +51,7 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
   void initState() {
     super.initState();
     _store = StoreProvider.of<AppState>(context, listen: false);
+    _quillController = quill.QuillController.basic();
     _initializeJournalEntry();
     if (widget.url != null) {
       _fetchLinkMetadata(widget.url!);
@@ -67,21 +73,8 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
 
   Widget _buildLinkPreview() {
     if (_isLoadingLinkMetadata) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Center(
-              child: Text(
-                widget.url ?? '',
-                style: Theme.of(context).textTheme.bodyMedium,
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const CircularProgressIndicator(),
-          ],
-        ),
+      return const Center(
+        child: CircularProgressIndicator(),
       );
     }
 
@@ -107,7 +100,6 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
   @override
   void dispose() {
     _store.dispatch(const ClearJournalEditor());
-    _bodyController.dispose();
     super.dispose();
   }
 
@@ -124,9 +116,15 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
     });
   }
 
+  // Convert Quill Delta to JSON string for storage
+  String _getDeltaJsonString() {
+    return jsonEncode(_quillController.document.toDelta().toJson());
+  }
+
   Future<void> _saveEntry(
       BuildContext context, JournalEntryEntity? currentEntry) async {
-    if (_bodyController.text.trim().isEmpty) {
+    // Check if the document is empty
+    if (_quillController.document.isEmpty()) {
       _showError('Journal entry cannot be empty');
       return;
     }
@@ -137,20 +135,29 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
     });
 
     try {
+      // Convert Quill Delta to JSON string
+      final deltaJsonString = _getDeltaJsonString();
+
       final updatedEntry = currentEntry?.copyWith(
-        body: _bodyController.text,
+        body: deltaJsonString,
       );
+
       if (updatedEntry != null) {
         await _store.dispatch(SaveJournalEntry(updatedEntry));
-        await _store.dispatch(AddUrlMetadataToJournalEntry(
-          journalEntryId: updatedEntry.id,
-          url: _linkMetadata!.url,
-          title: _linkMetadata!.title ?? '',
-          description: _linkMetadata!.description ?? '',
-          image: _linkMetadata!.image ?? '',
-          logo: _linkMetadata!.logo ?? '',
-          body: _linkMetadata!.body ?? '',
-        ));
+
+        // Add link metadata if available
+        if (_linkMetadata != null) {
+          await _store.dispatch(AddUrlMetadataToJournalEntry(
+            journalEntryId: updatedEntry.id,
+            url: _linkMetadata!.url,
+            title: _linkMetadata!.title ?? '',
+            description: _linkMetadata!.description ?? '',
+            image: _linkMetadata!.image ?? '',
+            logo: _linkMetadata!.logo ?? '',
+            body: _linkMetadata!.body ?? '',
+          ));
+        }
+
         await Future.delayed(const Duration(milliseconds: 100));
         await _store.dispatch(LoadJournalDetailAction(updatedEntry.id));
 
@@ -187,9 +194,10 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
     );
   }
 
+  // Similar modifications for _saveAndContinue method would follow the same pattern
   Future<void> _saveAndContinue(
       BuildContext context, JournalEntryEntity? currentEntry) async {
-    if (_bodyController.text.isEmpty) {
+    if (_quillController.document.isEmpty()) {
       _showError('Journal entry cannot be empty');
       return;
     }
@@ -200,16 +208,16 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
     });
 
     try {
+      final deltaJsonString = _getDeltaJsonString();
+
       final updatedEntry = currentEntry?.copyWith(
-        body: _bodyController.text,
+        body: deltaJsonString,
       );
+
       if (updatedEntry != null) {
         await _store.dispatch(SaveJournalEntry(updatedEntry));
         await Future.delayed(const Duration(milliseconds: 100));
         await _store.dispatch(LoadJournalDetailAction(updatedEntry.id));
-
-        // Wait for a short period to allow the state to update
-        await Future.delayed(const Duration(milliseconds: 100));
 
         final state = _store.state.journalDetailState;
         if (state.selectedJournalEntry != null &&
@@ -234,8 +242,20 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
     }
   }
 
+  void _discardAndGoBack(
+      BuildContext context, JournalEntryEntity? currentEntry) {
+    if (currentEntry != null &&
+        (currentEntry.body == null || currentEntry.body!.isEmpty)) {
+      _store.dispatch(DeleteJournalDetailAction(currentEntry.id));
+    }
+    if (context.mounted) {
+      GoRouter.of(context).pop();
+    }
+  }
+
+  // Modify _handleBack to check Quill document instead of text controller
   void _handleBack(BuildContext context, JournalEntryEntity? currentEntry) {
-    if (_bodyController.text.isNotEmpty) {
+    if (!_quillController.document.isEmpty()) {
       showDialog(
         context: context,
         builder: (BuildContext dialogContext) {
@@ -267,17 +287,6 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
     }
   }
 
-  void _discardAndGoBack(
-      BuildContext context, JournalEntryEntity? currentEntry) {
-    if (currentEntry != null &&
-        (currentEntry.body == null || currentEntry.body!.isEmpty)) {
-      _store.dispatch(DeleteJournalDetailAction(currentEntry.id));
-    }
-    if (context.mounted) {
-      GoRouter.of(context).pop();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;
@@ -292,8 +301,17 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
         converter: (store) => QuickJournalEditViewModel.fromStore(store),
         onWillChange: (oldViewModel, newViewModel) {
           if (!_isInitialized && newViewModel.currentJournalEntry != null) {
-            _bodyController.text = newViewModel.currentJournalEntry?.body ?? '';
-            _isInitialized = true;
+            try {
+              final savedBody = newViewModel.currentJournalEntry?.body;
+              if (savedBody != null && savedBody.isNotEmpty) {
+                final List<dynamic> json = jsonDecode(savedBody);
+                _quillController.document = quill.Document.fromJson(json);
+              }
+              _isInitialized = true;
+            } catch (e) {
+              print('Error initializing Quill controller: $e');
+              _isInitialized = true;
+            }
           }
         },
         builder: (context, viewModel) {
@@ -324,61 +342,45 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
             ),
             body: Column(
               children: [
-                _buildLinkPreview(), // Add this line before the TextField
+                _buildLinkPreview(),
                 Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: TextField(
-                      controller: _bodyController,
-                      decoration: InputDecoration(
-                        hintText: 'Write your journal entry...',
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(color: primary),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: primary),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: primary),
-                        ),
-                      ),
-                      minLines: 4,
-                      maxLines: null,
-                      autofocus: true,
-                    ),
+                  child: CustomQuillEditor(
+                    controller: _quillController,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Button(
-                            onPressed: _isSaving
-                                ? null
-                                : () => _saveEntry(
-                                    context, viewModel.currentJournalEntry),
-                            text: 'Save',
-                            buttonType: ButtonType.secondary),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                          child: FeatureGate(
-                        feature: AI_SUGGESTIONS,
-                        child: Button(
-                          width: isDesktop(context) ? 330 : 120,
-                          buttonType: ButtonType.primary,
-                          onPressed: _isSaving
-                              ? null
-                              : () => _saveAndContinue(
-                                  context, viewModel.currentJournalEntry),
-                          text: 'Continue',
-                        ),
-                      )),
-                      const SizedBox(width: 16),
-                    ],
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.all(16.0),
+                //   child: Row(
+                //     children: [
+                //       Expanded(
+                //         child: Button(
+                //           onPressed: _isSaving
+                //               ? null
+                //               : () => _saveEntry(
+                //                   context, viewModel.currentJournalEntry),
+                //           text: 'Save',
+                //           buttonType: ButtonType.secondary,
+                //         ),
+                //       ),
+                //       const SizedBox(width: 16),
+                //       Expanded(
+                //         child: FeatureGate(
+                //           feature: AI_SUGGESTIONS,
+                //           child: Button(
+                //             width: isDesktop(context) ? 330 : 120,
+                //             buttonType: ButtonType.primary,
+                //             onPressed: _isSaving
+                //                 ? null
+                //                 : () => _saveAndContinue(
+                //                     context, viewModel.currentJournalEntry),
+                //             text: 'Continue',
+                //           ),
+                //         ),
+                //       ),
+                //       const SizedBox(width: 16),
+                //     ],
+                //   ),
+                // ),
               ],
             ),
           );
@@ -398,88 +400,6 @@ class QuickJournalEditViewModel {
   static QuickJournalEditViewModel fromStore(Store<AppState> store) {
     return QuickJournalEditViewModel(
       currentJournalEntry: store.state.journalEditorState.currentJournalEntry,
-    );
-  }
-}
-
-class LinkPreviewWidget extends StatelessWidget {
-  final LinkMetadata metadata;
-  final VoidCallback? onRemove;
-
-  const LinkPreviewWidget({
-    Key? key,
-    required this.metadata,
-    this.onRemove,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.all(8.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (metadata.image != null)
-            Expanded(
-              flex: 2,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(4.0),
-                child: Image.network(
-                  metadata.image!,
-                  height: 127,
-                  width: double.infinity,
-                  fit: BoxFit.fill,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const SizedBox(),
-                ),
-              ),
-            ),
-          Expanded(
-            flex: 3,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          metadata.title ?? 'No Title',
-                          style: Theme.of(context).textTheme.titleMedium,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      if (onRemove != null)
-                        IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: onRemove,
-                        ),
-                    ],
-                  ),
-                  if (metadata.description != null) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      metadata.description!,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                  const SizedBox(height: 4),
-                  Text(
-                    metadata.url,
-                    style: Theme.of(context).textTheme.bodySmall,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

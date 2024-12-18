@@ -106,6 +106,8 @@ dependencies:
   in_app_purchase: ^3.2.0
   provider: ^6.0.5
   share_handler: ^0.0.21
+  flutter_quill: ^9.0.0
+
 
 dev_dependencies:
   flutter_test:
