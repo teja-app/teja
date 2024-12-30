@@ -121,7 +121,7 @@ class _CustomQuillEditorState extends State<CustomQuillEditor> {
                             Icons.text_fields,
                             color: _focusNode.hasFocus
                                 ? Colors.white
-                                : Theme.of(context).primaryColor,
+                                : Theme.of(context).primaryColorLight,
                           )),
                     ),
                   ),
