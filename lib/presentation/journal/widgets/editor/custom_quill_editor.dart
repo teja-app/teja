@@ -97,6 +97,7 @@ class _CustomQuillEditorState extends State<CustomQuillEditor> {
                           _focusNode.unfocus();
                         } else {
                           _focusNode.requestFocus();
+                          // nss
                         }
                       },
                       child: AnimatedContainer(
