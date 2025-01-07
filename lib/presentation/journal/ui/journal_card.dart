@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
+import 'package:teja/presentation/journal/widgets/view/custom_quill_view.dart';
 import 'package:teja/presentation/mood/ui/attachement_image.dart';
 import 'package:teja/presentation/mood/ui/attachment_video.dart';
 import 'package:teja/router.dart';
@@ -16,7 +17,9 @@ Widget journalEntryLayout(
   double gridWidth = 4, // Optional parameter with default value
 }) {
   final textTheme = Theme.of(context).textTheme;
-  final firstQuestion = journalEntry.questions?.isNotEmpty == true ? journalEntry.questions!.first : null;
+  final firstQuestion = journalEntry.questions?.isNotEmpty == true
+      ? journalEntry.questions!.first
+      : null;
 
   Widget _buildMediaRow() {
     final images = journalEntry.imageEntries?.take(3).toList() ?? [];
@@ -80,14 +83,17 @@ Widget journalEntryLayout(
         child: FlexibleHeightBox(
           gridWidth: gridWidth,
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 10.0),
+            padding:
+                const EdgeInsets.symmetric(vertical: 24.0, horizontal: 10.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (journalEntry.title != null && journalEntry.title!.isNotEmpty) ...[
+                if (journalEntry.title != null &&
+                    journalEntry.title!.isNotEmpty) ...[
                   Row(
                     children: [
-                      if (journalEntry.emoticon != null && journalEntry.emoticon!.isNotEmpty)
+                      if (journalEntry.emoticon != null &&
+                          journalEntry.emoticon!.isNotEmpty)
                         Text(
                           journalEntry.emoticon!,
                           style: textTheme.titleLarge,
@@ -104,10 +110,7 @@ Widget journalEntryLayout(
                   SizedBox(height: 8),
                 ] else ...[
                   if (journalEntry.body != null) ...[
-                    Text(
-                      journalEntry.body ?? "",
-                      style: textTheme.bodyMedium,
-                    ),
+                    CustomQuillView(quillJson: journalEntry.body ?? ""),
                   ],
                   if (template != null) ...[
                     Text(
@@ -121,10 +124,7 @@ Widget journalEntryLayout(
                       style: textTheme.titleSmall,
                     ),
                     const SizedBox(height: 8),
-                    Text(
-                      firstQuestion.answerText ?? 'No answer',
-                      style: textTheme.bodySmall,
-                    ),
+                    CustomQuillView(quillJson: firstQuestion.answerText ?? ""),
                   ],
                 ],
                 const SizedBox(height: 16),

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
@@ -9,6 +11,9 @@ import 'package:teja/domain/redux/journal/detail/journal_detail_actions.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.dart';
 import 'package:teja/infrastructure/api/ai_question_api.dart';
 import 'package:teja/presentation/journal/journal_editor/ui/typing_indicator.dart';
+import 'package:flutter_quill/flutter_quill.dart' as quill;
+import 'package:flutter_quill/flutter_quill.dart';
+import 'package:teja/presentation/journal/widgets/view/custom_quill_view.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:teja/shared/helpers/logger.dart';
@@ -49,11 +54,13 @@ class JournalEntryPage extends StatefulWidget {
 
 class JournalEntryPageState extends State<JournalEntryPage> {
   final ScrollController _scrollController = ScrollController();
+  final quill.QuillController _quillController = quill.QuillController.basic();
+
   LoadingState _loadingState = LoadingState();
   String? _errorMessage;
   List<Map<String, String>> qaList = [];
 
-  final TextEditingController _textController = TextEditingController();
+  // final TextEditingController _textController = TextEditingController();
   late int currentQuestionIndex;
   bool showingAlternatives = false;
   List<String> _alternativeQuestions = [];
@@ -69,27 +76,29 @@ class JournalEntryPageState extends State<JournalEntryPage> {
   void initState() {
     super.initState();
     _store = StoreProvider.of<AppState>(context, listen: false);
-    _textController.addListener(_handleTextChange);
     _scrollController.addListener(_checkScrollPosition);
     currentQuestionIndex = 0;
-
+    _quillController.addListener(_handleTextChange);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadJournalEntry();
     });
   }
 
-  void _checkScrollPosition() {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-      _textFocusNode.requestFocus();
-    }
-  }
-
   void _handleTextChange() {
-    final newIsTyping = _textController.text.trim().isNotEmpty;
+    // final newIsTyping = _textController.text.trim().isNotEmpty;
+    final newIsTyping =
+        _quillController.document.toPlainText().trim().isNotEmpty;
     if (newIsTyping != _isTyping) {
       setState(() {
         _isTyping = newIsTyping;
       });
+    }
+  }
+
+  void _checkScrollPosition() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      _textFocusNode.requestFocus();
     }
   }
 
@@ -119,40 +128,65 @@ class JournalEntryPageState extends State<JournalEntryPage> {
   Future<void> _initializeQAList(JournalEntryEntity journalEntry) async {
     qaList.clear();
     if (journalEntry.body != null && journalEntry.body!.isNotEmpty) {
-      qaList.add({'question': 'What\'s on your mind?', 'answer': journalEntry.body!});
+      qaList.add(
+          {'question': 'What\'s on your mind?', 'answer': journalEntry.body!});
     }
     for (var question in journalEntry.questions ?? []) {
       if (question.questionText != null && question.answerText != null) {
-        qaList.add({'question': question.questionText!, 'answer': question.answerText!});
+        qaList.add({
+          'question': question.questionText!,
+          'answer': question.answerText!
+        });
       }
     }
 
     currentQuestionIndex = qaList.length - 1;
     if (qaList.isNotEmpty) {
-      _textController.text = qaList.last['answer'] ?? '';
+      // _textController.text = qaList.last['answer'] ?? '';
+      _quillController.replaceText(0, 0, qaList.last['answer'] ?? '',
+          TextSelection.collapsed(offset: 0));
       await _goDeeper(useExistingAnswer: true);
     }
   }
 
   Future<void> _saveAnswer() async {
-    if (_textController.text.isNotEmpty) {
+    // if (_textController.text.isNotEmpty) {
+    if (_quillController.document.toPlainText().trim().isNotEmpty) {
       setState(() {
         _loadingState = _loadingState.copyWith(isSaving: true);
       });
 
       try {
         if (currentQuestionIndex < qaList.length) {
-          qaList[currentQuestionIndex]['answer'] = _textController.text;
+          print('currentQuestionIndex: $currentQuestionIndex');
+          print(
+              'qaList[currentQuestionIndex]: ${qaList[currentQuestionIndex]}');
+          print(
+              '_quillController.document.toPlainText().trim(): ${_quillController.document.toPlainText().trim()}');
+          // qaList[currentQuestionIndex]['answer'] = _textController.text;
+          qaList[currentQuestionIndex]['answer'] =
+              // _quillController.document.toPlainText().trim();
+              jsonEncode(_quillController.document.toDelta().toJson());
         } else {
-          qaList.add({'question': qaList.last['question'] ?? '', 'answer': _textController.text});
+          print(
+              '_quillController.document.toPlainText().trim()3: ${_quillController.document.toPlainText().trim()}');
+          qaList.add({
+            'question': qaList.last['question'] ?? '',
+            // 'answer': _textController.text
+            // 'answer': _quillController.document.toPlainText().trim()
+            'answer': jsonEncode(_quillController.document.toDelta().toJson())
+          });
         }
 
-        final journalEntry = _store.state.journalDetailState.selectedJournalEntry;
+        final journalEntry =
+            _store.state.journalDetailState.selectedJournalEntry;
         if (journalEntry != null) {
           await _store.dispatch(UpdateQuestionAnswer(
             journalEntryId: journalEntry.id,
             questionId: qaList[currentQuestionIndex]['questionId'] ?? uuid.v4(),
-            answerText: _textController.text,
+            // answerText: _textController.text,
+            answerText:
+                jsonEncode(_quillController.document.toDelta().toJson()),
             questionText: qaList[currentQuestionIndex]['question']!,
           ));
         }
@@ -168,7 +202,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
   }
 
   Future<void> _goDeeper({bool useExistingAnswer = false}) async {
-    if (_textController.text.trim().isEmpty) {
+    if (_quillController.document.toPlainText().trim().isEmpty) {
       _showError('Please write an answer before continuing');
       return;
     }
@@ -182,7 +216,8 @@ class JournalEntryPageState extends State<JournalEntryPage> {
     });
 
     try {
-      final deeperQuestionResponse = await AIQuestionAPI().generateDeeperQuestion(
+      final deeperQuestionResponse =
+          await AIQuestionAPI().generateDeeperQuestion(
         QAData(qaList: qaList),
       );
 
@@ -192,11 +227,12 @@ class JournalEntryPageState extends State<JournalEntryPage> {
           'answer': '',
         });
         _helpText = deeperQuestionResponse['helpText'];
-        _inputSuggestions = (deeperQuestionResponse['inputSuggestions'] as List<dynamic>).cast<String>();
+        _inputSuggestions =
+            (deeperQuestionResponse['inputSuggestions'] as List<dynamic>)
+                .cast<String>();
         currentQuestionIndex = qaList.length - 1;
         showingAlternatives = false;
-        _textController.clear();
-        _isTyping = false; // Reset typing state
+        _quillController.clear();
       });
       _scrollToBottom();
     } catch (e) {
@@ -259,8 +295,10 @@ class JournalEntryPageState extends State<JournalEntryPage> {
                   : ListView(
                       controller: _scrollController,
                       children: [
-                        ...qaList.asMap().entries.map((entry) => _buildQuestionAnswerItem(entry.key, colorScheme)),
-                        if (showingAlternatives) _buildAlternativesSection(colorScheme),
+                        ...qaList.asMap().entries.map((entry) =>
+                            _buildQuestionAnswerItem(entry.key, colorScheme)),
+                        if (showingAlternatives)
+                          _buildAlternativesSection(colorScheme),
                       ],
                     ),
             ),
@@ -288,21 +326,30 @@ class JournalEntryPageState extends State<JournalEntryPage> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Expanded(
-            child: TextField(
-              controller: _textController,
-              focusNode: _textFocusNode,
-              decoration: InputDecoration(
-                hintText: 'Write your answer...',
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(4),
               ),
-              maxLines: null,
-              textInputAction: TextInputAction.newline,
-              onChanged: (text) {
-                setState(() {
-                  _isTyping = text.trim().isNotEmpty;
-                });
-              },
+              constraints: BoxConstraints(
+                maxHeight: 150, // Set a max height to allow scrolling
+              ),
+              child: quill.QuillEditor(
+                focusNode: _textFocusNode,
+                scrollController: ScrollController(), // Enables scrolling
+                configurations: quill.QuillEditorConfigurations(
+                  controller: _quillController,
+                  placeholder: 'Write your answer...',
+                  expands: false,
+                  showCursor: true,
+                  textCapitalization: TextCapitalization.sentences,
+                  scrollable: true,
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  autoFocus: true,
+                  textInputAction: TextInputAction.done,
+                  enableMarkdownStyleConversion: true,
+                ),
+              ),
             ),
           ),
           SizedBox(width: 8),
@@ -324,6 +371,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
     if (_loadingState.isGeneratingQuestion) {
       return null;
     }
+
     if (_isTyping) {
       return _goDeeper;
     }
@@ -336,13 +384,16 @@ class JournalEntryPageState extends State<JournalEntryPage> {
     });
 
     try {
-      final alternativeQuestionsResponse = await AIQuestionAPI().generateAlternativeQuestions(
+      final alternativeQuestionsResponse =
+          await AIQuestionAPI().generateAlternativeQuestions(
         QAData(qaList: qaList),
       );
 
       setState(() {
         _alternativeQuestions =
-            (alternativeQuestionsResponse['alternatives'] as List<dynamic>).map((alt) => alt.toString()).toList();
+            (alternativeQuestionsResponse['alternatives'] as List<dynamic>)
+                .map((alt) => alt.toString())
+                .toList();
         showingAlternatives = true;
       });
     } catch (e) {
@@ -367,10 +418,15 @@ class JournalEntryPageState extends State<JournalEntryPage> {
             Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
               child: Text(_helpText!,
-                  style: TextStyle(fontStyle: FontStyle.italic, color: colorScheme.onSurface.withOpacity(0.6))),
+                  style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      color: colorScheme.onSurface.withOpacity(0.6))),
             ),
-          Text(qaList[index]['question']!, style: TextStyle(fontWeight: FontWeight.bold)),
-          if (isCurrentQuestion && !showingAlternatives && !_loadingState.isGeneratingQuestion)
+          Text(qaList[index]['question']!,
+              style: TextStyle(fontWeight: FontWeight.bold)),
+          if (isCurrentQuestion &&
+              !showingAlternatives &&
+              !_loadingState.isGeneratingQuestion)
             TextButton(
               onPressed: _showAlternatives,
               child: Text('Change Question'),
@@ -379,7 +435,26 @@ class JournalEntryPageState extends State<JournalEntryPage> {
           if (!isCurrentQuestion)
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
-              child: Text(qaList[index]['answer']!),
+              child: (() {
+                final answer = qaList[index]['answer'];
+                try {
+                  // Attempt to parse the answer as JSON
+                  final parsedJson = jsonDecode(answer!);
+                  // If parsing is successful, return QuillEditor
+                  return quill.QuillEditor.basic(
+                    configurations: quill.QuillEditorConfigurations(
+                      controller: quill.QuillController(
+                        document: quill.Document.fromJson(parsedJson),
+                        selection: TextSelection.collapsed(offset: 0),
+                        readOnly: true,
+                      ),
+                    ),
+                  );
+                } catch (e) {
+                  // If parsing fails, return a Text widget
+                  return Text(answer!);
+                }
+              })(),
             ),
           if (isCurrentQuestion && _inputSuggestions.isNotEmpty)
             Wrap(
@@ -389,20 +464,24 @@ class JournalEntryPageState extends State<JournalEntryPage> {
                   .map((suggestion) => GestureDetector(
                         onTap: () => _onInputSuggestionSelected(suggestion),
                         child: Chip(
-                          label: Text(suggestion, style: TextStyle(fontSize: 12)),
+                          label:
+                              Text(suggestion, style: TextStyle(fontSize: 12)),
                           padding: EdgeInsets.all(4),
-                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
                         ),
                       ))
                   .toList(),
             ),
-          if (isCurrentQuestion && _loadingState.isGeneratingQuestion) const CircularProgressIndicator(),
+          if (isCurrentQuestion && _loadingState.isGeneratingQuestion)
+            const CircularProgressIndicator(),
         ],
       ),
     );
   }
 
-  bool get _isLastQuestion => qaList.length >= 2 && currentQuestionIndex == qaList.length - 1;
+  bool get _isLastQuestion =>
+      qaList.length >= 2 && currentQuestionIndex == qaList.length - 1;
 
   void _handleContinueOrDone() {
     if (_isLastQuestion) {
@@ -418,7 +497,8 @@ class JournalEntryPageState extends State<JournalEntryPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Choose a different question:', style: TextStyle(fontWeight: FontWeight.bold)),
+          Text('Choose a different question:',
+              style: TextStyle(fontWeight: FontWeight.bold)),
           ..._alternativeQuestions.map((question) => ListTile(
                 title: Text(question),
                 onTap: () => _selectAlternative(question),
@@ -426,9 +506,14 @@ class JournalEntryPageState extends State<JournalEntryPage> {
           SizedBox(height: 16),
           Row(
             children: [
-              Expanded(child: ElevatedButton(onPressed: _showAlternatives, child: Text('Regenerate'))),
+              Expanded(
+                  child: ElevatedButton(
+                      onPressed: _showAlternatives, child: Text('Regenerate'))),
               SizedBox(width: 16),
-              Expanded(child: ElevatedButton(onPressed: _backToWriting, child: Text('Back to writing'))),
+              Expanded(
+                  child: ElevatedButton(
+                      onPressed: _backToWriting,
+                      child: Text('Back to writing'))),
             ],
           ),
         ],
@@ -438,17 +523,25 @@ class JournalEntryPageState extends State<JournalEntryPage> {
 
   Widget _buildContinueButton() {
     final bool isLastQuestion = qaList.length >= 2;
-    final String buttonText = (isLastQuestion && !_isTyping) ? "Done" : "Continue";
-    final IconData buttonIcon = (isLastQuestion && !_isTyping) ? Icons.check : Icons.arrow_downward;
+    final String buttonText = (isLastQuestion &&
+            !_quillController.document.toPlainText().trim().isNotEmpty)
+        ? "Done"
+        : "Continue";
+    final IconData buttonIcon = (isLastQuestion &&
+            !_quillController.document.toPlainText().trim().isNotEmpty)
+        ? Icons.check
+        : Icons.arrow_downward;
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Button(
         text: buttonText,
         icon: buttonIcon,
-        onPressed: _textController.text.trim().isEmpty || _loadingState.isGeneratingQuestion
+        onPressed: _quillController.document.toPlainText().trim().isEmpty ||
+                _loadingState.isGeneratingQuestion
             ? null
-            : (isLastQuestion && !_isTyping)
+            : (isLastQuestion &&
+                    !_quillController.document.toPlainText().trim().isNotEmpty)
                 ? _saveAndExit
                 : _goDeeper,
       ),
@@ -457,23 +550,30 @@ class JournalEntryPageState extends State<JournalEntryPage> {
 
   void _onInputSuggestionSelected(String suggestion) {
     setState(() {
-      if (_textController.text.isEmpty) {
-        _textController.text = suggestion;
+      if (_quillController.document.toPlainText().trim().isEmpty) {
+        _quillController.replaceText(0, 0, suggestion,
+            TextSelection.collapsed(offset: suggestion.length));
       } else {
-        _textController.text += ' ' + suggestion;
+        _quillController.replaceText(
+            _quillController.document.toPlainText().trim().length,
+            0,
+            '' + suggestion,
+            TextSelection.collapsed(
+                offset:
+                    _quillController.document.length + suggestion.length + 1));
       }
       _inputSuggestions.remove(suggestion);
     });
-    _textController.selection = TextSelection.fromPosition(
-      TextPosition(offset: _textController.text.length),
-    );
+    _quillController.updateSelection(
+        TextSelection.collapsed(offset: _quillController.document.length - 1),
+        ChangeSource.local);
   }
 
   void _selectAlternative(String question) {
     setState(() {
       qaList[currentQuestionIndex]['question'] = question;
       showingAlternatives = false;
-      _textController.clear();
+      _quillController.clear();
     });
     _scrollToBottom();
   }
@@ -523,9 +623,9 @@ class JournalEntryPageState extends State<JournalEntryPage> {
 
   @override
   void dispose() {
-    _textController.removeListener(_handleTextChange);
+    _quillController.removeListener(_checkScrollPosition);
     _scrollController.removeListener(_checkScrollPosition);
-    _textController.dispose();
+    _quillController.dispose();
     _scrollController.dispose();
     _textFocusNode.dispose();
     super.dispose();
