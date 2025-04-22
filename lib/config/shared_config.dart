@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cbl_flutter/cbl_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:isar/isar.dart';
@@ -23,14 +24,22 @@ import 'package:teja/shared/helpers/logger.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/store.dart';
 import 'package:teja/infrastructure/constants/notification_types.dart';
+import 'package:teja/config/open_cbl.dart';
 
 final notificationService = NotificationService();
 final shareHandler = ShareHandlerService();
 
 Future<Store<AppState>> configureCommonDependencies() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Initialize Couchbase Lite before opening the database
+  await CouchbaseLiteFlutter.init();
+
   final Isar isarInstance = await openIsar();
   logger.i("Database Instance is ready");
+
+  // Initialize Couchbase Lite database
+  final cblDb = await openCouchbaseLiteDatabase();
+  logger.i("Couchbase Lite Database Instance is ready");
 
   await notificationService.initialize();
   logger.i("Notification Service Connected");
@@ -50,7 +59,7 @@ Future<Store<AppState>> configureCommonDependencies() async {
   await Hive.openBox(TimeSlot.boxKey);
   await Hive.openBox(UserPreference.boxKey);
 
-  final store = await createStore(isarInstance);
+  final store = await createStore(isarInstance, cblDb);
   logger.i("Connected to local data store");
 
   await notificationService.cancelAllNotifications();
@@ -79,14 +88,12 @@ Future<Isar> openIsar() async {
   );
 }
 
-Future<void> handleNotificationInitialize(
-    NotificationService notificationService) async {
+Future<void> handleNotificationInitialize(NotificationService notificationService) async {
   final TimeStorage timeStorage = TimeStorage();
 
   // Retrieve saved times and statuses
   final Map<String, TimeOfDay> timeSlots = await timeStorage.getAllTimeSlots();
-  final Map<String, bool> enabledStatuses =
-      await timeStorage.getEnabledStatuses();
+  final Map<String, bool> enabledStatuses = await timeStorage.getEnabledStatuses();
 
   // Default settings
   final Map<String, TimeOfDay> defaultTimeSlots = {

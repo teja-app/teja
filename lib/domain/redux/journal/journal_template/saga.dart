@@ -1,5 +1,5 @@
-import 'package:isar/isar.dart';
-import 'package:redux_saga/redux_saga.dart';
+import 'package:redux_saga/redux_saga.dart' as redux_saga;
+import 'package:redux_saga/redux_saga.dart' hide Result, Select;
 import 'package:teja/domain/entities/app_error.dart';
 import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_error/app_error_actions.dart';
@@ -8,6 +8,7 @@ import 'package:teja/infrastructure/api/journal_template_api.dart';
 import 'package:teja/infrastructure/repositories/journal_template_repository.dart';
 import 'package:teja/shared/helpers/errors.dart';
 import 'package:teja/shared/helpers/logger.dart';
+import 'package:cbl/cbl.dart' as cbl;
 
 class JournalTemplateSaga {
   Iterable<void> saga() sync* {
@@ -19,12 +20,13 @@ class JournalTemplateSaga {
     yield Try(() sync* {
       yield Put(FetchJournalTemplatesInProgressAction());
 
-      var isarResult = Result<Isar>();
+      // For now, still use Isar for JournalTemplateRepository
+      var isarResult = redux_saga.Result<dynamic>();
       yield GetContext('isar', result: isarResult);
-      Isar isar = isarResult.value!;
+      var isar = isarResult.value!;
       var templateRepo = JournalTemplateRepository(isar);
 
-      var cachedTemplates = Result<List<JournalTemplateEntity>>();
+      var cachedTemplates = redux_saga.Result<List<JournalTemplateEntity>>();
       yield Call(templateRepo.getAllTemplateEntities, result: cachedTemplates);
 
       if (cachedTemplates.value != null && cachedTemplates.value!.isNotEmpty) {
@@ -45,12 +47,13 @@ class JournalTemplateSaga {
     yield Try(() sync* {
       yield Put(FetchJournalTemplatesInProgressAction());
 
-      var isarResult = Result<Isar>();
+      // For now, still use Isar for JournalTemplateRepository
+      var isarResult = redux_saga.Result<dynamic>();
       yield GetContext('isar', result: isarResult);
-      Isar isar = isarResult.value!;
+      var isar = isarResult.value!;
       var templateRepo = JournalTemplateRepository(isar);
 
-      var templatesResult = Result<List<JournalTemplateEntity>>();
+      var templatesResult = redux_saga.Result<List<JournalTemplateEntity>>();
       JournalTemplateApi api = JournalTemplateApi();
       yield Call(api.getJournalTemplates, result: templatesResult); // Replace null with actual auth token
 

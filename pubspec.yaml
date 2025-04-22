@@ -69,7 +69,7 @@ dependencies:
   decimal: ^2.3.3
   share_plus: ^7.2.1
   social_share: ^2.3.1
-  posthog_flutter: ^4.5.0
+  posthog_flutter: ^4.10.8
   connectivity_plus: ^5.0.2
   package_info_plus: ^4.2.0
   collection: ^1.17.2
@@ -105,7 +105,9 @@ dependencies:
   cached_network_image: ^3.4.0
   in_app_purchase: ^3.2.0
   provider: ^6.0.5
+  cbl_flutter: ^3.3.1
   share_handler: ^0.0.21
+  cbl_flutter_ee: ^3.3.2
 
 dev_dependencies:
   flutter_test:
@@ -122,6 +124,7 @@ dev_dependencies:
   isar_generator: ^3.1.0+1
   json_serializable: ^6.7.1
   build_runner: ^2.4.6
+  cbl_generator: ^0.3.0-dev.2
   mockito: ^5.4.3
   hive_generator: ^2.0.1
   assets:

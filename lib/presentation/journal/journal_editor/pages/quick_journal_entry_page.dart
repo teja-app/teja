@@ -100,8 +100,7 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
   }
 
   void _initializeJournalEntry() {
-    _store
-        .dispatch(InitializeQuickJournalEditor(journalEntryId: widget.entryId));
+    _store.dispatch(InitializeQuickJournalEditor(journalEntryId: widget.entryId));
   }
 
   @override
@@ -124,8 +123,7 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
     });
   }
 
-  Future<void> _saveEntry(
-      BuildContext context, JournalEntryEntity? currentEntry) async {
+  Future<void> _saveEntry(BuildContext context, JournalEntryEntity? currentEntry) async {
     if (_bodyController.text.trim().isEmpty) {
       _showError('Journal entry cannot be empty');
       return;
@@ -142,16 +140,6 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
       );
       if (updatedEntry != null) {
         await _store.dispatch(SaveJournalEntry(updatedEntry));
-        await _store.dispatch(AddUrlMetadataToJournalEntry(
-          journalEntryId: updatedEntry.id,
-          url: _linkMetadata!.url,
-          title: _linkMetadata!.title ?? '',
-          description: _linkMetadata!.description ?? '',
-          image: _linkMetadata!.image ?? '',
-          logo: _linkMetadata!.logo ?? '',
-          body: _linkMetadata!.body ?? '',
-        ));
-        await Future.delayed(const Duration(milliseconds: 100));
         await _store.dispatch(LoadJournalDetailAction(updatedEntry.id));
 
         // Wait for a short period to allow the state to update
@@ -187,8 +175,7 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
     );
   }
 
-  Future<void> _saveAndContinue(
-      BuildContext context, JournalEntryEntity? currentEntry) async {
+  Future<void> _saveAndContinue(BuildContext context, JournalEntryEntity? currentEntry) async {
     if (_bodyController.text.isEmpty) {
       _showError('Journal entry cannot be empty');
       return;
@@ -241,8 +228,7 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
         builder: (BuildContext dialogContext) {
           return AlertDialog(
             title: const Text('Unsaved Changes'),
-            content: const Text(
-                'You have unsaved changes. Do you want to save before leaving?'),
+            content: const Text('You have unsaved changes. Do you want to save before leaving?'),
             actions: <Widget>[
               TextButton(
                 child: const Text('Discard'),
@@ -267,10 +253,8 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
     }
   }
 
-  void _discardAndGoBack(
-      BuildContext context, JournalEntryEntity? currentEntry) {
-    if (currentEntry != null &&
-        (currentEntry.body == null || currentEntry.body!.isEmpty)) {
+  void _discardAndGoBack(BuildContext context, JournalEntryEntity? currentEntry) {
+    if (currentEntry != null && (currentEntry.body == null || currentEntry.body!.isEmpty)) {
       _store.dispatch(DeleteJournalDetailAction(currentEntry.id));
     }
     if (context.mounted) {
@@ -285,8 +269,7 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
 
     return PopScope(
       onPopInvoked: (didPop) async {
-        _handleBack(
-            context, _store.state.journalEditorState.currentJournalEntry);
+        _handleBack(context, _store.state.journalEditorState.currentJournalEntry);
       },
       child: StoreConnector<AppState, QuickJournalEditViewModel>(
         converter: (store) => QuickJournalEditViewModel.fromStore(store),
@@ -308,17 +291,12 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
               title: const Text("Quick Journal Entry"),
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
-                onPressed: _isSaving
-                    ? null
-                    : () => _handleBack(context, viewModel.currentJournalEntry),
+                onPressed: _isSaving ? null : () => _handleBack(context, viewModel.currentJournalEntry),
               ),
               actions: [
                 IconButton(
                   icon: const Icon(Icons.done),
-                  onPressed: _isSaving
-                      ? null
-                      : () =>
-                          _saveEntry(context, viewModel.currentJournalEntry),
+                  onPressed: _isSaving ? null : () => _saveEntry(context, viewModel.currentJournalEntry),
                 ),
               ],
             ),
@@ -354,10 +332,7 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
                     children: [
                       Expanded(
                         child: Button(
-                            onPressed: _isSaving
-                                ? null
-                                : () => _saveEntry(
-                                    context, viewModel.currentJournalEntry),
+                            onPressed: _isSaving ? null : () => _saveEntry(context, viewModel.currentJournalEntry),
                             text: 'Save',
                             buttonType: ButtonType.secondary),
                       ),
@@ -368,10 +343,7 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
                         child: Button(
                           width: isDesktop(context) ? 330 : 120,
                           buttonType: ButtonType.primary,
-                          onPressed: _isSaving
-                              ? null
-                              : () => _saveAndContinue(
-                                  context, viewModel.currentJournalEntry),
+                          onPressed: _isSaving ? null : () => _saveAndContinue(context, viewModel.currentJournalEntry),
                           text: 'Continue',
                         ),
                       )),
@@ -429,8 +401,7 @@ class LinkPreviewWidget extends StatelessWidget {
                   height: 127,
                   width: double.infinity,
                   fit: BoxFit.fill,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const SizedBox(),
+                  errorBuilder: (context, error, stackTrace) => const SizedBox(),
                 ),
               ),
             ),
