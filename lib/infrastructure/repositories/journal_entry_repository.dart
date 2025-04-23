@@ -38,8 +38,10 @@ class JournalEntryRepository {
     try {
       final collection = await database.defaultCollection;
 
-      // Build the query
-      var queryBuilder = const QueryBuilder().select(SelectResult.all()).from(DataSource.collection(collection));
+      // Build the query - explicitly select document ID and all properties
+      var queryBuilder = const QueryBuilder()
+          .select(SelectResult.expression(Meta.id), SelectResult.all())
+          .from(DataSource.collection(collection));
 
       // Add where clause if needed
       Query query;
@@ -53,13 +55,23 @@ class JournalEntryRepository {
       final entries = <JournalEntryEntity>[];
 
       await for (final result in resultSet.asStream()) {
-        // Get the dictionary from the result
-        final dictionary = result.dictionary(0);
-        if (dictionary != null) {
+        // Get the document ID (first selected item)
+        final docId = result.string(0);
+
+        // Get the dictionary (document content - second selected item)
+        final dictionary = result.dictionary(1);
+
+        if (docId != null && dictionary != null) {
           // Convert to plain map
           final map = dictionary.toPlainMap();
+
+          // Add the document ID to the map
+          map['id'] = docId;
+
           // Convert the plain map to a JournalEntryEntity
           entries.add(JournalEntryEntity.fromJson(map));
+        } else {
+          print('Warning: Invalid document data, docId: $docId, dictionary: ${dictionary != null}');
         }
       }
 
@@ -84,9 +96,9 @@ class JournalEntryRepository {
         // Create a dictionary with all the journal entry data
         final data = {
           'templateId': journalEntry.templateId,
-          'timestamp': journalEntry.timestamp.toIso8601String(),
-          'createdAt': journalEntry.createdAt.toIso8601String(),
-          'updatedAt': DateTime.now().toIso8601String(), // Update timestamp
+          'timestamp': (journalEntry.timestamp ?? DateTime.now()).toIso8601String(),
+          'createdAt': (journalEntry.createdAt ?? DateTime.now()).toIso8601String(),
+          'updatedAt': (journalEntry.updatedAt ?? DateTime.now()).toIso8601String(),
           'lock': journalEntry.lock,
           'emoticon': journalEntry.emoticon,
           'title': journalEntry.title,
@@ -338,6 +350,7 @@ class JournalEntryRepository {
           final map = dictionary.toPlainMap();
           // Add the document ID to the map
           map['id'] = docId;
+          print("${docId} ${dictionary.toString()}");
           // Convert the map directly to a JournalEntryEntity
           journalEntries.add(JournalEntryEntity.fromJson(map));
         }
@@ -364,7 +377,7 @@ class JournalEntryRepository {
     try {
       final collection = await database.defaultCollection;
       final query = const QueryBuilder()
-          .select(SelectResult.all())
+          .select(SelectResult.expression(Meta.id), SelectResult.all())
           .from(DataSource.collection(collection))
           .where(Expression.property('timestamp')
               .greaterThanOrEqualTo(Expression.string(start.toIso8601String()))
@@ -378,13 +391,23 @@ class JournalEntryRepository {
       final journalEntries = <JournalEntryEntity>[];
 
       await for (final results in result.asStream()) {
-        // Get the dictionary from the result
-        final dictionary = results.dictionary(0);
-        if (dictionary != null) {
+        // Get the document ID (first selected item)
+        final docId = results.string(0);
+
+        // Get the dictionary (document content - second selected item)
+        final dictionary = results.dictionary(1);
+
+        if (docId != null && dictionary != null) {
           // Convert to plain map
           final map = dictionary.toPlainMap();
+
+          // Add the document ID to the map
+          map['id'] = docId;
+
           // Convert the map directly to a JournalEntryEntity
           journalEntries.add(JournalEntryEntity.fromJson(map));
+        } else {
+          print('Warning: Invalid document data in date range query, docId: $docId, dictionary: ${dictionary != null}');
         }
       }
 

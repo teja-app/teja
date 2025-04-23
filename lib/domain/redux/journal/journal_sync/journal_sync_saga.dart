@@ -14,61 +14,62 @@ class JournalSyncSaga {
   }
 
   _handleSyncJournalEntries({required SyncJournalEntries action}) sync* {
-    // try {
-    //   var cblResult = redux_saga.Result<cbl.Database>();
-    //   yield GetContext('cbl', result: cblResult);
-    //   cbl.Database cblDatabase = cblResult.value!;
-    //   JournalEntryRepository journalEntryRepository = JournalEntryRepository(cblDatabase);
+    try {
+      var cblResult = redux_saga.Result<cbl.Database>();
+      yield GetContext('cbl', result: cblResult);
+      cbl.Database cblDatabase = cblResult.value!;
+      JournalEntryRepository journalEntryRepository = JournalEntryRepository(cblDatabase);
 
-    //   var lastSyncTimestampResult = redux_saga.Result<DateTime?>();
-    //   yield Call(journalEntryRepository.getLastSyncTimestamp, result: lastSyncTimestampResult);
-    //   DateTime lastSyncTimestamp = lastSyncTimestampResult.value ?? DateTime.fromMillisecondsSinceEpoch(0);
+      var lastSyncTimestampResult = redux_saga.Result<DateTime?>();
+      yield Call(journalEntryRepository.getLastSyncTimestamp, result: lastSyncTimestampResult);
+      DateTime lastSyncTimestamp = lastSyncTimestampResult.value ?? DateTime.fromMillisecondsSinceEpoch(0);
 
-    //   var localEntriesResult = redux_saga.Result<List<JournalEntryEntity>>();
-    //   yield Call(journalEntryRepository.getAllJournalEntries, result: localEntriesResult);
-    //   List<JournalEntryEntity> localEntries = localEntriesResult.value!;
+      var localEntriesResult = redux_saga.Result<List<JournalEntryEntity>>();
+      yield Call(journalEntryRepository.getAllJournalEntries, result: localEntriesResult);
+      List<JournalEntryEntity> localEntries = localEntriesResult.value!;
 
-    //   var previousFailedChunksResult = redux_saga.Result<List<String>?>();
-    //   yield Call(_getPreviousFailedChunks, result: previousFailedChunksResult);
-    //   List<String>? previousFailedChunks = previousFailedChunksResult.value;
+      var previousFailedChunksResult = redux_saga.Result<List<String>?>();
+      yield Call(_getPreviousFailedChunks, result: previousFailedChunksResult);
+      List<String>? previousFailedChunks = previousFailedChunksResult.value;
 
-    //   JournalEntryApiService api = JournalEntryApiService();
+      JournalEntryApiService api = JournalEntryApiService();
 
-    //   var syncResultResult = redux_saga.Result<Map<String, dynamic>>();
-    //   yield Call(api.syncEntries,
-    //       args: [localEntries, lastSyncTimestamp, previousFailedChunks], result: syncResultResult);
-    //   var syncResult = syncResultResult.value!;
+      var syncResultResult = redux_saga.Result<Map<String, dynamic>>();
+      yield Call(api.syncEntries,
+          args: [localEntries, lastSyncTimestamp, previousFailedChunks], result: syncResultResult);
+      var syncResult = syncResultResult.value!;
+      print("syncResult ${syncResult}");
 
-    //   if (syncResult['serverChanges'].isNotEmpty) {
-    //     yield Call(journalEntryRepository.addOrUpdateJournalEntries, args: [syncResult['serverChanges']]);
-    //   }
+      if (syncResult['serverChanges'].isNotEmpty) {
+        yield Call(journalEntryRepository.addOrUpdateJournalEntries, args: [syncResult['serverChanges']]);
+      }
 
-    //   if (syncResult['clientChanges'].isNotEmpty) {
-    //     yield Call(journalEntryRepository.addOrUpdateJournalEntries, args: [syncResult['clientChanges']]);
-    //   }
+      if (syncResult['clientChanges'].isNotEmpty) {
+        yield Call(journalEntryRepository.addOrUpdateJournalEntries, args: [syncResult['clientChanges']]);
+      }
 
-    //   if (syncResult['failedChunks'].isEmpty) {
-    //     yield Call(_clearFailedChunks);
-    //     yield Call(journalEntryRepository.updateLastSyncTimestamp, args: [DateTime.now()]);
-    //     yield Put(SyncJournalEntriesSuccessAction(
-    //       serverChanges: syncResult['serverChanges'],
-    //       clientChanges: syncResult['clientChanges'],
-    //       newSyncTimestamp: DateTime.now(),
-    //     ));
-    //   } else {
-    //     yield Call(_storeFailedChunks, args: [syncResult['failedChunks']]);
-    //     yield Call(journalEntryRepository.updateLastSyncTimestamp, args: [lastSyncTimestamp]);
-    //     yield Put(SyncJournalEntriesPartialSuccessAction(
-    //       serverChanges: syncResult['serverChanges'],
-    //       clientChanges: syncResult['clientChanges'],
-    //       newSyncTimestamp: lastSyncTimestamp,
-    //       failedChunks: syncResult['failedChunks'],
-    //       lastSuccessfulIndex: syncResult['lastSuccessfulIndex'],
-    //     ));
-    //   }
-    // } catch (error) {
-    //   yield Put(SyncJournalEntriesFailureAction(error.toString()));
-    // }
+      if (syncResult['failedChunks'].isEmpty) {
+        yield Call(_clearFailedChunks);
+        yield Call(journalEntryRepository.updateLastSyncTimestamp, args: [DateTime.now()]);
+        yield Put(SyncJournalEntriesSuccessAction(
+          serverChanges: syncResult['serverChanges'],
+          clientChanges: syncResult['clientChanges'],
+          newSyncTimestamp: DateTime.now(),
+        ));
+      } else {
+        yield Call(_storeFailedChunks, args: [syncResult['failedChunks']]);
+        yield Call(journalEntryRepository.updateLastSyncTimestamp, args: [lastSyncTimestamp]);
+        yield Put(SyncJournalEntriesPartialSuccessAction(
+          serverChanges: syncResult['serverChanges'],
+          clientChanges: syncResult['clientChanges'],
+          newSyncTimestamp: lastSyncTimestamp,
+          failedChunks: syncResult['failedChunks'],
+          lastSuccessfulIndex: syncResult['lastSuccessfulIndex'],
+        ));
+      }
+    } catch (error) {
+      yield Put(SyncJournalEntriesFailureAction(error.toString()));
+    }
   }
 
   Future<List<String>?> _getPreviousFailedChunks() async {

@@ -108,9 +108,9 @@ class JournalEntryEntity {
     return JournalEntryEntity(
       id: json['id'],
       templateId: json['templateId'],
-      timestamp: DateTime.parse(json['timestamp'] as String),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
+      timestamp: json['timestamp'] != null ? DateTime.parse(json['timestamp'] as String) : DateTime.now(),
+      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt'] as String) : DateTime.now(),
+      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt'] as String) : DateTime.now(),
       questions: json['questions'] != null
           ? (json['questions'] as List).map((q) => QuestionAnswerPairEntity.fromJson(q)).toList()
           : null,
