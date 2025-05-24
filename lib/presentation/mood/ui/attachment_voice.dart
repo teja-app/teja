@@ -6,10 +6,10 @@ import 'package:teja/presentation/mood/ui/voice_player_screen.dart';
 
 class AttachmentVoice extends StatelessWidget {
   final String relativeVoicePath;
-  double? width;
-  double? height;
+  final double? width;
+  final double? height;
 
-  AttachmentVoice({super.key, required this.relativeVoicePath, this.height = 100, this.width = 100});
+  const AttachmentVoice({super.key, required this.relativeVoicePath, this.height = 100, this.width = 100});
 
   @override
   Widget build(BuildContext context) {

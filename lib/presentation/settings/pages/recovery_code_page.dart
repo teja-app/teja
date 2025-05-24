@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teja/presentation/registration/ui/RecoveryCodeDisplay.dart';
+import 'package:teja/presentation/registration/ui/recovery_code_display.dart';
 import 'package:teja/shared/storage/secure_storage.dart';
 
 class RecoveryCodePage extends StatelessWidget {

@@ -26,37 +26,29 @@ class _AudioRecorderViewState extends State<AudioRecorderView> {
     try {
       if (await _audioRecorder.hasPermission()) {
         final path = 'audio_${DateTime.now().millisecondsSinceEpoch}.m4a';
-        print('Starting recording with path: $path');
         await _audioRecorder.start(const RecordConfig(), path: path);
         setState(() => _isRecording = true);
       } else {
-        print('Recording permission not granted.');
       }
     } catch (e) {
-      print('Error starting recording: $e');
     }
   }
 
   void _stopRecording() async {
     try {
       final path = await _audioRecorder.stop();
-      print('Stopped recording with path: $path');
       if (path != null) {
         try {
           final relativePath = await VoiceStorageHelper.saveVoicePermanently(path);
-          print('Voice recording saved permanently with relative path: $relativePath');
           widget.onStopRecording(relativePath, _transcription);
         } catch (e) {
-          print('Error saving voice recording: $e');
           // Handle the error and notify the user
           // Show an error message or provide an option to retry
         }
       } else {
-        print('No voice recording path available.');
       }
       setState(() => _isRecording = false);
     } catch (e) {
-      print('Error stopping recording: $e');
       setState(() => _isRecording = false);
     }
   }

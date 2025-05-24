@@ -5,10 +5,10 @@ import 'package:insta_image_viewer/insta_image_viewer.dart'; // Import the packa
 
 class AttachmentImage extends StatelessWidget {
   final String relativeImagePath;
-  double? width;
-  double? height;
+  final double? width;
+  final double? height;
 
-  AttachmentImage({super.key, required this.relativeImagePath, this.height = 100, this.width = 100});
+  const AttachmentImage({super.key, required this.relativeImagePath, this.height = 100, this.width = 100});
 
   @override
   Widget build(BuildContext context) {

@@ -32,7 +32,6 @@ class MasterFeelingRepository {
       
       return feelings;
     } catch (e) {
-      print('Error getting all feelings: $e');
       return [];
     }
   }
@@ -74,7 +73,7 @@ class MasterFeelingRepository {
             break; // We only need the first match
           }
           
-          final docId = existingId ?? feeling.id ?? _generateId();
+          final docId = existingId ?? feeling.id;
           final doc = MutableDocument.withId(docId);
           
           final data = {
@@ -95,14 +94,13 @@ class MasterFeelingRepository {
       
       return feelingIds;
     } catch (e) {
-      print('Error adding or updating feelings: $e');
       throw Exception('Failed to save feelings: $e');
     }
   }
 
   MasterFeelingEntity toEntity(cbl.MasterFeeling feeling) {
     return MasterFeelingEntity(
-      id: feeling.id ?? '',
+      id: feeling.id,
       slug: feeling.slug,
       name: feeling.name,
       type: feeling.type,
@@ -122,7 +120,6 @@ class MasterFeelingRepository {
       }
       return '';
     } catch (e) {
-      print('Error converting ID to slug: $e');
       return '';
     }
   }
@@ -159,13 +156,8 @@ class MasterFeelingRepository {
       
       return feelingsMap;
     } catch (e) {
-      print('Error getting feelings by slugs: $e');
       return {};
     }
   }
 
-  String _generateId() {
-    // Generate a unique ID for new documents
-    return DateTime.now().millisecondsSinceEpoch.toString();
-  }
 }

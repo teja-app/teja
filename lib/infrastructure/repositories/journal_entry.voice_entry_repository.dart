@@ -59,7 +59,6 @@ class VoiceEntryRepository {
         }
       });
     } catch (e) {
-      print('Error adding or updating voice: $e');
       throw Exception('Failed to save voice: $e');
     }
   }
@@ -93,7 +92,6 @@ class VoiceEntryRepository {
       }
       return null;
     } catch (e) {
-      print('Error finding voice by hash: $e');
       return null;
     }
   }
@@ -138,7 +136,6 @@ class VoiceEntryRepository {
         }
       });
     } catch (e) {
-      print('Error removing voice: $e');
       throw Exception('Failed to remove voice: $e');
     }
   }
@@ -196,7 +193,6 @@ class VoiceEntryRepository {
         }
       });
     } catch (e) {
-      print('Error linking voice to question-answer pair: $e');
       throw Exception('Failed to link voice: $e');
     }
   }
@@ -253,7 +249,6 @@ class VoiceEntryRepository {
         }
       });
     } catch (e) {
-      print('Error unlinking voice from question-answer pair: $e');
       throw Exception('Failed to unlink voice: $e');
     }
   }

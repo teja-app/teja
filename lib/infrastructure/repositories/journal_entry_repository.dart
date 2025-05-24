@@ -7,7 +7,7 @@ import 'package:teja/infrastructure/repositories/journal_entry_cbl_helpers.dart'
 /// Repository for managing journal entries using Couchbase Lite
 class JournalEntryRepository {
   final Database database;
-  static const String LAST_SYNC_KEY = 'last_journal_sync_timestamp';
+  static const String lastSyncKey = 'last_journal_sync_timestamp';
 
   JournalEntryRepository(this.database);
 
@@ -25,7 +25,6 @@ class JournalEntryRepository {
 
       return cbl.ImmutableJournalEntry.internal(doc);
     } catch (e) {
-      print('Error getting journal entry by ID: $e');
       return null;
     }
   }
@@ -71,13 +70,11 @@ class JournalEntryRepository {
           // Convert the plain map to a JournalEntryEntity
           entries.add(JournalEntryEntity.fromJson(map));
         } else {
-          print('Warning: Invalid document data, docId: $docId, dictionary: ${dictionary != null}');
         }
       }
 
       return entries;
     } catch (e) {
-      print('Error getting all journal entries: $e');
       return [];
     }
   }
@@ -91,14 +88,14 @@ class JournalEntryRepository {
         final collection = await database.defaultCollection;
 
         // Create a mutable document with the journal entry ID
-        final doc = MutableDocument.withId(journalEntry.id ?? '');
+        final doc = MutableDocument.withId(journalEntry.id);
 
         // Create a dictionary with all the journal entry data
         final data = {
           'templateId': journalEntry.templateId,
-          'timestamp': (journalEntry.timestamp ?? DateTime.now()).toIso8601String(),
-          'createdAt': (journalEntry.createdAt ?? DateTime.now()).toIso8601String(),
-          'updatedAt': (journalEntry.updatedAt ?? DateTime.now()).toIso8601String(),
+          'timestamp': journalEntry.timestamp.toIso8601String(),
+          'createdAt': journalEntry.createdAt.toIso8601String(),
+          'updatedAt': journalEntry.updatedAt.toIso8601String(),
           'lock': journalEntry.lock,
           'emoticon': journalEntry.emoticon,
           'title': journalEntry.title,
@@ -118,7 +115,6 @@ class JournalEntryRepository {
         await collection.saveDocument(doc);
       });
     } catch (e) {
-      print('Error adding or updating journal entry: $e');
       throw Exception('Failed to save journal entry: $e');
     }
   }
@@ -151,7 +147,6 @@ class JournalEntryRepository {
         }
       });
     } catch (e) {
-      print('Error soft deleting journal entry: $e');
       throw Exception('Failed to soft delete journal entry: $e');
     }
   }
@@ -169,7 +164,7 @@ class JournalEntryRepository {
           final journalEntry = fromEntityCBL(entry);
 
           // Check if an entry with this ID already exists
-          final existingDoc = await collection.document(journalEntry.id ?? '');
+          final existingDoc = await collection.document(journalEntry.id);
 
           if (existingDoc != null) {
             // If it exists, update it only if the new entry is more recent
@@ -179,7 +174,7 @@ class JournalEntryRepository {
 
               if (journalEntry.updatedAt.isAfter(existingUpdatedAt)) {
                 // Create a mutable document with the ID
-                final doc = MutableDocument.withId(journalEntry.id ?? '');
+                final doc = MutableDocument.withId(journalEntry.id);
 
                 // Create a dictionary with all the journal entry data
                 final data = {
@@ -207,7 +202,7 @@ class JournalEntryRepository {
               }
             } else {
               // If updatedAt is missing in the existing document, update it
-              final doc = MutableDocument.withId(journalEntry.id ?? '');
+              final doc = MutableDocument.withId(journalEntry.id);
 
               // Create a dictionary with all the journal entry data
               final data = {
@@ -235,7 +230,7 @@ class JournalEntryRepository {
             }
           } else {
             // If it doesn't exist, add it as a new entry
-            final doc = MutableDocument.withId(journalEntry.id ?? '');
+            final doc = MutableDocument.withId(journalEntry.id);
 
             // Create a dictionary with all the journal entry data
             final data = {
@@ -264,7 +259,6 @@ class JournalEntryRepository {
         }
       });
     } catch (e) {
-      print('Error adding or updating journal entries: $e');
       throw Exception('Failed to save journal entries: $e');
     }
   }
@@ -284,7 +278,6 @@ class JournalEntryRepository {
         }
       });
     } catch (e) {
-      print('Error deleting journal entry: $e');
       throw Exception('Failed to delete journal entry: $e');
     }
   }
@@ -350,7 +343,6 @@ class JournalEntryRepository {
           final map = dictionary.toPlainMap();
           // Add the document ID to the map
           map['id'] = docId;
-          print("$docId ${dictionary.toString()}");
           // Convert the map directly to a JournalEntryEntity
           journalEntries.add(JournalEntryEntity.fromJson(map));
         }
@@ -358,7 +350,6 @@ class JournalEntryRepository {
 
       return journalEntries;
     } catch (e) {
-      print('Error getting journal entries page: $e');
       return [];
     }
   }
@@ -407,13 +398,11 @@ class JournalEntryRepository {
           // Convert the map directly to a JournalEntryEntity
           journalEntries.add(JournalEntryEntity.fromJson(map));
         } else {
-          print('Warning: Invalid document data in date range query, docId: $docId, dictionary: ${dictionary != null}');
         }
       }
 
       return journalEntries;
     } catch (e) {
-      print('Error getting journal entries in date range: $e');
       return [];
     }
   }
@@ -428,7 +417,7 @@ class JournalEntryRepository {
   /// [timestamp] The timestamp to save
   Future<void> updateLastSyncTimestamp(DateTime timestamp) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(LAST_SYNC_KEY, timestamp.toIso8601String());
+    await prefs.setString(lastSyncKey, timestamp.toIso8601String());
   }
 
   /// Get the last sync timestamp
@@ -436,7 +425,7 @@ class JournalEntryRepository {
   /// Returns the last sync timestamp or null if not set
   Future<DateTime?> getLastSyncTimestamp() async {
     final prefs = await SharedPreferences.getInstance();
-    final timestampString = prefs.getString(LAST_SYNC_KEY);
+    final timestampString = prefs.getString(lastSyncKey);
     return timestampString != null ? DateTime.parse(timestampString) : null;
   }
 }

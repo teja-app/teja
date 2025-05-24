@@ -14,7 +14,6 @@ class VideoStorageHelper {
       // Return the relative path to be stored in the database
       return path.relative(newVideoFile.path, from: directory.path);
     } catch (e) {
-      print('Error saving video permanently: $e');
       rethrow;
     }
   }

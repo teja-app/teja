@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:icons_flutter/icons_flutter.dart';
-import 'package:teja/presentation/navigation/isDesktop.dart';
+import 'package:teja/presentation/navigation/is_desktop.dart';
 import 'package:teja/shared/common/button.dart';
 
 class RecoveryCodeDisplay extends StatelessWidget {

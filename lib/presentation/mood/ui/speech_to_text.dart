@@ -22,12 +22,10 @@ class SpeechToTextViewState extends State<SpeechToTextView> {
 
   Future<void> initSpeechState() async {
     _speechToText.initialize(onError: errorListener, onStatus: statusListener, debugLogging: true).then((initialized) {
-      print('Speech to text service initialized: $initialized');
       setState(() {
         _isListening = initialized;
       });
     }).catchError((error) {
-      print('Failed to initialize speech to text service: $error');
     });
   }
 
@@ -45,7 +43,6 @@ class SpeechToTextViewState extends State<SpeechToTextView> {
         listenMode: ListenMode.dictation,
       ),
     );
-    print('Listening started');
     setState(() {
       _isListening = true;
     });
@@ -53,7 +50,6 @@ class SpeechToTextViewState extends State<SpeechToTextView> {
 
   void stopListening() async {
     await _speechToText.stop();
-    print('Listening stopped');
     setState(() {
       _isListening = false;
     });
@@ -63,14 +59,11 @@ class SpeechToTextViewState extends State<SpeechToTextView> {
   void resultListener(SpeechRecognitionResult result) {
     if (result.finalResult) {
       _completeTranscription += "${result.recognizedWords} "; // Add space for separation
-      print('Final result received: ${result.recognizedWords}');
     } else {
-      print('Intermediate result: ${result.recognizedWords}');
     }
   }
 
   void statusListener(String status) {
-    print('Speech status update: $status');
     if (status == "notListening") {
       stopListening(); // Automatically stop listening when status is notListening
     }

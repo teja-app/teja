@@ -21,7 +21,7 @@ String encryptText(String keyHex, String text) {
   final cipher = PaddedBlockCipherImpl(PKCS7Padding(), CBCBlockCipher(AESEngine()));
   cipher.init(
     true,
-    PaddedBlockCipherParameters<ParametersWithIV<KeyParameter>, void>(
+    PaddedBlockCipherParameters(
       ParametersWithIV<KeyParameter>(KeyParameter(key), iv),
       null,
     ),

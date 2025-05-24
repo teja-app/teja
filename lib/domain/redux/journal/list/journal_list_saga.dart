@@ -28,7 +28,6 @@ class JournalListSaga {
 
       if (journalEntriesResult.value != null) {
         bool isLastPage = journalEntriesResult.value!.length < action.pageSize;
-        print("journalEntriesResult.value ${journalEntriesResult.value}");
         yield Put(JournalEntriesListFetchedSuccessAction(journalEntriesResult.value!, isLastPage));
       } else {
         yield Put(JournalEntriesListFetchFailedAction('No journal entries found for the requested page.'));

@@ -106,7 +106,7 @@ class MoodEditPageState extends State<MoodEditPage> {
                           // Finish page, the last page
                           return FinishScreen(
                             onFinish: () {
-                              String moodId;
+                              String moodId = '';
                               if (viewModel.currentMoodLog!.id.isNotEmpty) {
                                 moodId = viewModel.currentMoodLog!.id;
                               }

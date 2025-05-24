@@ -31,8 +31,6 @@ class ShareHandlerService {
   }
 
   Future<void> _processSharedMedia(SharedMedia media) async {
-    print('Processing shared media');
-    print(media.content);
     if (media.content != null && _isValidUrl(media.content!)) {
       _navigateToQuickJournal(media.content!);
     } else if (media.content != null) {
@@ -52,7 +50,6 @@ class ShareHandlerService {
         });
       }
     } catch (e) {
-      print('Error navigating to quick journal: $e');
     }
   }
 

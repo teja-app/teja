@@ -27,4 +27,7 @@ class SubCategoryEntity {
 
     return other is SubCategoryEntity && other.slug == slug;
   }
+
+  @override
+  int get hashCode => slug.hashCode;
 }

@@ -57,7 +57,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
   bool showingAlternatives = false;
   List<String> _alternativeQuestions = [];
   late final Store<AppState> _store;
-  const Uuid uuid = Uuid();
+  final Uuid uuid = Uuid();
   String? _helpText;
   List<String> _inputSuggestions = [];
 
@@ -401,15 +401,9 @@ class JournalEntryPageState extends State<JournalEntryPage> {
     );
   }
 
+  // ignore: unused_element
   bool get _isLastQuestion => qaList.length >= 2 && currentQuestionIndex == qaList.length - 1;
 
-  void _handleContinueOrDone() {
-    if (_isLastQuestion) {
-      _saveAndExit();
-    } else {
-      _goDeeper();
-    }
-  }
 
   Widget _buildAlternativesSection(ColorScheme colorScheme) {
     return Padding(
@@ -435,24 +429,6 @@ class JournalEntryPageState extends State<JournalEntryPage> {
     );
   }
 
-  Widget _buildContinueButton() {
-    final bool isLastQuestion = qaList.length >= 2;
-    final String buttonText = (isLastQuestion && !_isTyping) ? "Done" : "Continue";
-    final IconData buttonIcon = (isLastQuestion && !_isTyping) ? Icons.check : Icons.arrow_downward;
-
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Button(
-        text: buttonText,
-        icon: buttonIcon,
-        onPressed: _textController.text.trim().isEmpty || _loadingState.isGeneratingQuestion
-            ? null
-            : (isLastQuestion && !_isTyping)
-                ? _saveAndExit
-                : _goDeeper,
-      ),
-    );
-  }
 
   void _onInputSuggestionSelected(String suggestion) {
     setState(() {

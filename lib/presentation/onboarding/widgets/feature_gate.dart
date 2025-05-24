@@ -104,7 +104,6 @@ class FeatureGateViewModel {
       bool hasExistingMnemonic = store.state.authState.hasExistingMnemonic;
       return FeatureGateViewModel(hasAccess: hasExistingMnemonic);
     } catch (e) {
-      print('Error fetching access details: $e'); // Debug print
       return FeatureGateViewModel(hasAccess: false); // Default to no access on error
     }
     // try {

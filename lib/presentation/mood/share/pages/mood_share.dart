@@ -82,29 +82,6 @@ class _MoodSharePageState extends State<MoodSharePage> {
     );
   }
 
-  Future<void> _shareMood(BuildContext context) async {
-    try {
-      final RenderObject? renderObject = _globalKey.currentContext?.findRenderObject();
-      if (renderObject != null && renderObject is RenderRepaintBoundary) {
-        final ui.Image image = await renderObject.toImage(pixelRatio: 3.0);
-        final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-        if (byteData != null) {
-          final Uint8List pngBytes = byteData.buffer.asUint8List();
-          final tempDir = await getTemporaryDirectory();
-          final imagePath = '${tempDir.path}/mood_share.png';
-          final file = await File(imagePath).create();
-          await file.writeAsBytes(pngBytes);
-          Share.shareXFiles([XFile(imagePath)]);
-        } else {
-          _showErrorSnackBar(context, 'Failed to capture mood image.');
-        }
-      } else {
-        _showErrorSnackBar(context, 'Unable to find mood to share.');
-      }
-    } catch (e) {
-      _showErrorSnackBar(context, 'Error sharing mood: ${e.toString()}');
-    }
-  }
 
   void _showErrorSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(

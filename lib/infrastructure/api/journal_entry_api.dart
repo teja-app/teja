@@ -18,8 +18,8 @@ class JournalEntryApiService {
     }
   }
 
-  static const int CHUNK_SIZE = 10;
-  static const int MAX_RETRIES = 3;
+  static const int chunkSize = 10;
+  static const int maxRetries = 3;
 
   Future<Map<String, dynamic>> syncEntries(
       List<JournalEntryEntity> localEntries, DateTime lastSyncTimestamp, List<String>? previousFailedChunks) async {
@@ -39,8 +39,8 @@ class JournalEntryApiService {
       startIndex = int.parse(previousFailedChunks[0].split('-')[0]);
     }
 
-    for (var i = startIndex; i < entriesToSync.length; i += CHUNK_SIZE) {
-      var end = (i + CHUNK_SIZE < entriesToSync.length) ? i + CHUNK_SIZE : entriesToSync.length;
+    for (var i = startIndex; i < entriesToSync.length; i += chunkSize) {
+      var end = (i + chunkSize < entriesToSync.length) ? i + chunkSize : entriesToSync.length;
       var chunk = entriesToSync.sublist(i, end);
 
       try {
@@ -48,7 +48,6 @@ class JournalEntryApiService {
         allServerChanges.addAll(chunkResult['serverChanges']!);
         allClientChanges.addAll(chunkResult['clientChanges']!);
       } catch (e) {
-        print('Failed to sync chunk $i-$end: $e');
         failedChunks.add('$i-$end');
         break; // Stop at the first failed chunk
       }
@@ -65,7 +64,7 @@ class JournalEntryApiService {
   Future<Map<String, List<JournalEntryEntity>>> _syncChunk(
       String url, List<JournalEntryEntity> chunk, DateTime lastSyncTimestamp) async {
     int retries = 0;
-    while (retries < MAX_RETRIES) {
+    while (retries < maxRetries) {
       try {
         Response response = await _apiHelper.post(url, data: {
           'entries': chunk.map((e) => e.toJson()).toList(),
@@ -90,8 +89,8 @@ class JournalEntryApiService {
         };
       } catch (e) {
         retries++;
-        if (retries >= MAX_RETRIES) {
-          throw Exception('Failed to sync chunk after $MAX_RETRIES attempts: $e');
+        if (retries >= maxRetries) {
+          throw Exception('Failed to sync chunk after $maxRetries attempts: $e');
         }
         await Future.delayed(Duration(seconds: 2 * retries)); // Exponential backoff
       }

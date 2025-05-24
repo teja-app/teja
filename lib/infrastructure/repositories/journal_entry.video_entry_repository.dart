@@ -59,7 +59,6 @@ class VideoEntryRepository {
         }
       });
     } catch (e) {
-      print('Error adding or updating video: $e');
       throw Exception('Failed to save video: $e');
     }
   }
@@ -93,7 +92,6 @@ class VideoEntryRepository {
       }
       return null;
     } catch (e) {
-      print('Error finding video by hash: $e');
       return null;
     }
   }
@@ -138,7 +136,6 @@ class VideoEntryRepository {
         }
       });
     } catch (e) {
-      print('Error removing video: $e');
       throw Exception('Failed to remove video: $e');
     }
   }
@@ -196,7 +193,6 @@ class VideoEntryRepository {
         }
       });
     } catch (e) {
-      print('Error linking video to question-answer pair: $e');
       throw Exception('Failed to link video: $e');
     }
   }
@@ -253,7 +249,6 @@ class VideoEntryRepository {
         }
       });
     } catch (e) {
-      print('Error unlinking video from question-answer pair: $e');
       throw Exception('Failed to unlink video: $e');
     }
   }

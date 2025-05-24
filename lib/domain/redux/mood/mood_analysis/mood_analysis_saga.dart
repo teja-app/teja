@@ -44,7 +44,6 @@ class MoodAnalysisSaga {
     var moodLogResult = Result<mood_log.MoodLog?>();
     yield Call(repository.getMoodLogById, args: [moodEntryId], result: moodLogResult);
 
-    print("analysisResult['suggestion'] ${analysisResult['ai']['suggestion']}");
     if (moodLogResult.value != null) {
       mood_log.MoodLog existingEntry = moodLogResult.value!;
       

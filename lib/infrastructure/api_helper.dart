@@ -13,7 +13,6 @@ class ApiHelper {
   static const int maxRetries = 1;
 
   ApiHelper() {
-    print("AppConfig.instance.apiBaseUrl ${AppConfig.instance.apiBaseUrl}");
     _dio.options.baseUrl = AppConfig.instance.apiBaseUrl;
   }
 

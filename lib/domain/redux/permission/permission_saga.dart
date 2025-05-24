@@ -25,7 +25,6 @@ class PermissionSaga {
       }
     }, Catch: (e, s) sync* {
       // Handle any errors that occurred during the saga
-      print('Error adding permission: $e');
     });
   }
 }

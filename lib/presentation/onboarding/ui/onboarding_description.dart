@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teja/presentation/navigation/isDesktop.dart';
+import 'package:teja/presentation/navigation/is_desktop.dart';
 
 class OnboardingDescription extends StatelessWidget {
   const OnboardingDescription({Key? key}) : super(key: key);

@@ -115,7 +115,7 @@ class MasterFeelingSaga {
       } else {
         yield Put(const MasterFeelingsFetchFailedAction("An unexpected error occurred"));
         yield Put(AddAppErrorAction(createAppError({
-          'code': StaticErrorCodes.UNKNOWN_ERROR,
+          'code': StaticErrorCodes.unknownError,
           'message': "An unexpected error occurred while fetching from API",
           'details': {'error': e.toString()}
         })));

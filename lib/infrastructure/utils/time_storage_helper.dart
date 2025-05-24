@@ -52,7 +52,6 @@ class TimeStorage {
   }
 
   Future<void> saveEnabledStatus(String activity, bool isEnabled) async {
-    print('Handling toggle for $activity: $isEnabled');
 
     var box = Hive.box(boxKey);
     var timeSlot = box.get(activity);

@@ -137,11 +137,10 @@ class FeelingScreenState extends State<FeelingScreen> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
 
     return StoreConnector<AppState, _ViewModel>(
       converter: (store) => _ViewModel.fromStore(store),
-      onInit: (store) => _initializeFeelings(store.state.masterFeelingState.masterFeelings ?? []),
+      onInit: (store) => _initializeFeelings(store.state.masterFeelingState.masterFeelings),
       onDidChange: (previousViewModel, viewModel) {
         settingState(viewModel.masterFeelings);
       },

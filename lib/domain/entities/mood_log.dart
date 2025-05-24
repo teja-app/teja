@@ -125,7 +125,6 @@ class MoodLogEntity {
 
   // Update fromJson factory method
   static MoodLogEntity fromJson(Map<String, dynamic> json) {
-    print("json['timestamp'] ${json['timestamp']}");
     return MoodLogEntity(
       id: json['id'] as String,
       timestamp: DateTime.fromMillisecondsSinceEpoch(json['timestamp']),

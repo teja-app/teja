@@ -69,7 +69,6 @@ class MoodLogRepository {
         }
       });
     } catch (e) {
-      print('Error adding or updating mood logs: $e');
       throw Exception('Failed to save mood logs: $e');
     }
   }
@@ -131,7 +130,6 @@ class MoodLogRepository {
         }
       });
     } catch (e) {
-      print('Error soft deleting mood log: $e');
       throw Exception('Failed to soft delete mood log: $e');
     }
   }
@@ -146,7 +144,6 @@ class MoodLogRepository {
       
       return cbl.ImmutableMoodLog.internal(doc);
     } catch (e) {
-      print('Error getting mood log by ID: $e');
       return null;
     }
   }
@@ -183,7 +180,6 @@ class MoodLogRepository {
       
       return entries;
     } catch (e) {
-      print('Error getting all mood logs: $e');
       return [];
     }
   }
@@ -233,7 +229,6 @@ class MoodLogRepository {
       
       return entries;
     } catch (e) {
-      print('Error getting mood logs page: $e');
       return [];
     }
   }
@@ -263,7 +258,6 @@ class MoodLogRepository {
         }
       });
     } catch (e) {
-      print('Error adding attachment to mood log: $e');
       throw Exception('Failed to add attachment: $e');
     }
   }
@@ -294,12 +288,10 @@ class MoodLogRepository {
               await fileToDelete.delete();
             }
           } catch (e) {
-            print('Error deleting attachment file: $e');
           }
         }
       });
     } catch (e) {
-      print('Error removing attachment from mood log: $e');
       throw Exception('Failed to remove attachment: $e');
     }
   }
@@ -322,7 +314,6 @@ class MoodLogRepository {
         }
       });
     } catch (e) {
-      print('Error updating mood log comment: $e');
       throw Exception('Failed to update comment: $e');
     }
   }
@@ -358,7 +349,6 @@ class MoodLogRepository {
       
       return entries;
     } catch (e) {
-      print('Error getting mood logs for week: $e');
       return [];
     }
   }
@@ -384,7 +374,7 @@ class MoodLogRepository {
     try {
       await database.inBatch(() async {
         final collection = await database.defaultCollection;
-        final doc = MutableDocument.withId(moodLog.id ?? '');
+        final doc = MutableDocument.withId(moodLog.id);
         
         final data = {
           'timestamp': moodLog.timestamp.toIso8601String(),
@@ -423,7 +413,6 @@ class MoodLogRepository {
         await collection.saveDocument(doc);
       });
     } catch (e) {
-      print('Error adding or updating mood log: $e');
       throw Exception('Failed to save mood log: $e');
     }
   }
@@ -440,7 +429,6 @@ class MoodLogRepository {
         }
       });
     } catch (e) {
-      print('Error deleting mood log: $e');
       throw Exception('Failed to delete mood log: $e');
     }
   }
@@ -473,7 +461,6 @@ class MoodLogRepository {
         }
       });
     } catch (e) {
-      print('Error updating feelings for mood log: $e');
       throw Exception('Failed to update feelings: $e');
     }
   }
@@ -496,7 +483,6 @@ class MoodLogRepository {
         }
       });
     } catch (e) {
-      print('Error updating broad factors for mood log: $e');
       throw Exception('Failed to update broad factors: $e');
     }
   }
@@ -527,7 +513,6 @@ class MoodLogRepository {
         }
       });
     } catch (e) {
-      print('Error updating factors for feeling: $e');
       throw Exception('Failed to update factors for feeling: $e');
     }
   }
@@ -576,7 +561,6 @@ class MoodLogRepository {
       
       return entries;
     } catch (e) {
-      print('Error getting mood logs in date range: $e');
       return [];
     }
   }
@@ -610,7 +594,7 @@ class MoodLogRepository {
 
   MoodLogEntity toEntity(cbl.MoodLog moodLog) {
     return MoodLogEntity(
-      id: moodLog.id ?? '',
+      id: moodLog.id,
       timestamp: moodLog.timestamp,
       moodRating: moodLog.moodRating,
       comment: moodLog.comment,
@@ -699,7 +683,6 @@ class MoodLogRepository {
         }
       });
     } catch (e) {
-      print('Error updating AI suggestion: $e');
       throw Exception('Failed to update AI suggestion: $e');
     }
   }
@@ -715,7 +698,6 @@ class MoodLogRepository {
       }
       return null;
     } catch (e) {
-      print('Error fetching AI suggestion: $e');
       return null;
     }
   }
@@ -741,7 +723,6 @@ class MoodLogRepository {
         }
       });
     } catch (e) {
-      print('Error updating AI title: $e');
       throw Exception('Failed to update AI title: $e');
     }
   }
@@ -767,7 +748,6 @@ class MoodLogRepository {
         }
       });
     } catch (e) {
-      print('Error updating AI affirmation: $e');
       throw Exception('Failed to update AI affirmation: $e');
     }
   }
@@ -783,7 +763,6 @@ class MoodLogRepository {
       }
       return null;
     } catch (e) {
-      print('Error fetching AI title: $e');
       return null;
     }
   }
@@ -799,7 +778,6 @@ class MoodLogRepository {
       }
       return null;
     } catch (e) {
-      print('Error fetching AI affirmation: $e');
       return null;
     }
   }

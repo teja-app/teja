@@ -61,10 +61,10 @@ Future<void> handleNotificationInitialize(NotificationService notificationServic
 
   // Default settings
   final Map<String, TimeOfDay> defaultTimeSlots = {
-    NotificationType.MORNING_KICKSTART: const TimeOfDay(hour: 9, minute: 0),
-    NotificationType.EVENING_WIND_DOWN: const TimeOfDay(hour: 21, minute: 0),
-    NotificationType.FOCUS_REMINDER: const TimeOfDay(hour: 14, minute: 30),
-    NotificationType.JOURNALING_CUE: const TimeOfDay(hour: 12, minute: 0),
+    NotificationType.morningKickstart: const TimeOfDay(hour: 9, minute: 0),
+    NotificationType.eveningWindDown: const TimeOfDay(hour: 21, minute: 0),
+    NotificationType.focusReminder: const TimeOfDay(hour: 14, minute: 30),
+    NotificationType.journalingCue: const TimeOfDay(hour: 12, minute: 0),
   };
 
   // Schedule or cancel notifications based on saved statuses or defaults
@@ -96,13 +96,13 @@ Future<void> handleNotificationInitialize(NotificationService notificationServic
 
 int _getNotificationId(String title) {
   switch (title) {
-    case NotificationType.MORNING_KICKSTART:
+    case NotificationType.morningKickstart:
       return 100;
-    case NotificationType.EVENING_WIND_DOWN:
+    case NotificationType.eveningWindDown:
       return 200;
-    case NotificationType.FOCUS_REMINDER:
+    case NotificationType.focusReminder:
       return 300;
-    case NotificationType.JOURNALING_CUE:
+    case NotificationType.journalingCue:
       return 400;
     default:
       return 0; // Default ID for unknown titles

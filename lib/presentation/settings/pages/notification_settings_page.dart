@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teja/infrastructure/utils/notification_service.dart';
 import 'package:teja/infrastructure/utils/time_storage_helper.dart';
-import 'package:teja/presentation/navigation/isDesktop.dart';
+import 'package:teja/presentation/navigation/is_desktop.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:teja/infrastructure/constants/notification_types.dart';
 
@@ -18,17 +18,17 @@ class NotificationSettingsPage extends StatefulWidget {
 
 class NotificationSettingsPageState extends State<NotificationSettingsPage> {
   Map<String, TimeOfDay> notificationTimes = {
-    NotificationType.MORNING_KICKSTART: const TimeOfDay(hour: 9, minute: 0),
-    NotificationType.EVENING_WIND_DOWN: const TimeOfDay(hour: 21, minute: 0),
-    NotificationType.FOCUS_REMINDER: const TimeOfDay(hour: 14, minute: 30),
-    NotificationType.JOURNALING_CUE: const TimeOfDay(hour: 12, minute: 0),
+    NotificationType.morningKickstart: const TimeOfDay(hour: 9, minute: 0),
+    NotificationType.eveningWindDown: const TimeOfDay(hour: 21, minute: 0),
+    NotificationType.focusReminder: const TimeOfDay(hour: 14, minute: 30),
+    NotificationType.journalingCue: const TimeOfDay(hour: 12, minute: 0),
   };
 
   Map<String, bool> notificationEnabled = {
-    NotificationType.MORNING_KICKSTART: true,
-    NotificationType.EVENING_WIND_DOWN: true,
-    NotificationType.FOCUS_REMINDER: true,
-    NotificationType.JOURNALING_CUE: true,
+    NotificationType.morningKickstart: true,
+    NotificationType.eveningWindDown: true,
+    NotificationType.focusReminder: true,
+    NotificationType.journalingCue: true,
   };
 
   @override
@@ -132,7 +132,6 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
 
       await _scheduleDefaultNotifications();
     } catch (e) {
-      print('Error retrieving saved times and statuses: $e');
     }
   }
 
@@ -168,13 +167,13 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
               _buildNotificationTile(
                 title: 'Morning Kickstart',
                 subtitle: 'Begin your day with focus and clarity.',
-                notificationType: NotificationType.MORNING_KICKSTART,
+                notificationType: NotificationType.morningKickstart,
               ),
               _buildNotificationTile(
                 title: 'Evening Wind-down',
                 subtitle:
                     'Reflect on your day and set the tone for a restful evening.',
-                notificationType: NotificationType.EVENING_WIND_DOWN,
+                notificationType: NotificationType.eveningWindDown,
               ),
               const Divider(),
               const Padding(
@@ -187,12 +186,12 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
               _buildNotificationTile(
                 title: 'Focus Reminder',
                 subtitle: 'A nudge to realign with your morning focus goal.',
-                notificationType: NotificationType.FOCUS_REMINDER,
+                notificationType: NotificationType.focusReminder,
               ),
               _buildNotificationTile(
                 title: 'Journaling Cue',
                 subtitle: 'A prompt to engage your reflective thoughts.',
-                notificationType: NotificationType.JOURNALING_CUE,
+                notificationType: NotificationType.journalingCue,
               ),
             ],
           ),
@@ -203,7 +202,6 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
 
   Future<void> _handleToggle(
       String notificationType, TimeOfDay time, bool isEnabled) async {
-    print('Handling toggle for $notificationType: $isEnabled');
     final int hour = time.hour;
     final int minute = time.minute;
     final int notificationId = _getNotificationId(notificationType);
@@ -222,13 +220,13 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
 
   int _getNotificationId(String notificationType) {
     switch (notificationType) {
-      case NotificationType.MORNING_KICKSTART:
+      case NotificationType.morningKickstart:
         return 100;
-      case NotificationType.EVENING_WIND_DOWN:
+      case NotificationType.eveningWindDown:
         return 200;
-      case NotificationType.FOCUS_REMINDER:
+      case NotificationType.focusReminder:
         return 300;
-      case NotificationType.JOURNALING_CUE:
+      case NotificationType.journalingCue:
         return 400;
       default:
         return 0;

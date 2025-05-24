@@ -1,21 +1,20 @@
 import 'package:teja/domain/entities/app_error.dart';
 
 class StaticErrorCodes {
-  static const String NETWORK_ERROR = 'NETWORK_ERROR';
-  static const String UNKNOWN_ERROR = 'UNKNOWN_ERROR';
-  static const String AUTHENTICATION_ERROR = 'AUTHENTICATION_ERROR';
-  static const String NO_RECOVERY_CODE = 'NO_RECOVERY_CODE';
+  static const String networkError = 'NETWORK_ERROR';
+  static const String unknownError = 'UNKNOWN_ERROR';
+  static const String authenticationError = 'AUTHENTICATION_ERROR';
+  static const String noRecoveryCode = 'NO_RECOVERY_CODE';
   // Add more static error codes as needed
 }
 
 final maps = <String, String>{
-  StaticErrorCodes.AUTHENTICATION_ERROR: "Authentication Error",
-  StaticErrorCodes.NO_RECOVERY_CODE: "Recovery Code",
-  StaticErrorCodes.NETWORK_ERROR: 'Network Error',
+  StaticErrorCodes.authenticationError: "Authentication Error",
+  StaticErrorCodes.noRecoveryCode: "Recovery Code",
+  StaticErrorCodes.networkError: 'Network Error',
 };
 
 AppError createAppError(dynamic serverResponse) {
-  print("serverResponse $serverResponse");
   if (serverResponse is Map<String, dynamic>) {
     if (maps[serverResponse['code']] != null) {
       serverResponse['code'] = maps[serverResponse['code']];
@@ -24,12 +23,12 @@ AppError createAppError(dynamic serverResponse) {
     return AppError.fromJson(serverResponse);
   } else if (serverResponse is String) {
     return AppError(
-      code: StaticErrorCodes.UNKNOWN_ERROR,
+      code: StaticErrorCodes.unknownError,
       message: serverResponse,
     );
   } else {
     return AppError(
-      code: StaticErrorCodes.UNKNOWN_ERROR,
+      code: StaticErrorCodes.unknownError,
       message: 'An unknown error occurred',
     );
   }

@@ -94,7 +94,7 @@ MutableJournalEntry fromEntityCBL(JournalEntryEntity entity) {
 
 JournalEntryEntity toEntityCBL(JournalEntry entry) {
   return JournalEntryEntity(
-    id: entry.id ?? '',
+    id: entry.id,
     templateId: entry.templateId,
     timestamp: entry.timestamp,
     createdAt: entry.createdAt,

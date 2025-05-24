@@ -27,14 +27,12 @@ class _JournalEntriesWidgetState extends State<JournalEntriesWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
     final mainBody = StoreConnector<AppState, _ViewModel>(
       converter: _ViewModel.fromStore,
       builder: (context, viewModel) {
         String formattedDate =
             viewModel.selectedDate != null ? DateFormat('yyyy-MM-dd').format(viewModel.selectedDate!) : '';
 
-        final GoRouter goRouter = GoRouter.of(context);
         var journalEntries = viewModel.journalLogsByDate[formattedDate];
         if (journalEntries != null && journalEntries.isNotEmpty) {
           return Align(

@@ -9,15 +9,15 @@ import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
 import 'package:teja/domain/redux/mood/list/actions.dart';
 import 'package:teja/infrastructure/utils/share_handler_service.dart';
 import 'package:teja/presentation/home/ui/background_image_wrapper.dart';
-import 'package:teja/presentation/home/ui/QuickInputWidget.dart';
-import 'package:teja/presentation/home/ui/StreakDashboardWidget.dart';
+import 'package:teja/presentation/home/ui/quick_input_widget.dart';
+import 'package:teja/presentation/home/ui/streak_dashboard_widget.dart';
 import 'package:teja/presentation/home/ui/count_down_timer.dart';
 import 'package:teja/presentation/home/ui/journal/journal_entries_widget.dart';
 import 'package:teja/presentation/home/ui/mood/mood_tracker.dart';
-import 'package:teja/presentation/navigation/buildDesktopDrawer.dart';
+import 'package:teja/presentation/navigation/build_desktop_drawer.dart';
 import 'package:teja/presentation/navigation/mobile_navigation_bar.dart';
-import 'package:teja/presentation/navigation/isDesktop.dart';
-import 'package:teja/presentation/navigation/leadingContainer.dart';
+import 'package:teja/presentation/navigation/is_desktop.dart';
+import 'package:teja/presentation/navigation/leading_container.dart';
 import 'package:teja/router.dart';
 import 'package:teja/infrastructure/utils/user_preference_helper.dart';
 
@@ -72,7 +72,6 @@ class _HomePageState extends State<HomePage> {
                 ? 'rd'
                 : 'th';
     String weekday = DateFormat('EEE').format(date);
-    String fullDay = DateFormat('EEEE').format(date);
 
     return "$day$suffix - $weekday";
   }

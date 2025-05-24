@@ -14,10 +14,10 @@ import 'package:teja/domain/redux/mood/list/actions.dart';
 import 'package:teja/presentation/journal/ui/journal_card.dart';
 import 'package:teja/presentation/timeline/ui/filter_bottom_sheet.dart';
 import 'package:teja/presentation/mood/ui/mood_detail_card.dart';
-import 'package:teja/presentation/navigation/buildDesktopDrawer.dart';
+import 'package:teja/presentation/navigation/build_desktop_drawer.dart';
 import 'package:teja/presentation/navigation/mobile_navigation_bar.dart';
-import 'package:teja/presentation/navigation/isDesktop.dart';
-import 'package:teja/presentation/navigation/leadingContainer.dart';
+import 'package:teja/presentation/navigation/is_desktop.dart';
+import 'package:teja/presentation/navigation/leading_container.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 

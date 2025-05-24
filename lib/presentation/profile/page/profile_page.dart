@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:teja/presentation/navigation/buildDesktopDrawer.dart';
+import 'package:teja/presentation/navigation/build_desktop_drawer.dart';
 import 'package:teja/presentation/navigation/mobile_navigation_bar.dart';
-import 'package:teja/presentation/navigation/isDesktop.dart';
-import 'package:teja/presentation/navigation/leadingContainer.dart';
+import 'package:teja/presentation/navigation/is_desktop.dart';
+import 'package:teja/presentation/navigation/leading_container.dart';
 import 'package:teja/presentation/profile/page/profile_main_body.dart';
 
 class ProfilePage extends StatelessWidget {

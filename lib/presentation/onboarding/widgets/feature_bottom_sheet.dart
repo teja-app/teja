@@ -49,29 +49,20 @@ class FeatureAccessBottomSheetState extends State<FeatureAccessBottomSheet> {
 
     if (_available) {
       final Set<String> kIds = _kProductIDs.toSet();
-      print('Product IDs: $kIds');
 
       try {
         final ProductDetailsResponse response = await _iap.queryProductDetails(kIds);
         if (response.error != null) {
-          print('Error querying product details: ${response.error!.message}');
           // You might want to show this error to the user
         } else if (response.productDetails.isEmpty) {
-          print('No products found. This could be due to:');
-          print('1. Incorrect product IDs');
-          print('2. Products not yet available (try again later)');
-          print('3. App not correctly set up in the store');
         } else {
-          print('Product details: ${response.productDetails}');
           setState(() {
             _products = response.productDetails;
           });
         }
       } catch (e) {
-        print('Exception when querying product details: $e');
       }
     } else {
-      print('In-app purchases not available on this device.');
     }
 
     _iap.purchaseStream.listen((List<PurchaseDetails> purchases) {
@@ -245,7 +236,6 @@ class FeatureAccessBottomSheetState extends State<FeatureAccessBottomSheet> {
       _iap.buyNonConsumable(purchaseParam: purchaseParam);
     } catch (e) {
       // Handle the error
-      print('Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Product not found. Please try again later.')),
       );

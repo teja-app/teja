@@ -59,7 +59,6 @@ class ImageEntryRepository {
         }
       });
     } catch (e) {
-      print('Error adding or updating image: $e');
       throw Exception('Failed to save image: $e');
     }
   }
@@ -93,7 +92,6 @@ class ImageEntryRepository {
       }
       return null;
     } catch (e) {
-      print('Error finding image by hash: $e');
       return null;
     }
   }
@@ -138,7 +136,6 @@ class ImageEntryRepository {
         }
       });
     } catch (e) {
-      print('Error removing image: $e');
       throw Exception('Failed to remove image: $e');
     }
   }
@@ -196,7 +193,6 @@ class ImageEntryRepository {
         }
       });
     } catch (e) {
-      print('Error linking image to question-answer pair: $e');
       throw Exception('Failed to link image: $e');
     }
   }
@@ -253,7 +249,6 @@ class ImageEntryRepository {
         }
       });
     } catch (e) {
-      print('Error unlinking image from question-answer pair: $e');
       throw Exception('Failed to unlink image: $e');
     }
   }

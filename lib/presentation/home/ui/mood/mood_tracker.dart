@@ -28,7 +28,6 @@ class MoodTrackerWidget extends StatefulWidget {
 
 class MoodTrackerWidgetState extends State<MoodTrackerWidget> {
   bool _showMoods = false;
-  int? _selectedMoodIndex; // To track the selected mood
 
   @override
   void initState() {
@@ -43,12 +42,10 @@ class MoodTrackerWidgetState extends State<MoodTrackerWidget> {
   void reassemble() {
     super.reassemble();
     _showMoods = false;
-    _selectedMoodIndex = null;
   }
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
     return StoreConnector<AppState, CombinedModel>(
       converter: (store) => CombinedModel(
         moodLogsState: store.state.moodLogsState,
@@ -106,9 +103,4 @@ class MoodTrackerWidgetState extends State<MoodTrackerWidget> {
     );
   }
 
-  void _handleMoodSelected(int moodIndex) {
-    setState(() {
-      _selectedMoodIndex = moodIndex;
-    });
-  }
 }

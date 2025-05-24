@@ -63,7 +63,6 @@ Iterable<void> rootSaga(Store<AppState> store) sync* {
           yield Try(() sync* {
             yield Call(saga);
           }, Catch: (error, stackTrace) sync* {
-            print("error $error");
             if (error is AppError) {
               yield Put(AddAppErrorAction(
                   createAppError({'code': error.code, 'message': error.message, 'details': error.details})));

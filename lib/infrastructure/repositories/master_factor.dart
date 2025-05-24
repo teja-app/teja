@@ -29,7 +29,7 @@ class MasterFactorRepository {
             break; // We only need the first match
           }
           
-          final docId = existingId ?? factor.id ?? _generateId();
+          final docId = existingId ?? factor.id;
           final doc = MutableDocument.withId(docId);
           
           final data = {
@@ -52,7 +52,6 @@ class MasterFactorRepository {
       
       return factorIds;
     } catch (e) {
-      print('Error adding or updating factors: $e');
       throw Exception('Failed to save factors: $e');
     }
   }
@@ -86,7 +85,6 @@ class MasterFactorRepository {
       
       return factors;
     } catch (e) {
-      print('Error getting all factors: $e');
       return [];
     }
   }
@@ -98,7 +96,7 @@ class MasterFactorRepository {
 
   MasterFactorEntity toEntity(cbl.MasterFactor factor) {
     return MasterFactorEntity(
-      id: factor.id ?? '',
+      id: factor.id,
       slug: factor.slug,
       title: factor.title,
       subcategories: factor.subcategories
@@ -137,13 +135,8 @@ class MasterFactorRepository {
       
       return matchingSubCategories;
     } catch (e) {
-      print('Error filtering subcategories by slugs: $e');
       return [];
     }
   }
 
-  String _generateId() {
-    // Generate a unique ID for new documents
-    return DateTime.now().millisecondsSinceEpoch.toString();
-  }
 }

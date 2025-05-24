@@ -22,10 +22,8 @@ class ThemeSaga {
   }
 
   Iterable<void> _fetchThemeImages(String theme, String themeType) sync* {
-    print('Fetching $themeType theme images');
     final response = Result<Response>();
     yield Call(_themeApi.fetchThemeData, args: [theme], result: response);
-    print('Response for $themeType theme: ${response.value?.data}');
 
     if (response.value?.statusCode == 200) {
       final data = response.value?.data;
@@ -40,7 +38,6 @@ class ThemeSaga {
           }).toList();
           yield Put(ThemeImagesReceivedAction(images, themeType));
         } catch (e) {
-          print('Error parsing $themeType theme images: $e');
           yield Put(ThemeImagesFailedAction(
               'Error parsing $themeType theme images: $e'));
         }

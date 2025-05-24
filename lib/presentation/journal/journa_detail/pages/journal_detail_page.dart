@@ -13,7 +13,7 @@ import 'package:teja/domain/redux/permission/permissions_constants.dart';
 import 'package:teja/presentation/journal/journa_detail/ui/journal_setting_menu.dart';
 import 'package:teja/presentation/mood/ui/attachement_image.dart';
 import 'package:teja/presentation/mood/ui/attachment_video.dart';
-import 'package:teja/presentation/navigation/isDesktop.dart';
+import 'package:teja/presentation/navigation/is_desktop.dart';
 import 'package:teja/presentation/onboarding/widgets/feature_gate.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/button.dart';

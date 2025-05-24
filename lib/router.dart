@@ -9,9 +9,9 @@ import 'package:teja/presentation/journal/journal_editor/pages/journal_entry_pag
 import 'package:teja/presentation/journal/journal_editor/pages/quick_journal_entry_page.dart';
 import 'package:teja/presentation/mood/detail/page/mood_detail.dart';
 import 'package:teja/presentation/mood/editor/pages/mood_edit.dart';
-import 'package:teja/presentation/music/ui/SimpleMusicPlayer.dart';
-import 'package:teja/presentation/registration/page/RecoverAccountScreen.dart';
-import 'package:teja/presentation/registration/page/RegistrationScreen.dart';
+import 'package:teja/presentation/music/ui/simple_music_player.dart';
+import 'package:teja/presentation/registration/page/recover_account_screen.dart';
+import 'package:teja/presentation/registration/page/registration_screen.dart';
 import 'package:teja/presentation/profile/page/profile_page.dart';
 import 'package:teja/presentation/settings/pages/recovery_code_page.dart';
 import 'package:teja/presentation/settings/pages/notification_settings_page.dart';

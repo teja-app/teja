@@ -35,7 +35,6 @@ class LinkMetadata {
 
   factory LinkMetadata.fromJson(Map<String, dynamic> data) {
     final body = jsonStringify(data, pretty: false);
-    print('LinkMetadata.fromJson: $body');
     return LinkMetadata(
       url: data['url'] ?? '',
       title: data['title'],
@@ -76,7 +75,6 @@ class LinkPreviewService {
       }
       return null;
     } catch (e) {
-      print('Error fetching link metadata: $e');
       return null;
     }
   }
