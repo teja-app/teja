@@ -1,5 +1,5 @@
 class FeelingEntity {
-  late int? id;
+  late String? id;
   final String feeling;
   final String? comment;
   final List<String>? factors;
@@ -15,7 +15,7 @@ class FeelingEntity {
 
   // CopyWith method for immutability
   FeelingEntity copyWith({
-    int? id,
+    String? id,
     String? feeling,
     String? comment,
     List<String>? factors,
@@ -42,7 +42,7 @@ class FeelingEntity {
   // FromJson method for deserialization (optional, but useful)
   factory FeelingEntity.fromJson(Map<String, dynamic> json) {
     return FeelingEntity(
-      id: json['id'] as int?,
+      id: json['id'] as String?,
       feeling: json['feeling'] as String,
       comment: json['comment'] as String?,
       factors: (json['factors'] as List<dynamic>?)?.cast<String>(),

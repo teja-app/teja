@@ -1,10 +1,10 @@
-import 'package:isar/isar.dart';
+import 'package:cbl/cbl.dart';
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_actions.dart';
 import 'package:teja/domain/redux/mood/logs/mood_logs_actions.dart';
 import 'package:teja/domain/redux/mood/mood_sync/mood_sync_actions.dart';
 import 'package:teja/infrastructure/repositories/mood_log_repository.dart';
-import 'package:teja/infrastructure/database/isar_collections/mood_log.dart' as mood_collection;
+import 'package:teja/infrastructure/database/cbl_collections/mood_log.dart' as cbl;
 
 class MoodDetailSaga {
   Iterable<void> saga() sync* {
@@ -13,13 +13,13 @@ class MoodDetailSaga {
   }
 
   _loadMoodDetail({required LoadMoodDetailAction action}) sync* {
-    var isarResult = Result<Isar>();
-    yield GetContext('isar', result: isarResult);
-    Isar isar = isarResult.value!;
+    var cblResult = Result<Database>();
+    yield GetContext('cbl', result: cblResult);
+    Database database = cblResult.value!;
 
-    var moodLogRepository = MoodLogRepository(isar);
+    var moodLogRepository = MoodLogRepository(database);
     yield Try(() sync* {
-      var moodLog = Result<mood_collection.MoodLog?>();
+      var moodLog = Result<cbl.MoodLog?>();
       yield Call(
         moodLogRepository.getMoodLogById,
         args: [action.moodId],
@@ -38,11 +38,11 @@ class MoodDetailSaga {
   }
 
   _deleteMoodDetail({required DeleteMoodDetailAction action}) sync* {
-    var isarResult = Result<Isar>();
-    yield GetContext('isar', result: isarResult);
-    Isar isar = isarResult.value!;
+    var cblResult = Result<Database>();
+    yield GetContext('cbl', result: cblResult);
+    Database database = cblResult.value!;
 
-    var moodLogRepository = MoodLogRepository(isar);
+    var moodLogRepository = MoodLogRepository(database);
 
     yield Try(() sync* {
       yield Call(moodLogRepository.deleteMoodLogById, args: [action.moodId]);

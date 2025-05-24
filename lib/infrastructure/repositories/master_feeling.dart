@@ -1,80 +1,171 @@
-import 'package:isar/isar.dart';
+import 'package:cbl/cbl.dart';
 import 'package:teja/domain/entities/master_feeling_entity.dart';
-import 'package:teja/infrastructure/database/isar_collections/master_feeling.dart';
+import 'package:teja/infrastructure/database/cbl_collections/master_feeling.dart' as cbl;
 
 class MasterFeelingRepository {
-  final Isar isar;
+  final Database database;
 
-  MasterFeelingRepository(this.isar);
+  MasterFeelingRepository(this.database);
 
-  Future<List<MasterFeeling>> getAllFeelings() async {
-    return isar.masterFeelings.where().findAll();
+  Future<List<cbl.MasterFeeling>> getAllFeelings() async {
+    try {
+      final collection = await database.defaultCollection;
+      
+      final query = const QueryBuilder()
+          .select(SelectResult.expression(Meta.id), SelectResult.all())
+          .from(DataSource.collection(collection))
+          .where(Expression.property('type').equalTo(Expression.string('feeling'))); // Filter for master feelings
+      
+      final resultSet = await query.execute();
+      final feelings = <cbl.MasterFeeling>[];
+      
+      await for (final result in resultSet.asStream()) {
+        final docId = result.string(0);
+        
+        if (docId != null) {
+          final doc = await collection.document(docId);
+          if (doc != null) {
+            feelings.add(cbl.ImmutableMasterFeeling.internal(doc));
+          }
+        }
+      }
+      
+      return feelings;
+    } catch (e) {
+      print('Error getting all feelings: $e');
+      return [];
+    }
   }
 
   Future<List<MasterFeelingEntity>> getAllFeelingEntities() async {
-    List<MasterFeeling> feelings = await getAllFeelings();
+    List<cbl.MasterFeeling> feelings = await getAllFeelings();
     return feelings.map(toEntity).toList();
   }
 
-  Future<Map<String, int>> addOrUpdateFeelings(List<MasterFeeling> feelings) async {
-    Map<String, int> feelingIds = {};
-    await isar.writeTxn(() async {
-      for (var feeling in feelings) {
-        int id;
-        var existingFeelings = await isar.masterFeelings.filter().slugEqualTo(feeling.slug).findAll();
-
-        MasterFeeling? existingFeeling = existingFeelings.isNotEmpty
-            ? existingFeelings.firstWhere((f) => f.parentSlug == feeling.parentSlug, orElse: () => MasterFeeling())
-            : null;
-
-        if (existingFeeling != null && existingFeeling.isarId != 0) {
-          // Update existing record
-          existingFeeling.name = feeling.name;
-          existingFeeling.slug = feeling.slug;
-          existingFeeling.type = feeling.type;
-          existingFeeling.parentSlug = feeling.parentSlug;
-          existingFeeling.energy = feeling.energy; // Nullable
-          existingFeeling.pleasantness = feeling.pleasantness; // Nullable
-          id = await isar.masterFeelings.put(existingFeeling);
-        } else {
-          // Add new record
-          id = await isar.masterFeelings.put(feeling);
+  Future<Map<String, String>> addOrUpdateFeelings(List<cbl.MasterFeeling> feelings) async {
+    Map<String, String> feelingIds = {};
+    
+    try {
+      await database.inBatch(() async {
+        final collection = await database.defaultCollection;
+        
+        for (var feeling in feelings) {
+          // Create a unique key for the feeling
+          final uniqueKey = feeling.slug + (feeling.parentSlug ?? '');
+          
+          // Search for existing feeling with the same slug and parentSlug
+          final query = const QueryBuilder()
+              .select(SelectResult.expression(Meta.id))
+              .from(DataSource.collection(collection))
+              .where(
+                Expression.property('slug').equalTo(Expression.string(feeling.slug))
+                .and(
+                  feeling.parentSlug != null
+                    ? Expression.property('parentSlug').equalTo(Expression.string(feeling.parentSlug!))
+                    : Expression.property('parentSlug').isNullOrMissing()
+                )
+              );
+          
+          final resultSet = await query.execute();
+          String? existingId;
+          
+          await for (final result in resultSet.asStream()) {
+            existingId = result.string(0);
+            break; // We only need the first match
+          }
+          
+          final docId = existingId ?? feeling.id ?? _generateId();
+          final doc = MutableDocument.withId(docId);
+          
+          final data = {
+            'slug': feeling.slug,
+            'name': feeling.name,
+            'type': feeling.type,
+            'parentSlug': feeling.parentSlug,
+            'energy': feeling.energy,
+            'pleasantness': feeling.pleasantness,
+          };
+          
+          doc.setData(data);
+          await collection.saveDocument(doc);
+          
+          feelingIds[uniqueKey] = docId;
         }
-        feelingIds[feeling.slug + (feeling.parentSlug ?? '')] = id;
-      }
-    });
-    return feelingIds;
+      });
+      
+      return feelingIds;
+    } catch (e) {
+      print('Error adding or updating feelings: $e');
+      throw Exception('Failed to save feelings: $e');
+    }
   }
 
-  MasterFeelingEntity toEntity(MasterFeeling feeling) {
+  MasterFeelingEntity toEntity(cbl.MasterFeeling feeling) {
     return MasterFeelingEntity(
-      id: feeling.isarId,
+      id: feeling.id ?? '',
       slug: feeling.slug,
       name: feeling.name,
       type: feeling.type,
       parentSlug: feeling.parentSlug,
-      energy: feeling.energy, // Nullable
-      pleasantness: feeling.pleasantness, // Nullable
+      energy: feeling.energy,
+      pleasantness: feeling.pleasantness,
     );
   }
 
-  Future<String> convertIdToSlug(int id) async {
-    var feeling = await isar.masterFeelings.where().isarIdEqualTo(id).findFirst();
-    return feeling?.slug ?? '';
+  Future<String> convertIdToSlug(String id) async {
+    try {
+      final collection = await database.defaultCollection;
+      final doc = await collection.document(id);
+      
+      if (doc != null) {
+        return doc.string('slug') ?? '';
+      }
+      return '';
+    } catch (e) {
+      print('Error converting ID to slug: $e');
+      return '';
+    }
   }
 
   Future<Map<String, MasterFeelingEntity>> getFeelingsBySlugs(List<String?> slugs) async {
     Map<String, MasterFeelingEntity> feelingsMap = {};
-
-    for (var slug in slugs) {
-      if (slug != null) {
-        var feeling = await isar.masterFeelings.filter().slugEqualTo(slug).findFirst();
-        if (feeling != null) {
-          feelingsMap[slug] = toEntity(feeling);
+    
+    try {
+      final collection = await database.defaultCollection;
+      
+      for (var slug in slugs) {
+        if (slug != null) {
+          final query = const QueryBuilder()
+              .select(SelectResult.expression(Meta.id), SelectResult.all())
+              .from(DataSource.collection(collection))
+              .where(Expression.property('slug').equalTo(Expression.string(slug)));
+          
+          final resultSet = await query.execute();
+          
+          await for (final result in resultSet.asStream()) {
+            final docId = result.string(0);
+            
+            if (docId != null) {
+              final doc = await collection.document(docId);
+              if (doc != null) {
+                final feeling = cbl.ImmutableMasterFeeling.internal(doc);
+                feelingsMap[slug] = toEntity(feeling);
+                break; // We only need the first match
+              }
+            }
+          }
         }
       }
+      
+      return feelingsMap;
+    } catch (e) {
+      print('Error getting feelings by slugs: $e');
+      return {};
     }
+  }
 
-    return feelingsMap;
+  String _generateId() {
+    // Generate a unique ID for new documents
+    return DateTime.now().millisecondsSinceEpoch.toString();
   }
 }

@@ -1,4 +1,4 @@
-import 'package:isar/isar.dart';
+import 'package:cbl/cbl.dart';
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/entities/mood_log.dart';
 import 'package:teja/domain/redux/app_state.dart';
@@ -19,9 +19,9 @@ class MoodLogListSaga {
 
   _fetchMoodLogs({required LoadMoodLogsListAction action}) sync* {
     yield Try(() sync* {
-      var isarResult = Result<Isar>();
-      yield GetContext('isar', result: isarResult);
-      Isar isar = isarResult.value!;
+      var cblResult = Result<Database>();
+      yield GetContext('cbl', result: cblResult);
+      Database database = cblResult.value!;
 
       var filterResult = Result<MoodLogFilter>();
       yield Select(
@@ -30,7 +30,7 @@ class MoodLogListSaga {
       );
 
       var moodLogsResult = Result<List<MoodLogEntity>>();
-      yield Call(MoodLogRepository(isar).getMoodLogsPage,
+      yield Call(MoodLogRepository(database).getMoodLogsPage,
           args: [action.pageKey, action.pageSize, filterResult.value], result: moodLogsResult);
 
       if (moodLogsResult.value != null) {

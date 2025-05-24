@@ -26,9 +26,9 @@ This document outlines the migration plan from Isar to Couchbase Lite (CBL) for 
 
 ## Migration Phases
 
-### Phase 1: Schema Migration (1 week)
+### Phase 1: Schema Migration (1 week) - IN PROGRESS
 
-#### 1.1 Master Data Migration (2 days)
+#### 1.1 Master Data Migration (2 days) - COMPLETED
 
 **MasterFeeling Migration**
 ```dart
@@ -65,7 +65,7 @@ class SubCategory {
 }
 ```
 
-#### 2.2 MoodLog Migration (3-4 days)
+#### 2.2 MoodLog Migration (3-4 days) - SCHEMA COMPLETED
 
 **MoodLog Schema**
 ```dart
@@ -89,10 +89,23 @@ class MoodLog {
 ```
 
 #### Tasks
-- [ ] Create CBL schemas in `/lib/infrastructure/database/cbl_collections/`
+- [x] Create CBL schemas in `/lib/infrastructure/database/cbl_collections/`
+  - [x] Create `master_feeling.dart` with CBL annotations
+  - [x] Create `master_factor.dart` with CBL annotations
+  - [x] Create `mood_log.dart` with CBL annotations
+  - [x] Generate TypedDocument code using `dart run cbl_flutter:generate`
 - [ ] Implement repositories with CBL
+  - [ ] Refactor MoodLogRepository to use CBL Database instead of Isar
+  - [ ] Refactor MasterFeelingRepository to use CBL
+  - [ ] Refactor MasterFactorRepository to use CBL
+  - [ ] Update repository methods to use CBL queries
 - [ ] Update all mood-related sagas
+  - [ ] Update saga imports to use new CBL repositories
+  - [ ] Ensure all saga methods handle CBL document operations
+  - [ ] Update sync saga to work with CBL documents
 - [ ] Remove Isar collection files
+  - [ ] Delete all `.g.dart` generated files
+  - [ ] Delete Isar collection definitions
 
 #### Deliverables
 - Working CBL repositories
@@ -116,9 +129,30 @@ class MoodLog {
 
 3. **Testing**
    - [ ] Test all mood tracking flows
+     - [ ] Create new mood log
+     - [ ] Edit existing mood log
+     - [ ] Delete mood log
+     - [ ] View mood history
+     - [ ] Filter moods by date range
+   - [ ] Test master data operations
+     - [ ] Load master feelings
+     - [ ] Load master factors
+     - [ ] Search/filter capabilities
+   - [ ] Test sync functionality
+     - [ ] Upload mood logs to server
+     - [ ] Download mood logs from server
+     - [ ] Handle conflict resolution
    - [ ] Verify app initialization
+     - [ ] CBL database opens correctly
+     - [ ] No Isar initialization errors
+     - [ ] Master data loads on first launch
    - [ ] Check for runtime errors
+     - [ ] Monitor Sentry for new errors
+     - [ ] Test edge cases (empty data, large datasets)
    - [ ] Performance testing
+     - [ ] Measure query performance vs Isar baseline
+     - [ ] Check memory usage
+     - [ ] Verify smooth UI transitions
 
 #### Deliverables
 - Zero Isar dependencies
@@ -151,16 +185,45 @@ class MoodLogRepository extends BaseCBLRepository<MoodLog> {
 #### Core Configuration
 - `/lib/config/shared_config.dart` - Remove Isar, configure only CBL
 - `/lib/config/open_cbl.dart` - Ensure proper CBL setup
+- `/lib/pubspec.yaml` - Remove isar and isar_flutter_libs dependencies
+
+#### Repository Files (Need CBL Implementation)
+- `/lib/infrastructure/repositories/mood_log_repository.dart`
+- `/lib/infrastructure/repositories/master_feeling.dart`
+- `/lib/infrastructure/repositories/master_factor.dart`
 
 #### Redux Store
 - `/lib/domain/redux/store.dart` - Remove Isar from context
 - `/lib/domain/redux/app_state.dart` - Remove deleted feature states
 - `/lib/domain/redux/root_saga.dart` - Remove deleted sagas
 
+#### Redux Mood Modules (Need CBL Updates)
+- `/lib/domain/redux/mood/editor/` - MoodEditorSaga
+- `/lib/domain/redux/mood/detail/` - MoodDetailSaga
+- `/lib/domain/redux/mood/list/` - MoodLogListSaga
+- `/lib/domain/redux/mood/logs/` - MoodLogsSaga
+- `/lib/domain/redux/mood/master_feeling/` - MasterFeelingSaga
+- `/lib/domain/redux/mood/master_factor/` - MasterFactorSaga
+- `/lib/domain/redux/mood/mood_analysis/` - MoodAnalysisSaga
+- `/lib/domain/redux/mood/mood_sync/` - MoodSyncSaga
+- `/lib/domain/redux/weekly_mood_report/` - WeeklyMoodReportSaga
+- `/lib/domain/redux/monthly_mood_report/` - MonthlyMoodReportSaga
+- `/lib/domain/redux/yearly_mood_report/` - YearlyMoodReportSaga
+
 #### Navigation
 - `/lib/router.dart` - Remove routes for deleted features
 - `/lib/presentation/navigation/mobile_navigation_bar.dart` - Update indices
 - `/lib/presentation/navigation/buildDesktopDrawer.dart` - Remove items
+
+#### Files to Delete
+- `/lib/infrastructure/database/isar_collections/master_factor.dart`
+- `/lib/infrastructure/database/isar_collections/master_factor.g.dart`
+- `/lib/infrastructure/database/isar_collections/master_feeling.dart`
+- `/lib/infrastructure/database/isar_collections/master_feeling.g.dart`
+- `/lib/infrastructure/database/isar_collections/mood_log.dart`
+- `/lib/infrastructure/database/isar_collections/mood_log.g.dart`
+- `/lib/infrastructure/database/isar_collections/journal_entry.dart`
+- `/lib/infrastructure/database/isar_collections/journal_entry.g.dart`
 
 ## Risk Mitigation
 
@@ -195,12 +258,47 @@ class MoodLogRepository extends BaseCBLRepository<MoodLog> {
    - [ ] Cleaner dependency graph
    - [ ] Improved maintainability
 
+## Implementation Considerations
+
+### CBL-Specific Changes
+
+1. **Document ID Strategy**
+   - Use UUID for document IDs (matching JournalEntry pattern)
+   - Maintain backward compatibility with existing IDs where possible
+
+2. **Query Patterns**
+   - Replace Isar's `.where()` with CBL's QueryBuilder
+   - Use indexes for frequently queried fields (timestamp, moodRating)
+   - Implement proper sorting for mood logs
+
+3. **Data Type Mappings**
+   - Isar `Id` → CBL `@DocumentId() String id`
+   - Isar `List<>` → CBL `List<>` (ensure proper JSON serialization)
+   - Isar embedded objects → CBL `@TypedDictionary()` classes
+
+4. **Repository Method Updates**
+   ```dart
+   // Old Isar pattern
+   await isar.writeTxn(() async {
+     await isar.moodLogs.put(moodLog);
+   });
+   
+   // New CBL pattern
+   final doc = MutableDocument.withId(moodLog.id, moodLog.toJson());
+   await collection.saveDocument(doc);
+   ```
+
+### Dependencies to Add
+- Already have `cbl_flutter_ee` in pubspec.yaml
+- Need to ensure `cbl_flutter:generate` is configured in `build.yaml`
+
 ## Post-Migration Tasks
 
 1. **Documentation Updates**
    - Update README
    - Update setup instructions
    - Document new architecture
+   - Create migration guide for other developers
 
 2. **Team Knowledge Transfer**
    - Code walkthrough session

@@ -1,6 +1,6 @@
 // lib/domain/entities/master_feeling_entity.dart
 class MasterFeelingEntity {
-  final int? id;
+  final String? id;
   final String name;
   final String slug;
   final String? parentSlug; // Optional, used for subcategories and feelings
@@ -45,7 +45,7 @@ class MasterFeelingEntity {
 
   // CopyWith method for immutability
   MasterFeelingEntity copyWith({
-    int? id,
+    String? id,
     String? name,
     String? slug,
     String? parentSlug,

@@ -1,5 +1,5 @@
 class MasterFactorEntity {
-  final int? id;
+  final String? id;
   final String slug;
   final String title;
   final List<SubCategoryEntity> subcategories;
