@@ -4,6 +4,7 @@ import 'package:teja/infrastructure/utils/time_storage_helper.dart';
 import 'package:teja/presentation/navigation/is_desktop.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:teja/infrastructure/constants/notification_types.dart';
+import 'package:teja/shared/helpers/logger.dart';
 
 class NotificationSettingsPage extends StatefulWidget {
   final NotificationService notificationService;
@@ -45,6 +46,10 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
 
   Future<void> _selectTime(
       BuildContext context, String notificationType) async {
+    // Store MaterialLocalizations and ScaffoldMessenger before async operations
+    final localizations = MaterialLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: notificationTimes[notificationType]!,
@@ -88,17 +93,23 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
 
     final TimeStorage timeStorage = TimeStorage();
     if (picked != null && picked != notificationTimes[notificationType]) {
+      // Format time using stored localizations
+      final formattedTime = localizations.formatTimeOfDay(picked);
+      
       setState(() {
         notificationTimes[notificationType] = picked;
       });
+      
       await timeStorage.saveTimeSlot(notificationType, picked);
       await timeStorage.saveEnabledStatus(
           notificationType, notificationEnabled[notificationType]!);
 
-      ScaffoldMessenger.of(context).showSnackBar(
+      if (!mounted) return;
+      
+      messenger.showSnackBar(
         SnackBar(
           content: Text(
-              "Notification time for ${NotificationType.toReadableString(notificationType)} changed to ${picked.format(context)}."),
+              "Notification time for ${NotificationType.toReadableString(notificationType)} changed to $formattedTime."),
           duration: const Duration(seconds: 3),
         ),
       );
@@ -132,6 +143,7 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
 
       await _scheduleDefaultNotifications();
     } catch (e) {
+      logger.e('Failed to load notification settings', error: e);
     }
   }
 

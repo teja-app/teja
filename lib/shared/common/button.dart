@@ -55,7 +55,6 @@ class Button extends StatelessWidget {
         case ButtonType.disabled:
           return Colors.grey;
         case ButtonType.defaultButton:
-        default:
           return textColor ?? theme.colorScheme.onSurface;
       }
     }
@@ -69,7 +68,6 @@ class Button extends StatelessWidget {
         case ButtonType.disabled:
           return Colors.grey.withValues(alpha: 0.3);
         case ButtonType.defaultButton:
-        default:
           return backgroundColor ?? theme.colorScheme.surface;
       }
     }
@@ -82,7 +80,6 @@ class Button extends StatelessWidget {
         case ButtonType.disabled:
           return Colors.grey.withValues(alpha: 0.5);
         case ButtonType.defaultButton:
-        default:
           return borderColor ?? theme.colorScheme.outline;
       }
     }

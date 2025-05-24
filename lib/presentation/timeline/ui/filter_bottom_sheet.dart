@@ -5,6 +5,8 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/mood/list/actions.dart';
 import 'package:teja/domain/redux/mood/list/state.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class FilterBottomSheet extends StatefulWidget {
   const FilterBottomSheet({super.key});
 

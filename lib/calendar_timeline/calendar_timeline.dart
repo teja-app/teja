@@ -7,6 +7,8 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 typedef OnDateSelected = void Function(DateTime);
 
 /// Creates a minimal, small profile calendar to select specific dates.

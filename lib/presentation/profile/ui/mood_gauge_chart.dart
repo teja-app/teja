@@ -86,7 +86,7 @@ class MoodGaugeChart extends StatelessWidget {
       package: "assets",
       width: iconSize,
       height: iconSize,
-      color: iconColor,
+      colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
     );
   }
 }

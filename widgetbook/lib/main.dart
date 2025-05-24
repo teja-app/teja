@@ -22,9 +22,7 @@ class WidgetbookApp extends StatelessWidget {
         color: const Color.fromARGB(255, 255, 255, 255),
         child: child,
       ),
-      integrations: [
-        WidgetbookCloudIntegration(),
-      ],
+      integrations: const [],
       addons: [
         DeviceFrameAddon(
           devices: [

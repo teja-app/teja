@@ -11,6 +11,8 @@ import 'package:teja/shared/common/button.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 import 'package:icons_flutter/icons_flutter.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
 
@@ -156,9 +158,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   Widget _buildMnemonicPage() {
-    final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: SingleChildScrollView(
@@ -191,8 +190,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       int blankIndex) {
     List<String> mnemonicWords = mnemonic.split(' ');
     String missingWord = '';
-
-    final colorScheme = Theme.of(context).colorScheme;
 
     // Initialize the mnemonic words and select a random missing word
     void initializeMnemonic() {

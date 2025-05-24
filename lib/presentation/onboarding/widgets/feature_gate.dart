@@ -5,6 +5,8 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/presentation/onboarding/widgets/feature_bottom_sheet.dart';
 import 'package:teja/shared/storage/secure_storage.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class FeatureGate extends StatefulWidget {
   final String feature;
   final Widget child;

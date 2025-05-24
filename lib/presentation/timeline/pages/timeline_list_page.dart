@@ -12,7 +12,6 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
 import 'package:teja/domain/redux/mood/list/actions.dart';
 import 'package:teja/presentation/journal/ui/journal_card.dart';
-import 'package:teja/presentation/timeline/ui/filter_bottom_sheet.dart';
 import 'package:teja/presentation/mood/ui/mood_detail_card.dart';
 import 'package:teja/presentation/navigation/build_desktop_drawer.dart';
 import 'package:teja/presentation/navigation/mobile_navigation_bar.dart';
@@ -21,6 +20,8 @@ import 'package:teja/presentation/navigation/leading_container.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class TimelinePage extends StatefulWidget {
   const TimelinePage({super.key});
 
@@ -60,15 +61,6 @@ class _TimelinePageState extends State<TimelinePage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _loadInitialData();
-  }
-
-  void _showFilterDialog() async {
-    await showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return const FilterBottomSheet(); // Replace with your actual dialog/widget
-      },
-    );
   }
 
   Map<DateTime, List<dynamic>> groupEntriesByDate(

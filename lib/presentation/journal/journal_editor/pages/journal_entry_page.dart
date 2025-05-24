@@ -9,7 +9,6 @@ import 'package:teja/domain/redux/journal/detail/journal_detail_actions.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.dart';
 import 'package:teja/infrastructure/api/ai_question_api.dart';
 import 'package:teja/router.dart';
-import 'package:teja/shared/common/button.dart';
 import 'package:teja/shared/helpers/logger.dart';
 import 'package:uuid/uuid.dart';
 
@@ -49,7 +48,7 @@ class JournalEntryPage extends StatefulWidget {
 class JournalEntryPageState extends State<JournalEntryPage> {
   final ScrollController _scrollController = ScrollController();
   LoadingState _loadingState = const LoadingState();
-  String? _errorMessage;
+  String? _errorMessage; // ignore: unused_field
   List<Map<String, String>> qaList = [];
 
   final TextEditingController _textController = TextEditingController();
@@ -57,7 +56,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
   bool showingAlternatives = false;
   List<String> _alternativeQuestions = [];
   late final Store<AppState> _store;
-  final Uuid uuid = Uuid();
+  final Uuid uuid = const Uuid();
   String? _helpText;
   List<String> _inputSuggestions = [];
 
@@ -472,6 +471,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
       final journalEntry = _store.state.journalDetailState.selectedJournalEntry;
       if (journalEntry != null) {
         await _store.dispatch(LoadJournalDetailAction(journalEntry.id));
+        if (!mounted) return;
         _navigateToDetailPage(context, journalEntry.id);
       } else {
         throw Exception('Journal entry not found');
@@ -479,6 +479,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
     } catch (e) {
       logger.e("JournalEntryPageState:_saveAndExit", error: e);
       _showError('Failed to save and exit: $e');
+      if (!mounted) return;
       GoRouter.of(context).pushNamed(RootPath.home);
     } finally {
       if (mounted) {

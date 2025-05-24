@@ -72,7 +72,7 @@ Widget moodLogLayout(MoodLogEntity? moodLog, BuildContext context, [MoodLogLayou
   final includeComments = config?.includeComments ?? true;
   final includeAttachments = config?.includeAttachments ?? true;
   final textTheme = Theme.of(context).textTheme;
-  final gridWidth = config!.gridWidth ?? 3.5;
+  final gridWidth = config!.gridWidth;
 
   // Extract moodLog details with null checks
   Map<String, String> moodTexts = _getMoodEntryText(moodLog, context);

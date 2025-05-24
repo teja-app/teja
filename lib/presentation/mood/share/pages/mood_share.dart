@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/mood_log.dart';
 import 'package:teja/domain/redux/app_state.dart';
-import 'dart:ui' as ui;
-import 'dart:typed_data';
-import 'package:share_plus/share_plus.dart';
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 import 'package:teja/presentation/mood/share/ui/share_option_ui.dart';
 import 'package:teja/presentation/mood/ui/mood_detail_card.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class MoodSharePage extends StatefulWidget {
   final String moodId;
 
@@ -79,13 +75,6 @@ class _MoodSharePageState extends State<MoodSharePage> {
               : const Center(child: Text('Mood not found')),
         );
       },
-    );
-  }
-
-
-  void _showErrorSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
     );
   }
 }

@@ -43,8 +43,6 @@ class OnboardingPageState extends State<OnboardingPage> {
     _updateButtonColors();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final store = StoreProvider.of<AppState>(context);
-      bool hasExistingMnemonic =
-          store.state.authState.hasExistingMnemonic;
       performInitStateActions(store);
       if (_isPressed != null) {
         _isPressed!.value = false;
@@ -57,8 +55,7 @@ class OnboardingPageState extends State<OnboardingPage> {
 
       final recoverCode = await SecureStorage().readRecoveryCode();
 
-      hasExistingMnemonic = await store.dispatch(SetHasExistingMnemonicAction(
-          hasExistingMnemonic = recoverCode != null));
+      await store.dispatch(SetHasExistingMnemonicAction(recoverCode != null));
 
       final authService = AuthService();
       await authService.validateAndAuthenticate(store);
@@ -86,7 +83,9 @@ class OnboardingPageState extends State<OnboardingPage> {
         _isPressed!.value = true;
       }
       Future.delayed(const Duration(seconds: 3), () {
-        GoRouter.of(context).replaceNamed(RootPath.home);
+        if (mounted) {
+          GoRouter.of(context).replaceNamed(RootPath.home);
+        }
       });
     });
   }
@@ -97,7 +96,9 @@ class OnboardingPageState extends State<OnboardingPage> {
         _isPressed!.value = true;
       }
       Future.delayed(const Duration(seconds: 3), () {
-        GoRouter.of(context).pushNamed(RootPath.registration);
+        if (mounted) {
+          GoRouter.of(context).pushNamed(RootPath.registration);
+        }
       });
     });
   }

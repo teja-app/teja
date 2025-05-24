@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:teja/infrastructure/api/streak_api.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class StreakEntriesDashboardWidget extends StatefulWidget {
   final int currentStreak;
   final int totalEntries;

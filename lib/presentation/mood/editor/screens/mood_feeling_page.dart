@@ -9,6 +9,8 @@ import 'package:teja/domain/redux/app_state.dart';
 
 import 'package:collection/collection.dart'; // Import collection package
 
+// ignore_for_file: library_private_types_in_public_api
+
 class FeelingScreen extends StatefulWidget {
   const FeelingScreen({super.key});
 

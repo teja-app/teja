@@ -21,6 +21,8 @@ import 'package:teja/presentation/navigation/leading_container.dart';
 import 'package:teja/router.dart';
 import 'package:teja/infrastructure/utils/user_preference_helper.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 

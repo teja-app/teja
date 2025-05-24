@@ -37,7 +37,7 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
   final TextEditingController _bodyController = TextEditingController();
   bool _isSaving = false;
   bool _isInitialized = false;
-  String? _errorMessage;
+  String? _errorMessage; // ignore: unused_field
   bool _isLoadingLinkMetadata = false;
   LinkMetadata? _linkMetadata;
 
@@ -133,6 +133,9 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
       _errorMessage = null;
     });
 
+    // Capture the router before async operations
+    final router = GoRouter.of(context);
+
     try {
       final updatedEntry = currentEntry?.copyWith(
         body: _bodyController.text,
@@ -143,7 +146,19 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
 
         // Wait for a short period to allow the state to update
         await Future.delayed(const Duration(milliseconds: 100));
-        _checkAndNavigate(context, updatedEntry.id);
+        if (!mounted) return;
+        // Use mounted check properly by not passing context
+        final state = _store.state.journalDetailState;
+        if (state.selectedJournalEntry != null &&
+            state.selectedJournalEntry!.id == updatedEntry.id &&
+            state.selectedJournalEntry!.body != null) {
+          router.goNamed(
+            RootPath.journalDetail,
+            queryParameters: {"id": updatedEntry.id},
+          );
+        } else {
+          _showError('Failed to save entry. Please try again.');
+        }
       }
     } catch (e) {
       _showError('Failed to save entry. Please try again.');
@@ -156,23 +171,7 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
     }
   }
 
-  void _checkAndNavigate(BuildContext context, String entryId) {
-    final state = _store.state.journalDetailState;
-    if (state.selectedJournalEntry != null &&
-        state.selectedJournalEntry!.id == entryId &&
-        state.selectedJournalEntry!.body != null) {
-      _navigateToDetailPage(context, entryId);
-    } else {
-      _showError('Failed to save entry. Please try again.');
-    }
-  }
 
-  void _navigateToDetailPage(BuildContext context, String entryId) {
-    GoRouter.of(context).goNamed(
-      RootPath.journalDetail,
-      queryParameters: {"id": entryId},
-    );
-  }
 
   Future<void> _saveAndContinue(BuildContext context, JournalEntryEntity? currentEntry) async {
     if (_bodyController.text.isEmpty) {
@@ -184,6 +183,9 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
       _isSaving = true;
       _errorMessage = null;
     });
+
+    // Capture the router before async operations
+    final router = GoRouter.of(context);
 
     try {
       final updatedEntry = currentEntry?.copyWith(
@@ -197,11 +199,13 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
         // Wait for a short period to allow the state to update
         await Future.delayed(const Duration(milliseconds: 100));
 
+        if (!mounted) return;
+        
         final state = _store.state.journalDetailState;
         if (state.selectedJournalEntry != null &&
             state.selectedJournalEntry!.id == updatedEntry.id &&
             state.selectedJournalEntry!.body != null) {
-          GoRouter.of(context).pushNamed(
+          router.pushNamed(
             RootPath.journalEntryPage,
             pathParameters: {'id': updatedEntry.id},
           );
@@ -267,7 +271,7 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
     Color primary = colorScheme.primary;
 
     return PopScope(
-      onPopInvoked: (didPop) async {
+      onPopInvokedWithResult: (didPop, result) async {
         _handleBack(context, _store.state.journalEditorState.currentJournalEntry);
       },
       child: StoreConnector<AppState, QuickJournalEditViewModel>(

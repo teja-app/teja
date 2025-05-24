@@ -9,6 +9,7 @@ import 'package:teja/presentation/onboarding/widgets/authenticate.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:teja/shared/storage/secure_storage.dart';
+import 'package:teja/shared/helpers/logger.dart';
 
 enum FeatureTab { free, paid }
 
@@ -28,6 +29,7 @@ class FeatureAccessBottomSheetState extends State<FeatureAccessBottomSheet> {
   final SecureStorage _secureStorage = SecureStorage();
 
   List<ProductDetails> _products = [];
+  // ignore: unused_field
   List<PurchaseDetails> _purchases = [];
   final List<String> _kProductIDs = [
     'app.teja.subscription.all',
@@ -61,6 +63,7 @@ class FeatureAccessBottomSheetState extends State<FeatureAccessBottomSheet> {
           });
         }
       } catch (e) {
+        logger.e('Failed to load products', error: e);
       }
     } else {
     }

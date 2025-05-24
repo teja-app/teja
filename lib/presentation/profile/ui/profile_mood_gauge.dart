@@ -7,6 +7,8 @@ import 'package:teja/domain/redux/permission/permissions_constants.dart';
 import 'package:teja/presentation/profile/ui/mood_gauge_chart.dart';
 import 'package:teja/presentation/profile/ui/checklist.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class MoodSemiCircleChartScreen extends StatefulWidget {
   const MoodSemiCircleChartScreen({super.key});
 

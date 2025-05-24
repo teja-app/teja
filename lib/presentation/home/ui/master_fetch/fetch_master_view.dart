@@ -6,6 +6,8 @@ import 'package:teja/domain/redux/mood/master_factor/actions.dart';
 import 'package:teja/domain/redux/mood/master_feeling/actions.dart';
 import 'package:teja/shared/common/button.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class FetchMasterView extends StatefulWidget {
   const FetchMasterView({super.key});
 

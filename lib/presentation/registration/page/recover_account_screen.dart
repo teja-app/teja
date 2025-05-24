@@ -8,6 +8,8 @@ import 'package:teja/router.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:go_router/go_router.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class RecoverAccountScreen extends StatefulWidget {
   const RecoverAccountScreen({super.key});
 

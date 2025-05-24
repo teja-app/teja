@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rive/rive.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class SimplePlayerScreen extends StatefulWidget {
   const SimplePlayerScreen({super.key});
 

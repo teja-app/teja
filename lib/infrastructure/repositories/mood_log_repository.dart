@@ -9,6 +9,7 @@ import 'package:teja/domain/entities/feeling.dart';
 import 'package:teja/domain/entities/mood_log.dart';
 import 'package:teja/domain/redux/mood/list/state.dart';
 import 'package:teja/infrastructure/database/cbl_collections/mood_log.dart' as cbl;
+import 'package:teja/shared/helpers/logger.dart';
 
 class MoodLogRepository {
   final Database database;
@@ -288,6 +289,7 @@ class MoodLogRepository {
               await fileToDelete.delete();
             }
           } catch (e) {
+            logger.e('Failed to delete attachment file: $attachmentId', error: e);
           }
         }
       });

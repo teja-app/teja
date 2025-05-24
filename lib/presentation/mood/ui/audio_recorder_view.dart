@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:record/record.dart';
-import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:teja/infrastructure/utils/voice_storage_helper.dart';
+import 'package:teja/shared/helpers/logger.dart';
+
+// ignore_for_file: library_private_types_in_public_api
 
 class AudioRecorderView extends StatefulWidget {
   final Function(String, String) onStopRecording;
@@ -15,6 +17,7 @@ class AudioRecorderView extends StatefulWidget {
 class _AudioRecorderViewState extends State<AudioRecorderView> {
   bool _isRecording = false;
   final _audioRecorder = AudioRecorder();
+  // ignore: prefer_final_fields
   String _transcription = '';
 
   @override
@@ -29,8 +32,10 @@ class _AudioRecorderViewState extends State<AudioRecorderView> {
         await _audioRecorder.start(const RecordConfig(), path: path);
         setState(() => _isRecording = true);
       } else {
+        logger.e('Audio recording permission denied');
       }
     } catch (e) {
+      logger.e('Failed to start audio recording', error: e);
     }
   }
 
@@ -51,12 +56,6 @@ class _AudioRecorderViewState extends State<AudioRecorderView> {
     } catch (e) {
       setState(() => _isRecording = false);
     }
-  }
-
-  void _onSpeechResult(SpeechRecognitionResult result) {
-    setState(() {
-      _transcription = result.recognizedWords;
-    });
   }
 
   @override

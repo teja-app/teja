@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class TypingIndicator extends StatefulWidget {
   const TypingIndicator({Key? key}) : super(key: key);
 

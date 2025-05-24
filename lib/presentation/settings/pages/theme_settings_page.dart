@@ -8,6 +8,8 @@ import 'package:teja/domain/redux/theme/theme_actions.dart';
 import 'package:teja/infrastructure/utils/user_preference_helper.dart';
 import 'package:teja/theme/theme_service.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class ThemeSettingsPage extends StatefulWidget {
   const ThemeSettingsPage({Key? key}) : super(key: key);
 

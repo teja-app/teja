@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 
+// ignore_for_file: library_private_types_in_public_api
+
 class VideoPlayerScreen extends StatefulWidget {
   final File videoFile;
 
@@ -63,13 +65,12 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
       builder: (context, orientation) {
         final bool isLandscape = orientation == Orientation.landscape;
 
-        return WillPopScope(
-          onWillPop: () async {
-            if (_isFullScreen) {
+        return PopScope(
+          canPop: !_isFullScreen,
+          onPopInvokedWithResult: (didPop, result) {
+            if (!didPop && _isFullScreen) {
               _toggleFullScreen();
-              return false;
             }
-            return true;
           },
           child: Scaffold(
             body: Center(

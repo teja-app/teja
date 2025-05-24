@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class VoicePlayerScreen extends StatefulWidget {
   final File voiceFile;
 

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:share_handler/share_handler.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
+import 'package:teja/shared/helpers/logger.dart';
 
 class ShareHandlerService {
   StreamSubscription<SharedMedia>? _streamSubscription;
@@ -50,6 +51,7 @@ class ShareHandlerService {
         });
       }
     } catch (e) {
+      logger.e('Failed to navigate to quick journal', error: e);
     }
   }
 

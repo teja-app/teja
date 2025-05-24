@@ -7,6 +7,8 @@ import 'package:teja/domain/redux/yearly_mood_report/yearly_mood_report_actions.
 import 'package:teja/presentation/profile/ui/checklist.dart';
 import 'package:teja/presentation/profile/ui/heat_map_chart.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class ProfileMoodYearlyHeatMapScreen extends StatefulWidget {
   const ProfileMoodYearlyHeatMapScreen({super.key});
 

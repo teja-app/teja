@@ -4,6 +4,8 @@ import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/token/token_actions.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class TokenWidget extends StatefulWidget {
   const TokenWidget({Key? key}) : super(key: key);
 

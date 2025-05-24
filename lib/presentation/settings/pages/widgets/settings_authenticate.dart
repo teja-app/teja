@@ -11,7 +11,9 @@ void settingsAuthenticate(BuildContext context, VoidCallback onSuccess) async {
     final List<BiometricType> availableBiometrics = await auth.getAvailableBiometrics();
 
     if (!canCheckBiometrics || availableBiometrics.isEmpty) {
-      showSnackbar(context, 'Biometric authentication not available or set up.');
+      if (context.mounted) {
+        showSnackbar(context, 'Biometric authentication not available or set up.');
+      }
       return;
     }
 
@@ -27,22 +29,34 @@ void settingsAuthenticate(BuildContext context, VoidCallback onSuccess) async {
     if (authenticated) {
       onSuccess();
     } else {
-      showSnackbar(context, 'Authentication canceled by user.');
+      if (context.mounted) {
+        showSnackbar(context, 'Authentication canceled by user.');
+      }
     }
   } on PlatformException catch (e) {
     // Handling specific platform exceptions
     if (e.code == 'NotAvailable') {
-      showSnackbar(context, 'Biometric authentication not available.');
+      if (context.mounted) {
+        showSnackbar(context, 'Biometric authentication not available.');
+      }
     } else if (e.code == 'NotEnrolled') {
-      showSnackbar(context, 'No biometrics enrolled. Please set up biometric authentication.');
+      if (context.mounted) {
+        showSnackbar(context, 'No biometrics enrolled. Please set up biometric authentication.');
+      }
     } else if (e.code == 'LockedOut' || e.code == 'PermanentlyLockedOut') {
-      showSnackbar(context, 'Biometric authentication is locked out. Please try again later.');
+      if (context.mounted) {
+        showSnackbar(context, 'Biometric authentication is locked out. Please try again later.');
+      }
     } else {
-      showSnackbar(context, 'Authentication error: ${e.message}');
+      if (context.mounted) {
+        showSnackbar(context, 'Authentication error: ${e.message}');
+      }
     }
   } catch (e) {
     // Generic error handling
-    showSnackbar(context, 'An unexpected error occurred. Please try again.');
+    if (context.mounted) {
+      showSnackbar(context, 'An unexpected error occurred. Please try again.');
+    }
   }
 }
 
