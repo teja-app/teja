@@ -1,12 +1,12 @@
 // lib/domain/redux/mood/master_feeling/saga.dart
-import 'package:cbl/cbl.dart';
+import 'package:cbl/cbl.dart' as cbl;
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/entities/app_error.dart';
 import 'package:teja/domain/entities/master_feeling_entity.dart';
 import 'package:teja/domain/redux/app_error/app_error_actions.dart';
 import 'package:teja/domain/redux/mood/master_feeling/actions.dart';
 import 'package:teja/infrastructure/api/feeling_api.dart';
-import 'package:teja/infrastructure/database/cbl_collections/master_feeling.dart' as cbl;
+import 'package:teja/infrastructure/database/cbl_collections/master_feeling.dart' as master_feeling;
 import 'package:teja/infrastructure/repositories/master_feeling.dart';
 import 'package:teja/shared/helpers/errors.dart';
 import 'package:teja/shared/helpers/logger.dart';
@@ -27,9 +27,9 @@ class MasterFeelingSaga {
     yield Try(() sync* {
       yield Put(FetchMasterFeelingsInProgressAction());
 
-      var cblResult = Result<Database>();
+      var cblResult = Result<cbl.Database>();
       yield GetContext('cbl', result: cblResult);
-      Database database = cblResult.value!;
+      cbl.Database database = cblResult.value!;
 
       // Check cache first
       var cachedFeelingEntities = Result<List<MasterFeelingEntity>>();
@@ -56,9 +56,9 @@ class MasterFeelingSaga {
 
   Iterable<void> _fetchAndProcessFeelingsFromAPI({dynamic action}) sync* {
     yield Try(() sync* {
-      var cblResult = Result<Database>();
+      var cblResult = Result<cbl.Database>();
       yield GetContext('cbl', result: cblResult);
-      Database database = cblResult.value!;
+      cbl.Database database = cblResult.value!;
 
       FeelingApi moodApi = FeelingApi();
       var feelingsResult = Result<List<MasterFeelingEntity>>();
@@ -69,8 +69,8 @@ class MasterFeelingSaga {
 
       if (feelingsResult.value != null && feelingsResult.value!.isNotEmpty) {
         List<MasterFeelingEntity>? feelings = feelingsResult.value;
-        List<cbl.MasterFeeling> domainFeelings = feelings!.map((entity) {
-          return cbl.MasterFeeling(
+        List<master_feeling.MasterFeeling> domainFeelings = feelings!.map((entity) {
+          return master_feeling.MasterFeeling(
             slug: entity.slug,
             name: entity.name,
             type: entity.type,

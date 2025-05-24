@@ -2,15 +2,9 @@ import 'dart:io';
 import 'package:cbl_flutter/cbl_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:isar/isar.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/infrastructure/database/hive_collections/notification_time_slot.dart';
 import 'package:teja/infrastructure/database/hive_collections/user_preference.dart';
-import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart';
-import 'package:teja/infrastructure/database/isar_collections/master_factor.dart';
-import 'package:teja/infrastructure/database/isar_collections/master_feeling.dart';
-import 'package:teja/infrastructure/database/isar_collections/mood_log.dart';
 import 'package:teja/infrastructure/utils/notification_service.dart';
 import 'package:teja/infrastructure/utils/share_handler_service.dart';
 import 'package:teja/infrastructure/utils/time_storage_helper.dart';
@@ -27,9 +21,6 @@ Future<Store<AppState>> configureCommonDependencies() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Initialize Couchbase Lite before opening the database
   await CouchbaseLiteFlutter.init();
-
-  final Isar isarInstance = await openIsar();
-  logger.i("Database Instance is ready");
 
   // Initialize Couchbase Lite database
   final cblDb = await openCouchbaseLiteDatabase();
@@ -49,7 +40,7 @@ Future<Store<AppState>> configureCommonDependencies() async {
   await Hive.openBox(TimeSlot.boxKey);
   await Hive.openBox(UserPreference.boxKey);
 
-  final store = await createStore(isarInstance, cblDb);
+  final store = await createStore(cblDb);
   logger.i("Connected to local data store");
 
   await notificationService.cancelAllNotifications();
@@ -60,19 +51,6 @@ Future<Store<AppState>> configureCommonDependencies() async {
   return store;
 }
 
-Future<Isar> openIsar() async {
-  final directory = await getApplicationDocumentsDirectory();
-  final path = directory.path;
-  return await Isar.open(
-    [
-      MoodLogSchema,
-      MasterFeelingSchema,
-      MasterFactorSchema,
-      JournalEntrySchema
-    ],
-    directory: path,
-  );
-}
 
 Future<void> handleNotificationInitialize(NotificationService notificationService) async {
   final TimeStorage timeStorage = TimeStorage();

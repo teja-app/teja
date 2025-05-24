@@ -388,7 +388,7 @@ class JournalEditorSaga {
 
           // Create a new question with the updated answer
           journal_collection.QuestionAnswerPair updatedQuestion = journal_collection.QuestionAnswerPair(
-              id: questionToUpdate.id ?? Helpers.generateUniqueId(),
+              id: questionToUpdate.id,
               questionId: questionToUpdate.questionId,
               questionText: questionToUpdate.questionText,
               answerText: action.answerText,

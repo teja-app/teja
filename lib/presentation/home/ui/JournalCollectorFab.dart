@@ -83,7 +83,7 @@ class JournalCollectorFabState extends State<JournalCollectorFab> with SingleTic
 
   Widget audio() {
     return _buildLabeledIconButton('Audio', Icons.mic, () {
-      goRouter.pushNamed(RootPath.journalCategory);
+      goRouter.pushNamed(RootPath.journalEditor);
     });
   }
 

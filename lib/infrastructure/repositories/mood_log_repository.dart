@@ -83,7 +83,6 @@ class MoodLogRepository {
       'updatedAt': DateTime.now().toIso8601String(),
       'moodRating': moodLogEntity.moodRating,
       'comment': moodLogEntity.comment,
-      'senderId': moodLogEntity.senderId,
       'feelings': moodLogEntity.feelings
           ?.map((f) => {
                 'feeling': f.feeling,
@@ -194,28 +193,28 @@ class MoodLogRepository {
       final collection = await database.defaultCollection;
       final startIndex = pageKey * pageSize;
       
-      var queryBuilder = const QueryBuilder()
+      // Build query with optional where clause
+      final baseQuery = const QueryBuilder()
           .select(SelectResult.expression(Meta.id), SelectResult.all())
           .from(DataSource.collection(collection));
       
-      // Add filter conditions
-      Expression? whereExpression;
+      Query query;
       if (filter != null && filter.selectedMoodRatings.isNotEmpty) {
         var moodRatingExpressions = filter.selectedMoodRatings
             .map((rating) => Expression.property('moodRating').equalTo(Expression.integer(rating)))
             .toList();
         
-        whereExpression = moodRatingExpressions.reduce((value, element) => value.or(element));
+        final whereExpression = moodRatingExpressions.reduce((value, element) => value.or(element));
+        
+        query = baseQuery
+            .where(whereExpression)
+            .orderBy(Ordering.property('timestamp').descending())
+            .limit(Expression.integer(pageSize), offset: Expression.integer(startIndex));
+      } else {
+        query = baseQuery
+            .orderBy(Ordering.property('timestamp').descending())
+            .limit(Expression.integer(pageSize), offset: Expression.integer(startIndex));
       }
-      
-      if (whereExpression != null) {
-        queryBuilder = queryBuilder.where(whereExpression);
-      }
-      
-      // Add ordering and pagination
-      final query = queryBuilder
-          .orderBy(Ordering.property('timestamp').descending())
-          .limit(Expression.integer(pageSize), offset: Expression.integer(startIndex));
       
       final resultSet = await query.execute();
       final entries = <MoodLogEntity>[];
@@ -249,7 +248,7 @@ class MoodLogRepository {
           final mutableDoc = MutableDocument.withId(moodLogId);
           final existingData = doc.toPlainMap();
           
-          final attachments = List<Map<String, dynamic>>.from(existingData['attachments'] ?? []);
+          final attachments = List<Map<String, dynamic>>.from((existingData['attachments'] as List<dynamic>?) ?? []);
           attachments.add({
             'id': attachmentEntity.id,
             'type': attachmentEntity.type,
@@ -279,7 +278,7 @@ class MoodLogRepository {
           final mutableDoc = MutableDocument.withId(moodLogId);
           final existingData = doc.toPlainMap();
           
-          final attachments = List<Map<String, dynamic>>.from(existingData['attachments'] ?? []);
+          final attachments = List<Map<String, dynamic>>.from((existingData['attachments'] as List<dynamic>?) ?? []);
           attachments.removeWhere((attachment) => attachment['id'] == attachmentId);
           
           existingData['attachments'] = attachments;
@@ -512,7 +511,7 @@ class MoodLogRepository {
           final mutableDoc = MutableDocument.withId(moodLogId);
           final existingData = doc.toPlainMap();
           
-          final feelings = List<Map<String, dynamic>>.from(existingData['feelings'] ?? []);
+          final feelings = List<Map<String, dynamic>>.from((existingData['feelings'] as List<dynamic>?) ?? []);
           for (var i = 0; i < feelings.length; i++) {
             if (feelings[i]['feeling'] == feelingSlug) {
               feelings[i]['factors'] = factorSlugs;
@@ -620,7 +619,7 @@ class MoodLogRepository {
                 feeling: f.feeling ?? '',
                 comment: f.comment,
                 factors: f.factors,
-                detailed: f.detailed,
+                detailed: f.detailed ?? false,
               ))
           .toList(),
       factors: moodLog.factors,
@@ -638,10 +637,9 @@ class MoodLogRepository {
               affirmation: moodLog.ai!.affirmation,
             )
           : null,
-      isDeleted: moodLog.isDeleted,
+      isDeleted: moodLog.isDeleted ?? false,
       createdAt: moodLog.createdAt,
       updatedAt: moodLog.updatedAt,
-      senderId: moodLog.senderId,
     );
   }
 
@@ -651,13 +649,12 @@ class MoodLogRepository {
       timestamp: DateTime.parse(map['timestamp'] as String),
       moodRating: map['moodRating'] as int,
       comment: map['comment'] as String?,
-      senderId: map['senderId'] as String?,
       feelings: (map['feelings'] as List<dynamic>?)
           ?.map((f) => FeelingEntity(
                 feeling: f['feeling'] as String,
                 comment: f['comment'] as String?,
                 factors: (f['factors'] as List<dynamic>?)?.cast<String>(),
-                detailed: f['detailed'] as bool?,
+                detailed: f['detailed'] as bool? ?? false,
               ))
           .toList(),
       factors: (map['factors'] as List<dynamic>?)?.cast<String>(),

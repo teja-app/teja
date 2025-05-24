@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/redux/app_state.dart';
@@ -129,10 +128,4 @@ class AuthSaga {
       yield Put(FetchRecoveryPhraseFailedAction(e.toString()));
     });
   }
-}
-
-Iterable<void> _setHasExistingMnemonic({
-  required SetHasExistingMnemonicAction action,
-}) sync* {
-  yield Put(SetHasExistingMnemonicAction(action.hasExistingMnemonic));
 }

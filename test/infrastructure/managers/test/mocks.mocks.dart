@@ -5,11 +5,11 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i5;
 
-import 'package:isar/isar.dart' as _i2;
+import 'package:cbl/cbl.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:teja/domain/entities/mood_log.dart' as _i3;
 import 'package:teja/domain/redux/mood/list/state.dart' as _i7;
-import 'package:teja/infrastructure/database/isar_collections/mood_log.dart'
+import 'package:teja/infrastructure/database/cbl_collections/mood_log.dart'
     as _i6;
 import 'package:teja/infrastructure/repositories/mood_log_repository.dart'
     as _i4;
@@ -27,8 +27,8 @@ import 'package:teja/infrastructure/repositories/mood_log_repository.dart'
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeIsar_0 extends _i1.SmartFake implements _i2.Isar {
-  _FakeIsar_0(
+class _FakeDatabase_0 extends _i1.SmartFake implements _i2.Database {
+  _FakeDatabase_0(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -56,13 +56,13 @@ class MockMoodLogRepository extends _i1.Mock implements _i4.MoodLogRepository {
   }
 
   @override
-  _i2.Isar get isar => (super.noSuchMethod(
-        Invocation.getter(#isar),
-        returnValue: _FakeIsar_0(
+  _i2.Database get database => (super.noSuchMethod(
+        Invocation.getter(#database),
+        returnValue: _FakeDatabase_0(
           this,
-          Invocation.getter(#isar),
+          Invocation.getter(#database),
         ),
-      ) as _i2.Isar);
+      ) as _i2.Database);
 
   @override
   _i5.Future<void> updateLastSyncTimestamp(DateTime? timestamp) =>
@@ -158,7 +158,7 @@ class MockMoodLogRepository extends _i1.Mock implements _i4.MoodLogRepository {
       ) as _i5.Future<List<_i3.MoodLogEntity>>);
 
   @override
-  _i5.Future<List<dynamic>> getMoodLogsPage(
+  _i5.Future<List<_i3.MoodLogEntity>> getMoodLogsPage(
     int? pageKey,
     int? pageSize, [
     _i7.MoodLogFilter? filter,
@@ -172,8 +172,9 @@ class MockMoodLogRepository extends _i1.Mock implements _i4.MoodLogRepository {
             filter,
           ],
         ),
-        returnValue: _i5.Future<List<dynamic>>.value(<dynamic>[]),
-      ) as _i5.Future<List<dynamic>>);
+        returnValue:
+            _i5.Future<List<_i3.MoodLogEntity>>.value(<_i3.MoodLogEntity>[]),
+      ) as _i5.Future<List<_i3.MoodLogEntity>>);
 
   @override
   _i5.Future<void> addAttachmentToMoodLog(

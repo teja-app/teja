@@ -1,4 +1,4 @@
-import 'package:cbl/cbl.dart';
+import 'package:cbl/cbl.dart' as cbl;
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/entities/mood_log.dart';
 import 'package:teja/domain/redux/app_state.dart';
@@ -19,9 +19,9 @@ class MoodLogListSaga {
 
   _fetchMoodLogs({required LoadMoodLogsListAction action}) sync* {
     yield Try(() sync* {
-      var cblResult = Result<Database>();
+      var cblResult = Result<cbl.Database>();
       yield GetContext('cbl', result: cblResult);
-      Database database = cblResult.value!;
+      cbl.Database database = cblResult.value!;
 
       var filterResult = Result<MoodLogFilter>();
       yield Select(

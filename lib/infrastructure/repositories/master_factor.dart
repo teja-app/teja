@@ -64,7 +64,7 @@ class MasterFactorRepository {
       final query = const QueryBuilder()
           .select(SelectResult.expression(Meta.id), SelectResult.all())
           .from(DataSource.collection(collection))
-          .where(Expression.property('slug').isNotNullOrMissing()); // Filter for master factors (they have slug property)
+          .where(Expression.property('slug').notNullOrMissing()); // Filter for master factors (they have slug property)
       
       final resultSet = await query.execute();
       final factors = <cbl.MasterFactor>[];

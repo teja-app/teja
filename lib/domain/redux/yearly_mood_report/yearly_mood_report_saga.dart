@@ -1,4 +1,4 @@
-import 'package:isar/isar.dart';
+import 'package:cbl/cbl.dart' as cbl;
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/redux/permission/permission_actions.dart';
 import 'package:teja/domain/redux/permission/permissions_constants.dart';
@@ -15,15 +15,15 @@ class YearlyMoodReportSaga {
 
   _fetchYearlyMoodReport({required FetchYearlyMoodReportAction action}) sync* {
     yield Try(() sync* {
-      var isarResult = Result<Isar>();
-      yield GetContext('isar', result: isarResult);
-      Isar? isar = isarResult.value;
+      var cblResult = Result<cbl.Database>();
+      yield GetContext('cbl', result: cblResult);
+      cbl.Database? database = cblResult.value;
 
-      if (isar == null) {
-        throw Exception("Isar context is null");
+      if (database == null) {
+        throw Exception("Database context is null");
       }
 
-      final moodLogRepository = MoodLogRepository(isar);
+      final moodLogRepository = MoodLogRepository(database);
 
       // Calculate the start and end dates for the past 30 days
       final startOfYear = DateTime(action.referenceDate.year, 1, 1);

@@ -1,4 +1,4 @@
-import 'package:isar/isar.dart';
+import 'package:cbl/cbl.dart' as cbl;
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_actions.dart';
 import 'package:teja/infrastructure/repositories/mood_log_repository.dart';
@@ -13,11 +13,11 @@ class WeeklyMoodReportSaga {
 
   _fetchWeeklyMoodReport({required FetchWeeklyMoodReportAction action}) sync* {
     yield Try(() sync* {
-      var isarResult = Result<Isar>();
-      yield GetContext('isar', result: isarResult);
-      Isar isar = isarResult.value!;
+      var cblResult = Result<cbl.Database>();
+      yield GetContext('cbl', result: cblResult);
+      cbl.Database database = cblResult.value!;
 
-      final moodLogRepository = MoodLogRepository(isar);
+      final moodLogRepository = MoodLogRepository(database);
 
       // Calculate the start and end dates for the current and previous weeks
       final currentWeekStart = _startOfWeek(action.referenceDate);

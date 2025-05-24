@@ -48,7 +48,7 @@ Iterable<void> rootSaga(Store<AppState> store) sync* {
     'JournalAnalysisSaga': () => JournalAnalysisSaga().saga(),
     'JournalLogsSaga': () => JournalLogsSaga().saga(),
     'JournalDetailSaga': () => JournalDetailSaga().saga(),
-    'SyncSaga': () => SyncSaga().saga(),
+    // 'SyncSaga': () => SyncSaga().saga(), // TODO: Migrate SyncSaga to CBL
     'JournalListSaga': () => JournalListSaga().saga(),
     'PermissionSaga': () => PermissionSaga(store).saga(),
     'MoodAnalysisSaga': () => MoodAnalysisSaga().saga(),

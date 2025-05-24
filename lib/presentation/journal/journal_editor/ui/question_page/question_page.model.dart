@@ -3,7 +3,7 @@ import 'package:teja/domain/entities/journal_entry_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.image.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.video.dart';
-import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart';
+import 'package:teja/infrastructure/database/cbl_collections/journal_entry.dart';
 
 class JournalQuestionViewModel {
   final JournalEntryEntity journalEntry;

@@ -2,7 +2,7 @@ import 'package:cbl/cbl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teja/infrastructure/database/cbl_collections/journal_entry.dart' as cbl;
 import 'package:teja/domain/entities/journal_entry_entity.dart';
-import 'package:teja/infrastructure/repositories/journal_entry_repository_helpers.dart';
+import 'package:teja/infrastructure/repositories/journal_entry_cbl_helpers.dart';
 
 /// Repository for managing journal entries using Couchbase Lite
 class JournalEntryRepository {
@@ -166,7 +166,7 @@ class JournalEntryRepository {
 
         for (var entry in entries) {
           // Convert entity to journal entry
-          final journalEntry = fromEntity(entry);
+          final journalEntry = fromEntityCBL(entry);
 
           // Check if an entry with this ID already exists
           final existingDoc = await collection.document(journalEntry.id ?? '');
@@ -420,7 +420,7 @@ class JournalEntryRepository {
 
   /// Convert a JournalEntry to a JournalEntryEntity
   JournalEntryEntity toEntity(cbl.JournalEntry journalEntry) {
-    return cblToEntityHelper(journalEntry);
+    return toEntityCBL(journalEntry);
   }
 
   /// Update the last sync timestamp

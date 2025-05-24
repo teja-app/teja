@@ -1,7 +1,6 @@
 import 'package:redux_saga/redux_saga.dart' as redux_saga;
 import 'package:redux_saga/redux_saga.dart' hide Result, Select;
 import 'package:teja/domain/entities/journal_entry_entity.dart';
-import 'package:teja/domain/redux/journal/journal_logs/journal_logs_actions.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
 import 'package:teja/infrastructure/repositories/journal_entry_repository.dart';
 import 'package:cbl/cbl.dart' as cbl;

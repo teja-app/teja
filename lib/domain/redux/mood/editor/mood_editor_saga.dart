@@ -1,4 +1,4 @@
-import 'package:cbl/cbl.dart';
+import 'package:cbl/cbl.dart' as cbl;
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/entities/feeling.dart';
 import 'package:teja/domain/entities/master_factor.dart';
@@ -12,7 +12,7 @@ import 'package:teja/domain/redux/mood/mood_sync/mood_sync_actions.dart';
 import 'package:teja/infrastructure/repositories/master_factor.dart';
 import 'package:teja/infrastructure/repositories/master_feeling.dart';
 import 'package:teja/infrastructure/repositories/mood_log_repository.dart';
-import 'package:teja/infrastructure/database/cbl_collections/mood_log.dart' as cbl;
+import 'package:teja/infrastructure/database/cbl_collections/mood_log.dart' as mood_log;
 
 class MoodEditorSaga {
   Iterable<void> saga() sync* {
@@ -70,9 +70,9 @@ class MoodEditorSaga {
   }
 
   _handleUpdateBroadFactorsAction({required UpdateBroadFactorsAction action}) sync* {
-    var cblResult = Result<Database>();
+    var cblResult = Result<cbl.Database>();
     yield GetContext('cbl', result: cblResult);
-    Database database = cblResult.value!;
+    cbl.Database database = cblResult.value!;
 
     var moodLogRepository = MoodLogRepository(database);
 
@@ -89,9 +89,9 @@ class MoodEditorSaga {
   }
 
   _handleUpdateMoodLogComment({required UpdateMoodLogCommentAction action}) sync* {
-    var cblResult = Result<Database>();
+    var cblResult = Result<cbl.Database>();
     yield GetContext('cbl', result: cblResult);
-    Database database = cblResult.value!;
+    cbl.Database database = cblResult.value!;
 
     var moodLogRepository = MoodLogRepository(database);
 
@@ -109,18 +109,18 @@ class MoodEditorSaga {
 
   _handleInitializeMoodEditor({required InitializeMoodEditorAction action}) sync* {
     yield Try(() sync* {
-      var cblResult = Result<Database>();
+      var cblResult = Result<cbl.Database>();
       yield GetContext('cbl', result: cblResult);
-      Database database = cblResult.value!;
+      cbl.Database database = cblResult.value!;
 
       var moodLogRepository = MoodLogRepository(database);
       var masterFeelingRepository = MasterFeelingRepository(database);
       var masterFactorRepository = MasterFactorRepository(database);
       // Fetch mood log by ID and initialize the mood editor state
-      var moodLogResult = Result<cbl.MoodLog?>();
+      var moodLogResult = Result<mood_log.MoodLog?>();
       yield Call(moodLogRepository.getMoodLogById, args: [action.moodLogId], result: moodLogResult);
 
-      cbl.MoodLog? moodLog = moodLogResult.value;
+      mood_log.MoodLog? moodLog = moodLogResult.value;
       if (moodLog != null) {
         yield Put(SelectMoodSuccessAction(moodLogRepository.toEntity(moodLog)));
 
@@ -155,9 +155,9 @@ class MoodEditorSaga {
             ),
           );
 
-          for (var feelingEntity in feelingsEntities) {
+          for (int i = 0; i < feelingsEntities.length; i++) {
+            var feelingEntity = feelingsEntities[i];
             // Dispatch success action
-            String feelingEntityId = feelingEntity.id!;
             if (feelingEntity.factors != null && feelingEntity.factors!.isNotEmpty) {
               List<String> factorSlugList = feelingEntity.factors!;
               var masterFactorEntitiesResult = Result<List<SubCategoryEntity>>();
@@ -168,7 +168,7 @@ class MoodEditorSaga {
               );
               yield Put(UpdateFactorsSuccessAction(
                 moodLogId: action.moodLogId,
-                feelingId: feelingEntityId,
+                feelingId: i,
                 factors: masterFactorEntitiesResult.value,
               ));
             }
@@ -181,21 +181,21 @@ class MoodEditorSaga {
   }
 
   _handleSelectMoodAction({required TriggerSelectMoodAction action}) sync* {
-    var cblResult = Result<Database>();
+    var cblResult = Result<cbl.Database>();
     yield GetContext('cbl', result: cblResult);
-    Database database = cblResult.value!;
+    cbl.Database database = cblResult.value!;
 
     var moodLogRepository = MoodLogRepository(database);
 
     if (action.moodLogId != null) {
       // Use Result to capture the returned mood log
-      var moodLogResult = Result<cbl.MoodLog?>();
+      var moodLogResult = Result<mood_log.MoodLog?>();
       yield Call(moodLogRepository.getMoodLogById, args: [action.moodLogId], result: moodLogResult);
 
-      cbl.MoodLog? moodLog = moodLogResult.value;
+      mood_log.MoodLog? moodLog = moodLogResult.value;
       if (moodLog != null) {
         // Create a new mutable instance with updated rating
-        final updatedMoodLog = cbl.MoodLog(
+        final updatedMoodLog = mood_log.MoodLog(
           id: moodLog.id,
           timestamp: moodLog.timestamp,
           createdAt: moodLog.createdAt,
@@ -219,7 +219,7 @@ class MoodEditorSaga {
       }
     } else {
       // Create new mood log if no ID is provided
-      final newMoodLog = cbl.MoodLog(
+      final newMoodLog = mood_log.MoodLog(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         timestamp: action.timestamp ?? DateTime.now(),
         createdAt: DateTime.now(),
@@ -241,24 +241,24 @@ class MoodEditorSaga {
   }
 
   _handleUpdateFeelingsAction({required TriggerUpdateFeelingsAction action}) sync* {
-    var cblResult = Result<Database>();
+    var cblResult = Result<cbl.Database>();
     yield GetContext('cbl', result: cblResult);
-    Database database = cblResult.value!;
+    cbl.Database database = cblResult.value!;
 
     var moodLogRepository = MoodLogRepository(database);
 
     yield Try(() sync* {
       // Retrieve the current mood log
-      var currentMoodLogResult = Result<cbl.MoodLog?>();
+      var currentMoodLogResult = Result<mood_log.MoodLog?>();
       yield Call(moodLogRepository.getMoodLogById, args: [action.moodLogId], result: currentMoodLogResult);
-      cbl.MoodLog? currentMoodLog = currentMoodLogResult.value;
+      mood_log.MoodLog? currentMoodLog = currentMoodLogResult.value;
 
       List<FeelingEntity> feelingsEntities = [];
-      List<cbl.MoodLogFeeling> updatedMoodLogFeelings = [];
+      List<mood_log.MoodLogFeeling> updatedMoodLogFeelings = [];
 
       if (currentMoodLog != null) {
         // Create a map of existing feelings for easy lookup
-        Map<String, cbl.MoodLogFeeling> existingFeelingsMap = {};
+        Map<String, mood_log.MoodLogFeeling> existingFeelingsMap = {};
         for (var feeling in currentMoodLog.feelings ?? []) {
           existingFeelingsMap[feeling.feeling ?? ''] = feeling;
         }
@@ -276,7 +276,7 @@ class MoodEditorSaga {
           ));
 
           // Update or add to MoodLogFeelings
-          updatedMoodLogFeelings.add(cbl.MoodLogFeeling(
+          updatedMoodLogFeelings.add(mood_log.MoodLogFeeling(
             feeling: masterFeeling.slug,
             factors: existingFeeling?.factors ?? [], // Retain existing factors if present
             comment: existingFeeling?.comment,
