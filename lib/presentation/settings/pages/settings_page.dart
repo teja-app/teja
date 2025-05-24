@@ -217,9 +217,7 @@ class ViewModel {
     return ViewModel(
       selectedDate: store.state.homeState.selectedDate,
       isFetchSuccessful: store.state.masterFeelingState.isFetchSuccessful &&
-          store.state.masterFactorState.isFetchSuccessful &&
-          store.state.quoteState.isFetchSuccessful &&
-          store.state.journalTemplateState.isFetchSuccessful,
+          store.state.masterFactorState.isFetchSuccessful,
     );
   }
 }

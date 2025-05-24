@@ -4,7 +4,6 @@ import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/journal_sync/journal_sync_actions.dart';
 import 'package:teja/domain/redux/mood/mood_sync/mood_sync_actions.dart';
-import 'package:teja/domain/redux/tasks/task_action.dart';
 import 'package:teja/infrastructure/service/auth_service.dart';
 import 'package:teja/shared/helpers/logger.dart';
 import 'package:teja/shared/storage/secure_storage.dart';
@@ -71,7 +70,6 @@ class AuthSaga {
         yield Put(const SetHasExistingMnemonicAction(true));
         yield Put(const FetchInitialJournalEntriesAction());
         yield Put(const FetchInitialMoodLogsAction());
-        yield Put(const FetchInitialTasksAction());
       } else {
         yield Put(const AuthenticateFailedAction('Failed to retrieve tokens.'));
       }
@@ -124,10 +122,7 @@ class AuthSaga {
       mnemonic.value = mnemonic.value!;
 
       final blankIndex = store.state.authState.blankIndex ??
-          3 +
-              (mnemonic.value!.split(' ').length - 7) *
-                  (DateTime.now().millisecondsSinceEpoch % 1000) ~/
-                  1000;
+          3 + (mnemonic.value!.split(' ').length - 7) * (DateTime.now().millisecondsSinceEpoch % 1000) ~/ 1000;
       yield Put(SetBlankIndexAction(blankIndex));
     }, Catch: (e, stackTrace) sync* {
       logger.e(e, stackTrace: stackTrace);

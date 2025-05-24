@@ -15,7 +15,6 @@ import 'package:teja/infrastructure/database/isar_collections/master_factor.dart
 import 'package:teja/infrastructure/database/isar_collections/master_feeling.dart';
 import 'package:teja/infrastructure/database/isar_collections/mood_log.dart';
 import 'package:teja/infrastructure/database/isar_collections/quote.dart';
-import 'package:teja/infrastructure/database/isar_collections/task.dart';
 import 'package:teja/infrastructure/database/isar_collections/vision.dart';
 import 'package:teja/infrastructure/utils/notification_service.dart';
 import 'package:teja/infrastructure/utils/share_handler_service.dart';
@@ -81,8 +80,7 @@ Future<Isar> openIsar() async {
       QuoteSchema,
       VisionSchema,
       JournalTemplateSchema,
-      JournalEntrySchema,
-      TaskSchema
+      JournalEntrySchema
     ],
     directory: path,
   );

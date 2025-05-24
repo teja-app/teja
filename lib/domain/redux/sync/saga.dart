@@ -14,10 +14,7 @@ import 'package:teja/domain/redux/mood/list/actions.dart';
 import 'package:teja/domain/redux/sync/actions.dart';
 import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart';
 import 'package:teja/infrastructure/database/isar_collections/mood_log.dart';
-import 'package:teja/infrastructure/database/isar_collections/task.dart';
 import 'package:teja/shared/storage/secure_storage.dart';
-
-import 'package:teja/domain/redux/tasks/task_action.dart';
 
 class SyncSaga {
   Iterable<void> saga() sync* {
@@ -41,7 +38,6 @@ class SyncSaga {
         yield Put(const DeleteAccountActionSuccess());
         yield Put(ResetMoodLogsListAction());
         yield Put(ResetJournalEntriesListAction());
-        yield Put(const ResetTasksAction());
         yield Put(SecureStorage().deleteAll());
       } else {
         yield Put(const DeleteAccountActionFailed('Account deletion failed'));
@@ -61,11 +57,6 @@ class SyncSaga {
       // Delete journals
       await isar.writeTxn(() async {
         await isar.journalEntrys.clear();
-      });
-
-      // Delete tasks
-      await isar.writeTxn(() async {
-        await isar.tasks.clear();
       });
 
       // Delete files

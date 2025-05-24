@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:teja/router.dart';
+import 'package:teja/config/feature_flags.dart';
 
 class MobileNavigationBar extends StatelessWidget {
   const MobileNavigationBar({Key? key}) : super(key: key);
@@ -10,9 +11,23 @@ class MobileNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final GoRouter goRouter = GoRouter.of(context);
     final String location = GoRouterState.of(context).uri.toString();
-    int selectedIndex = _getSelectedIndex(location);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+
+    // Build list of nav items dynamically based on feature flags
+    final List<_NavItemData> navItems = [
+      _NavItemData(Icons.home_outlined, RootPath.home, '/home'),
+      if (FeatureFlags.exploreEnabled)
+        _NavItemData(Icons.search, RootPath.explore, '/explore'),
+      if (FeatureFlags.habitEnabled)
+        _NavItemData(Icons.task_alt_outlined, RootPath.habit, '/habit'),
+      _NavItemData(Icons.book, RootPath.timeLine, '/timeline'),
+      _NavItemData(Icons.person_outline, RootPath.profile, '/profile'),
+    ];
+
+    // Find selected index based on current location
+    int selectedIndex = navItems.indexWhere((item) => item.path == location);
+    if (selectedIndex == -1) selectedIndex = 0;
 
     return Container(
       decoration: BoxDecoration(
@@ -31,42 +46,24 @@ class MobileNavigationBar extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildNavItem(Icons.home_outlined, 0, selectedIndex, goRouter, theme),
-              _buildNavItem(Icons.search, 1, selectedIndex, goRouter, theme),
-              _buildNavItem(Icons.task_alt_outlined, 2, selectedIndex, goRouter, theme),
-              _buildNavItem(Icons.book, 3, selectedIndex, goRouter, theme),
-              _buildNavItem(Icons.person_outline, 4, selectedIndex, goRouter, theme),
-            ],
+            children: navItems.asMap().entries.map((entry) {
+              final index = entry.key;
+              final item = entry.value;
+              return _buildNavItem(item.icon, index, selectedIndex, goRouter, theme, item.routeName);
+            }).toList(),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildNavItem(IconData icon, int index, int selectedIndex, GoRouter goRouter, ThemeData theme) {
+  Widget _buildNavItem(IconData icon, int index, int selectedIndex, GoRouter goRouter, ThemeData theme, String routeName) {
     final bool isSelected = selectedIndex == index;
     final colorScheme = theme.colorScheme;
 
     return GestureDetector(
       onTap: () {
-        switch (index) {
-          case 0:
-            goRouter.goNamed(RootPath.home);
-            break;
-          case 1:
-            goRouter.goNamed(RootPath.explore);
-            break;
-          case 2:
-            goRouter.goNamed(RootPath.habit);
-            break;
-          case 3:
-            goRouter.goNamed(RootPath.timeLine);
-            break;
-          case 4:
-            goRouter.goNamed(RootPath.profile);
-            break;
-        }
+        goRouter.goNamed(routeName);
         HapticFeedback.selectionClick();
       },
       child: Container(
@@ -84,20 +81,12 @@ class MobileNavigationBar extends StatelessWidget {
     );
   }
 
-  int _getSelectedIndex(String currentLocation) {
-    switch (currentLocation) {
-      case '/home':
-        return 0;
-      case '/explore':
-        return 1;
-      case '/habit':
-        return 2;
-      case '/timeline':
-        return 3;
-      case '/profile':
-        return 4;
-      default:
-        return 0;
-    }
-  }
+}
+
+class _NavItemData {
+  final IconData icon;
+  final String routeName;
+  final String path;
+
+  _NavItemData(this.icon, this.routeName, this.path);
 }

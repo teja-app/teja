@@ -3,9 +3,6 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:teja/infrastructure/analytics/analytics_service.dart';
-import 'package:teja/presentation/explore/list/pages/explore_page.dart';
-import 'package:teja/presentation/explore/list/pages/search_page.dart';
-import 'package:teja/presentation/goal_editor/page/vision_picker_page.dart';
 import 'package:teja/presentation/home/pages/home_page.dart';
 import 'package:teja/presentation/journal/journa_detail/pages/journal_detail_page.dart';
 import 'package:teja/presentation/journal/journal_categories/categories_detail_page.dart';
@@ -22,12 +19,9 @@ import 'package:teja/presentation/profile/page/profile_page.dart';
 import 'package:teja/presentation/settings/pages/recovery_code_page.dart';
 import 'package:teja/presentation/settings/pages/notification_settings_page.dart';
 import 'package:teja/presentation/settings/pages/theme_settings_page.dart';
-import 'package:teja/presentation/task/page/task_list.dart';
 import 'package:teja/presentation/timeline/pages/timeline_list_page.dart';
 import 'package:teja/presentation/mood/share/pages/mood_share.dart';
-import 'package:teja/presentation/note_editor/note_editor_page.dart';
 import 'package:teja/presentation/onboarding/pages/onboarding_page.dart';
-import 'package:teja/presentation/quotes/random_quote.dart';
 import 'package:teja/presentation/settings/pages/advanced_settings_page.dart';
 import 'package:teja/presentation/settings/pages/basic_settings_page.dart';
 import 'package:teja/presentation/settings/pages/perference_settings_page.dart';
@@ -36,6 +30,8 @@ import 'package:teja/presentation/settings/pages/settings_page.dart';
 import 'package:teja/presentation/settings/pages/sync_settings_page.dart';
 import 'package:teja/shared/helpers/logger.dart';
 import 'package:teja/config/shared_config.dart';
+import 'package:teja/config/feature_flags.dart';
+import 'package:teja/presentation/error_handler/feature_disabled_page.dart';
 
 class RouteLoggingObserver extends NavigatorObserver {
   @override
@@ -125,8 +121,7 @@ class AnalyticsRouteObserver extends NavigatorObserver {
   }
 
   @override
-  void didStartUserGesture(
-      Route<dynamic> route, Route<dynamic>? previousRoute) {
+  void didStartUserGesture(Route<dynamic> route, Route<dynamic>? previousRoute) {
     _analyticsService.track('didStartUserGesture', {
       'currentRoute': route.settings.name ?? 'Unknown',
       'previousRoute': previousRoute?.settings.name ?? 'Unknown',
@@ -197,12 +192,6 @@ GoRouter createRouter(AnalyticsService analyticsService) {
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
-        name: RootPath.noteEditor,
-        path: '/note_editor',
-        builder: (context, state) => const NoteEditorPage(),
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
         name: RootPath.registration,
         path: '/registration',
         builder: (context, state) => RegistrationScreen(),
@@ -240,33 +229,9 @@ GoRouter createRouter(AnalyticsService analyticsService) {
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
-        name: RootPath.habit,
-        path: '/habit',
-        builder: (context, state) => TaskList(),
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
         name: RootPath.music,
         path: '/music',
         builder: (context, state) => const SimplePlayerScreen(),
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        name: RootPath.explore,
-        path: '/explore',
-        builder: (context, state) => const ExplorePage(),
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        name: RootPath.exploreSearch,
-        path: '/explore_search',
-        builder: (context, state) => const SearchPage(),
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        name: RootPath.inspiration,
-        path: '/inspiration',
-        builder: (context, state) => RandomQuotePage(),
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
@@ -305,11 +270,8 @@ GoRouter createRouter(AnalyticsService analyticsService) {
         path: '/quick-journal-entry',
         pageBuilder: (context, state) {
           final String? entryId = state.uri.queryParameters['id'];
-          final String heroTag =
-              (state.extra as Map<String, dynamic>?)?['heroTag'] ??
-                  'defaultHeroTag';
-          final bool sharedContent =
-              (state.extra as Map<String, dynamic>?)?['sharedContent'] ?? false;
+          final String heroTag = (state.extra as Map<String, dynamic>?)?['heroTag'] ?? 'defaultHeroTag';
+          final bool sharedContent = (state.extra as Map<String, dynamic>?)?['sharedContent'] ?? false;
           final String? url = (state.extra as Map<String, dynamic>?)?['url'];
           return HeroPageRoute(
             heroTag: heroTag,
@@ -324,8 +286,7 @@ GoRouter createRouter(AnalyticsService analyticsService) {
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
-        name: RootPath
-            .journalCategoryDetail, // Make sure you have this constant defined
+        name: RootPath.journalCategoryDetail, // Make sure you have this constant defined
         path: '/category_detail',
         builder: (context, state) {
           final String? categoryId = state.uri.queryParameters['id'];
@@ -333,16 +294,9 @@ GoRouter createRouter(AnalyticsService analyticsService) {
             return CategoryDetailPage(categoryId: categoryId);
           } else {
             // Handle the case where categoryId is null, maybe navigate back or show an error
-            return const Scaffold(
-                body: Center(child: Text('Category not found')));
+            return const Scaffold(body: Center(child: Text('Category not found')));
           }
         },
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        name: RootPath.goalSettings,
-        path: '/goal_settings',
-        builder: (context, state) => const VisionPickerPage(),
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
