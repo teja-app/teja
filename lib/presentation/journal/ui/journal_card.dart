@@ -3,14 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
-import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/presentation/mood/ui/attachement_image.dart';
 import 'package:teja/presentation/mood/ui/attachment_video.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 
 Widget journalEntryLayout(
-  JournalTemplateEntity? template, // Make template nullable
   JournalEntryEntity journalEntry,
   BuildContext context, {
   double gridWidth = 4, // Optional parameter with default value
@@ -107,12 +105,6 @@ Widget journalEntryLayout(
                     Text(
                       journalEntry.body ?? "",
                       style: textTheme.bodyMedium,
-                    ),
-                  ],
-                  if (template != null) ...[
-                    Text(
-                      template.title ?? "",
-                      style: textTheme.titleMedium,
                     ),
                   ],
                   if (firstQuestion != null) ...[

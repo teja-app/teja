@@ -47,7 +47,6 @@ class _JournalEntriesWidgetState extends State<JournalEntriesWidget> {
                   return Padding(
                     padding: const EdgeInsets.only(right: 8.0), // Adjust the spacing as needed
                     child: journalEntryLayout(
-                      null, // Templates removed
                       entry,
                       context,
                       gridWidth: 3.8,

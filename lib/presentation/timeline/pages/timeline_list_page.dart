@@ -123,7 +123,6 @@ class _TimelinePageState extends State<TimelinePage> {
           // Templates removed - no longer needed
           // final template = item.templateId != null ? templatesById[item.templateId] : null;
           return journalEntryLayout(
-            null, // Templates removed
             item,
             context,
           ); // Your widget to display a journal entry

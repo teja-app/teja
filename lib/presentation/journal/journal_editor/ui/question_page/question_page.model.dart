@@ -1,6 +1,5 @@
 import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
-import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.image.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.video.dart';
@@ -10,7 +9,6 @@ class JournalQuestionViewModel {
   final JournalEntryEntity journalEntry;
   final int questionIndex;
   final int currentPageIndex;
-  JournalTemplateEntity? template;
   final List<ImageEntryEntity>? imageEntries;
   final List<VideoEntryEntity>? videoEntries;
 
@@ -24,14 +22,11 @@ class JournalQuestionViewModel {
     required this.addImage,
     required this.addVideo,
     this.imageEntries,
-    this.template,
     this.videoEntries,
   });
 
   static JournalQuestionViewModel fromStore(Store<AppState> store, int questionIndex) {
     final currentJournalEntry = store.state.journalEditorState.currentJournalEntry!;
-    // Templates removed - no longer needed
-    JournalTemplateEntity? template = null;
 
     final imageEntryIds = currentJournalEntry.questions![questionIndex].imageEntryIds;
 
@@ -61,7 +56,6 @@ class JournalQuestionViewModel {
       journalEntry: currentJournalEntry,
       currentPageIndex: store.state.journalEditorState.currentPageIndex,
       questionIndex: questionIndex,
-      template: template,
       imageEntries: imageEntries,
       addImage: (journalEntryId, questionAnswerPairId, imageEntry) => store.dispatch(AddImageToQuestionAnswerPair(
         journalEntryId: journalEntryId,

@@ -5,17 +5,12 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:redux/redux.dart';
-import 'package:teja/infrastructure/database/hive_collections/featured_journal_template.dart';
-import 'package:teja/infrastructure/database/hive_collections/journal_category.dart';
 import 'package:teja/infrastructure/database/hive_collections/notification_time_slot.dart';
 import 'package:teja/infrastructure/database/hive_collections/user_preference.dart';
 import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart';
-import 'package:teja/infrastructure/database/isar_collections/journal_template.dart';
 import 'package:teja/infrastructure/database/isar_collections/master_factor.dart';
 import 'package:teja/infrastructure/database/isar_collections/master_feeling.dart';
 import 'package:teja/infrastructure/database/isar_collections/mood_log.dart';
-import 'package:teja/infrastructure/database/isar_collections/quote.dart';
-import 'package:teja/infrastructure/database/isar_collections/vision.dart';
 import 'package:teja/infrastructure/utils/notification_service.dart';
 import 'package:teja/infrastructure/utils/share_handler_service.dart';
 import 'package:teja/infrastructure/utils/time_storage_helper.dart';
@@ -49,12 +44,8 @@ Future<Store<AppState>> configureCommonDependencies() async {
   }
 
   await Hive.initFlutter();
-  Hive.registerAdapter(FeaturedJournalTemplateAdapter());
-  Hive.registerAdapter(JournalCategoryAdapter());
   Hive.registerAdapter(TimeSlotAdapter());
   Hive.registerAdapter(UserPreferenceAdapter());
-  await Hive.openBox(FeaturedJournalTemplate.boxKey);
-  await Hive.openBox(JournalCategory.boxKey);
   await Hive.openBox(TimeSlot.boxKey);
   await Hive.openBox(UserPreference.boxKey);
 
@@ -77,9 +68,6 @@ Future<Isar> openIsar() async {
       MoodLogSchema,
       MasterFeelingSchema,
       MasterFactorSchema,
-      QuoteSchema,
-      VisionSchema,
-      JournalTemplateSchema,
       JournalEntrySchema
     ],
     directory: path,

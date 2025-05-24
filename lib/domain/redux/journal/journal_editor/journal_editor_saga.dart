@@ -1,6 +1,5 @@
 import 'package:redux_saga/redux_saga.dart' as redux_saga;
 import 'package:redux_saga/redux_saga.dart' hide Result, Select;
-import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_actions.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.dart';
@@ -12,7 +11,6 @@ import 'package:teja/domain/redux/journal/journal_logs/journal_logs_actions.dart
 import 'package:teja/domain/redux/journal/journal_sync/journal_sync_actions.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
 import 'package:teja/infrastructure/repositories/journal_entry_repository.dart';
-import 'package:teja/infrastructure/repositories/journal_template_repository.dart';
 import 'package:teja/infrastructure/utils/helpers.dart';
 import 'package:cbl/cbl.dart' as cbl;
 import 'package:teja/infrastructure/database/cbl_collections/journal_entry.dart' as journal_collection;
@@ -62,12 +60,6 @@ class JournalEditorSaga {
   }
 
   _handleInitializeJournalEditor({required InitializeJournalEditor action}) sync* {
-    // For now, still use Isar for JournalTemplateRepository
-    var isarResult = redux_saga.Result<dynamic>();
-    yield GetContext('isar', result: isarResult);
-    var isar = isarResult.value!;
-    var journalTemplateRepository = JournalTemplateRepository(isar);
-
     var cblResult = redux_saga.Result<cbl.Database>();
     yield GetContext('cbl', result: cblResult);
     cbl.Database cblDatabase = cblResult.value!;
@@ -86,40 +78,21 @@ class JournalEditorSaga {
         } else {
           yield Put(InitializeJournalEditorFailureAction("Journal entry not found"));
         }
-      } else if (action.template != null && action.template?.id != null) {
-        // Fetch the journal template to get the questions
-        var journalTemplateResult = redux_saga.Result<JournalTemplateEntity>();
-        yield Call(journalTemplateRepository.getJournalTemplateById,
-            args: [action.template!.templateID], result: journalTemplateResult);
+      } else {
+        // Create a new blank journal entry
+        String newId = Helpers.generateUniqueId();
+        DateTime now = DateTime.now();
 
-        if (journalTemplateResult.value != null) {
-          JournalTemplateEntity journalTemplate = journalTemplateResult.value!;
+        // Create the new journal entry using the factory constructor
+        journal_collection.JournalEntry newJournalEntry = journal_collection.JournalEntry(
+            id: newId,
+            timestamp: action.timestamp ?? now,
+            createdAt: now,
+            updatedAt: now,
+            isDeleted: false);
 
-          // Create a new entry with questions initialized from the template
-          String newId = Helpers.generateUniqueId();
-          DateTime now = DateTime.now();
-
-          // Create question-answer pairs
-          List<journal_collection.QuestionAnswerPair> questions = journalTemplate.questions
-              .map((question) => journal_collection.QuestionAnswerPair(
-                  id: question.id, questionId: question.id, questionText: question.text, answerText: ""))
-              .toList();
-
-          // Create the new journal entry using the factory constructor
-          journal_collection.JournalEntry newJournalEntry = journal_collection.JournalEntry(
-              id: newId,
-              templateId: action.template!.id,
-              timestamp: action.timestamp ?? now,
-              createdAt: now,
-              updatedAt: now,
-              questions: questions,
-              isDeleted: false);
-
-          yield Call(journalEntryRepository.addOrUpdateJournalEntry, args: [newJournalEntry]);
-          yield Put(InitializeJournalEditorSuccessAction(journalEntryRepository.toEntity(newJournalEntry)));
-        } else {
-          yield Put(InitializeJournalEditorFailureAction("Journal template not found"));
-        }
+        yield Call(journalEntryRepository.addOrUpdateJournalEntry, args: [newJournalEntry]);
+        yield Put(InitializeJournalEditorSuccessAction(journalEntryRepository.toEntity(newJournalEntry)));
       }
     }, Catch: (e, s) sync* {
       yield Put(InitializeJournalEditorFailureAction(e.toString()));
