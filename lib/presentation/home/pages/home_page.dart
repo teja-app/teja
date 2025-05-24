@@ -231,7 +231,9 @@ class QuickInputWidgetWrapper extends StatelessWidget {
               extra: {'heroTag': 'quickInputHero'}),
           onMoodTap: () => context.pushNamed(RootPath.moodEdit),
           onAudioTap: () => context.pushNamed(RootPath.moodEdit),
-          onGuidedJournal: () => context.pushNamed(RootPath.journalCategory),
+          onGuidedJournal: () {
+            // Journal categories feature has been removed
+          },
         ),
       ),
     );

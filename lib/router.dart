@@ -5,8 +5,6 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:teja/infrastructure/analytics/analytics_service.dart';
 import 'package:teja/presentation/home/pages/home_page.dart';
 import 'package:teja/presentation/journal/journa_detail/pages/journal_detail_page.dart';
-import 'package:teja/presentation/journal/journal_categories/categories_detail_page.dart';
-import 'package:teja/presentation/journal/journal_categories/categories_page.dart';
 import 'package:teja/presentation/journal/journal_editor/pages/journal_editor_page.dart';
 import 'package:teja/presentation/journal/journal_editor/pages/journal_entry_page.dart';
 import 'package:teja/presentation/journal/journal_editor/pages/quick_journal_entry_page.dart';
@@ -78,8 +76,6 @@ class RootPath {
   static const moodEdit = "mood_edit";
   static const timeLine = "timeline";
   static const moodDetail = "mood_detail";
-  static const journalCategory = "journal_categories";
-  static const journalCategoryDetail = "journal_categories_detail";
   static const moodShare = "mood_share";
   static const goalSettings = "goal_settings";
   static const noteEditor = "note_editor";
@@ -217,12 +213,6 @@ GoRouter createRouter(AnalyticsService analyticsService) {
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
-        name: RootPath.journalCategory, // Define a constant for this route
-        path: '/journal_categories',
-        builder: (context, state) => const JournalCategoriesPage(),
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
         name: RootPath.home,
         path: '/home',
         builder: (context, state) => const HomePage(),
@@ -282,20 +272,6 @@ GoRouter createRouter(AnalyticsService analyticsService) {
               url: url,
             ),
           );
-        },
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        name: RootPath.journalCategoryDetail, // Make sure you have this constant defined
-        path: '/category_detail',
-        builder: (context, state) {
-          final String? categoryId = state.uri.queryParameters['id'];
-          if (categoryId != null) {
-            return CategoryDetailPage(categoryId: categoryId);
-          } else {
-            // Handle the case where categoryId is null, maybe navigate back or show an error
-            return const Scaffold(body: Center(child: Text('Category not found')));
-          }
         },
       ),
       GoRoute(

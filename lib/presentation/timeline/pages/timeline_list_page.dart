@@ -7,7 +7,6 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
-import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/entities/mood_log.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
@@ -102,8 +101,7 @@ class _TimelinePageState extends State<TimelinePage> {
     return count;
   }
 
-  Widget _buildItem(BuildContext context, Map<DateTime, List<dynamic>> groupedEntries, int index,
-      Map<String, JournalTemplateEntity> templatesById) {
+  Widget _buildItem(BuildContext context, Map<DateTime, List<dynamic>> groupedEntries, int index) {
     var currentIndex = 0;
     for (var entry in groupedEntries.entries) {
       if (index == currentIndex) {
@@ -122,9 +120,10 @@ class _TimelinePageState extends State<TimelinePage> {
           ); // Your widget to display a mood log
         } else if (item is JournalEntryEntity) {
           // Check if template exists before calling journalEntryLayout
-          final template = item.templateId != null ? templatesById[item.templateId] : null;
+          // Templates removed - no longer needed
+          // final template = item.templateId != null ? templatesById[item.templateId] : null;
           return journalEntryLayout(
-            template,
+            null, // Templates removed
             item,
             context,
           ); // Your widget to display a journal entry
@@ -158,7 +157,7 @@ class _TimelinePageState extends State<TimelinePage> {
               color: Theme.of(context).scaffoldBackgroundColor,
               child: ScrollablePositionedList.builder(
                 itemCount: _calculateItemCount(groupedEntries), // Use the calculated item count
-                itemBuilder: (context, index) => _buildItem(context, groupedEntries, index, viewModel.templatesById),
+                itemBuilder: (context, index) => _buildItem(context, groupedEntries, index),
                 itemScrollController: itemScrollController,
                 itemPositionsListener: itemPositionsListener,
               )),
@@ -222,7 +221,6 @@ class ListViewModel {
   final List<JournalEntryEntity> journalEntries;
   final String? journalErrorMessage;
   final bool isJouralLastPage;
-  final Map<String, JournalTemplateEntity> templatesById;
 
   ListViewModel({
     required this.isMoodLoading,
@@ -233,7 +231,6 @@ class ListViewModel {
     required this.journalEntries,
     this.journalErrorMessage,
     required this.isJouralLastPage,
-    required this.templatesById,
   });
 
   // Factory constructor to create ViewModel from the Redux store state
@@ -249,7 +246,6 @@ class ListViewModel {
       journalEntries: journalListState.journalEntries,
       journalErrorMessage: journalListState.errorMessage,
       isJouralLastPage: journalListState.isLastPage,
-      templatesById: store.state.journalTemplateState.templatesById,
     );
   }
 }

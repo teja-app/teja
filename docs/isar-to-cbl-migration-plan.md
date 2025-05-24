@@ -121,52 +121,91 @@ This document outlines the migration plan from Isar to Couchbase Lite (CBL) for 
 - Updated UI components
 - No broken links or references
 
-### Phase 3: Redux State Cleanup (3-4 days)
+### Phase 3: Redux State Cleanup (3-4 days) ✅ COMPLETED
 
 #### Tasks
-1. **Remove Redux Modules**
+1. **Remove Redux Modules** ✅
    ```
    /lib/domain/redux/journal/journal_template/
    /lib/domain/redux/journal/featured_journal_template/
+   /lib/domain/redux/journal/journal_category/
    /lib/domain/redux/visions/
    /lib/domain/redux/quotes/
+   /lib/domain/redux/tasks/ (already deleted)
    ```
 
-2. **Update Core Redux Files**
-   - [ ] `app_state.dart` - remove state fields
-   - [ ] `app_reducer.dart` - remove reducer combinations
-   - [ ] `root_saga.dart` - remove saga forks
-   - [ ] `core_actions.dart` - remove initialization actions
+2. **Update Core Redux Files** ✅
+   - [x] `app_state.dart` - removed state fields (journalTemplateState, featuredJournalTemplateState, journalCategoryState, visionState, quoteState)
+   - [x] `app_reducer.dart` - removed reducer combinations
+   - [x] `root_saga.dart` - removed saga forks
+   - [x] `core_actions.dart` - no initialization actions needed removal
 
-#### Deliverables
+3. **Fix UI Dependencies** ✅
+   - [x] Updated timeline_list_page.dart - removed template references
+   - [x] Updated journal_editor_page.dart - removed template references
+   - [x] Updated journal_detail_page.dart - removed template references
+   - [x] Updated journal_entries_widget.dart - pass null for templates
+   - [x] Updated question_page.model.dart - return null for templates
+   - [x] Updated home_page.dart - removed journal category navigation
+   - [x] Removed journal categories UI directory
+   - [x] Updated router.dart - removed category routes
+
+#### Deliverables ✅
 - Simplified Redux state tree
 - Clean saga orchestration
 - Reduced boilerplate code
+- All UI components updated to work without templates
 
-### Phase 4: Backend Cleanup (2-3 days)
+### Phase 4: Backend Cleanup (2-3 days) 🚧 IN PROGRESS
 
 #### Tasks
 1. **Remove API Integrations**
    - [ ] Delete journal_template_api.dart
    - [ ] Delete featured_journal_template_api.dart
+   - [ ] Delete journal_category_api.dart
    - [ ] Delete quote_api.dart
+   - [ ] Delete task_api.dart (if not already deleted)
    - [ ] Update API helper if needed
 
 2. **Remove Repositories**
-   - [ ] Delete template repositories
-   - [ ] Delete vision repository
-   - [ ] Delete badge repository
-   - [ ] Delete quote repository
+   - [ ] Delete journal_template_repository.dart
+   - [ ] Delete featured_journal_template.dart
+   - [ ] Delete journal_category_repository.dart
+   - [ ] Delete vision_respository.dart
+   - [ ] Delete badge_repository.dart
+   - [ ] Delete quote_respository.dart
+   - [ ] Delete task_repository.dart (if not already deleted)
 
 3. **Remove DTOs and Entities**
-   - [ ] Delete all DTOs for removed features
-   - [ ] Delete all entities for removed features
+   - [ ] Delete journal_template_entity.dart
+   - [ ] Delete featured_journal_template_entity.dart
+   - [ ] Delete journal_category_entity.dart
+   - [ ] Delete journal_template_dto.dart
+   - [ ] Delete featured_journal_template_dto.dart
+   - [ ] Delete journal_category_dto.dart
+   - [ ] Delete vision_entity.dart
+   - [ ] Delete quote_entity.dart & quote_dto.dart
+   - [ ] Delete task_entity.dart (if not already deleted)
    - [ ] Update any shared types
+
+4. **Remove Hive Collections**
+   - [ ] Remove FeaturedJournalTemplate from Hive
+   - [ ] Remove any Hive adapters for templates
+   - [ ] Clean up Hive initialization code
+
+5. **Update UI Components**
+   - [ ] Update journalEntryLayout function to not accept template parameter
+   - [ ] Remove onGuidedJournal from QuickInputWidget
+   - [ ] Delete journal_template_card.dart
+   - [ ] Delete journal_template_detail_bottom_sheet.dart
+   - [ ] Update journal_card.dart to remove template logic
+   - [ ] Update journal editor saga to remove template references
 
 #### Deliverables
 - Clean infrastructure layer
 - No unused API calls
 - Simplified data flow
+- All template references removed from UI
 
 ### Phase 5: Schema Migration (1 week)
 
@@ -401,12 +440,14 @@ Created `/lib/config/feature_flags.dart` with the following flags:
 - **Navigation**: Mobile nav index 1, Desktop nav index 1
 
 #### Journal Templates Dependencies
-- **Entities**: `journal_template_entity.dart`, `featured_journal_template_entity.dart`
-- **DTOs**: `journal_template_dto.dart`, `featured_journal_template_dto.dart`
-- **Redux**: `/lib/domain/redux/journal/journal_template/`, `/lib/domain/redux/journal/featured_journal_template/`
-- **APIs**: `journal_template_api.dart`, `featured_journal_template_api.dart`
-- **Repositories**: `journal_template_repository.dart`, `featured_journal_template.dart`
+- **Entities**: `journal_template_entity.dart`, `featured_journal_template_entity.dart`, `journal_category_entity.dart`
+- **DTOs**: `journal_template_dto.dart`, `featured_journal_template_dto.dart`, `journal_category_dto.dart`
+- **Redux**: `/lib/domain/redux/journal/journal_template/`, `/lib/domain/redux/journal/featured_journal_template/`, `/lib/domain/redux/journal/journal_category/`
+- **APIs**: `journal_template_api.dart`, `featured_journal_template_api.dart`, `journal_category_api.dart`
+- **Repositories**: `journal_template_repository.dart`, `featured_journal_template.dart`, `journal_category_repository.dart`
 - **Database**: Isar JournalTemplateSchema, Hive FeaturedJournalTemplate
+- **UI Components**: `journal_template_card.dart`, `journal_template_detail_bottom_sheet.dart`, journal categories pages
+- **UI Functions**: `journalEntryLayout` function in `journal_card.dart`, `onGuidedJournal` in QuickInputWidget
 
 #### Vision/Goals Dependencies
 - **UI**: `/lib/presentation/goal_editor/`
@@ -443,7 +484,34 @@ Created `/lib/config/feature_flags.dart` with the following flags:
 
 ---
 
-**Document Version**: 1.1
+**Document Version**: 1.2
 **Last Updated**: January 24, 2025
 **Author**: Migration Team
-**Status**: Phase 1 In Progress
+**Status**: Phase 3 Complete, Phase 4 In Progress
+
+---
+
+## Phase 3 Completion Summary
+
+### Completed Tasks
+1. **Redux Module Removal**
+   - Deleted all Redux directories for removed features
+   - Cleaned up imports and references
+
+2. **Core Redux Updates**
+   - Updated app_state.dart to remove all feature states
+   - Updated app_reducer.dart to remove all feature reducers
+   - Updated root_saga.dart to remove all feature sagas
+   - Verified core_actions.dart had no feature-specific actions
+
+3. **UI Dependency Fixes**
+   - Fixed compilation errors in multiple UI files
+   - Updated all pages to handle missing templates
+   - Removed journal category navigation
+   - Cleaned up router configuration
+
+### Key Changes Made
+- Removed 5 Redux state modules
+- Updated 8+ UI files to remove template dependencies
+- Simplified navigation structure
+- Reduced Redux boilerplate significantly

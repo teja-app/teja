@@ -30,10 +30,8 @@ class JournalQuestionViewModel {
 
   static JournalQuestionViewModel fromStore(Store<AppState> store, int questionIndex) {
     final currentJournalEntry = store.state.journalEditorState.currentJournalEntry!;
-    JournalTemplateEntity? template;
-    if (currentJournalEntry.templateId != null) {
-      template = store.state.journalTemplateState.templatesById[currentJournalEntry.templateId];
-    }
+    // Templates removed - no longer needed
+    JournalTemplateEntity? template = null;
 
     final imageEntryIds = currentJournalEntry.questions![questionIndex].imageEntryIds;
 

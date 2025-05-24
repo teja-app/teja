@@ -4,12 +4,9 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/auth/auth_reducer.dart';
 import 'package:teja/domain/redux/home/home_reducer.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_reducer.dart';
-import 'package:teja/domain/redux/journal/featured_journal_template/reducer.dart';
 import 'package:teja/domain/redux/journal/journal_analysis/journal_analysis_redux.dart';
-import 'package:teja/domain/redux/journal/journal_category/reducer.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_reducer.dart';
 import 'package:teja/domain/redux/journal/journal_logs/journal_logs_reducer.dart';
-import 'package:teja/domain/redux/journal/journal_template/reducer.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_reducer.dart';
 import 'package:teja/domain/redux/monthly_mood_report/monthly_mood_report_reducer.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_reducer.dart';
@@ -21,10 +18,8 @@ import 'package:teja/domain/redux/mood/master_feeling/reducer.dart';
 import 'package:teja/domain/redux/mood/mood_analysis/mood_analysis_redux.dart';
 import 'package:teja/domain/redux/profile_page_sequence/profile_page_reducer.dart';
 import 'package:teja/domain/redux/permission/permission_reducer.dart';
-import 'package:teja/domain/redux/quotes/quote_reducer.dart';
 import 'package:teja/domain/redux/theme/theme_reducer.dart';
 import 'package:teja/domain/redux/token/token_reducer.dart';
-import 'package:teja/domain/redux/visions/vision_reducer.dart';
 import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_reducer.dart';
 import 'package:teja/domain/redux/yearly_mood_report/yearly_mood_report_reducer.dart';
 import 'package:teja/domain/redux/yearly_sleep_report/yearly_sleep_report_reducer.dart';
@@ -92,28 +87,9 @@ AppState _yearlySleepReportReducer(AppState state, action) {
   );
 }
 
-AppState _quoteReducer(AppState state, action) {
-  return state.copyWith(
-    quoteState: quoteReducer(state.quoteState, action),
-  );
-}
-
-AppState _visionReducer(AppState state, action) {
-  return state.copyWith(
-    visionState: visionReducer(state.visionState, action),
-  );
-}
-
 AppState _tokenReducer(AppState state, action) {
   return state.copyWith(
     tokenState: tokenReducer(state.tokenState, action),
-  );
-}
-
-AppState _journalTemplateReducer(AppState state, action) {
-  return state.copyWith(
-    journalTemplateState:
-        journalTemplateReducer(state.journalTemplateState, action),
   );
 }
 
@@ -139,20 +115,6 @@ AppState _journalLogsReducer(AppState state, action) {
 AppState _journalDetailReducer(AppState state, action) {
   return state.copyWith(
     journalDetailState: journalDetailReducer(state.journalDetailState, action),
-  );
-}
-
-AppState _featuredJournalTemplateReducer(AppState state, action) {
-  return state.copyWith(
-    featuredJournalTemplateState: featuredJournalTemplateReducer(
-        state.featuredJournalTemplateState, action),
-  );
-}
-
-AppState _journalCategoryReducer(AppState state, action) {
-  return state.copyWith(
-    journalCategoryState:
-        journalCategoryReducer(state.journalCategoryState, action),
   );
 }
 
@@ -212,16 +174,11 @@ Reducer<AppState> appReducer = combineReducers<AppState>([
   _weeklyMoodReportReducer,
   _monthlyMoodReportReducer,
   _yearlySleepReportReducer,
-  _quoteReducer,
-  _visionReducer,
   _tokenReducer,
-  _journalTemplateReducer,
   _journalEditorReducer,
   _journalAnalysisReducer,
   _journalLogsReducer,
   _journalDetailReducer,
-  _featuredJournalTemplateReducer,
-  _journalCategoryReducer,
   _journalListReducer,
   _moodAnalysisReducer,
   _yearlyMoodReportReducer,

@@ -3,7 +3,6 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
-import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:intl/intl.dart';
 import 'package:teja/domain/redux/journal/journal_logs/journal_logs_actions.dart';
@@ -44,12 +43,11 @@ class _JournalEntriesWidgetState extends State<JournalEntriesWidget> {
               children: [
                 ...List.generate(journalEntries.length, (index) {
                   var entry = journalEntries[index];
-                  // Check if template exists before calling journalEntryLayout
-                  final template = entry.templateId != null ? viewModel.templatesById[entry.templateId] : null;
+                  // Templates removed - always pass null
                   return Padding(
                     padding: const EdgeInsets.only(right: 8.0), // Adjust the spacing as needed
                     child: journalEntryLayout(
-                      template,
+                      null, // Templates removed
                       entry,
                       context,
                       gridWidth: 3.8,
@@ -70,15 +68,12 @@ class _JournalEntriesWidgetState extends State<JournalEntriesWidget> {
 class _ViewModel {
   final Map<String, List<JournalEntryEntity>> journalLogsByDate;
   final DateTime? selectedDate;
-  final Map<String, JournalTemplateEntity> templatesById;
-
-  _ViewModel({required this.journalLogsByDate, this.selectedDate, required this.templatesById});
+  _ViewModel({required this.journalLogsByDate, this.selectedDate});
 
   static _ViewModel fromStore(Store<AppState> store) {
     return _ViewModel(
       journalLogsByDate: store.state.journalLogsState.journalLogsByDate,
       selectedDate: store.state.homeState.selectedDate,
-      templatesById: store.state.journalTemplateState.templatesById,
     );
   }
 }

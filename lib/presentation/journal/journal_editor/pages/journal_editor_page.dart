@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
-import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/presentation/journal/journal_editor/ui/journal_editor_finish_page.dart';
 import 'package:teja/presentation/journal/journal_editor/ui/question_page/question_page.view.dart';
@@ -106,20 +105,17 @@ class JournalEditViewModel {
   final JournalEntryEntity? currentJournalEntry; // Make this nullable
   final Function(int) changePage;
   final int pageCount;
-  final Map<String, JournalTemplateEntity> templatesById;
 
   JournalEditViewModel({
     required this.currentPageIndex,
     this.currentJournalEntry, // Now nullable
     required this.changePage,
-    required this.templatesById,
   }) : pageCount = 5; // +2 for initial and feeling pages
 
   static JournalEditViewModel fromStore(Store<AppState> store) {
     return JournalEditViewModel(
       currentPageIndex: store.state.journalEditorState.currentPageIndex,
       currentJournalEntry: store.state.journalEditorState.currentJournalEntry, // No longer using `!`
-      templatesById: store.state.journalTemplateState.templatesById,
       changePage: (index) => store.dispatch(ChangeJournalPageAction(index)),
     );
   }

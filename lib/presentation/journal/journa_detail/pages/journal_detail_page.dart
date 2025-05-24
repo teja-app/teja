@@ -5,7 +5,6 @@ import 'package:icons_flutter/icons_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
-import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_actions.dart';
 import 'package:teja/domain/redux/journal/journal_analysis/journal_analysis_actions.dart';
@@ -511,12 +510,10 @@ class JournalDetailViewModel {
   final JournalEntryEntity? journalEntry;
   final bool isLoading;
   final String? errorMessage;
-  final Map<String, JournalTemplateEntity> templatesById;
   final Function(String, List<Map<String, String>>) dispatchAnalyzeJournal;
 
   JournalDetailViewModel({
     required this.journalEntry,
-    required this.templatesById,
     required this.isLoading,
     required this.errorMessage,
     required this.dispatchAnalyzeJournal,
@@ -526,7 +523,6 @@ class JournalDetailViewModel {
     final state = store.state.journalDetailState;
     return JournalDetailViewModel(
       journalEntry: state.selectedJournalEntry,
-      templatesById: store.state.journalTemplateState.templatesById,
       isLoading: state.isLoading,
       errorMessage: state.errorMessage,
       dispatchAnalyzeJournal: (String journalEntryId, List<Map<String, String>> qaList) {
