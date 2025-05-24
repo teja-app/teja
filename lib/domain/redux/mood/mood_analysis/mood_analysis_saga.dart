@@ -2,7 +2,6 @@ import 'package:cbl/cbl.dart' as cbl;
 
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_actions.dart';
-import 'package:teja/domain/redux/mood/mood_sync/mood_sync_actions.dart';
 
 import 'package:teja/infrastructure/api/mood_analysis_api.dart';
 import 'package:teja/infrastructure/repositories/mood_log_repository.dart';

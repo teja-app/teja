@@ -30,12 +30,12 @@ final ThemeData darkTheme = ThemeData(
     hourMinuteTextColor: Colors.white,
     dayPeriodColor: const Color(0xFF3A3A3A),
     confirmButtonStyle: ButtonStyle(
-      backgroundColor: MaterialStateProperty.all<Color>(Colors.green[400]!),
-      foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
+      backgroundColor: WidgetStateProperty.all<Color>(Colors.green[400]!),
+      foregroundColor: WidgetStateProperty.all<Color>(Colors.black),
     ),
     cancelButtonStyle: ButtonStyle(
-      backgroundColor: MaterialStateProperty.all<Color>(Colors.grey[700]!),
-      foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+      backgroundColor: WidgetStateProperty.all<Color>(Colors.grey[700]!),
+      foregroundColor: WidgetStateProperty.all<Color>(Colors.white),
     ),
     hourMinuteShape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10),
@@ -79,23 +79,23 @@ final ThemeData darkTheme = ThemeData(
   ),
   segmentedButtonTheme: SegmentedButtonThemeData(
     style: ButtonStyle(
-      foregroundColor: MaterialStateProperty.resolveWith<Color>(
-        (Set<MaterialState> states) {
-          if (states.contains(MaterialState.selected)) {
+      foregroundColor: WidgetStateProperty.resolveWith<Color>(
+        (Set<WidgetState> states) {
+          if (states.contains(WidgetState.selected)) {
             return Colors.black;
           }
           return Colors.white;
         },
       ),
-      backgroundColor: MaterialStateProperty.resolveWith<Color>(
-        (Set<MaterialState> states) {
-          if (states.contains(MaterialState.selected)) {
+      backgroundColor: WidgetStateProperty.resolveWith<Color>(
+        (Set<WidgetState> states) {
+          if (states.contains(WidgetState.selected)) {
             return Colors.green[400]!;
           }
           return const Color(0xFF3A3A3A);
         },
       ),
-      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
         RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),
         ),

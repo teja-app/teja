@@ -106,19 +106,15 @@ class MoodEditPageState extends State<MoodEditPage> {
                           // Finish page, the last page
                           return FinishScreen(
                             onFinish: () {
-                              var moodId = null;
+                              String moodId;
                               if (viewModel.currentMoodLog!.id.isNotEmpty) {
                                 moodId = viewModel.currentMoodLog!.id;
                               }
-                              if (moodId != null) {
-                                goRouter.replaceNamed(
-                                  RootPath.moodDetail,
-                                  queryParameters: {"id": moodId},
-                                );
-                              } else {
-                                goRouter.pushNamed(RootPath.home);
-                              }
-                            },
+                              goRouter.replaceNamed(
+                                RootPath.moodDetail,
+                                queryParameters: {"id": moodId},
+                              );
+                                                        },
                           );
                         }
                       },

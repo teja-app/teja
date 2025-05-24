@@ -35,7 +35,7 @@ class ThemeSaga {
             if (item is Map<String, dynamic>) {
               return item;
             } else {
-              throw FormatException('Invalid item format');
+              throw const FormatException('Invalid item format');
             }
           }).toList();
           yield Put(ThemeImagesReceivedAction(images, themeType));

@@ -22,7 +22,6 @@ import 'package:teja/domain/redux/mood/mood_analysis/mood_analysis_saga.dart';
 import 'package:teja/domain/redux/mood/mood_sync/mood_sync_saga.dart';
 import 'package:teja/domain/redux/permission/permission_saga.dart';
 import 'package:teja/domain/redux/profile_page_sequence/profile_page_saga.dart';
-import 'package:teja/domain/redux/sync/saga.dart';
 import 'package:teja/domain/redux/theme/theme_saga.dart';
 import 'package:teja/domain/redux/token/token_saga.dart';
 import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_saga.dart';
@@ -64,7 +63,7 @@ Iterable<void> rootSaga(Store<AppState> store) sync* {
           yield Try(() sync* {
             yield Call(saga);
           }, Catch: (error, stackTrace) sync* {
-            print("error ${error}");
+            print("error $error");
             if (error is AppError) {
               yield Put(AddAppErrorAction(
                   createAppError({'code': error.code, 'message': error.message, 'details': error.details})));

@@ -160,8 +160,9 @@ class NotificationService {
     final now = tz.TZDateTime.now(tz.local);
     var scheduledDate = tz.TZDateTime(
         tz.local, now.year, now.month, now.day + daysAhead, hour, minute);
-    if (scheduledDate.isBefore(now))
+    if (scheduledDate.isBefore(now)) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
     return scheduledDate;
   }
 }

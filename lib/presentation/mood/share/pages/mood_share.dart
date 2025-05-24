@@ -76,7 +76,7 @@ class _MoodSharePageState extends State<MoodSharePage> {
                     ],
                   ),
                 )
-              : Center(child: Text('Mood not found')),
+              : const Center(child: Text('Mood not found')),
         );
       },
     );

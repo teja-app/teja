@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:teja/infrastructure/analytics/analytics_service.dart';
@@ -28,8 +27,6 @@ import 'package:teja/presentation/settings/pages/settings_page.dart';
 import 'package:teja/presentation/settings/pages/sync_settings_page.dart';
 import 'package:teja/shared/helpers/logger.dart';
 import 'package:teja/config/shared_config.dart';
-import 'package:teja/config/feature_flags.dart';
-import 'package:teja/presentation/error_handler/feature_disabled_page.dart';
 
 class RouteLoggingObserver extends NavigatorObserver {
   @override
@@ -190,12 +187,12 @@ GoRouter createRouter(AnalyticsService analyticsService) {
         parentNavigatorKey: _rootNavigatorKey,
         name: RootPath.registration,
         path: '/registration',
-        builder: (context, state) => RegistrationScreen(),
+        builder: (context, state) => const RegistrationScreen(),
       ),
       GoRoute(
         path: '/recover-account',
         name: RootPath.recoveryAccount,
-        builder: (context, state) => RecoverAccountScreen(),
+        builder: (context, state) => const RecoverAccountScreen(),
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,

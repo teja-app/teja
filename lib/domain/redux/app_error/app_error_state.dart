@@ -12,7 +12,7 @@ class AppErrorState {
   });
 
   factory AppErrorState.initial() {
-    return AppErrorState(errors: []);
+    return const AppErrorState(errors: []);
   }
 
   AppErrorState copyWith({

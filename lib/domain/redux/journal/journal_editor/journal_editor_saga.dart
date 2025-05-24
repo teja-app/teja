@@ -76,7 +76,7 @@ class JournalEditorSaga {
         if (journalEntryResult.value != null) {
           yield Put(InitializeJournalEditorSuccessAction(journalEntryRepository.toEntity(journalEntryResult.value!)));
         } else {
-          yield Put(InitializeJournalEditorFailureAction("Journal entry not found"));
+          yield Put(const InitializeJournalEditorFailureAction("Journal entry not found"));
         }
       } else {
         // Create a new blank journal entry

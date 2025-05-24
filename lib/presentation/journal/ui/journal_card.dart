@@ -16,15 +16,15 @@ Widget journalEntryLayout(
   final textTheme = Theme.of(context).textTheme;
   final firstQuestion = journalEntry.questions?.isNotEmpty == true ? journalEntry.questions!.first : null;
 
-  Widget _buildMediaRow() {
+  Widget buildMediaRow() {
     final images = journalEntry.imageEntries?.take(3).toList() ?? [];
     final videos = journalEntry.videoEntries?.take(3).toList() ?? [];
 
     if (images.isEmpty && videos.isEmpty) {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
 
-    return Container(
+    return SizedBox(
       height: 60, // Adjust height accordingly
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
@@ -34,7 +34,7 @@ Widget journalEntryLayout(
             final imagePath = images[index].filePath;
             if (imagePath != null) {
               return Padding(
-                padding: EdgeInsets.only(right: 8),
+                padding: const EdgeInsets.only(right: 8),
                 child: AttachmentImage(
                   relativeImagePath: imagePath,
                   width: 100, // Adjust width as needed
@@ -47,7 +47,7 @@ Widget journalEntryLayout(
             final videoPath = videos[videoIndex].filePath;
             if (videoPath != null) {
               return Padding(
-                padding: EdgeInsets.only(right: 8),
+                padding: const EdgeInsets.only(right: 8),
                 child: AttachmentVideo(
                   relativeVideoPath: videoPath,
                   width: 100, // Adjust width as needed
@@ -56,7 +56,7 @@ Widget journalEntryLayout(
               );
             }
           }
-          return SizedBox.shrink();
+          return const SizedBox.shrink();
         },
       ),
     );
@@ -90,7 +90,7 @@ Widget journalEntryLayout(
                           journalEntry.emoticon!,
                           style: textTheme.titleLarge,
                         ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           journalEntry.title!,
@@ -99,7 +99,7 @@ Widget journalEntryLayout(
                       ),
                     ],
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                 ] else ...[
                   if (journalEntry.body != null) ...[
                     Text(
@@ -120,7 +120,7 @@ Widget journalEntryLayout(
                   ],
                 ],
                 const SizedBox(height: 16),
-                _buildMediaRow(),
+                buildMediaRow(),
                 Align(
                   alignment: Alignment.bottomRight,
                   child: Text(

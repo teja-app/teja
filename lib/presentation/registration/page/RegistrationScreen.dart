@@ -1,23 +1,19 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/auth/auth_action.dart';
 import 'package:teja/domain/redux/auth/auth_state.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/presentation/registration/ui/RecoveryCodeDisplay.dart';
-import 'package:teja/router.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
-import 'package:teja/shared/storage/secure_storage.dart';
-import 'package:crypto/crypto.dart';
 import 'package:icons_flutter/icons_flutter.dart';
-import 'package:flutter/services.dart';
 
 class RegistrationScreen extends StatefulWidget {
+  const RegistrationScreen({super.key});
+
   @override
   _RegistrationScreenState createState() => _RegistrationScreenState();
 }
@@ -27,7 +23,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   String _mnemonic = '';
   bool _isConfirmed = false;
   final ValueNotifier<int> _currentPageNotifier = ValueNotifier<int>(0);
-  TextEditingController _textController = TextEditingController();
+  final TextEditingController _textController = TextEditingController();
   String _errorMessage = '';
   bool _isFetchMnemonicCalled = false;
   int blankIndex = 0;
@@ -169,7 +165,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            RecoveryCodeDisplay(recoveryCode: _mnemonic!),
+            RecoveryCodeDisplay(recoveryCode: _mnemonic),
             Center(
               child: Button(
                 onPressed: () {
@@ -189,11 +185,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   Widget _buildConfirmationPage(
       BuildContext context,
-      PageController _pageController,
-      String _mnemonic,
-      VoidCallback _confirmAndRegister,
+      PageController pageController,
+      String mnemonic,
+      VoidCallback confirmAndRegister,
       int blankIndex) {
-    List<String> mnemonicWords = _mnemonic.split(' ');
+    List<String> mnemonicWords = mnemonic.split(' ');
     String missingWord = '';
 
     final colorScheme = Theme.of(context).colorScheme;
@@ -278,7 +274,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           _errorMessage = ''; // Clear the error message
                           _isConfirmed = true; // Update the confirmation status
                         });
-                        _confirmAndRegister(); // Proceed with the registration
+                        confirmAndRegister(); // Proceed with the registration
                       } else {
                         setState(() {
                           _errorMessage =

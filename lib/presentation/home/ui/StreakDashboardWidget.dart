@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:icons_flutter/icons_flutter.dart';
 import 'package:teja/infrastructure/api/streak_api.dart';
 
 class StreakEntriesDashboardWidget extends StatefulWidget {
@@ -31,7 +30,7 @@ class _StreakEntriesDashboardWidgetState extends State<StreakEntriesDashboardWid
         });
       },
       child: AnimatedContainer(
-        duration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
         width: double.infinity,
         decoration: BoxDecoration(
@@ -39,7 +38,7 @@ class _StreakEntriesDashboardWidgetState extends State<StreakEntriesDashboardWid
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: theme.shadowColor.withOpacity(0.1),
+              color: theme.shadowColor.withValues(alpha: 0.1),
               spreadRadius: 1,
               blurRadius: 3,
               offset: const Offset(0, 1),
@@ -75,9 +74,9 @@ class _StreakEntriesDashboardWidgetState extends State<StreakEntriesDashboardWid
               ],
             ),
             if (_isExpanded) ...[
-              SizedBox(height: 16),
-              Divider(),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
+              const Divider(),
+              const SizedBox(height: 16),
               ...widget.streaks.map((streak) => _buildStreakItem(context, streak)),
             ],
           ],
@@ -91,7 +90,7 @@ class _StreakEntriesDashboardWidgetState extends State<StreakEntriesDashboardWid
     return Column(
       children: [
         Icon(icon, color: theme.colorScheme.primary, size: 24),
-        SizedBox(height: 4),
+        const SizedBox(height: 4),
         Text(
           value == -1 ? '-' : value.toString(),
           style: theme.textTheme.headlineSmall?.copyWith(
@@ -116,21 +115,21 @@ class _StreakEntriesDashboardWidgetState extends State<StreakEntriesDashboardWid
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(6),
+            padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withOpacity(0.1),
+              color: theme.colorScheme.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(streak.icon, size: 20, color: theme.colorScheme.primary),
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Text(
             '${streak.count}',
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Expanded(
             child: Text(
               streak.label,
@@ -159,6 +158,8 @@ class StreakItem {
 }
 
 class ExampleStreakEntriesDashboard extends StatefulWidget {
+  const ExampleStreakEntriesDashboard({super.key});
+
   @override
   _ExampleStreakEntriesDashboardState createState() => _ExampleStreakEntriesDashboardState();
 }
@@ -185,7 +186,7 @@ class _ExampleStreakEntriesDashboardState extends State<ExampleStreakEntriesDash
       future: _streakInfoFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
           return const StreakEntriesDashboardWidget(
             currentStreak: -1, // Use -1 to represent a dash
@@ -197,10 +198,10 @@ class _ExampleStreakEntriesDashboardState extends State<ExampleStreakEntriesDash
           return StreakEntriesDashboardWidget(
             currentStreak: streakInfo['currentStreak'] as int,
             totalEntries: streakInfo['totalEntries'] as int,
-            streaks: [], // We're ignoring other streaks as per the request
+            streaks: const [], // We're ignoring other streaks as per the request
           );
         } else {
-          return Text('No data available');
+          return const Text('No data available');
         }
       },
     );

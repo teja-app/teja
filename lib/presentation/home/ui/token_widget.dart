@@ -3,7 +3,6 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/token/token_actions.dart';
-import 'package:teja/shared/storage/secure_storage.dart';
 
 class TokenWidget extends StatefulWidget {
   const TokenWidget({Key? key}) : super(key: key);

@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:convert/convert.dart';
-import 'dart:typed_data';
 import 'package:pointycastle/export.dart';
 
 Uint8List _generateRandomBytes(int length) {
@@ -22,7 +21,7 @@ String encryptText(String keyHex, String text) {
   final cipher = PaddedBlockCipherImpl(PKCS7Padding(), CBCBlockCipher(AESEngine()));
   cipher.init(
     true,
-    PaddedBlockCipherParameters<ParametersWithIV<KeyParameter>, Null>(
+    PaddedBlockCipherParameters<ParametersWithIV<KeyParameter>, void>(
       ParametersWithIV<KeyParameter>(KeyParameter(key), iv),
       null,
     ),

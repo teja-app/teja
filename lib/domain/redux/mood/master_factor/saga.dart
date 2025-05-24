@@ -9,7 +9,6 @@ import 'package:teja/infrastructure/database/cbl_collections/master_factor.dart'
 import 'package:teja/infrastructure/repositories/master_factor.dart';
 import 'package:teja/shared/helpers/errors.dart';
 import 'package:teja/shared/helpers/logger.dart';
-import 'package:teja/shared/storage/secure_storage.dart';
 
 class MasterFactorSaga {
   Iterable<void> saga() sync* {
@@ -50,7 +49,6 @@ class MasterFactorSaga {
 
       var factorsResult = Result<List<MasterFactorEntity>>();
 
-      final accessToken = Result<String?>();
 
       FactorApi factorApi = FactorApi();
       yield Call(

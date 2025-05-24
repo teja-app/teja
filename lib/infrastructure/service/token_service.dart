@@ -1,10 +1,7 @@
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
-import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:teja/config/app_config.dart';
 import 'package:teja/domain/entities/app_error.dart';
-import 'package:teja/domain/redux/permission/permissions_constants.dart';
-import 'package:teja/infrastructure/analytics/set_context.dart';
 import 'package:teja/infrastructure/utils/token_helper.dart';
 import 'package:teja/shared/storage/secure_storage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';

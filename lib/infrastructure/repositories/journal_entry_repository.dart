@@ -350,7 +350,7 @@ class JournalEntryRepository {
           final map = dictionary.toPlainMap();
           // Add the document ID to the map
           map['id'] = docId;
-          print("${docId} ${dictionary.toString()}");
+          print("$docId ${dictionary.toString()}");
           // Convert the map directly to a JournalEntryEntity
           journalEntries.add(JournalEntryEntity.fromJson(map));
         }

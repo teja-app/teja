@@ -17,7 +17,8 @@ class MonthlyMoodReportSaga {
     );
   }
 
-  _fetchMonthlyMoodReport({required FetchMonthlyMoodReportAction action}) sync* {
+  _fetchMonthlyMoodReport(
+      {required FetchMonthlyMoodReportAction action}) sync* {
     yield Try(() sync* {
       yield Put(MonthlyMoodReportFetchInProgressAction());
 
@@ -61,7 +62,8 @@ class MonthlyMoodReportSaga {
 
       // Call the asynchronous function to calculate scatter spots
       var scatterSpotsResult = Result<List<ScatterSpot>>();
-      yield Call(_fetchScatterSpots, args: [moodData], result: scatterSpotsResult);
+      yield Call(_fetchScatterSpots,
+          args: [moodData], result: scatterSpotsResult);
 
       final scatterSpots = scatterSpotsResult.value;
 
@@ -75,7 +77,8 @@ class MonthlyMoodReportSaga {
       }
 
       var scatterStepSpotsResult = Result<List<ScatterSpot>>();
-      yield Call(_fetchStepsScatterSpots, args: [moodData], result: scatterStepSpotsResult);
+      yield Call(_fetchStepsScatterSpots,
+          args: [moodData], result: scatterStepSpotsResult);
 
       final scatterStepSpots = scatterStepSpotsResult.value;
 
@@ -89,36 +92,43 @@ class MonthlyMoodReportSaga {
       }
 
       // Dispatch success action with the calculated scatter spots
-      yield Put(MonthlyMoodReportFetchedSuccessAction(moodData, scatterSpots, scatterStepSpots));
+      yield Put(MonthlyMoodReportFetchedSuccessAction(
+          moodData, scatterSpots, scatterStepSpots));
     }, Catch: (e, s) sync* {
       yield Put(MonthlyMoodReportFetchFailedAction(e.toString()));
     });
   }
 
-  static Future<List<ScatterSpot>> _fetchScatterSpots(Map<DateTime, double> moodData) async {
+  static Future<List<ScatterSpot>> _fetchScatterSpots(
+      Map<DateTime, double> moodData) async {
     return await _calculateScatterSpots(moodData);
   }
 
-  static Future<List<ScatterSpot>> _fetchStepsScatterSpots(Map<DateTime, double> moodData) async {
+  static Future<List<ScatterSpot>> _fetchStepsScatterSpots(
+      Map<DateTime, double> moodData) async {
     return await _calculateStepScatterSpots(moodData);
   }
 
-  static Future<List<ScatterSpot>> _calculateScatterSpots(Map<DateTime, double> moodData) async {
+  static Future<List<ScatterSpot>> _calculateScatterSpots(
+      Map<DateTime, double> moodData) async {
     List<DateTime> dates = moodData.keys.toList();
     final sleepData = await HealthDataFetcher.fetchSleepData(dates);
     return _mapToScatterSpots(moodData, sleepData);
   }
 
-  static Future<List<ScatterSpot>> _calculateStepScatterSpots(Map<DateTime, double> moodData) async {
+  static Future<List<ScatterSpot>> _calculateStepScatterSpots(
+      Map<DateTime, double> moodData) async {
     List<DateTime> dates = moodData.keys.toList();
     final stepData = await HealthDataFetcher.fetchStepsData(dates);
     return _mapToStepScatterSpots(moodData, stepData);
   }
 
-  static List<ScatterSpot> _mapToScatterSpots(Map<DateTime, double> moodData, List<HealthDataPoint> sleepData) {
+  static List<ScatterSpot> _mapToScatterSpots(
+      Map<DateTime, double> moodData, List<HealthDataPoint> sleepData) {
     final Map<DateTime, double> sleepMap = {};
     for (final dataPoint in sleepData) {
-      final date = DateTime(dataPoint.dateFrom.year, dataPoint.dateFrom.month, dataPoint.dateFrom.day);
+      final date = DateTime(dataPoint.dateFrom.year, dataPoint.dateFrom.month,
+          dataPoint.dateFrom.day);
       final value = dataPoint.value;
       double duration;
 
@@ -129,7 +139,10 @@ class MonthlyMoodReportSaga {
       } else if (valueString.contains('instantValue')) {
         final instantValueString = valueString.split('instantValue:')[1].trim();
         final instantValue = DateTime.parse(instantValueString);
-        duration = instantValue.difference(DateTime.fromMillisecondsSinceEpoch(0)).inHours.toDouble();
+        duration = instantValue
+            .difference(DateTime.fromMillisecondsSinceEpoch(0))
+            .inHours
+            .toDouble();
       } else {
         continue;
       }
@@ -144,14 +157,15 @@ class MonthlyMoodReportSaga {
     final List<ScatterSpot> scatterSpots = [];
     moodData.forEach((moodDate, moodValue) {
       final sleepDate = moodDate.subtract(const Duration(days: 1));
-      final sleepDateOnly = DateTime(sleepDate.year, sleepDate.month, sleepDate.day);
+      final sleepDateOnly =
+          DateTime(sleepDate.year, sleepDate.month, sleepDate.day);
       if (sleepMap.containsKey(sleepDateOnly)) {
         final sleepValue = sleepMap[sleepDateOnly]!;
         scatterSpots.add(ScatterSpot(
           sleepValue,
           moodValue,
           radius: calculateRadius(3),
-          color: Colors.blue.withOpacity(0.6),
+          color: Colors.blue.withValues(alpha: 0.6),
         ));
       }
     });
@@ -159,11 +173,13 @@ class MonthlyMoodReportSaga {
     return scatterSpots;
   }
 
-  static List<ScatterSpot> _mapToStepScatterSpots(Map<DateTime, double> moodData, List<HealthDataPoint> stepData) {
+  static List<ScatterSpot> _mapToStepScatterSpots(
+      Map<DateTime, double> moodData, List<HealthDataPoint> stepData) {
     final Map<DateTime, double> stepMap = {};
 
     for (final dataPoint in stepData) {
-      final date = DateTime(dataPoint.dateFrom.year, dataPoint.dateFrom.month, dataPoint.dateFrom.day);
+      final date = DateTime(dataPoint.dateFrom.year, dataPoint.dateFrom.month,
+          dataPoint.dateFrom.day);
       final value = dataPoint.value;
       double stepsCount;
 
@@ -185,14 +201,15 @@ class MonthlyMoodReportSaga {
     final List<ScatterSpot> scatterSpots = [];
     moodData.forEach((moodDate, moodValue) {
       final stepsDate = moodDate.subtract(const Duration(days: 1));
-      final stepsDateOnly = DateTime(stepsDate.year, stepsDate.month, stepsDate.day);
+      final stepsDateOnly =
+          DateTime(stepsDate.year, stepsDate.month, stepsDate.day);
       if (stepMap.containsKey(stepsDateOnly)) {
         final stepsCount = stepMap[stepsDateOnly]!;
         scatterSpots.add(ScatterSpot(
           stepsCount,
           moodValue,
           radius: calculateRadius(3),
-          color: Colors.blue[700]!.withOpacity(0.6),
+          color: Colors.blue[700]!.withValues(alpha: 0.6),
         ));
       }
     });

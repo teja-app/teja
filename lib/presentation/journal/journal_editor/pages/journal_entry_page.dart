@@ -8,7 +8,6 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_actions.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.dart';
 import 'package:teja/infrastructure/api/ai_question_api.dart';
-import 'package:teja/presentation/journal/journal_editor/ui/typing_indicator.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/button.dart';
 import 'package:teja/shared/helpers/logger.dart';
@@ -49,7 +48,7 @@ class JournalEntryPage extends StatefulWidget {
 
 class JournalEntryPageState extends State<JournalEntryPage> {
   final ScrollController _scrollController = ScrollController();
-  LoadingState _loadingState = LoadingState();
+  LoadingState _loadingState = const LoadingState();
   String? _errorMessage;
   List<Map<String, String>> qaList = [];
 
@@ -58,7 +57,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
   bool showingAlternatives = false;
   List<String> _alternativeQuestions = [];
   late final Store<AppState> _store;
-  final Uuid uuid = Uuid();
+  const Uuid uuid = Uuid();
   String? _helpText;
   List<String> _inputSuggestions = [];
 
@@ -213,7 +212,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
     setState(() {
       _errorMessage = message;
     });
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
         setState(() {
           _errorMessage = null;
@@ -273,14 +272,14 @@ class JournalEntryPageState extends State<JournalEntryPage> {
 
   Widget _buildBottomInputArea(ColorScheme colorScheme) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 4,
-            offset: Offset(0, -2),
+            offset: const Offset(0, -2),
           ),
         ],
       ),
@@ -291,7 +290,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
             child: TextField(
               controller: _textController,
               focusNode: _textFocusNode,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Write your answer...',
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -305,15 +304,15 @@ class JournalEntryPageState extends State<JournalEntryPage> {
               },
             ),
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           ElevatedButton(
             onPressed: _determineButtonAction(),
-            child: Icon(_isTyping ? AntDesign.right : AntDesign.check),
             style: ElevatedButton.styleFrom(
               backgroundColor: colorScheme.primary,
               foregroundColor: colorScheme.onPrimary,
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             ),
+            child: Icon(_isTyping ? AntDesign.right : AntDesign.check),
           ),
         ],
       ),
@@ -367,14 +366,14 @@ class JournalEntryPageState extends State<JournalEntryPage> {
             Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
               child: Text(_helpText!,
-                  style: TextStyle(fontStyle: FontStyle.italic, color: colorScheme.onSurface.withOpacity(0.6))),
+                  style: TextStyle(fontStyle: FontStyle.italic, color: colorScheme.onSurface.withValues(alpha: 0.6))),
             ),
-          Text(qaList[index]['question']!, style: TextStyle(fontWeight: FontWeight.bold)),
+          Text(qaList[index]['question']!, style: const TextStyle(fontWeight: FontWeight.bold)),
           if (isCurrentQuestion && !showingAlternatives && !_loadingState.isGeneratingQuestion)
             TextButton(
               onPressed: _showAlternatives,
-              child: Text('Change Question'),
               style: TextButton.styleFrom(foregroundColor: colorScheme.primary),
+              child: const Text('Change Question'),
             ),
           if (!isCurrentQuestion)
             Padding(
@@ -389,8 +388,8 @@ class JournalEntryPageState extends State<JournalEntryPage> {
                   .map((suggestion) => GestureDetector(
                         onTap: () => _onInputSuggestionSelected(suggestion),
                         child: Chip(
-                          label: Text(suggestion, style: TextStyle(fontSize: 12)),
-                          padding: EdgeInsets.all(4),
+                          label: Text(suggestion, style: const TextStyle(fontSize: 12)),
+                          padding: const EdgeInsets.all(4),
                           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
                       ))
@@ -418,17 +417,17 @@ class JournalEntryPageState extends State<JournalEntryPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Choose a different question:', style: TextStyle(fontWeight: FontWeight.bold)),
+          const Text('Choose a different question:', style: TextStyle(fontWeight: FontWeight.bold)),
           ..._alternativeQuestions.map((question) => ListTile(
                 title: Text(question),
                 onTap: () => _selectAlternative(question),
               )),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Row(
             children: [
-              Expanded(child: ElevatedButton(onPressed: _showAlternatives, child: Text('Regenerate'))),
-              SizedBox(width: 16),
-              Expanded(child: ElevatedButton(onPressed: _backToWriting, child: Text('Back to writing'))),
+              Expanded(child: ElevatedButton(onPressed: _showAlternatives, child: const Text('Regenerate'))),
+              const SizedBox(width: 16),
+              Expanded(child: ElevatedButton(onPressed: _backToWriting, child: const Text('Back to writing'))),
             ],
           ),
         ],
@@ -460,7 +459,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
       if (_textController.text.isEmpty) {
         _textController.text = suggestion;
       } else {
-        _textController.text += ' ' + suggestion;
+        _textController.text += ' $suggestion';
       }
       _inputSuggestions.remove(suggestion);
     });

@@ -43,7 +43,7 @@ class DataCheckOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Theme.of(context).colorScheme.surface.withOpacity(0.9),
+      color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.9),
       padding: const EdgeInsets.all(16.0),
       child: Center(
         child: Column(

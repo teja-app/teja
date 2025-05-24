@@ -130,7 +130,7 @@ class _TimelinePageState extends State<TimelinePage> {
       }
       currentIndex += entry.value.length;
     }
-    return SizedBox.shrink(); // Fallback for any index that doesn't match
+    return const SizedBox.shrink(); // Fallback for any index that doesn't match
   }
 
   @override
@@ -144,7 +144,7 @@ class _TimelinePageState extends State<TimelinePage> {
       converter: (store) => ListViewModel.fromStore(store),
       builder: (context, viewModel) {
         if (viewModel.isMoodLoading && viewModel.moodLogs.isEmpty) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
 
         // Group mood logs by date
@@ -164,7 +164,7 @@ class _TimelinePageState extends State<TimelinePage> {
       },
     );
     return Scaffold(
-      bottomNavigationBar: isDesktop(context) ? null : MobileNavigationBar(),
+      bottomNavigationBar: isDesktop(context) ? null : const MobileNavigationBar(),
       appBar: AppBar(
         title: const Text('Timeline'),
         forceMaterialTransparency: true,

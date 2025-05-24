@@ -62,7 +62,7 @@ class SpeechToTextViewState extends State<SpeechToTextView> {
 
   void resultListener(SpeechRecognitionResult result) {
     if (result.finalResult) {
-      _completeTranscription += result.recognizedWords + " "; // Add space for separation
+      _completeTranscription += "${result.recognizedWords} "; // Add space for separation
       print('Final result received: ${result.recognizedWords}');
     } else {
       print('Intermediate result: ${result.recognizedWords}');

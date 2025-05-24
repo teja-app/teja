@@ -9,7 +9,6 @@ import 'package:teja/domain/redux/journal/journal_editor/quick_journal_editor_ac
 import 'package:teja/domain/redux/journal/detail/journal_detail_actions.dart';
 import 'package:teja/domain/redux/permission/permissions_constants.dart';
 import 'package:teja/infrastructure/service/link_preview_service.dart';
-import 'package:teja/infrastructure/utils/share_handler_service.dart';
 import 'package:teja/presentation/navigation/isDesktop.dart';
 import 'package:teja/presentation/onboarding/widgets/feature_gate.dart';
 import 'package:teja/router.dart';

@@ -65,7 +65,7 @@ class MoodLogLayoutConfig {
 
 Widget moodLogLayout(MoodLogEntity? moodLog, BuildContext context, [MoodLogLayoutConfig? config]) {
   if (moodLog == null) {
-    return Center(child: Text("Mood log is not available"));
+    return const Center(child: Text("Mood log is not available"));
   }
 
   final svgPath = 'assets/icons/mood_${moodLog.moodRating}_active.svg';

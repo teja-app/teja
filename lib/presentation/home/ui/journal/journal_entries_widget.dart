@@ -36,7 +36,7 @@ class _JournalEntriesWidgetState extends State<JournalEntriesWidget> {
 
         final GoRouter goRouter = GoRouter.of(context);
         var journalEntries = viewModel.journalLogsByDate[formattedDate];
-        if (journalEntries != null && !journalEntries.isEmpty) {
+        if (journalEntries != null && journalEntries.isNotEmpty) {
           return Align(
             alignment: Alignment.topCenter,
             child: Column(

@@ -64,8 +64,8 @@ class _BackgroundImageWrapperState extends State<BackgroundImageWrapper> {
     return Positioned.fill(
       child: Container(
         color: isDarkMode
-            ? Colors.black.withOpacity(0.7)
-            : Colors.white.withOpacity(0.7),
+            ? Colors.black.withValues(alpha: 0.7)
+            : Colors.white.withValues(alpha: 0.7),
       ),
     );
   }

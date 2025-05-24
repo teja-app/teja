@@ -36,7 +36,7 @@ class SlideItemWidget extends StatelessWidget {
             width: 200,
             height: 200,
           ),
-          SizedBox(height: 20), // Space between image and text
+          const SizedBox(height: 20), // Space between image and text
           DefaultTextStyle(
             style: textTheme.titleLarge!,
             child: AnimatedTextKit(

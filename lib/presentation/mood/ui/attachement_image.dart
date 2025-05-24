@@ -44,7 +44,7 @@ class AttachmentImage extends StatelessWidget {
               color: Colors.grey[200],
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(Icons.error, color: Colors.red),
+            child: const Icon(Icons.error, color: Colors.red),
           );
         } else {
           // Handle the loading state

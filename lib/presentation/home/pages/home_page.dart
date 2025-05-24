@@ -1,11 +1,8 @@
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:posthog_flutter/posthog_flutter.dart';
-import 'package:provider/provider.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
@@ -190,7 +187,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           const SizedBox(height: 20),
-          ExampleStreakEntriesDashboard(),
+          const ExampleStreakEntriesDashboard(),
           const SizedBox(height: 20),
           const QuickInputWidgetWrapper(),
           const SizedBox(height: 20),
@@ -217,9 +214,9 @@ class QuickInputWidgetWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _shareHandlerService = ShareHandlerService();
+    final shareHandlerService = ShareHandlerService();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _shareHandlerService.setContext(context);
+      shareHandlerService.setContext(context);
     });
 
     return Padding(

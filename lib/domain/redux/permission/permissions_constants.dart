@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 const String SLEEP = "SLEEP";
 const String SLEEP_YEARLY = "SLEEP_YEARLY";
 const String MOOD_MONTHLY = "MOOD_MONTHLY";

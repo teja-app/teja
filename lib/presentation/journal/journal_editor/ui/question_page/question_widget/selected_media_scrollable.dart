@@ -16,7 +16,7 @@ Widget buildSelectedMediaScrollable(
       ...viewModel.videoEntries!.map((entry) => MediaEntry(type: MediaType.video, entry: entry)),
   ];
 
-  return Container(
+  return SizedBox(
     width: 50,
     height: MediaQuery.of(context).size.height - 200,
     child: ListView.builder(

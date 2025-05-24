@@ -9,6 +9,8 @@ import 'package:teja/shared/common/button.dart';
 import 'package:go_router/go_router.dart';
 
 class RecoverAccountScreen extends StatefulWidget {
+  const RecoverAccountScreen({super.key});
+
   @override
   _RecoverAccountScreenState createState() => _RecoverAccountScreenState();
 }

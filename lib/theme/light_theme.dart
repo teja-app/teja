@@ -28,12 +28,12 @@ final ThemeData lightTheme = ThemeData(
     hourMinuteTextColor: Colors.black,
     dayPeriodColor: Colors.white,
     confirmButtonStyle: ButtonStyle(
-      backgroundColor: MaterialStateProperty.all<Color>(Colors.green[600]!),
-      foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+      backgroundColor: WidgetStateProperty.all<Color>(Colors.green[600]!),
+      foregroundColor: WidgetStateProperty.all<Color>(Colors.white),
     ),
     cancelButtonStyle: ButtonStyle(
-      backgroundColor: MaterialStateProperty.all<Color>(Colors.grey[300]!),
-      foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
+      backgroundColor: WidgetStateProperty.all<Color>(Colors.grey[300]!),
+      foregroundColor: WidgetStateProperty.all<Color>(Colors.black),
     ),
     hourMinuteShape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10),
@@ -77,23 +77,23 @@ final ThemeData lightTheme = ThemeData(
   ),
   segmentedButtonTheme: SegmentedButtonThemeData(
     style: ButtonStyle(
-      backgroundColor: MaterialStateProperty.resolveWith<Color>(
-        (Set<MaterialState> states) {
-          if (states.contains(MaterialState.selected)) {
+      backgroundColor: WidgetStateProperty.resolveWith<Color>(
+        (Set<WidgetState> states) {
+          if (states.contains(WidgetState.selected)) {
             return Colors.green[600]!;
           }
           return Colors.white;
         },
       ),
-      foregroundColor: MaterialStateProperty.resolveWith<Color>(
-        (Set<MaterialState> states) {
-          if (states.contains(MaterialState.selected)) {
+      foregroundColor: WidgetStateProperty.resolveWith<Color>(
+        (Set<WidgetState> states) {
+          if (states.contains(WidgetState.selected)) {
             return Colors.white;
           }
           return Colors.black;
         },
       ),
-      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
         RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),
         ),

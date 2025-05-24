@@ -79,11 +79,11 @@ class _MoodSleepChartState extends State<MoodSleepChart> {
                     drawVerticalLine: true,
                     verticalInterval: widget.maxX / 5,
                     getDrawingHorizontalLine: (value) => FlLine(
-                      color: Colors.grey.withOpacity(0.1),
+                      color: Colors.grey.withValues(alpha: 0.1),
                       strokeWidth: 0.5,
                     ),
                     getDrawingVerticalLine: (value) => FlLine(
-                      color: Colors.grey.withOpacity(0.1),
+                      color: Colors.grey.withValues(alpha: 0.1),
                       strokeWidth: 0.5,
                     ),
                     checkToShowVerticalLine: (value) {
@@ -142,7 +142,7 @@ class _MoodSleepChartState extends State<MoodSleepChart> {
                   borderData: FlBorderData(
                     show: true,
                     border: Border.all(
-                      color: Colors.grey.withOpacity(0.3),
+                      color: Colors.grey.withValues(alpha: 0.3),
                       width: 0.1,
                     ),
                   ),

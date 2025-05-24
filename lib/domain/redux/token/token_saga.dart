@@ -22,7 +22,7 @@ class TokenSaga {
       final usedToday = data['usedToday'];
       yield Put(TokenSummaryReceivedAction(total, used, pending, usedToday));
     } else {
-      yield Put(TokenSummaryFailedAction('Failed to fetch token summary.'));
+      yield Put(const TokenSummaryFailedAction('Failed to fetch token summary.'));
     }
   }
 }

@@ -99,7 +99,7 @@ class NotificationSettingsPageState extends State<NotificationSettingsPage> {
         SnackBar(
           content: Text(
               "Notification time for ${NotificationType.toReadableString(notificationType)} changed to ${picked.format(context)}."),
-          duration: Duration(seconds: 3),
+          duration: const Duration(seconds: 3),
         ),
       );
 

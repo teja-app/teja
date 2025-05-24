@@ -1,5 +1,4 @@
 import 'package:cbl/cbl.dart';
-import 'package:json_annotation/json_annotation.dart';
 
 part 'journal_entry.cbl.type.g.dart';
 

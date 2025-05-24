@@ -12,7 +12,7 @@ class FeatureGate extends StatefulWidget {
   final VoidCallback? onFeatureAccessed; // Optional callback
   final bool autoTriggerOnAccess; // Flag to control auto-trigger
 
-  FeatureGate({
+  const FeatureGate({
     Key? key,
     required this.feature,
     this.initialTab = FeatureTab.free,
@@ -101,8 +101,8 @@ class FeatureGateViewModel {
     SecureStorage secureStorage,
   ) async {
     try {
-      bool _hasExistingMnemonic = await store.state.authState.hasExistingMnemonic;
-      return FeatureGateViewModel(hasAccess: _hasExistingMnemonic);
+      bool hasExistingMnemonic = store.state.authState.hasExistingMnemonic;
+      return FeatureGateViewModel(hasAccess: hasExistingMnemonic);
     } catch (e) {
       print('Error fetching access details: $e'); // Debug print
       return FeatureGateViewModel(hasAccess: false); // Default to no access on error

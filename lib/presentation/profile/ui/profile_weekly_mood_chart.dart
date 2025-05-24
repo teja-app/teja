@@ -60,13 +60,13 @@ class ProfileWeeklyMoodChartState extends State<ProfileWeeklyMoodChart> {
                 gridHeight: 2.8,
                 margin: 0,
                 padding: 0,
-                color: colorSchema.background,
+                color: colorSchema.surface,
                 child: WeeklyMoodChart(
                   key: const Key("WeeklyMoodChart"),
                   currentWeekSpots: currentWeekSpots,
                   previousWeekSpots: previousWeekSpots,
                   currentWeekColor: colorScheme.primary,
-                  previousWeekColor: colorScheme.secondary.withOpacity(0.2),
+                  previousWeekColor: colorScheme.secondary.withValues(alpha: 0.2),
                 ),
               ),
             ],
@@ -99,7 +99,7 @@ class ProfileWeeklyMoodChartState extends State<ProfileWeeklyMoodChart> {
     // Assign actual data to the spots
     moodRatings.forEach((date, rating) {
       int dayOfWeek = date.weekday - 1; // Convert to 0-index (0 = Monday)
-      if (date.isBefore(DateTime.now().add(Duration(days: 1)))) {
+      if (date.isBefore(DateTime.now().add(const Duration(days: 1)))) {
         weekSpots[dayOfWeek] = FlSpot(dayOfWeek.toDouble(), rating);
       }
     });
@@ -115,8 +115,8 @@ class ProfileWeeklyMoodChartState extends State<ProfileWeeklyMoodChart> {
   List<FlSpot> _previousWeekMoodRatingsToSpots(Map<DateTime, double> moodRatings) {
     // Initialize all spots with null values except the first and last, which are set to a default value (e.g., 0)
     List<FlSpot?> weekSpots = List<FlSpot?>.filled(7, null);
-    weekSpots[0] = FlSpot(0, 0); // Default value for the first day of the week
-    weekSpots[6] = FlSpot(6, 0); // Default value for the last day of the week
+    weekSpots[0] = const FlSpot(0, 0); // Default value for the first day of the week
+    weekSpots[6] = const FlSpot(6, 0); // Default value for the last day of the week
 
     // Assign actual data to the spots
     moodRatings.forEach((date, rating) {

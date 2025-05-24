@@ -34,10 +34,10 @@ class MobileNavigationBar extends StatelessWidget {
         color: theme.navigationBarTheme.backgroundColor ?? colorScheme.surface,
         boxShadow: [
           BoxShadow(
-            color: theme.shadowColor.withOpacity(0.1),
+            color: theme.shadowColor.withValues(alpha: 0.1),
             spreadRadius: 0,
             blurRadius: 10,
-            offset: Offset(0, -1),
+            offset: const Offset(0, -1),
           ),
         ],
       ),
@@ -67,14 +67,14 @@ class MobileNavigationBar extends StatelessWidget {
         HapticFeedback.selectionClick();
       },
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected ? colorScheme.primary : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Icon(
           icon,
-          color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface.withOpacity(0.6),
+          color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface.withValues(alpha: 0.6),
           size: 24,
         ),
       ),

@@ -48,10 +48,10 @@ class MoodDetailSaga {
       yield Call(moodLogRepository.deleteMoodLogById, args: [action.moodId]);
       yield Put(const DeleteMoodDetailSuccessAction());
       yield Put(const SyncMoodLogs());
-      yield Put(FetchMoodLogsAction());
+      yield Put(const FetchMoodLogsAction());
     }, Catch: (e, s) sync* {
       yield Put(DeleteMoodDetailFailureAction(e.toString()));
-      yield Put(FetchMoodLogsAction());
+      yield Put(const FetchMoodLogsAction());
     });
   }
 }

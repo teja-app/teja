@@ -38,7 +38,7 @@ class JournalSyncSaga {
       yield Call(api.syncEntries,
           args: [localEntries, lastSyncTimestamp, previousFailedChunks], result: syncResultResult);
       var syncResult = syncResultResult.value!;
-      print("syncResult ${syncResult}");
+      print("syncResult $syncResult");
 
       if (syncResult['serverChanges'].isNotEmpty) {
         yield Call(journalEntryRepository.addOrUpdateJournalEntries, args: [syncResult['serverChanges']]);

@@ -63,7 +63,7 @@ class QuickJournalEditorSaga {
             if (e.toString().contains('Unique index violated')) {
               logger.e("Unique index violated, generating a new ID.");
             } else {
-              throw e;
+              rethrow;
             }
           }
         }

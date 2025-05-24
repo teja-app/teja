@@ -90,7 +90,7 @@ class JournalEditorScreenState extends State<JournalEditorScreen> {
                           goRouter.goNamed(RootPath.home);
                         },
                       )
-                    : Center(child: Text("No data available"));
+                    : const Center(child: Text("No data available"));
               }
             },
           ),

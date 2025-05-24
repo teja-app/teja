@@ -346,7 +346,7 @@ class JournalDetailPageState extends State<JournalDetailPage> {
                   'Affirmation',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                const Icon(Icons.favorite, color: Colors.grey),
+                Icon(Icons.favorite, color: Colors.grey),
               ],
             ),
             const SizedBox(height: 12),

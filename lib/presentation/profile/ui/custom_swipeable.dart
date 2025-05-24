@@ -27,7 +27,7 @@ class _CustomSwipeableState extends State<CustomSwipeable>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 200),
       value: 0, // start at 0
     );
 
@@ -82,7 +82,7 @@ class _CustomSwipeableState extends State<CustomSwipeable>
         children: [
           // Progress bar background
           Container(
-            color: widget.progressColor.withOpacity(_colorTween.value),
+            color: widget.progressColor.withValues(alpha: _colorTween.value),
             width: double.infinity,
             height: double.infinity,
           ),

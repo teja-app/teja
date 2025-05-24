@@ -19,7 +19,7 @@ class WidgetbookApp extends StatelessWidget {
     return Widgetbook(
       directories: directories,
       appBuilder: (context, child) => ColoredBox(
-        color: Color.fromARGB(255, 255, 255, 255),
+        color: const Color.fromARGB(255, 255, 255, 255),
         child: child,
       ),
       integrations: [
@@ -46,7 +46,7 @@ class WidgetbookApp extends StatelessWidget {
             ),
           ],
           themeBuilder: (context, theme, child) => ColoredBox(
-            color: theme.colorScheme.background,
+            color: theme.colorScheme.surface,
             child: Theme(
               data: theme,
               child: child,
