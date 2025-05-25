@@ -430,7 +430,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
                     configurations: quill.QuillEditorConfigurations(
                       controller: quill.QuillController(
                         document: quill.Document.fromJson(parsedJson),
-                        selection: TextSelection.collapsed(offset: 0),
+                        selection: const TextSelection.collapsed(offset: 0),
                         readOnly: true,
                       ),
                     ),

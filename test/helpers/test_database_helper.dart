@@ -1,10 +1,11 @@
 import 'dart:io';
 import 'package:cbl/cbl.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
 class TestDatabaseHelper {
-  static final _uuid = Uuid();
+  static const _uuid = Uuid();
   static final List<String> _createdDatabases = [];
   
   /// Create a test database with a unique name
@@ -42,7 +43,7 @@ class TestDatabaseHelper {
           await dir.delete(recursive: true);
         }
       } catch (e) {
-        print('Failed to delete test database at $dbPath: $e');
+        debugPrint('Failed to delete test database at $dbPath: $e');
       }
     }
     _createdDatabases.clear();

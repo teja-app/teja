@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:cbl/cbl.dart';
-import 'package:teja/infrastructure/repositories/master_factor.dart';
 import 'package:teja/domain/entities/master_factor.dart';
 import '../../../fixtures/master_factor_fixtures.dart';
 
@@ -9,11 +8,6 @@ class MockDatabase extends Mock implements Database {}
 
 void main() {
   group('MasterFactorRepository Entity Conversion', () {
-    late MasterFactorRepository repository;
-
-    setUp(() {
-      repository = MasterFactorRepository(MockDatabase());
-    });
 
     group('Entity Conversion', () {
       test('should convert complete MasterFactorEntity correctly', () {

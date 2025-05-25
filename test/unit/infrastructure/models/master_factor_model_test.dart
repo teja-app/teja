@@ -248,8 +248,8 @@ void main() {
 
       test('should handle special characters in slug and title', () {
         // Arrange
-        final specialSlug = 'slug-with-émojis-😊-and-spëcials';
-        final specialTitle = 'Title with émojis 😊 and spëcial chârs: ñ, ü, é';
+        const specialSlug = 'slug-with-émojis-😊-and-spëcials';
+        const specialTitle = 'Title with émojis 😊 and spëcial chârs: ñ, ü, é';
         
         // Act
         final factor = MasterFactorEntity(

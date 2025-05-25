@@ -315,8 +315,8 @@ void main() {
       test('should create copy with updated fields', () {
         // Arrange
         final original = JournalEntryFixtures.minimal();
-        final newTitle = 'Updated Title';
-        final newBody = 'Updated body content';
+        const newTitle = 'Updated Title';
+        const newBody = 'Updated body content';
         final newTopics = ['updated', 'topics'];
         
         // Act
@@ -369,8 +369,8 @@ void main() {
       test('should update timestamps correctly', () {
         // Arrange
         final original = JournalEntryFixtures.minimal();
-        final newTimestamp = DateTime.now().add(Duration(hours: 1));
-        final newUpdatedAt = DateTime.now().add(Duration(minutes: 30));
+        final newTimestamp = DateTime.now().add(const Duration(hours: 1));
+        final newUpdatedAt = DateTime.now().add(const Duration(minutes: 30));
         
         // Act
         final updated = original.copyWith(
@@ -643,7 +643,7 @@ void main() {
 
       test('should handle special characters in text fields', () {
         // Arrange
-        final specialChars = 'Test with émojis 😊 and spëcial chârs: ñ, ü, é, 中文';
+        const specialChars = 'Test with émojis 😊 and spëcial chârs: ñ, ü, é, 中文';
         final entry = JournalEntryFixtures.minimal().copyWith(
           title: specialChars,
           body: specialChars,

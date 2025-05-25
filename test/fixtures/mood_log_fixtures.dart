@@ -3,7 +3,7 @@ import 'package:teja/domain/entities/feeling.dart';
 import 'package:uuid/uuid.dart';
 
 class MoodLogFixtures {
-  static final _uuid = Uuid();
+  static const _uuid = Uuid();
   
   /// Create a complete mood log with all fields populated
   static MoodLogEntity complete({
@@ -79,7 +79,7 @@ class MoodLogFixtures {
     DateTime? startDate,
     bool includeDeleted = false,
   }) {
-    final start = startDate ?? DateTime.now().subtract(Duration(days: 7));
+    final start = startDate ?? DateTime.now().subtract(const Duration(days: 7));
     final logs = <MoodLogEntity>[];
     
     for (int i = 0; i < 7; i++) {
@@ -87,7 +87,7 @@ class MoodLogFixtures {
       final rating = (i % 5) + 1; // Ratings from 1-5
       
       final log = MoodLogEntity(
-        id: 'mood-week-${i}-${_uuid.v4()}',
+        id: 'mood-week-$i-${_uuid.v4()}',
         timestamp: date,
         createdAt: date,
         updatedAt: date,
@@ -123,7 +123,7 @@ class MoodLogFixtures {
       final date = start.add(Duration(days: i));
       logs.add(
         MoodLogEntity(
-          id: 'mood-page-${i}-${_uuid.v4()}',
+          id: 'mood-page-$i-${_uuid.v4()}',
           timestamp: date,
           createdAt: date,
           updatedAt: date,
@@ -192,7 +192,7 @@ class MoodLogFixtures {
     for (int i = 0; i < count; i++) {
       logs.add(
         MoodLogEntity(
-          id: 'mood-unsynced-${i}-${_uuid.v4()}',
+          id: 'mood-unsynced-$i-${_uuid.v4()}',
           timestamp: now.subtract(Duration(hours: i)),
           createdAt: now.subtract(Duration(hours: i)),
           updatedAt: now.subtract(Duration(hours: i)),

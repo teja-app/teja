@@ -2,7 +2,7 @@ import 'package:teja/domain/entities/journal_entry_entity.dart';
 import 'package:uuid/uuid.dart';
 
 class JournalEntryFixtures {
-  static final _uuid = Uuid();
+  static const _uuid = Uuid();
   
   /// Create a complete journal entry with all fields populated
   static JournalEntryEntity complete({
@@ -202,14 +202,14 @@ class JournalEntryFixtures {
     DateTime? startDate,
     bool includeDeleted = false,
   }) {
-    final start = startDate ?? DateTime.now().subtract(Duration(days: 7));
+    final start = startDate ?? DateTime.now().subtract(const Duration(days: 7));
     final entries = <JournalEntryEntity>[];
     
     for (int i = 0; i < 7; i++) {
       final date = start.add(Duration(days: i));
       
       final entry = JournalEntryEntity(
-        id: 'journal-week-${i}-${_uuid.v4()}',
+        id: 'journal-week-$i-${_uuid.v4()}',
         timestamp: date,
         createdAt: date,
         updatedAt: date,
@@ -238,7 +238,7 @@ class JournalEntryFixtures {
       final date = start.add(Duration(days: i));
       entries.add(
         JournalEntryEntity(
-          id: 'journal-page-${i}-${_uuid.v4()}',
+          id: 'journal-page-$i-${_uuid.v4()}',
           timestamp: date,
           createdAt: date,
           updatedAt: date,

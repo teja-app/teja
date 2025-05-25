@@ -1,9 +1,8 @@
 import 'package:teja/domain/entities/master_factor.dart';
-import 'package:teja/infrastructure/database/cbl_collections/master_factor.dart' as cbl;
 import 'package:uuid/uuid.dart';
 
 class MasterFactorFixtures {
-  static final _uuid = Uuid();
+  static const _uuid = Uuid();
   
   /// Create a complete master factor with subcategories
   static MasterFactorEntity complete({

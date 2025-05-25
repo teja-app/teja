@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
 import 'package:teja/infrastructure/repositories/journal_entry_cbl_helpers.dart';
-import 'package:teja/infrastructure/database/cbl_collections/journal_entry.dart';
 import '../../../fixtures/journal_entry_fixtures.dart';
 
 void main() {
@@ -515,7 +514,7 @@ void main() {
 
       test('should handle special characters correctly', () {
         // Arrange
-        final specialChars = 'Test with émojis 😊 and spëcial chârs: ñ, ü, é, 中文';
+        const specialChars = 'Test with émojis 😊 and spëcial chârs: ñ, ü, é, 中文';
         final entity = JournalEntryFixtures.minimal().copyWith(
           title: specialChars,
           body: specialChars,

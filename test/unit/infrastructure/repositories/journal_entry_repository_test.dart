@@ -1,19 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:cbl/cbl.dart';
-import 'package:teja/infrastructure/repositories/journal_entry_repository.dart';
-import 'package:teja/domain/entities/journal_entry_entity.dart';
 import '../../../fixtures/journal_entry_fixtures.dart';
 
 class MockDatabase extends Mock implements Database {}
 
 void main() {
   group('JournalEntryRepository Entity Conversion', () {
-    late JournalEntryRepository repository;
-
-    setUp(() {
-      repository = JournalEntryRepository(MockDatabase());
-    });
 
     group('Entity Conversion', () {
       test('should convert complete JournalEntryEntity correctly', () {
@@ -156,8 +149,8 @@ void main() {
         final entity = JournalEntryFixtures.withSpecificDate(now);
         
         expect(entity.timestamp, equals(now));
-        expect(entity.createdAt.isBefore(now.add(Duration(seconds: 1))), isTrue);
-        expect(entity.updatedAt.isBefore(now.add(Duration(seconds: 1))), isTrue);
+        expect(entity.createdAt.isBefore(now.add(const Duration(seconds: 1))), isTrue);
+        expect(entity.updatedAt.isBefore(now.add(const Duration(seconds: 1))), isTrue);
       });
 
       test('should handle soft delete functionality', () {

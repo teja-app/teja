@@ -5,11 +5,6 @@ import '../../../fixtures/mood_log_fixtures.dart';
 
 void main() {
   group('MoodLogEntity Tests', () {
-    late MoodLogEntity testMoodLog;
-    
-    setUp(() {
-      testMoodLog = MoodLogFixtures.complete();
-    });
     
     group('Serialization', () {
       test('should serialize to JSON correctly', () {
