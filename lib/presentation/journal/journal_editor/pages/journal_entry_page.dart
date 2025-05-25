@@ -10,10 +10,8 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_actions.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.dart';
 import 'package:teja/infrastructure/api/ai_question_api.dart';
-import 'package:teja/presentation/journal/journal_editor/ui/typing_indicator.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:teja/presentation/journal/widgets/view/custom_quill_view.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/helpers/logger.dart';
 import 'package:uuid/uuid.dart';
@@ -143,7 +141,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
     if (qaList.isNotEmpty) {
       // _textController.text = qaList.last['answer'] ?? '';
       _quillController.replaceText(0, 0, qaList.last['answer'] ?? '',
-          TextSelection.collapsed(offset: 0));
+          const TextSelection.collapsed(offset: 0));
       await _goDeeper(useExistingAnswer: true);
     }
   }
@@ -157,22 +155,11 @@ class JournalEntryPageState extends State<JournalEntryPage> {
 
       try {
         if (currentQuestionIndex < qaList.length) {
-          print('currentQuestionIndex: $currentQuestionIndex');
-          print(
-              'qaList[currentQuestionIndex]: ${qaList[currentQuestionIndex]}');
-          print(
-              '_quillController.document.toPlainText().trim(): ${_quillController.document.toPlainText().trim()}');
-          // qaList[currentQuestionIndex]['answer'] = _textController.text;
           qaList[currentQuestionIndex]['answer'] =
-              // _quillController.document.toPlainText().trim();
               jsonEncode(_quillController.document.toDelta().toJson());
         } else {
-          print(
-              '_quillController.document.toPlainText().trim()3: ${_quillController.document.toPlainText().trim()}');
           qaList.add({
             'question': qaList.last['question'] ?? '',
-            // 'answer': _textController.text
-            // 'answer': _quillController.document.toPlainText().trim()
             'answer': jsonEncode(_quillController.document.toDelta().toJson())
           });
         }
@@ -183,7 +170,6 @@ class JournalEntryPageState extends State<JournalEntryPage> {
           await _store.dispatch(UpdateQuestionAnswer(
             journalEntryId: journalEntry.id,
             questionId: qaList[currentQuestionIndex]['questionId'] ?? uuid.v4(),
-            // answerText: _textController.text,
             answerText:
                 jsonEncode(_quillController.document.toDelta().toJson()),
             questionText: qaList[currentQuestionIndex]['question']!,
@@ -419,7 +405,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
               child: Text(_helpText!,
                   style: TextStyle(
                       fontStyle: FontStyle.italic,
-                      color: colorScheme.onSurface.withOpacity(0.6))),
+                      color: colorScheme.onSurface.withValues(alpha: 0.6))),
             ),
           Text(qaList[index]['question']!,
               style: const TextStyle(fontWeight: FontWeight.bold)),

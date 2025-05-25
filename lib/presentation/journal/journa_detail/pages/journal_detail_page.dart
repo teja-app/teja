@@ -483,7 +483,7 @@ class JournalDetailPageState extends State<JournalDetailPage> {
             (() {
               try {
                 // Attempt to parse the answerText as JSON
-                final quillJson = jsonDecode(question?.answerText ?? '');
+                jsonDecode(question?.answerText ?? '');
                 return CustomQuillView(quillJson: question?.answerText ?? '');
               } catch (e) {
                 // Fallback to Text widget if parsing fails
@@ -515,8 +515,9 @@ class JournalDetailPageState extends State<JournalDetailPage> {
             .toList() ??
         [];
 
-    if (imageEntries.isEmpty && videoEntries.isEmpty)
+    if (imageEntries.isEmpty && videoEntries.isEmpty) {
       return const SizedBox.shrink();
+    }
 
     return SizedBox(
       height: 60,

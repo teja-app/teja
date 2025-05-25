@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
-import 'package:flutter_quill/quill_delta.dart';
-import 'package:flutter_quill/flutter_quill.dart' show Document, ChangeSource;
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
@@ -293,8 +291,6 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ColorScheme colorScheme = Theme.of(context).colorScheme;
-    Color primary = colorScheme.primary;
 
     return PopScope(
       onPopInvokedWithResult: (didPop, result) async {
@@ -312,7 +308,7 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
               }
               _isInitialized = true;
             } catch (e) {
-              print('Error initializing Quill controller: $e');
+              // Error initializing Quill controller
               _isInitialized = true;
             }
           }
