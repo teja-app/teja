@@ -96,6 +96,7 @@ class JournalEntryEntity {
       summary: summary ?? this.summary,
       keyInsight: keyInsight ?? this.keyInsight,
       affirmation: affirmation ?? this.affirmation,
+      topics: topics ?? this.topics,
       feelings: feelings ?? this.feelings,
       lock: lock ?? this.lock,
       body: body ?? this.body,
@@ -108,9 +109,21 @@ class JournalEntryEntity {
     return JournalEntryEntity(
       id: json['id'],
       templateId: json['templateId'],
-      timestamp: json['timestamp'] != null ? DateTime.parse(json['timestamp'] as String) : DateTime.now(),
-      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt'] as String) : DateTime.now(),
-      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt'] as String) : DateTime.now(),
+      timestamp: json['timestamp'] != null 
+          ? (json['timestamp'] is int 
+              ? DateTime.fromMillisecondsSinceEpoch(json['timestamp']) 
+              : DateTime.parse(json['timestamp'] as String))
+          : DateTime.now(),
+      createdAt: json['createdAt'] != null 
+          ? (json['createdAt'] is int 
+              ? DateTime.fromMillisecondsSinceEpoch(json['createdAt']) 
+              : DateTime.parse(json['createdAt'] as String))
+          : DateTime.now(),
+      updatedAt: json['updatedAt'] != null 
+          ? (json['updatedAt'] is int 
+              ? DateTime.fromMillisecondsSinceEpoch(json['updatedAt']) 
+              : DateTime.parse(json['updatedAt'] as String))
+          : DateTime.now(),
       questions: json['questions'] != null
           ? (json['questions'] as List).map((q) => QuestionAnswerPairEntity.fromJson(q)).toList()
           : null,

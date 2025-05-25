@@ -4,6 +4,7 @@
 import 'dart:io';
 
 import 'package:cbl/cbl.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teja/domain/entities/feeling.dart';
 import 'package:teja/domain/entities/mood_log.dart';
@@ -175,7 +176,7 @@ class MoodLogRepository {
           final map = dictionary.toPlainMap();
           map['id'] = docId;
           
-          entries.add(_mapToEntity(map));
+          entries.add(mapToEntity(map));
         }
       }
       
@@ -224,7 +225,7 @@ class MoodLogRepository {
           final map = dictionary.toPlainMap();
           map['id'] = docId;
           
-          entries.add(_mapToEntity(map));
+          entries.add(mapToEntity(map));
         }
       }
       
@@ -345,7 +346,7 @@ class MoodLogRepository {
           final map = dictionary.toPlainMap();
           map['id'] = docId;
           
-          entries.add(_mapToEntity(map));
+          entries.add(mapToEntity(map));
         }
       }
       
@@ -629,7 +630,8 @@ class MoodLogRepository {
     );
   }
 
-  MoodLogEntity _mapToEntity(Map<String, dynamic> map) {
+  @visibleForTesting
+  MoodLogEntity mapToEntity(Map<String, dynamic> map) {
     return MoodLogEntity(
       id: map['id'] as String,
       timestamp: DateTime.parse(map['timestamp'] as String),
