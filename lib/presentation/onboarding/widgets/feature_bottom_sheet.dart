@@ -4,11 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:teja/domain/redux/app_state.dart';
-import 'package:teja/infrastructure/service/token_service.dart';
 import 'package:teja/presentation/onboarding/widgets/authenticate.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/button.dart';
-import 'package:teja/shared/storage/secure_storage.dart';
 import 'package:teja/shared/helpers/logger.dart';
 
 enum FeatureTab { free, paid }
@@ -25,8 +23,6 @@ class FeatureAccessBottomSheet extends StatefulWidget {
 class FeatureAccessBottomSheetState extends State<FeatureAccessBottomSheet> {
   final InAppPurchase _iap = InAppPurchase.instance;
   bool _available = true;
-  final TokenService _tokenService = TokenService();
-  final SecureStorage _secureStorage = SecureStorage();
 
   List<ProductDetails> _products = [];
   // ignore: unused_field
@@ -81,8 +77,6 @@ class FeatureAccessBottomSheetState extends State<FeatureAccessBottomSheet> {
       if (purchase.status == PurchaseStatus.purchased) {
         // Verify the purchase and grant the feature
         // You might want to call your backend here to verify the purchase
-        final accessToken = await _secureStorage.readAccessToken();
-        await _tokenService.getMeDetails(accessToken!);
       }
     }
     setState(() {

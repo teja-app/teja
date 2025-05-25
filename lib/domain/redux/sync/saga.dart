@@ -15,7 +15,8 @@ class SyncSaga {
   _deleteAccount({required DeleteAccountAction action}) sync* {
     yield Try(() sync* {
       // TODO: Implement account deletion for CBL
-      yield Put(const DeleteAccountActionFailed('Delete account functionality is temporarily disabled during migration'));
+      yield Put(const DeleteAccountActionFailed(
+          'Delete account functionality is temporarily disabled during migration'));
     }, Catch: (e, s) sync* {
       yield Put(DeleteAccountActionFailed(e.toString()));
     });
@@ -24,7 +25,8 @@ class SyncSaga {
   _exportJSON({required ExportJSONAction action}) sync* {
     yield Try(() sync* {
       // TODO: Implement CBL export functionality
-      yield Put(const ExportJSONActionFailed('Export functionality is temporarily disabled during migration'));
+      yield Put(const ExportJSONActionFailed(
+          'Export functionality is temporarily disabled during migration'));
     }, Catch: (e, s) sync* {
       yield Put(ExportJSONActionFailed(e.toString()));
     });
@@ -33,7 +35,8 @@ class SyncSaga {
   _importJSON({required ImportJSONAction action}) sync* {
     yield Try(() sync* {
       // TODO: Implement CBL import functionality
-      yield Put(const ImportJSONActionFailed('Import functionality is temporarily disabled during migration'));
+      yield Put(const ImportJSONActionFailed(
+          'Import functionality is temporarily disabled during migration'));
     }, Catch: (e, s) sync* {
       yield Put(ImportJSONActionFailed(e.toString()));
     });

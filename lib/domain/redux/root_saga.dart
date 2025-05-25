@@ -23,7 +23,6 @@ import 'package:teja/domain/redux/mood/mood_sync/mood_sync_saga.dart';
 import 'package:teja/domain/redux/permission/permission_saga.dart';
 import 'package:teja/domain/redux/profile_page_sequence/profile_page_saga.dart';
 import 'package:teja/domain/redux/theme/theme_saga.dart';
-import 'package:teja/domain/redux/token/token_saga.dart';
 import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_saga.dart';
 import 'package:teja/domain/redux/yearly_mood_report/yearly_mood_report_saga.dart';
 import 'package:teja/domain/redux/yearly_sleep_report/yearly_sleep_report_saga.dart';
@@ -42,7 +41,6 @@ Iterable<void> rootSaga(Store<AppState> store) sync* {
     'WeeklyMoodReportSaga': () => WeeklyMoodReportSaga().saga(),
     'MonthlyMoodReportSaga': () => MonthlyMoodReportSaga().saga(),
     'YearlySleepReportSaga': () => YearlySleepReportSaga().saga(),
-    'TokenSaga': () => TokenSaga().saga(),
     'JournalEditorSaga': () => JournalEditorSaga().saga(),
     'JournalAnalysisSaga': () => JournalAnalysisSaga().saga(),
     'JournalLogsSaga': () => JournalLogsSaga().saga(),

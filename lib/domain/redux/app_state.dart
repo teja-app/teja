@@ -18,7 +18,6 @@ import 'package:teja/domain/redux/mood/mood_analysis/mood_analysis_state.dart';
 import 'package:teja/domain/redux/permission/permission_state.dart';
 import 'package:teja/domain/redux/profile_page_sequence/profile_page_state.dart';
 import 'package:teja/domain/redux/theme/theme_state.dart';
-import 'package:teja/domain/redux/token/token_state.dart';
 import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_state.dart';
 import 'package:teja/domain/redux/yearly_mood_report/yearly_mood_report_state.dart';
 import 'package:teja/domain/redux/yearly_sleep_report/yearly_sleep_report_state.dart';
@@ -35,7 +34,6 @@ class AppState {
   final YearlySleepReportState yearlySleepReportState;
   final YearlyMoodReportState yearlyMoodReportState;
   final PermissionState permissionState;
-  final TokenState tokenState;
   final ProfilePageState profilePageState;
 
   // Mood
@@ -69,7 +67,6 @@ class AppState {
     required this.weeklyMoodReportState,
     required this.monthlyMoodReportState,
     required this.yearlySleepReportState,
-    required this.tokenState,
     required this.journalEditorState,
     required this.journalAnalysisState,
     required this.journalLogsState,
@@ -94,7 +91,6 @@ class AppState {
     WeeklyMoodReportState? weeklyMoodReportState,
     MonthlyMoodReportState? monthlyMoodReportState,
     YearlySleepReportState? yearlySleepReportState,
-    TokenState? tokenState,
     JournalEditorState? journalEditorState,
     JournalAnalysisState? journalAnalysisState,
     JournalLogsState? journalLogsState,
@@ -119,7 +115,6 @@ class AppState {
       weeklyMoodReportState: weeklyMoodReportState ?? this.weeklyMoodReportState,
       monthlyMoodReportState: monthlyMoodReportState ?? this.monthlyMoodReportState,
       yearlySleepReportState: yearlySleepReportState ?? this.yearlySleepReportState,
-      tokenState: tokenState ?? this.tokenState,
       journalEditorState: journalEditorState ?? this.journalEditorState,
       journalAnalysisState: journalAnalysisState ?? this.journalAnalysisState,
       journalLogsState: journalLogsState ?? this.journalLogsState,
@@ -147,7 +142,6 @@ class AppState {
       weeklyMoodReportState: WeeklyMoodReportState.initial(),
       monthlyMoodReportState: MonthlyMoodReportState.initial(),
       yearlySleepReportState: YearlySleepReportState.initial(),
-      tokenState: TokenState.initial(),
       journalEditorState: JournalEditorState.initialState(),
       journalAnalysisState: JournalAnalysisState.initialState(),
       journalLogsState: JournalLogsState.initialState(),
