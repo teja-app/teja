@@ -44,7 +44,7 @@ class FinishScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    void _handleSurveyResponse(BuildContext context, String response) {
+    void handleSurveyResponse(BuildContext context, String response) {
       if (response == "Yes") {
         _triggerAppReview();
       }
@@ -101,12 +101,12 @@ class FinishScreen extends StatelessWidget {
                               // Dislike Button
                               IconButton(
                                 icon: const Icon(AntDesign.like1),
-                                onPressed: () => {_handleSurveyResponse(context, "Yes")},
+                                onPressed: () => {handleSurveyResponse(context, "Yes")},
                               ),
                               // Like Button
                               IconButton(
                                 icon: const Icon(AntDesign.dislike1),
-                                onPressed: () => {_handleSurveyResponse(context, "No")},
+                                onPressed: () => {handleSurveyResponse(context, "No")},
                               ),
                             ],
                           ),

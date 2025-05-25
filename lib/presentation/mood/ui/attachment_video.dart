@@ -6,10 +6,10 @@ import 'package:teja/presentation/mood/ui/video_player_screen.dart';
 
 class AttachmentVideo extends StatelessWidget {
   final String relativeVideoPath;
-  double? width;
-  double? height;
+  final double? width;
+  final double? height;
 
-  AttachmentVideo({super.key, required this.relativeVideoPath, this.height = 100, this.width = 100});
+  const AttachmentVideo({super.key, required this.relativeVideoPath, this.height = 100, this.width = 100});
 
   @override
   Widget build(BuildContext context) {

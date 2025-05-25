@@ -76,10 +76,10 @@ class BentoBox extends StatelessWidget {
         color: color ?? cardTheme.color,
         boxShadow: [
           BoxShadow(
-            color: (color ?? cardTheme.color)!.withOpacity(0.2),
+            color: (color ?? cardTheme.color)!.withValues(alpha: 0.2),
             spreadRadius: 1,
             blurRadius: 5,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),

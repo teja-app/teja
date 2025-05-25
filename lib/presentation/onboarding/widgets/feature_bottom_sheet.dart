@@ -4,11 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:teja/domain/redux/app_state.dart';
-import 'package:teja/infrastructure/service/token_service.dart';
 import 'package:teja/presentation/onboarding/widgets/authenticate.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/button.dart';
-import 'package:teja/shared/storage/secure_storage.dart';
+import 'package:teja/shared/helpers/logger.dart';
 
 enum FeatureTab { free, paid }
 
@@ -24,10 +23,9 @@ class FeatureAccessBottomSheet extends StatefulWidget {
 class FeatureAccessBottomSheetState extends State<FeatureAccessBottomSheet> {
   final InAppPurchase _iap = InAppPurchase.instance;
   bool _available = true;
-  final TokenService _tokenService = TokenService();
-  final SecureStorage _secureStorage = SecureStorage();
 
   List<ProductDetails> _products = [];
+  // ignore: unused_field
   List<PurchaseDetails> _purchases = [];
   final List<String> _kProductIDs = [
     'app.teja.subscription.all',
@@ -49,29 +47,21 @@ class FeatureAccessBottomSheetState extends State<FeatureAccessBottomSheet> {
 
     if (_available) {
       final Set<String> kIds = _kProductIDs.toSet();
-      print('Product IDs: $kIds');
 
       try {
         final ProductDetailsResponse response = await _iap.queryProductDetails(kIds);
         if (response.error != null) {
-          print('Error querying product details: ${response.error!.message}');
           // You might want to show this error to the user
         } else if (response.productDetails.isEmpty) {
-          print('No products found. This could be due to:');
-          print('1. Incorrect product IDs');
-          print('2. Products not yet available (try again later)');
-          print('3. App not correctly set up in the store');
         } else {
-          print('Product details: ${response.productDetails}');
           setState(() {
             _products = response.productDetails;
           });
         }
       } catch (e) {
-        print('Exception when querying product details: $e');
+        logger.e('Failed to load products', error: e);
       }
     } else {
-      print('In-app purchases not available on this device.');
     }
 
     _iap.purchaseStream.listen((List<PurchaseDetails> purchases) {
@@ -87,8 +77,6 @@ class FeatureAccessBottomSheetState extends State<FeatureAccessBottomSheet> {
       if (purchase.status == PurchaseStatus.purchased) {
         // Verify the purchase and grant the feature
         // You might want to call your backend here to verify the purchase
-        final accessToken = await _secureStorage.readAccessToken();
-        await _tokenService.getMeDetails(accessToken!);
       }
     }
     setState(() {
@@ -245,7 +233,6 @@ class FeatureAccessBottomSheetState extends State<FeatureAccessBottomSheet> {
       _iap.buyNonConsumable(purchaseParam: purchaseParam);
     } catch (e) {
       // Handle the error
-      print('Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Product not found. Please try again later.')),
       );

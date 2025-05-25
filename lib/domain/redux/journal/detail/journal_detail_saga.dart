@@ -1,10 +1,11 @@
-import 'package:isar/isar.dart';
-import 'package:redux_saga/redux_saga.dart';
+import 'package:redux_saga/redux_saga.dart' as redux_saga;
+import 'package:redux_saga/redux_saga.dart' hide Result, Select;
 import 'package:teja/domain/redux/journal/detail/journal_detail_actions.dart';
 import 'package:teja/domain/redux/journal/journal_sync/journal_sync_actions.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
 import 'package:teja/infrastructure/repositories/journal_entry_repository.dart';
-import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart' as journal_collection;
+import 'package:teja/infrastructure/database/cbl_collections/journal_entry.dart' as journal_collection;
+import 'package:cbl/cbl.dart' as cbl;
 
 class JournalDetailSaga {
   Iterable<void> saga() sync* {
@@ -13,13 +14,13 @@ class JournalDetailSaga {
   }
 
   _loadJournalDetail({required LoadJournalDetailAction action}) sync* {
-    var isarResult = Result<Isar>();
-    yield GetContext('isar', result: isarResult);
-    Isar isar = isarResult.value!;
+    var cblResult = redux_saga.Result<cbl.Database>();
+    yield GetContext('cbl', result: cblResult);
+    cbl.Database cblDatabase = cblResult.value!;
 
-    var journalEntryRepository = JournalEntryRepository(isar);
+    var journalEntryRepository = JournalEntryRepository(cblDatabase);
     yield Try(() sync* {
-      var journalEntry = Result<journal_collection.JournalEntry?>();
+      var journalEntry = redux_saga.Result<journal_collection.JournalEntry?>();
       yield Call(
         journalEntryRepository.getJournalEntryById,
         args: [action.journalEntryId],
@@ -41,11 +42,11 @@ class JournalDetailSaga {
   }
 
   _deleteJournalDetail({required DeleteJournalDetailAction action}) sync* {
-    var isarResult = Result<Isar>();
-    yield GetContext('isar', result: isarResult);
-    Isar isar = isarResult.value!;
+    var cblResult = redux_saga.Result<cbl.Database>();
+    yield GetContext('cbl', result: cblResult);
+    cbl.Database cblDatabase = cblResult.value!;
 
-    var journalEntryRepository = JournalEntryRepository(isar);
+    var journalEntryRepository = JournalEntryRepository(cblDatabase);
 
     yield Try(() sync* {
       yield Call(journalEntryRepository.softDeleteJournalEntry, args: [action.journalEntryId]);

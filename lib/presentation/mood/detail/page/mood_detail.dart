@@ -15,7 +15,7 @@ import 'package:teja/presentation/mood/ui/attachement_image.dart';
 import 'package:teja/presentation/mood/detail/ui/feeling_list.dart';
 import 'package:teja/presentation/mood/detail/ui/mood_rating_widget.dart';
 import 'package:teja/presentation/mood/detail/ui/mood_setting_menu.dart';
-import 'package:teja/presentation/navigation/isDesktop.dart';
+import 'package:teja/presentation/navigation/is_desktop.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/bento_box.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
@@ -77,8 +77,7 @@ class MoodDetailPageState extends State<MoodDetailPage> {
                 (subCategory) => subCategory.slug == slug,
                 orElse: () => SubCategoryEntity(slug: slug, title: "Unknown"),
               );
-        }).toList() ??
-        [];
+        }).toList();
   }
 
   void onShareMoodLog(String moodLogId) {

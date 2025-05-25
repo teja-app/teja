@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
-import 'package:flutter_quill/quill_delta.dart';
-import 'package:flutter_quill/flutter_quill.dart' show Document, ChangeSource;
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
 import 'package:redux/redux.dart';
@@ -15,7 +13,7 @@ import 'package:teja/domain/redux/permission/permissions_constants.dart';
 import 'package:teja/infrastructure/service/link_preview_service.dart';
 import 'package:teja/presentation/journal/widgets/editor/custom_quill_editor.dart';
 import 'package:teja/presentation/journal/widgets/view/link_preview.dart';
-import 'package:teja/presentation/navigation/isDesktop.dart';
+import 'package:teja/presentation/navigation/is_desktop.dart';
 import 'package:teja/presentation/onboarding/widgets/feature_gate.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/button.dart';
@@ -43,7 +41,7 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
   late final quill.QuillController _quillController;
   bool _isSaving = false;
   bool _isInitialized = false;
-  String? _errorMessage;
+  String? _errorMessage; // ignore: unused_field
   bool _isLoadingLinkMetadata = false;
   LinkMetadata? _linkMetadata;
 
@@ -93,8 +91,7 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
   }
 
   void _initializeJournalEntry() {
-    _store
-        .dispatch(InitializeQuickJournalEditor(journalEntryId: widget.entryId));
+    _store.dispatch(InitializeQuickJournalEditor(journalEntryId: widget.entryId));
   }
 
   @override
@@ -134,6 +131,9 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
       _errorMessage = null;
     });
 
+    // Capture the router before async operations
+    final router = GoRouter.of(context);
+
     try {
       // Convert Quill Delta to JSON string
       final deltaJsonString = _getDeltaJsonString();
@@ -163,7 +163,19 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
 
         // Wait for a short period to allow the state to update
         await Future.delayed(const Duration(milliseconds: 100));
-        _checkAndNavigate(context, updatedEntry.id);
+        if (!mounted) return;
+        // Use mounted check properly by not passing context
+        final state = _store.state.journalDetailState;
+        if (state.selectedJournalEntry != null &&
+            state.selectedJournalEntry!.id == updatedEntry.id &&
+            state.selectedJournalEntry!.body != null) {
+          router.goNamed(
+            RootPath.journalDetail,
+            queryParameters: {"id": updatedEntry.id},
+          );
+        } else {
+          _showError('Failed to save entry. Please try again.');
+        }
       }
     } catch (e) {
       _showError('Failed to save entry. Please try again.');
@@ -176,23 +188,7 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
     }
   }
 
-  void _checkAndNavigate(BuildContext context, String entryId) {
-    final state = _store.state.journalDetailState;
-    if (state.selectedJournalEntry != null &&
-        state.selectedJournalEntry!.id == entryId &&
-        state.selectedJournalEntry!.body != null) {
-      _navigateToDetailPage(context, entryId);
-    } else {
-      _showError('Failed to save entry. Please try again.');
-    }
-  }
 
-  void _navigateToDetailPage(BuildContext context, String entryId) {
-    GoRouter.of(context).goNamed(
-      RootPath.journalDetail,
-      queryParameters: {"id": entryId},
-    );
-  }
 
   // Similar modifications for _saveAndContinue method would follow the same pattern
   Future<void> _saveAndContinue(
@@ -207,6 +203,9 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
       _errorMessage = null;
     });
 
+    // Capture the router before async operations
+    final router = GoRouter.of(context);
+
     try {
       final deltaJsonString = _getDeltaJsonString();
 
@@ -219,11 +218,15 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
         await Future.delayed(const Duration(milliseconds: 100));
         await _store.dispatch(LoadJournalDetailAction(updatedEntry.id));
 
+        // Wait for a short period to allow the state to update
+        await Future.delayed(const Duration(milliseconds: 100));
+
+        if (!mounted) return;
         final state = _store.state.journalDetailState;
         if (state.selectedJournalEntry != null &&
             state.selectedJournalEntry!.id == updatedEntry.id &&
             state.selectedJournalEntry!.body != null) {
-          GoRouter.of(context).pushNamed(
+          router.pushNamed(
             RootPath.journalEntryPage,
             pathParameters: {'id': updatedEntry.id},
           );
@@ -261,8 +264,7 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
         builder: (BuildContext dialogContext) {
           return AlertDialog(
             title: const Text('Unsaved Changes'),
-            content: const Text(
-                'You have unsaved changes. Do you want to save before leaving?'),
+            content: const Text('You have unsaved changes. Do you want to save before leaving?'),
             actions: <Widget>[
               TextButton(
                 child: const Text('Discard'),
@@ -289,13 +291,10 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ColorScheme colorScheme = Theme.of(context).colorScheme;
-    Color primary = colorScheme.primary;
 
     return PopScope(
-      onPopInvoked: (didPop) async {
-        _handleBack(
-            context, _store.state.journalEditorState.currentJournalEntry);
+      onPopInvokedWithResult: (didPop, result) async {
+        _handleBack(context, _store.state.journalEditorState.currentJournalEntry);
       },
       child: StoreConnector<AppState, QuickJournalEditViewModel>(
         converter: (store) => QuickJournalEditViewModel.fromStore(store),
@@ -309,7 +308,7 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
               }
               _isInitialized = true;
             } catch (e) {
-              print('Error initializing Quill controller: $e');
+              // Error initializing Quill controller
               _isInitialized = true;
             }
           }
@@ -326,17 +325,12 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
               title: const Text("Quick Journal Entry"),
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
-                onPressed: _isSaving
-                    ? null
-                    : () => _handleBack(context, viewModel.currentJournalEntry),
+                onPressed: _isSaving ? null : () => _handleBack(context, viewModel.currentJournalEntry),
               ),
               actions: [
                 IconButton(
                   icon: const Icon(Icons.done),
-                  onPressed: _isSaving
-                      ? null
-                      : () =>
-                          _saveEntry(context, viewModel.currentJournalEntry),
+                  onPressed: _isSaving ? null : () => _saveEntry(context, viewModel.currentJournalEntry),
                 ),
               ],
             ),
@@ -348,39 +342,39 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
                     controller: _quillController,
                   ),
                 ),
-                // Padding(
-                //   padding: const EdgeInsets.all(16.0),
-                //   child: Row(
-                //     children: [
-                //       Expanded(
-                //         child: Button(
-                //           onPressed: _isSaving
-                //               ? null
-                //               : () => _saveEntry(
-                //                   context, viewModel.currentJournalEntry),
-                //           text: 'Save',
-                //           buttonType: ButtonType.secondary,
-                //         ),
-                //       ),
-                //       const SizedBox(width: 16),
-                //       Expanded(
-                //         child: FeatureGate(
-                //           feature: AI_SUGGESTIONS,
-                //           child: Button(
-                //             width: isDesktop(context) ? 330 : 120,
-                //             buttonType: ButtonType.primary,
-                //             onPressed: _isSaving
-                //                 ? null
-                //                 : () => _saveAndContinue(
-                //                     context, viewModel.currentJournalEntry),
-                //             text: 'Continue',
-                //           ),
-                //         ),
-                //       ),
-                //       const SizedBox(width: 16),
-                //     ],
-                //   ),
-                // ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Button(
+                          onPressed: _isSaving
+                              ? null
+                              : () => _saveEntry(
+                                  context, viewModel.currentJournalEntry),
+                          text: 'Save',
+                          buttonType: ButtonType.secondary,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: FeatureGate(
+                          feature: AI_SUGGESTIONS,
+                          child: Button(
+                            width: isDesktop(context) ? 330 : 120,
+                            buttonType: ButtonType.primary,
+                            onPressed: _isSaving
+                                ? null
+                                : () => _saveAndContinue(
+                                    context, viewModel.currentJournalEntry),
+                            text: 'Continue',
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                    ],
+                  ),
+                ),
               ],
             ),
           );

@@ -1,0 +1,8 @@
+- Use `build_runner` and `cbl_generator` packages for code generation.
+- Add `cbl_generator` and `build_runner` as dev dependencies in `pubspec.yaml`.
+- Annotate data models with `@TypedDocument()` and `@TypedDictionary()`.
+- Include a `part` directive in Dart files for the generated `.g.dart` file.
+- Run `flutter pub run build_runner build --delete-conflicting-outputs` to generate code.
+- Use `flutter pub run build_runner clean` to clean generated files and caches.
+- Automate generation in CI/CD pipelines to keep generated files up to date.
+- Ensure compatible Dart SDK and package versions to avoid generation issues.

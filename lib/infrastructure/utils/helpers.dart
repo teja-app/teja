@@ -1,5 +1,5 @@
 import 'package:uuid/uuid.dart';
-import 'dart:convert'; // for utf8 encode
+// for utf8 encode
 import 'package:crypto/crypto.dart'; // for hashing
 
 class Helpers {

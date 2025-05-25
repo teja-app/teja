@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
-import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/core_actions.dart';
 
 @immutable
 class InitializeJournalEditor {
   final String? journalEntryId;
-  final JournalTemplateEntity? template; // Make templateId optional
   final DateTime? timestamp;
 
   const InitializeJournalEditor(
-      {this.journalEntryId, this.template, this.timestamp});
+      {this.journalEntryId, this.timestamp});
 }
 
 @immutable

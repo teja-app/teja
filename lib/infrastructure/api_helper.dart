@@ -1,19 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:teja/domain/entities/app_error.dart';
-import 'package:teja/infrastructure/service/token_service.dart';
 import 'package:teja/shared/helpers/logger.dart';
 import 'package:teja/shared/storage/secure_storage.dart';
 import 'package:teja/config/app_config.dart';
 
 class ApiHelper {
   final Dio _dio = Dio();
-  final TokenService _tokenService = TokenService();
   final SecureStorage _secureStorage = SecureStorage();
   static const int maxRetries = 1;
 
   ApiHelper() {
-    print("AppConfig.instance.apiBaseUrl ${AppConfig.instance.apiBaseUrl}");
     _dio.options.baseUrl = AppConfig.instance.apiBaseUrl;
   }
 
@@ -85,7 +82,7 @@ class ApiHelper {
   }) async {
     logger.i("Request");
     try {
-      final token = await _tokenService.getValidAccessToken();
+      final token = await getValidAccessToken();
       if (token != null) {
         _dio.options.headers['Authorization'] = 'Bearer $token';
       }
@@ -112,7 +109,7 @@ class ApiHelper {
     DioException originalError,
   ) async {
     try {
-      final newToken = await _tokenService.getValidAccessToken();
+      final newToken = await getValidAccessToken();
       if (newToken != null) {
         _dio.options.headers['Authorization'] = 'Bearer $newToken';
         return await _safeRequest(requestFunction, retries: retries + 1);
@@ -212,7 +209,8 @@ class ApiHelper {
   }
 
   Future<void> _handleReAuthentication() async {
-    await _tokenService.clearTokens();
+    await _secureStorage.deleteAccessToken();
+    await _secureStorage.deleteRefreshToken();
   }
 
   Future<Response> get(String path,

@@ -8,6 +8,8 @@ import 'package:teja/domain/redux/permission/permissions_constants.dart';
 import 'package:teja/presentation/profile/ui/mood_sleep_chart.dart';
 import 'package:teja/presentation/profile/ui/checklist.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class MoodActivityChartScreen extends StatefulWidget {
   const MoodActivityChartScreen({super.key});
 

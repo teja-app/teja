@@ -7,21 +7,21 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
-import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/entities/mood_log.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
 import 'package:teja/domain/redux/mood/list/actions.dart';
 import 'package:teja/presentation/journal/ui/journal_card.dart';
-import 'package:teja/presentation/timeline/ui/filter_bottom_sheet.dart';
 import 'package:teja/presentation/mood/ui/mood_detail_card.dart';
-import 'package:teja/presentation/navigation/buildDesktopDrawer.dart';
+import 'package:teja/presentation/navigation/build_desktop_drawer.dart';
 import 'package:teja/presentation/navigation/mobile_navigation_bar.dart';
-import 'package:teja/presentation/navigation/isDesktop.dart';
-import 'package:teja/presentation/navigation/leadingContainer.dart';
+import 'package:teja/presentation/navigation/is_desktop.dart';
+import 'package:teja/presentation/navigation/leading_container.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class TimelinePage extends StatefulWidget {
   const TimelinePage({super.key});
 
@@ -63,15 +63,6 @@ class _TimelinePageState extends State<TimelinePage> {
     _loadInitialData();
   }
 
-  void _showFilterDialog() async {
-    await showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return const FilterBottomSheet(); // Replace with your actual dialog/widget
-      },
-    );
-  }
-
   Map<DateTime, List<dynamic>> groupEntriesByDate(
       List<MoodLogEntity> moodLogs, List<JournalEntryEntity> journalEntries) {
     // Combine mood logs and journal entries into a single list with a common structure
@@ -102,8 +93,7 @@ class _TimelinePageState extends State<TimelinePage> {
     return count;
   }
 
-  Widget _buildItem(BuildContext context, Map<DateTime, List<dynamic>> groupedEntries, int index,
-      Map<String, JournalTemplateEntity> templatesById) {
+  Widget _buildItem(BuildContext context, Map<DateTime, List<dynamic>> groupedEntries, int index) {
     var currentIndex = 0;
     for (var entry in groupedEntries.entries) {
       if (index == currentIndex) {
@@ -122,9 +112,9 @@ class _TimelinePageState extends State<TimelinePage> {
           ); // Your widget to display a mood log
         } else if (item is JournalEntryEntity) {
           // Check if template exists before calling journalEntryLayout
-          final template = item.templateId != null ? templatesById[item.templateId] : null;
+          // Templates removed - no longer needed
+          // final template = item.templateId != null ? templatesById[item.templateId] : null;
           return journalEntryLayout(
-            template,
             item,
             context,
           ); // Your widget to display a journal entry
@@ -132,7 +122,7 @@ class _TimelinePageState extends State<TimelinePage> {
       }
       currentIndex += entry.value.length;
     }
-    return SizedBox.shrink(); // Fallback for any index that doesn't match
+    return const SizedBox.shrink(); // Fallback for any index that doesn't match
   }
 
   @override
@@ -146,7 +136,7 @@ class _TimelinePageState extends State<TimelinePage> {
       converter: (store) => ListViewModel.fromStore(store),
       builder: (context, viewModel) {
         if (viewModel.isMoodLoading && viewModel.moodLogs.isEmpty) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
 
         // Group mood logs by date
@@ -158,7 +148,7 @@ class _TimelinePageState extends State<TimelinePage> {
               color: Theme.of(context).scaffoldBackgroundColor,
               child: ScrollablePositionedList.builder(
                 itemCount: _calculateItemCount(groupedEntries), // Use the calculated item count
-                itemBuilder: (context, index) => _buildItem(context, groupedEntries, index, viewModel.templatesById),
+                itemBuilder: (context, index) => _buildItem(context, groupedEntries, index),
                 itemScrollController: itemScrollController,
                 itemPositionsListener: itemPositionsListener,
               )),
@@ -166,7 +156,7 @@ class _TimelinePageState extends State<TimelinePage> {
       },
     );
     return Scaffold(
-      bottomNavigationBar: isDesktop(context) ? null : MobileNavigationBar(),
+      bottomNavigationBar: isDesktop(context) ? null : const MobileNavigationBar(),
       appBar: AppBar(
         title: const Text('Timeline'),
         forceMaterialTransparency: true,
@@ -222,7 +212,6 @@ class ListViewModel {
   final List<JournalEntryEntity> journalEntries;
   final String? journalErrorMessage;
   final bool isJouralLastPage;
-  final Map<String, JournalTemplateEntity> templatesById;
 
   ListViewModel({
     required this.isMoodLoading,
@@ -233,7 +222,6 @@ class ListViewModel {
     required this.journalEntries,
     this.journalErrorMessage,
     required this.isJouralLastPage,
-    required this.templatesById,
   });
 
   // Factory constructor to create ViewModel from the Redux store state
@@ -249,7 +237,6 @@ class ListViewModel {
       journalEntries: journalListState.journalEntries,
       journalErrorMessage: journalListState.errorMessage,
       isJouralLastPage: journalListState.isLastPage,
-      templatesById: store.state.journalTemplateState.templatesById,
     );
   }
 }

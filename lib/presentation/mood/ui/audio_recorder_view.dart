@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:record/record.dart';
-import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:teja/infrastructure/utils/voice_storage_helper.dart';
+import 'package:teja/shared/helpers/logger.dart';
+
+// ignore_for_file: library_private_types_in_public_api
 
 class AudioRecorderView extends StatefulWidget {
   final Function(String, String) onStopRecording;
@@ -15,6 +17,7 @@ class AudioRecorderView extends StatefulWidget {
 class _AudioRecorderViewState extends State<AudioRecorderView> {
   bool _isRecording = false;
   final _audioRecorder = AudioRecorder();
+  // ignore: prefer_final_fields
   String _transcription = '';
 
   @override
@@ -26,45 +29,33 @@ class _AudioRecorderViewState extends State<AudioRecorderView> {
     try {
       if (await _audioRecorder.hasPermission()) {
         final path = 'audio_${DateTime.now().millisecondsSinceEpoch}.m4a';
-        print('Starting recording with path: $path');
         await _audioRecorder.start(const RecordConfig(), path: path);
         setState(() => _isRecording = true);
       } else {
-        print('Recording permission not granted.');
+        logger.e('Audio recording permission denied');
       }
     } catch (e) {
-      print('Error starting recording: $e');
+      logger.e('Failed to start audio recording', error: e);
     }
   }
 
   void _stopRecording() async {
     try {
       final path = await _audioRecorder.stop();
-      print('Stopped recording with path: $path');
       if (path != null) {
         try {
           final relativePath = await VoiceStorageHelper.saveVoicePermanently(path);
-          print('Voice recording saved permanently with relative path: $relativePath');
           widget.onStopRecording(relativePath, _transcription);
         } catch (e) {
-          print('Error saving voice recording: $e');
           // Handle the error and notify the user
           // Show an error message or provide an option to retry
         }
       } else {
-        print('No voice recording path available.');
       }
       setState(() => _isRecording = false);
     } catch (e) {
-      print('Error stopping recording: $e');
       setState(() => _isRecording = false);
     }
-  }
-
-  void _onSpeechResult(SpeechRecognitionResult result) {
-    setState(() {
-      _transcription = result.recognizedWords;
-    });
   }
 
   @override

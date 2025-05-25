@@ -6,13 +6,10 @@ import 'package:teja/domain/redux/app_error/app_error_actions.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/auth/auth_saga.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_saga.dart';
-import 'package:teja/domain/redux/journal/featured_journal_template/saga.dart';
 import 'package:teja/domain/redux/journal/journal_analysis/journal_analysis_saga.dart';
-import 'package:teja/domain/redux/journal/journal_category/saga.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_saga.dart';
 import 'package:teja/domain/redux/journal/journal_logs/journal_logs_saga.dart';
 import 'package:teja/domain/redux/journal/journal_sync/journal_sync_saga.dart';
-import 'package:teja/domain/redux/journal/journal_template/saga.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_saga.dart';
 import 'package:teja/domain/redux/monthly_mood_report/monthly_mood_report_saga.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_saga.dart';
@@ -25,12 +22,7 @@ import 'package:teja/domain/redux/mood/mood_analysis/mood_analysis_saga.dart';
 import 'package:teja/domain/redux/mood/mood_sync/mood_sync_saga.dart';
 import 'package:teja/domain/redux/permission/permission_saga.dart';
 import 'package:teja/domain/redux/profile_page_sequence/profile_page_saga.dart';
-import 'package:teja/domain/redux/quotes/quote_saga.dart';
-import 'package:teja/domain/redux/sync/saga.dart';
-import 'package:teja/domain/redux/tasks/task_saga.dart';
 import 'package:teja/domain/redux/theme/theme_saga.dart';
-import 'package:teja/domain/redux/token/token_saga.dart';
-import 'package:teja/domain/redux/visions/vision_saga.dart';
 import 'package:teja/domain/redux/weekly_mood_report/weekly_mood_report_saga.dart';
 import 'package:teja/domain/redux/yearly_mood_report/yearly_mood_report_saga.dart';
 import 'package:teja/domain/redux/yearly_sleep_report/yearly_sleep_report_saga.dart';
@@ -49,17 +41,11 @@ Iterable<void> rootSaga(Store<AppState> store) sync* {
     'WeeklyMoodReportSaga': () => WeeklyMoodReportSaga().saga(),
     'MonthlyMoodReportSaga': () => MonthlyMoodReportSaga().saga(),
     'YearlySleepReportSaga': () => YearlySleepReportSaga().saga(),
-    'QuoteSaga': () => QuoteSaga().saga(),
-    'VisionSaga': () => VisionSaga().saga(),
-    'TokenSaga': () => TokenSaga().saga(),
-    'JournalTemplateSaga': () => JournalTemplateSaga().saga(),
     'JournalEditorSaga': () => JournalEditorSaga().saga(),
     'JournalAnalysisSaga': () => JournalAnalysisSaga().saga(),
     'JournalLogsSaga': () => JournalLogsSaga().saga(),
     'JournalDetailSaga': () => JournalDetailSaga().saga(),
-    'JournalCategorySaga': () => JournalCategorySaga().saga(),
-    'FeaturedJournalTemplateSaga': () => FeaturedJournalTemplateSaga().saga(),
-    'SyncSaga': () => SyncSaga().saga(),
+    // 'SyncSaga': () => SyncSaga().saga(), // TODO: Migrate SyncSaga to CBL
     'JournalListSaga': () => JournalListSaga().saga(),
     'PermissionSaga': () => PermissionSaga(store).saga(),
     'MoodAnalysisSaga': () => MoodAnalysisSaga().saga(),
@@ -67,7 +53,6 @@ Iterable<void> rootSaga(Store<AppState> store) sync* {
     'ProfilePageSaga': () => ProfilePageSaga().saga(),
     'journalSync': () => JournalSyncSaga().saga(),
     'moodSync': () => MoodSyncSaga().saga(),
-    'taskSaga': () => TaskSaga().saga(),
     'themeSaga': () => ThemeSaga().saga(),
   };
 
@@ -76,16 +61,11 @@ Iterable<void> rootSaga(Store<AppState> store) sync* {
           yield Try(() sync* {
             yield Call(saga);
           }, Catch: (error, stackTrace) sync* {
-            print("error ${error}");
             if (error is AppError) {
-              yield Put(AddAppErrorAction(createAppError({
-                'code': error.code,
-                'message': error.message,
-                'details': error.details
-              })));
+              yield Put(AddAppErrorAction(
+                  createAppError({'code': error.code, 'message': error.message, 'details': error.details})));
             } else {
-              yield Call(_handleSagaError,
-                  args: [store, key, error, stackTrace]);
+              yield Call(_handleSagaError, args: [store, key, error, stackTrace]);
             }
           });
           // Small delay before restarting the saga
@@ -94,8 +74,7 @@ Iterable<void> rootSaga(Store<AppState> store) sync* {
       }))));
 }
 
-void _handleSagaError(Store<AppState> store, String sagaName, dynamic error,
-    StackTrace? stackTrace) {
+void _handleSagaError(Store<AppState> store, String sagaName, dynamic error, StackTrace? stackTrace) {
   logger.e('Saga error in $sagaName', error: error, stackTrace: stackTrace);
 
   final appError = AppError(

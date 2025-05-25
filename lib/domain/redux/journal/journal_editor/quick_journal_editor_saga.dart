@@ -1,9 +1,10 @@
-import 'package:redux_saga/redux_saga.dart';
+import 'package:redux_saga/redux_saga.dart' as redux_saga;
+import 'package:redux_saga/redux_saga.dart' hide Result, Select;
 import 'package:teja/domain/entities/journal_entry_entity.dart';
 import 'package:teja/domain/redux/journal/journal_editor/quick_journal_editor_actions.dart';
-import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart';
+import 'package:teja/infrastructure/database/cbl_collections/journal_entry.dart' as journal_collection;
 import 'package:teja/infrastructure/repositories/journal_entry_repository.dart';
-import 'package:isar/isar.dart';
+import 'package:cbl/cbl.dart' as cbl;
 import 'package:teja/infrastructure/utils/helpers.dart';
 import 'package:teja/shared/helpers/logger.dart';
 
@@ -13,16 +14,16 @@ class QuickJournalEditorSaga {
   }
 
   _handleInitializeQuickJournalEditor({required InitializeQuickJournalEditor action}) sync* {
-    var isarResult = Result<Isar>();
-    yield GetContext('isar', result: isarResult);
-    Isar isar = isarResult.value!;
+    var cblResult = redux_saga.Result<cbl.Database>();
+    yield GetContext('cbl', result: cblResult);
+    cbl.Database cblDatabase = cblResult.value!;
 
-    var journalEntryRepository = JournalEntryRepository(isar);
+    JournalEntryRepository journalEntryRepository = JournalEntryRepository(cblDatabase);
 
     yield Try(() sync* {
       JournalEntryEntity? journalEntryEntity;
       if (action.journalEntryId != null) {
-        var journalEntryResult = Result<JournalEntry>();
+        var journalEntryResult = redux_saga.Result<journal_collection.JournalEntry?>();
         yield Call(journalEntryRepository.getJournalEntryById,
             args: [action.journalEntryId], result: journalEntryResult);
         if (journalEntryResult.value != null) {
@@ -34,21 +35,26 @@ class QuickJournalEditorSaga {
         bool unique = false;
         while (!unique) {
           try {
-            final newJournalEntry = JournalEntry()
-              ..id = Helpers.generateUniqueId()
-              ..timestamp = DateTime.now()
-              ..createdAt = DateTime.now()
-              ..updatedAt = DateTime.now()
-              ..questions = []
-              ..textEntries = []
-              ..voiceEntries = []
-              ..videoEntries = []
-              ..imageEntries = []
-              ..bulletPointEntries = []
-              ..painNoteEntries = []
-              ..metadata = (JournalEntryMetadata()..tags = [])
-              ..lock = false
-              ..title = '';
+            DateTime now = DateTime.now();
+            String newId = Helpers.generateUniqueId();
+
+            // Create the journal entry using the factory constructor
+            journal_collection.JournalEntry newJournalEntry = journal_collection.JournalEntry(
+                id: newId,
+                timestamp: now,
+                createdAt: now,
+                updatedAt: now,
+                questions: [],
+                textEntries: [],
+                voiceEntries: [],
+                videoEntries: [],
+                imageEntries: [],
+                bulletPointEntries: [],
+                painNoteEntries: [],
+                metadata: journal_collection.JournalEntryMetadata(tags: []),
+                lock: false,
+                title: '',
+                isDeleted: false);
 
             yield Call(journalEntryRepository.addOrUpdateJournalEntry, args: [newJournalEntry]);
             journalEntryEntity = journalEntryRepository.toEntity(newJournalEntry);
@@ -57,7 +63,7 @@ class QuickJournalEditorSaga {
             if (e.toString().contains('Unique index violated')) {
               logger.e("Unique index violated, generating a new ID.");
             } else {
-              throw e;
+              rethrow;
             }
           }
         }

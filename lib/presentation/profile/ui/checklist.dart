@@ -3,7 +3,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/permission/permissions_constants.dart';
-import 'package:teja/presentation/mood/share/ui/Share_option_popup.dart';
+import 'package:teja/presentation/mood/share/ui/share_option_popup.dart';
 import 'package:teja/presentation/profile/ui/data_check_overlay.dart';
 
 class Checklist extends StatelessWidget {

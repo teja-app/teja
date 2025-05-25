@@ -14,7 +14,6 @@ class ImageStorageHelper {
       // Return the relative path to be stored in the database
       return path.relative(newImageFile.path, from: directory.path);
     } catch (e) {
-      print('Error saving image permanently: $e');
       rethrow;
     }
   }

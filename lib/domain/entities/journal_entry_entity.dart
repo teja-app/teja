@@ -96,6 +96,7 @@ class JournalEntryEntity {
       summary: summary ?? this.summary,
       keyInsight: keyInsight ?? this.keyInsight,
       affirmation: affirmation ?? this.affirmation,
+      topics: topics ?? this.topics,
       feelings: feelings ?? this.feelings,
       lock: lock ?? this.lock,
       body: body ?? this.body,
@@ -108,47 +109,43 @@ class JournalEntryEntity {
     return JournalEntryEntity(
       id: json['id'],
       templateId: json['templateId'],
-      timestamp: DateTime.fromMillisecondsSinceEpoch(json['timestamp']),
-      createdAt: DateTime.fromMillisecondsSinceEpoch(json['createdAt']),
-      updatedAt: DateTime.fromMillisecondsSinceEpoch(json['updatedAt']),
+      timestamp: json['timestamp'] != null 
+          ? (json['timestamp'] is int 
+              ? DateTime.fromMillisecondsSinceEpoch(json['timestamp']) 
+              : DateTime.parse(json['timestamp'] as String))
+          : DateTime.now(),
+      createdAt: json['createdAt'] != null 
+          ? (json['createdAt'] is int 
+              ? DateTime.fromMillisecondsSinceEpoch(json['createdAt']) 
+              : DateTime.parse(json['createdAt'] as String))
+          : DateTime.now(),
+      updatedAt: json['updatedAt'] != null 
+          ? (json['updatedAt'] is int 
+              ? DateTime.fromMillisecondsSinceEpoch(json['updatedAt']) 
+              : DateTime.parse(json['updatedAt'] as String))
+          : DateTime.now(),
       questions: json['questions'] != null
-          ? (json['questions'] as List)
-              .map((q) => QuestionAnswerPairEntity.fromJson(q))
-              .toList()
+          ? (json['questions'] as List).map((q) => QuestionAnswerPairEntity.fromJson(q)).toList()
           : null,
       textEntries: json['textEntries'] != null
-          ? (json['textEntries'] as List)
-              .map((t) => TextEntryEntity.fromJson(t))
-              .toList()
+          ? (json['textEntries'] as List).map((t) => TextEntryEntity.fromJson(t)).toList()
           : null,
       voiceEntries: json['voiceEntries'] != null
-          ? (json['voiceEntries'] as List)
-              .map((v) => VoiceEntryEntity.fromJson(v))
-              .toList()
+          ? (json['voiceEntries'] as List).map((v) => VoiceEntryEntity.fromJson(v)).toList()
           : null,
       videoEntries: json['videoEntries'] != null
-          ? (json['videoEntries'] as List)
-              .map((v) => VideoEntryEntity.fromJson(v))
-              .toList()
+          ? (json['videoEntries'] as List).map((v) => VideoEntryEntity.fromJson(v)).toList()
           : null,
       imageEntries: json['imageEntries'] != null
-          ? (json['imageEntries'] as List)
-              .map((i) => ImageEntryEntity.fromJson(i))
-              .toList()
+          ? (json['imageEntries'] as List).map((i) => ImageEntryEntity.fromJson(i)).toList()
           : null,
       bulletPointEntries: json['bulletPointEntries'] != null
-          ? (json['bulletPointEntries'] as List)
-              .map((b) => BulletPointEntryEntity.fromJson(b))
-              .toList()
+          ? (json['bulletPointEntries'] as List).map((b) => BulletPointEntryEntity.fromJson(b)).toList()
           : null,
       painNoteEntries: json['painNoteEntries'] != null
-          ? (json['painNoteEntries'] as List)
-              .map((p) => PainNoteEntryEntity.fromJson(p))
-              .toList()
+          ? (json['painNoteEntries'] as List).map((p) => PainNoteEntryEntity.fromJson(p)).toList()
           : null,
-      metadata: json['metadata'] != null
-          ? JournalEntryMetadataEntity.fromJson(json['metadata'])
-          : null,
+      metadata: json['metadata'] != null ? JournalEntryMetadataEntity.fromJson(json['metadata']) : null,
       lock: json['lock'],
       emoticon: json['emoticon'],
       title: json['title'],
@@ -157,16 +154,12 @@ class JournalEntryEntity {
       affirmation: json['affirmation'],
       topics: json['topics'] != null ? List<String>.from(json['topics']) : null,
       feelings: json['feelings'] != null
-          ? (json['feelings'] as List)
-              .map((f) => JournalFeelingEntity.fromJson(f))
-              .toList()
+          ? (json['feelings'] as List).map((f) => JournalFeelingEntity.fromJson(f)).toList()
           : null,
       body: json['body'],
       isDeleted: json['isDeleted'] ?? false,
       urlMetadata: json['urlMetadata'] != null
-          ? (json['urlMetadata'] as List)
-              .map((u) => UrlMetadataEntity.fromJson(u))
-              .toList()
+          ? (json['urlMetadata'] as List).map((u) => UrlMetadataEntity.fromJson(u)).toList()
           : null,
     );
   }
@@ -279,15 +272,9 @@ class QuestionAnswerPairEntity {
       questionId: json['questionId'],
       questionText: json['questionText'],
       answerText: json['answerText'],
-      imageEntryIds: json['imageEntryIds'] != null
-          ? List<String>.from(json['imageEntryIds'])
-          : null,
-      videoEntryIds: json['videoEntryIds'] != null
-          ? List<String>.from(json['videoEntryIds'])
-          : null,
-      voiceEntryIds: json['voiceEntryIds'] != null
-          ? List<String>.from(json['voiceEntryIds'])
-          : null,
+      imageEntryIds: json['imageEntryIds'] != null ? List<String>.from(json['imageEntryIds']) : null,
+      videoEntryIds: json['videoEntryIds'] != null ? List<String>.from(json['videoEntryIds']) : null,
+      voiceEntryIds: json['voiceEntryIds'] != null ? List<String>.from(json['voiceEntryIds']) : null,
     );
   }
 

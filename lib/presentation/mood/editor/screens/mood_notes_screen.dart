@@ -121,6 +121,7 @@ class NotesScreenState extends State<NotesScreen> {
                     onPressed: () async {
                       FocusScope.of(context).unfocus();
                       await Future.delayed(const Duration(milliseconds: 100));
+                      if (!context.mounted) return;
                       final store = StoreProvider.of<AppState>(context);
                       store.dispatch(ChangePageAction(viewModel.currentPageIndex + 1));
                     },

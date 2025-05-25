@@ -5,6 +5,8 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/presentation/onboarding/widgets/feature_bottom_sheet.dart';
 import 'package:teja/shared/storage/secure_storage.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class FeatureGate extends StatefulWidget {
   final String feature;
   final Widget child;
@@ -12,7 +14,7 @@ class FeatureGate extends StatefulWidget {
   final VoidCallback? onFeatureAccessed; // Optional callback
   final bool autoTriggerOnAccess; // Flag to control auto-trigger
 
-  FeatureGate({
+  const FeatureGate({
     Key? key,
     required this.feature,
     this.initialTab = FeatureTab.free,
@@ -101,10 +103,9 @@ class FeatureGateViewModel {
     SecureStorage secureStorage,
   ) async {
     try {
-      bool _hasExistingMnemonic = await store.state.authState.hasExistingMnemonic;
-      return FeatureGateViewModel(hasAccess: _hasExistingMnemonic);
+      bool hasExistingMnemonic = store.state.authState.hasExistingMnemonic;
+      return FeatureGateViewModel(hasAccess: hasExistingMnemonic);
     } catch (e) {
-      print('Error fetching access details: $e'); // Debug print
       return FeatureGateViewModel(hasAccess: false); // Default to no access on error
     }
     // try {

@@ -268,11 +268,11 @@ class QuillToolbar extends StatelessWidget {
     // Define button dimensions based on the row index
     final buttonDimensions = [
       // Row 1: Big Buttons (e.g., "H1", "H2", etc.)
-      Size(87, 10),
+      const Size(87, 10),
       // Row 2: Vertically Long Buttons (e.g., "Bullet", "Quote", etc.)
-      Size(180, 10),
+      const Size(180, 10),
       // Row 3: Small Buttons (e.g., "B", "I", "U", etc.)
-      Size(87, 30),
+      const Size(87, 30),
     ];
 
     final buttonSize = buttonDimensions[rowIndex.clamp(0, 2)];

@@ -7,7 +7,7 @@ import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
   type: CountdownTimer,
 )
 Widget buildCountdownTimer1HourUseCase(BuildContext context) {
-  return CountdownTimer(
+  return const CountdownTimer(
     key: Key('1-hour-timer'),
   );
 }

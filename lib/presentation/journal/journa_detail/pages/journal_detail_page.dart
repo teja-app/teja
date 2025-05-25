@@ -7,7 +7,6 @@ import 'package:icons_flutter/icons_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
-import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_actions.dart';
 import 'package:teja/domain/redux/journal/journal_analysis/journal_analysis_actions.dart';
@@ -17,7 +16,7 @@ import 'package:teja/presentation/journal/journa_detail/ui/journal_setting_menu.
 import 'package:teja/presentation/journal/widgets/view/custom_quill_view.dart';
 import 'package:teja/presentation/mood/ui/attachement_image.dart';
 import 'package:teja/presentation/mood/ui/attachment_video.dart';
-import 'package:teja/presentation/navigation/isDesktop.dart';
+import 'package:teja/presentation/navigation/is_desktop.dart';
 import 'package:teja/presentation/onboarding/widgets/feature_gate.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/button.dart';
@@ -375,7 +374,7 @@ class JournalDetailPageState extends State<JournalDetailPage> {
                   'Affirmation',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                const Icon(Icons.favorite, color: Colors.grey),
+                Icon(Icons.favorite, color: Colors.grey),
               ],
             ),
             const SizedBox(height: 12),
@@ -484,7 +483,7 @@ class JournalDetailPageState extends State<JournalDetailPage> {
             (() {
               try {
                 // Attempt to parse the answerText as JSON
-                final quillJson = jsonDecode(question?.answerText ?? '');
+                jsonDecode(question?.answerText ?? '');
                 return CustomQuillView(quillJson: question?.answerText ?? '');
               } catch (e) {
                 // Fallback to Text widget if parsing fails
@@ -516,8 +515,9 @@ class JournalDetailPageState extends State<JournalDetailPage> {
             .toList() ??
         [];
 
-    if (imageEntries.isEmpty && videoEntries.isEmpty)
+    if (imageEntries.isEmpty && videoEntries.isEmpty) {
       return const SizedBox.shrink();
+    }
 
     return SizedBox(
       height: 60,
@@ -556,12 +556,10 @@ class JournalDetailViewModel {
   final JournalEntryEntity? journalEntry;
   final bool isLoading;
   final String? errorMessage;
-  final Map<String, JournalTemplateEntity> templatesById;
   final Function(String, List<Map<String, String>>) dispatchAnalyzeJournal;
 
   JournalDetailViewModel({
     required this.journalEntry,
-    required this.templatesById,
     required this.isLoading,
     required this.errorMessage,
     required this.dispatchAnalyzeJournal,
@@ -571,7 +569,6 @@ class JournalDetailViewModel {
     final state = store.state.journalDetailState;
     return JournalDetailViewModel(
       journalEntry: state.selectedJournalEntry,
-      templatesById: store.state.journalTemplateState.templatesById,
       isLoading: state.isLoading,
       errorMessage: state.errorMessage,
       dispatchAnalyzeJournal:

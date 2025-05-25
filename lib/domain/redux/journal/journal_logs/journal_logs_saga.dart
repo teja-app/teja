@@ -1,8 +1,9 @@
-import 'package:isar/isar.dart';
-import 'package:redux_saga/redux_saga.dart';
+import 'package:redux_saga/redux_saga.dart' as redux_saga;
+import 'package:redux_saga/redux_saga.dart' hide Result, Select;
 import 'package:teja/domain/entities/journal_entry_entity.dart';
 import 'package:teja/infrastructure/repositories/journal_entry_repository.dart';
 import 'package:teja/domain/redux/journal/journal_logs/journal_logs_actions.dart';
+import 'package:cbl/cbl.dart' as cbl;
 
 class JournalLogsSaga {
   Iterable<void> saga() sync* {
@@ -10,15 +11,15 @@ class JournalLogsSaga {
   }
 
   _fetchJournalLogs({dynamic action}) sync* {
-    var isarResult = Result<Isar>();
-    yield GetContext('isar', result: isarResult);
-    Isar isar = isarResult.value!;
-    JournalEntryRepository journalEntryRepository = JournalEntryRepository(isar);
+    var cblResult = redux_saga.Result<cbl.Database>();
+    yield GetContext('cbl', result: cblResult);
+    cbl.Database cblDatabase = cblResult.value!;
+    JournalEntryRepository journalEntryRepository = JournalEntryRepository(cblDatabase);
 
     final now = DateTime.now();
     final startOfMonth = DateTime(now.year, now.month - 5);
     final endOfMonth = DateTime(now.year, now.month + 1, 1);
-    var journalLogs = Result<List<JournalEntryEntity>>();
+    var journalLogs = redux_saga.Result<List<JournalEntryEntity>>();
     yield Call(journalEntryRepository.getJournalEntriesInDateRange,
         args: [startOfMonth, endOfMonth], result: journalLogs);
 

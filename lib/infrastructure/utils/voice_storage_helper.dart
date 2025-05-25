@@ -19,7 +19,6 @@ class VoiceStorageHelper {
         throw Exception('Voice recording file not found: $voicePath');
       }
     } catch (e) {
-      print('Error saving voice recording permanently: $e');
       rethrow;
     }
   }

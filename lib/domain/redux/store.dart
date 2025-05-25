@@ -1,6 +1,5 @@
 // lib/shared/redux/store.dart
-import 'dart:io';
-import 'package:isar/isar.dart';
+import 'package:cbl/cbl.dart' as cbl;
 import 'package:redux/redux.dart';
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/redux/app_reducer.dart';
@@ -10,7 +9,9 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/logging_middleware.dart';
 import 'package:teja/shared/helpers/logger.dart';
 
-Future<Store<AppState>> createStore(Isar isarInstance) async {
+Future<Store<AppState>> createStore(
+  cbl.Database cblDatabase,
+) async {
   var options = Options(
     //add an option to handle uncaught errors
     onError: (dynamic e, String s) {
@@ -33,7 +34,7 @@ Future<Store<AppState>> createStore(Isar isarInstance) async {
   //connect to store
   sagaMiddleware.setStore(store);
   sagaMiddleware.setContext({
-    'isar': isarInstance,
+    'cbl': cblDatabase,
     // Add other dependencies if needed
   });
   sagaMiddleware.run(() => rootSaga(store));

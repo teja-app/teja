@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class BasicSettingsPage extends StatefulWidget {
   const BasicSettingsPage({super.key});
 
@@ -15,7 +17,6 @@ class _BasicSettingsPageState extends State<BasicSettingsPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   DateTime? _dateOfBirth;
-  String? _profileImageUrl;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(

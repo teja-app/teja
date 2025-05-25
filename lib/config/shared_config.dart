@@ -1,21 +1,10 @@
 import 'dart:io';
+import 'package:cbl_flutter/cbl_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:isar/isar.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:redux/redux.dart';
-import 'package:teja/infrastructure/database/hive_collections/featured_journal_template.dart';
-import 'package:teja/infrastructure/database/hive_collections/journal_category.dart';
 import 'package:teja/infrastructure/database/hive_collections/notification_time_slot.dart';
 import 'package:teja/infrastructure/database/hive_collections/user_preference.dart';
-import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart';
-import 'package:teja/infrastructure/database/isar_collections/journal_template.dart';
-import 'package:teja/infrastructure/database/isar_collections/master_factor.dart';
-import 'package:teja/infrastructure/database/isar_collections/master_feeling.dart';
-import 'package:teja/infrastructure/database/isar_collections/mood_log.dart';
-import 'package:teja/infrastructure/database/isar_collections/quote.dart';
-import 'package:teja/infrastructure/database/isar_collections/task.dart';
-import 'package:teja/infrastructure/database/isar_collections/vision.dart';
 import 'package:teja/infrastructure/utils/notification_service.dart';
 import 'package:teja/infrastructure/utils/share_handler_service.dart';
 import 'package:teja/infrastructure/utils/time_storage_helper.dart';
@@ -23,14 +12,19 @@ import 'package:teja/shared/helpers/logger.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/store.dart';
 import 'package:teja/infrastructure/constants/notification_types.dart';
+import 'package:teja/config/open_cbl.dart';
 
 final notificationService = NotificationService();
 final shareHandler = ShareHandlerService();
 
 Future<Store<AppState>> configureCommonDependencies() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final Isar isarInstance = await openIsar();
-  logger.i("Database Instance is ready");
+  // Initialize Couchbase Lite before opening the database
+  await CouchbaseLiteFlutter.init();
+
+  // Initialize Couchbase Lite database
+  final cblDb = await openCouchbaseLiteDatabase();
+  logger.i("Couchbase Lite Database Instance is ready");
 
   await notificationService.initialize();
   logger.i("Notification Service Connected");
@@ -41,16 +35,12 @@ Future<Store<AppState>> configureCommonDependencies() async {
   }
 
   await Hive.initFlutter();
-  Hive.registerAdapter(FeaturedJournalTemplateAdapter());
-  Hive.registerAdapter(JournalCategoryAdapter());
   Hive.registerAdapter(TimeSlotAdapter());
   Hive.registerAdapter(UserPreferenceAdapter());
-  await Hive.openBox(FeaturedJournalTemplate.boxKey);
-  await Hive.openBox(JournalCategory.boxKey);
   await Hive.openBox(TimeSlot.boxKey);
   await Hive.openBox(UserPreference.boxKey);
 
-  final store = await createStore(isarInstance);
+  final store = await createStore(cblDb);
   logger.i("Connected to local data store");
 
   await notificationService.cancelAllNotifications();
@@ -61,39 +51,20 @@ Future<Store<AppState>> configureCommonDependencies() async {
   return store;
 }
 
-Future<Isar> openIsar() async {
-  final directory = await getApplicationDocumentsDirectory();
-  final path = directory.path;
-  return await Isar.open(
-    [
-      MoodLogSchema,
-      MasterFeelingSchema,
-      MasterFactorSchema,
-      QuoteSchema,
-      VisionSchema,
-      JournalTemplateSchema,
-      JournalEntrySchema,
-      TaskSchema
-    ],
-    directory: path,
-  );
-}
 
-Future<void> handleNotificationInitialize(
-    NotificationService notificationService) async {
+Future<void> handleNotificationInitialize(NotificationService notificationService) async {
   final TimeStorage timeStorage = TimeStorage();
 
   // Retrieve saved times and statuses
   final Map<String, TimeOfDay> timeSlots = await timeStorage.getAllTimeSlots();
-  final Map<String, bool> enabledStatuses =
-      await timeStorage.getEnabledStatuses();
+  final Map<String, bool> enabledStatuses = await timeStorage.getEnabledStatuses();
 
   // Default settings
   final Map<String, TimeOfDay> defaultTimeSlots = {
-    NotificationType.MORNING_KICKSTART: const TimeOfDay(hour: 9, minute: 0),
-    NotificationType.EVENING_WIND_DOWN: const TimeOfDay(hour: 21, minute: 0),
-    NotificationType.FOCUS_REMINDER: const TimeOfDay(hour: 14, minute: 30),
-    NotificationType.JOURNALING_CUE: const TimeOfDay(hour: 12, minute: 0),
+    NotificationType.morningKickstart: const TimeOfDay(hour: 9, minute: 0),
+    NotificationType.eveningWindDown: const TimeOfDay(hour: 21, minute: 0),
+    NotificationType.focusReminder: const TimeOfDay(hour: 14, minute: 30),
+    NotificationType.journalingCue: const TimeOfDay(hour: 12, minute: 0),
   };
 
   // Schedule or cancel notifications based on saved statuses or defaults
@@ -125,13 +96,13 @@ Future<void> handleNotificationInitialize(
 
 int _getNotificationId(String title) {
   switch (title) {
-    case NotificationType.MORNING_KICKSTART:
+    case NotificationType.morningKickstart:
       return 100;
-    case NotificationType.EVENING_WIND_DOWN:
+    case NotificationType.eveningWindDown:
       return 200;
-    case NotificationType.FOCUS_REMINDER:
+    case NotificationType.focusReminder:
       return 300;
-    case NotificationType.JOURNALING_CUE:
+    case NotificationType.journalingCue:
       return 400;
     default:
       return 0; // Default ID for unknown titles

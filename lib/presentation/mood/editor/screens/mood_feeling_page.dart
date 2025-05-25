@@ -9,6 +9,8 @@ import 'package:teja/domain/redux/app_state.dart';
 
 import 'package:collection/collection.dart'; // Import collection package
 
+// ignore_for_file: library_private_types_in_public_api
+
 class FeelingScreen extends StatefulWidget {
   const FeelingScreen({super.key});
 
@@ -137,11 +139,10 @@ class FeelingScreenState extends State<FeelingScreen> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
 
     return StoreConnector<AppState, _ViewModel>(
       converter: (store) => _ViewModel.fromStore(store),
-      onInit: (store) => _initializeFeelings(store.state.masterFeelingState.masterFeelings ?? []),
+      onInit: (store) => _initializeFeelings(store.state.masterFeelingState.masterFeelings),
       onDidChange: (previousViewModel, viewModel) {
         settingState(viewModel.masterFeelings);
       },

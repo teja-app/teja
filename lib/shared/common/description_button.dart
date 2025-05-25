@@ -39,7 +39,7 @@ class DescriptionButton extends StatelessWidget {
               BorderRadius.circular(8), // Rounded corners like the button
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.5), // Shadow color
+              color: Colors.grey.withValues(alpha: 0.5), // Shadow color
               spreadRadius: 0.5,
               blurRadius: 1,
               offset: const Offset(0, 1), // changes position of shadow

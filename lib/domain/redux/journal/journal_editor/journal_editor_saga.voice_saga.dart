@@ -1,8 +1,9 @@
-import 'package:isar/isar.dart';
-import 'package:redux_saga/redux_saga.dart';
+import 'package:cbl/cbl.dart' as cbl;
+import 'package:redux_saga/redux_saga.dart' as redux_saga;
+import 'package:redux_saga/redux_saga.dart' hide Result, Select;
 import 'package:teja/domain/entities/journal_entry_entity.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.voice.dart';
-import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart';
+import 'package:teja/infrastructure/database/cbl_collections/journal_entry.dart' as journal_collection;
 import 'package:teja/infrastructure/repositories/journal_entry.voice_entry_repository.dart';
 import 'package:teja/infrastructure/repositories/journal_entry_repository.dart';
 
@@ -16,11 +17,11 @@ class VoiceSaga {
   }
 
   _handleAddOrUpdateVoice({required AddOrUpdateVoiceAction action}) sync* {
-    var isarResult = Result<Isar>();
-    yield GetContext('isar', result: isarResult);
-    Isar isar = isarResult.value!;
+    var cblResult = redux_saga.Result<cbl.Database>();
+    yield GetContext('cbl', result: cblResult);
+    cbl.Database cblDatabase = cblResult.value!;
 
-    var journalEntryRepository = VoiceEntryRepository(isar);
+    var journalEntryRepository = VoiceEntryRepository(cblDatabase);
 
     yield Try(() sync* {
       yield Call(journalEntryRepository.addOrUpdateVoice, args: [action.journalEntryId, action.voiceEntry]);
@@ -31,11 +32,11 @@ class VoiceSaga {
   }
 
   _handleRemoveVoice({required RemoveVoiceAction action}) sync* {
-    var isarResult = Result<Isar>();
-    yield GetContext('isar', result: isarResult);
-    Isar isar = isarResult.value!;
+    var cblResult = redux_saga.Result<cbl.Database>();
+    yield GetContext('cbl', result: cblResult);
+    cbl.Database cblDatabase = cblResult.value!;
 
-    var journalEntryRepository = VoiceEntryRepository(isar);
+    var journalEntryRepository = VoiceEntryRepository(cblDatabase);
 
     yield Try(() sync* {
       yield Call(journalEntryRepository.removeVoice, args: [action.journalEntryId, action.voiceHash]);
@@ -46,11 +47,11 @@ class VoiceSaga {
   }
 
   _handleAddVoiceToQuestionAnswerPair({required AddVoiceToQuestionAnswerPair action}) sync* {
-    var isarResult = Result<Isar>();
-    yield GetContext('isar', result: isarResult);
-    Isar isar = isarResult.value!;
+    var cblResult = redux_saga.Result<cbl.Database>();
+    yield GetContext('cbl', result: cblResult);
+    cbl.Database cblDatabase = cblResult.value!;
 
-    var journalEntryRepository = VoiceEntryRepository(isar);
+    var journalEntryRepository = VoiceEntryRepository(cblDatabase);
 
     yield Try(() sync* {
       // First, add or update the voice in the repository
@@ -70,11 +71,11 @@ class VoiceSaga {
   }
 
   _handleRemoveVoiceFromQuestionAnswerPair({required RemoveVoiceFromQuestionAnswerPair action}) sync* {
-    var isarResult = Result<Isar>();
-    yield GetContext('isar', result: isarResult);
-    Isar isar = isarResult.value!;
+    var cblResult = redux_saga.Result<cbl.Database>();
+    yield GetContext('cbl', result: cblResult);
+    cbl.Database cblDatabase = cblResult.value!;
 
-    var journalEntryRepository = VoiceEntryRepository(isar);
+    var journalEntryRepository = VoiceEntryRepository(cblDatabase);
 
     yield Try(() sync* {
       // First, unlink the voice from the question-answer pair
@@ -91,19 +92,19 @@ class VoiceSaga {
   }
 
   _handleRefreshVoices({required RefreshVoicesAction action}) sync* {
-    var isarResult = Result<Isar>();
-    yield GetContext('isar', result: isarResult);
-    Isar isar = isarResult.value!;
+    var cblResult = redux_saga.Result<cbl.Database>();
+    yield GetContext('cbl', result: cblResult);
+    cbl.Database cblDatabase = cblResult.value!;
 
-    var journalEntryRepository = JournalEntryRepository(isar);
+    JournalEntryRepository journalEntryRepository = JournalEntryRepository(cblDatabase);
 
     yield Try(() sync* {
       // Fetch the updated journal entry with the new voices
-      var journalEntryResult = Result<JournalEntry>();
+      var journalEntryResult = redux_saga.Result<journal_collection.JournalEntry?>();
       yield Call(journalEntryRepository.getJournalEntryById, args: [action.journalEntryId], result: journalEntryResult);
 
       if (journalEntryResult.value != null) {
-        JournalEntry journalEntry = journalEntryResult.value!;
+        journal_collection.JournalEntry journalEntry = journalEntryResult.value!;
         // Convert the JournalEntry to JournalEntryEntity (or your specific entity model)
         JournalEntryEntity updatedEntry = journalEntryRepository.toEntity(journalEntry);
         // Dispatch an action to update the state with this new entry

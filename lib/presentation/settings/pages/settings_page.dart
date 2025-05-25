@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/presentation/home/ui/master_fetch/fetch_master_view.dart';
 import 'package:teja/presentation/settings/pages/widgets/settings_authenticate.dart';
 import 'package:teja/router.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
-import 'package:teja/theme/theme_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -25,8 +23,6 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final GoRouter goRouter = GoRouter.of(context);
-    final ThemeService themeService =
-        Provider.of<ThemeService>(context, listen: false);
     final double screenWidth = MediaQuery.of(context).size.width;
     final double contentWidth = (screenWidth > 500) ? 500 : screenWidth;
 
@@ -170,33 +166,6 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  void _showThemeOptions(BuildContext context, ThemeService themeService) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return SimpleDialog(
-          title: const Text('Choose Theme'),
-          children: <Widget>[
-            SimpleDialogOption(
-              onPressed: () {
-                themeService.setThemeMode(ThemeMode.light);
-                Navigator.pop(context);
-              },
-              child: const Text('Light Theme'),
-            ),
-            SimpleDialogOption(
-              onPressed: () {
-                themeService.setThemeMode(ThemeMode.dark);
-                Navigator.pop(context);
-              },
-              child: const Text('Dark Theme'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   void _authenticateAndNavigate(BuildContext context, String route) {
     settingsAuthenticate(context, () {
       GoRouter.of(context).push(route);
@@ -217,9 +186,7 @@ class ViewModel {
     return ViewModel(
       selectedDate: store.state.homeState.selectedDate,
       isFetchSuccessful: store.state.masterFeelingState.isFetchSuccessful &&
-          store.state.masterFactorState.isFetchSuccessful &&
-          store.state.quoteState.isFetchSuccessful &&
-          store.state.journalTemplateState.isFetchSuccessful,
+          store.state.masterFactorState.isFetchSuccessful,
     );
   }
 }

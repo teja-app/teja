@@ -1,10 +1,11 @@
-import 'package:redux_saga/redux_saga.dart';
+import 'package:redux_saga/redux_saga.dart' as redux_saga;
+import 'package:redux_saga/redux_saga.dart' hide Result, Select;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
 import 'package:teja/domain/redux/journal/journal_sync/journal_sync_actions.dart';
 import 'package:teja/infrastructure/api/journal_entry_api.dart';
 import 'package:teja/infrastructure/repositories/journal_entry_repository.dart';
-import 'package:isar/isar.dart';
+import 'package:cbl/cbl.dart' as cbl;
 
 class JournalSyncSaga {
   Iterable<void> saga() sync* {
@@ -14,27 +15,26 @@ class JournalSyncSaga {
 
   _handleSyncJournalEntries({required SyncJournalEntries action}) sync* {
     try {
-      var isarResult = Result<Isar>();
-      yield GetContext('isar', result: isarResult);
-      Isar isar = isarResult.value!;
+      var cblResult = redux_saga.Result<cbl.Database>();
+      yield GetContext('cbl', result: cblResult);
+      cbl.Database cblDatabase = cblResult.value!;
+      JournalEntryRepository journalEntryRepository = JournalEntryRepository(cblDatabase);
 
-      var journalEntryRepository = JournalEntryRepository(isar);
-
-      var lastSyncTimestampResult = Result<DateTime?>();
+      var lastSyncTimestampResult = redux_saga.Result<DateTime?>();
       yield Call(journalEntryRepository.getLastSyncTimestamp, result: lastSyncTimestampResult);
       DateTime lastSyncTimestamp = lastSyncTimestampResult.value ?? DateTime.fromMillisecondsSinceEpoch(0);
 
-      var localEntriesResult = Result<List<JournalEntryEntity>>();
+      var localEntriesResult = redux_saga.Result<List<JournalEntryEntity>>();
       yield Call(journalEntryRepository.getAllJournalEntries, result: localEntriesResult);
       List<JournalEntryEntity> localEntries = localEntriesResult.value!;
 
-      var previousFailedChunksResult = Result<List<String>?>();
+      var previousFailedChunksResult = redux_saga.Result<List<String>?>();
       yield Call(_getPreviousFailedChunks, result: previousFailedChunksResult);
       List<String>? previousFailedChunks = previousFailedChunksResult.value;
 
       JournalEntryApiService api = JournalEntryApiService();
 
-      var syncResultResult = Result<Map<String, dynamic>>();
+      var syncResultResult = redux_saga.Result<Map<String, dynamic>>();
       yield Call(api.syncEntries,
           args: [localEntries, lastSyncTimestamp, previousFailedChunks], result: syncResultResult);
       var syncResult = syncResultResult.value!;
@@ -88,15 +88,14 @@ class JournalSyncSaga {
 
   _handleFetchInitialJournalEntries({required FetchInitialJournalEntriesAction action}) sync* {
     try {
-      var isarResult = Result<Isar>();
-      yield GetContext('isar', result: isarResult);
-      Isar isar = isarResult.value!;
-
-      var journalEntryRepository = JournalEntryRepository(isar);
+      var cblResult = redux_saga.Result<cbl.Database>();
+      yield GetContext('cbl', result: cblResult);
+      cbl.Database cblDatabase = cblResult.value!;
+      JournalEntryRepository journalEntryRepository = JournalEntryRepository(cblDatabase);
       JournalEntryApiService api = JournalEntryApiService();
 
       // Fetch all entries from the server
-      var entriesResult = Result<List<JournalEntryEntity>>();
+      var entriesResult = redux_saga.Result<List<JournalEntryEntity>>();
       yield Call(api.getAllEntries, args: [], namedArgs: {#includeDeleted: true}, result: entriesResult);
       List<JournalEntryEntity> entries = entriesResult.value!;
 

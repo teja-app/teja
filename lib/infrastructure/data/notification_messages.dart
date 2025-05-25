@@ -13,7 +13,7 @@ class NotificationMessages {
   }
 
   static final Map<String, List<Map<String, String>>> _notificationMessages = {
-    NotificationType.MORNING_KICKSTART: [
+    NotificationType.morningKickstart: [
       {
         'title': '🌅 Rise and Shine!',
         'body': 'Start your day with intention and positivity.'
@@ -67,7 +67,7 @@ class NotificationMessages {
         'body': 'Sketch out your ideal day. What does success look like today?'
       },
     ],
-    NotificationType.EVENING_WIND_DOWN: [
+    NotificationType.eveningWindDown: [
       {
         'title': '🌙 Day\'s Wrap-up',
         'body': 'Reflect on your accomplishments and plan for tomorrow.'
@@ -122,7 +122,7 @@ class NotificationMessages {
         'body': 'Recall a moment that made you smile today.'
       },
     ],
-    NotificationType.FOCUS_REMINDER: [
+    NotificationType.focusReminder: [
       {
         'title': '🎯 Stay on Track',
         'body': 'Remember your morning goals. How are you progressing?'
@@ -178,7 +178,7 @@ class NotificationMessages {
         'body': 'What small win can you achieve in the next 30 minutes?'
       },
     ],
-    NotificationType.JOURNALING_CUE: [
+    NotificationType.journalingCue: [
       {
         'title': '📝 Time to Journal',
         'body': 'Capture your thoughts and feelings. What\'s on your mind?'

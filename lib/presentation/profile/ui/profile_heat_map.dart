@@ -7,6 +7,8 @@ import 'package:teja/domain/redux/yearly_sleep_report/yearly_sleep_report_action
 import 'package:teja/presentation/profile/ui/checklist.dart';
 import 'package:teja/presentation/profile/ui/heat_map_chart.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class ProfileSleepHeatMapScreen extends StatefulWidget {
   const ProfileSleepHeatMapScreen({super.key});
 

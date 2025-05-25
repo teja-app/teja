@@ -3,9 +3,9 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  cbl_flutter_ee
   file_selector_linux
   flutter_secure_storage_linux
-  isar_flutter_libs
   record_linux
   sentry_flutter
   url_launcher_linux

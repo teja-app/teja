@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:teja/domain/entities/mood_log.dart';
 import 'package:teja/domain/redux/app_state.dart';
-import 'dart:ui' as ui;
-import 'dart:typed_data';
-import 'package:share_plus/share_plus.dart';
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 import 'package:teja/presentation/mood/share/ui/share_option_ui.dart';
 import 'package:teja/presentation/mood/ui/mood_detail_card.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class MoodSharePage extends StatefulWidget {
   final String moodId;
 
@@ -76,39 +72,9 @@ class _MoodSharePageState extends State<MoodSharePage> {
                     ],
                   ),
                 )
-              : Center(child: Text('Mood not found')),
+              : const Center(child: Text('Mood not found')),
         );
       },
-    );
-  }
-
-  Future<void> _shareMood(BuildContext context) async {
-    try {
-      final RenderObject? renderObject = _globalKey.currentContext?.findRenderObject();
-      if (renderObject != null && renderObject is RenderRepaintBoundary) {
-        final ui.Image image = await renderObject.toImage(pixelRatio: 3.0);
-        final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-        if (byteData != null) {
-          final Uint8List pngBytes = byteData.buffer.asUint8List();
-          final tempDir = await getTemporaryDirectory();
-          final imagePath = '${tempDir.path}/mood_share.png';
-          final file = await File(imagePath).create();
-          await file.writeAsBytes(pngBytes);
-          Share.shareXFiles([XFile(imagePath)]);
-        } else {
-          _showErrorSnackBar(context, 'Failed to capture mood image.');
-        }
-      } else {
-        _showErrorSnackBar(context, 'Unable to find mood to share.');
-      }
-    } catch (e) {
-      _showErrorSnackBar(context, 'Error sharing mood: ${e.toString()}');
-    }
-  }
-
-  void _showErrorSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
     );
   }
 }

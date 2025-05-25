@@ -65,14 +65,14 @@ class MoodLogLayoutConfig {
 
 Widget moodLogLayout(MoodLogEntity? moodLog, BuildContext context, [MoodLogLayoutConfig? config]) {
   if (moodLog == null) {
-    return Center(child: Text("Mood log is not available"));
+    return const Center(child: Text("Mood log is not available"));
   }
 
   final svgPath = 'assets/icons/mood_${moodLog.moodRating}_active.svg';
   final includeComments = config?.includeComments ?? true;
   final includeAttachments = config?.includeAttachments ?? true;
   final textTheme = Theme.of(context).textTheme;
-  final gridWidth = config!.gridWidth ?? 3.5;
+  final gridWidth = config!.gridWidth;
 
   // Extract moodLog details with null checks
   Map<String, String> moodTexts = _getMoodEntryText(moodLog, context);

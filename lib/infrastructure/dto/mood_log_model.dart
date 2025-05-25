@@ -32,6 +32,8 @@ class MoodLogModelDto {
       moodRating: moodRating,
       comment: comment,
       feelings: feelings.map((dto) => dto.toDomain()).toList(), // Map DTO to domain
+      createdAt: DateTime.now(), // Default to now if not available
+      updatedAt: DateTime.now(), // Default to now if not available
     );
   }
 }

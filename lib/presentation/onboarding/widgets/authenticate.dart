@@ -12,8 +12,10 @@ void authenticate(BuildContext context, VoidCallback onSuccess) async {
         await auth.getAvailableBiometrics();
 
     if (!canCheckBiometrics || availableBiometrics.isEmpty) {
-      _showSnackbar(
-          context, 'Biometric authentication not available or set up.');
+      if (context.mounted) {
+        _showSnackbar(
+            context, 'Biometric authentication not available or set up.');
+      }
       return;
     }
 
@@ -30,24 +32,36 @@ void authenticate(BuildContext context, VoidCallback onSuccess) async {
     if (authenticated) {
       onSuccess();
     } else {
-      _showSnackbar(context, 'Authentication canceled by user.');
+      if (context.mounted) {
+        _showSnackbar(context, 'Authentication canceled by user.');
+      }
     }
   } on PlatformException catch (e) {
     // Handling specific platform exceptions
     if (e.code == 'NotAvailable') {
-      _showSnackbar(context, 'Biometric authentication not available.');
+      if (context.mounted) {
+        _showSnackbar(context, 'Biometric authentication not available.');
+      }
     } else if (e.code == 'NotEnrolled') {
-      _showSnackbar(context,
-          'No biometrics enrolled. Please set up biometric authentication.');
+      if (context.mounted) {
+        _showSnackbar(context,
+            'No biometrics enrolled. Please set up biometric authentication.');
+      }
     } else if (e.code == 'LockedOut' || e.code == 'PermanentlyLockedOut') {
-      _showSnackbar(context,
-          'Biometric authentication is locked out. Please try again later.');
+      if (context.mounted) {
+        _showSnackbar(context,
+            'Biometric authentication is locked out. Please try again later.');
+      }
     } else {
-      _showSnackbar(context, 'Authentication error: ${e.message}');
+      if (context.mounted) {
+        _showSnackbar(context, 'Authentication error: ${e.message}');
+      }
     }
   } catch (e) {
     // Generic error handling
-    _showSnackbar(context, 'An unexpected error occurred. Please try again.');
+    if (context.mounted) {
+      _showSnackbar(context, 'An unexpected error occurred. Please try again.');
+    }
   }
 }
 
@@ -61,8 +75,10 @@ void register(BuildContext context, VoidCallback onSuccess) async {
         await auth.getAvailableBiometrics();
 
     if (!canCheckBiometrics || availableBiometrics.isEmpty) {
-      _showSnackbar(
-          context, 'Biometric authentication not available or set up.');
+      if (context.mounted) {
+        _showSnackbar(
+            context, 'Biometric authentication not available or set up.');
+      }
       return;
     }
 
@@ -78,24 +94,36 @@ void register(BuildContext context, VoidCallback onSuccess) async {
     if (authenticated) {
       onSuccess();
     } else {
-      _showSnackbar(context, 'Authentication canceled by user.');
+      if (context.mounted) {
+        _showSnackbar(context, 'Authentication canceled by user.');
+      }
     }
   } on PlatformException catch (e) {
     // Handling specific platform exceptions
     if (e.code == 'NotAvailable') {
-      _showSnackbar(context, 'Biometric authentication not available.');
+      if (context.mounted) {
+        _showSnackbar(context, 'Biometric authentication not available.');
+      }
     } else if (e.code == 'NotEnrolled') {
-      _showSnackbar(context,
-          'No biometrics enrolled. Please set up biometric authentication.');
+      if (context.mounted) {
+        _showSnackbar(context,
+            'No biometrics enrolled. Please set up biometric authentication.');
+      }
     } else if (e.code == 'LockedOut' || e.code == 'PermanentlyLockedOut') {
-      _showSnackbar(context,
-          'Biometric authentication is locked out. Please try again later.');
+      if (context.mounted) {
+        _showSnackbar(context,
+            'Biometric authentication is locked out. Please try again later.');
+      }
     } else {
-      _showSnackbar(context, 'Authentication error: ${e.message}');
+      if (context.mounted) {
+        _showSnackbar(context, 'Authentication error: ${e.message}');
+      }
     }
   } catch (e) {
     // Generic error handling
-    _showSnackbar(context, 'An unexpected error occurred. Please try again.');
+    if (context.mounted) {
+      _showSnackbar(context, 'An unexpected error occurred. Please try again.');
+    }
   }
 }
 

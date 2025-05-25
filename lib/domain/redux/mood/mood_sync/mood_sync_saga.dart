@@ -3,7 +3,7 @@ import 'package:teja/domain/entities/mood_log.dart';
 import 'package:teja/domain/redux/mood/mood_sync/mood_sync_actions.dart';
 import 'package:teja/infrastructure/api/mood_log_api.dart';
 import 'package:teja/infrastructure/repositories/mood_log_repository.dart';
-import 'package:isar/isar.dart';
+import 'package:cbl/cbl.dart' as cbl;
 
 class MoodSyncSaga {
   Iterable<void> saga() sync* {
@@ -13,11 +13,11 @@ class MoodSyncSaga {
 
   _handleSyncMoodLogs({required SyncMoodLogs action}) sync* {
     try {
-      var isarResult = Result<Isar>();
-      yield GetContext('isar', result: isarResult);
-      Isar isar = isarResult.value!;
+      var cblResult = Result<cbl.Database>();
+      yield GetContext('cbl', result: cblResult);
+      cbl.Database database = cblResult.value!;
 
-      var moodLogRepository = MoodLogRepository(isar);
+      var moodLogRepository = MoodLogRepository(database);
 
       var lastSyncTimestampResult = Result<DateTime?>();
       yield Call(moodLogRepository.getLastSyncTimestamp, result: lastSyncTimestampResult);
@@ -76,11 +76,11 @@ class MoodSyncSaga {
 
   _handleFetchInitialMoodLogs({required FetchInitialMoodLogsAction action}) sync* {
     try {
-      var isarResult = Result<Isar>();
-      yield GetContext('isar', result: isarResult);
-      Isar isar = isarResult.value!;
+      var cblResult = Result<cbl.Database>();
+      yield GetContext('cbl', result: cblResult);
+      cbl.Database database = cblResult.value!;
 
-      var moodLogRepository = MoodLogRepository(isar);
+      var moodLogRepository = MoodLogRepository(database);
       MoodLogApiService api = MoodLogApiService();
 
       // Fetch all entries from the server

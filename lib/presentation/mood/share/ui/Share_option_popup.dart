@@ -82,13 +82,19 @@ class ShareOptionsPopup extends StatelessWidget {
             Share.shareXFiles([XFile(imagePath)]);
           }
         } else {
-          _showErrorSnackBar(context, 'Failed to capture mood image.');
+          if (context.mounted) {
+            _showErrorSnackBar(context, 'Failed to capture mood image.');
+          }
         }
       } else {
-        _showErrorSnackBar(context, 'Unable to find mood to share.');
+        if (context.mounted) {
+          _showErrorSnackBar(context, 'Unable to find mood to share.');
+        }
       }
     } catch (e) {
-      _showErrorSnackBar(context, 'Error sharing mood: ${e.toString()}');
+      if (context.mounted) {
+        _showErrorSnackBar(context, 'Error sharing mood: ${e.toString()}');
+      }
     }
   }
 }

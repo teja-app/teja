@@ -8,6 +8,8 @@ import 'package:teja/domain/redux/theme/theme_actions.dart';
 import 'package:teja/infrastructure/utils/user_preference_helper.dart';
 import 'package:teja/theme/theme_service.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class ThemeSettingsPage extends StatefulWidget {
   const ThemeSettingsPage({Key? key}) : super(key: key);
 
@@ -135,10 +137,10 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
   }
 
   void _clearSelectedImage() {
-    final UserPreferenceStorage _preferenceStorage = UserPreferenceStorage();
-    _preferenceStorage.setSelectedImageUrl('');
+    final UserPreferenceStorage preferenceStorage = UserPreferenceStorage();
+    preferenceStorage.setSelectedImageUrl('');
     StoreProvider.of<AppState>(context).dispatch(
-      SelectThemeImageAction('', 1.0),
+      const SelectThemeImageAction('', 1.0),
     );
   }
 
@@ -146,7 +148,7 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
       List<Map<String, dynamic>> imageList, String theme, _ViewModel vm) {
     final ThemeService themeService =
         Provider.of<ThemeService>(context, listen: false);
-    final UserPreferenceStorage _preferenceStorage = UserPreferenceStorage();
+    final UserPreferenceStorage preferenceStorage = UserPreferenceStorage();
     if (imageList.isEmpty) {
       return const Padding(
         padding: EdgeInsets.all(16.0),
@@ -155,7 +157,7 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
     }
 
     return FutureBuilder<String?>(
-      future: _preferenceStorage.getSelectedImageUrl(),
+      future: preferenceStorage.getSelectedImageUrl(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const CircularProgressIndicator();
@@ -184,7 +186,7 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
                     SelectThemeImageAction(
                         image['url'], image['opacity'] ?? 1.0),
                   );
-                  _preferenceStorage.setSelectedImageUrl(image['url']);
+                  preferenceStorage.setSelectedImageUrl(image['url']);
                   setState(() {}); // Trigger a rebuild to update the UI
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(

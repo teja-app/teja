@@ -55,7 +55,6 @@ class Button extends StatelessWidget {
         case ButtonType.disabled:
           return Colors.grey;
         case ButtonType.defaultButton:
-        default:
           return textColor ?? theme.colorScheme.onSurface;
       }
     }
@@ -67,9 +66,8 @@ class Button extends StatelessWidget {
         case ButtonType.secondary:
           return backgroundColor ?? theme.colorScheme.secondary;
         case ButtonType.disabled:
-          return Colors.grey.withOpacity(0.3);
+          return Colors.grey.withValues(alpha: 0.3);
         case ButtonType.defaultButton:
-        default:
           return backgroundColor ?? theme.colorScheme.surface;
       }
     }
@@ -80,9 +78,8 @@ class Button extends StatelessWidget {
         case ButtonType.secondary:
           return Colors.transparent;
         case ButtonType.disabled:
-          return Colors.grey.withOpacity(0.5);
+          return Colors.grey.withValues(alpha: 0.5);
         case ButtonType.defaultButton:
-        default:
           return borderColor ?? theme.colorScheme.outline;
       }
     }
@@ -122,9 +119,9 @@ class Button extends StatelessWidget {
                   if (secondaryText != null)
                     Text(
                       secondaryText!,
-                      style: secondaryTextStyle?.copyWith(color: getTextColor().withOpacity(0.7)) ??
+                      style: secondaryTextStyle?.copyWith(color: getTextColor().withValues(alpha: 0.7)) ??
                           TextStyle(
-                            color: getTextColor().withOpacity(0.7),
+                            color: getTextColor().withValues(alpha: 0.7),
                             fontSize: 12,
                           ),
                     ),

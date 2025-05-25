@@ -27,11 +27,11 @@ class OnboardingPage extends StatefulWidget {
 
 class OnboardingPageState extends State<OnboardingPage> {
   SMIInput<bool>? _isPressed;
-  bool _isProUser = false;
+  final bool _isProUser = false;
   Color _buttonBackgroundColor = Colors.black;
   Color _buttonTextColor = Colors.white;
   Color _borderColor = Colors.white;
-  String _affirmation =
+  final String _affirmation =
       "You are capable, worthy, and have the strength to overcome challenges.";
 
   final String _imageUrl =
@@ -43,8 +43,6 @@ class OnboardingPageState extends State<OnboardingPage> {
     _updateButtonColors();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final store = StoreProvider.of<AppState>(context);
-      bool _hasExistingMnemonic =
-          await store.state.authState.hasExistingMnemonic;
       performInitStateActions(store);
       if (_isPressed != null) {
         _isPressed!.value = false;
@@ -57,8 +55,7 @@ class OnboardingPageState extends State<OnboardingPage> {
 
       final recoverCode = await SecureStorage().readRecoveryCode();
 
-      _hasExistingMnemonic = await store.dispatch(SetHasExistingMnemonicAction(
-          _hasExistingMnemonic = recoverCode != null));
+      await store.dispatch(SetHasExistingMnemonicAction(recoverCode != null));
 
       final authService = AuthService();
       await authService.validateAndAuthenticate(store);
@@ -86,7 +83,9 @@ class OnboardingPageState extends State<OnboardingPage> {
         _isPressed!.value = true;
       }
       Future.delayed(const Duration(seconds: 3), () {
-        GoRouter.of(context).replaceNamed(RootPath.home);
+        if (mounted) {
+          GoRouter.of(context).replaceNamed(RootPath.home);
+        }
       });
     });
   }
@@ -97,7 +96,9 @@ class OnboardingPageState extends State<OnboardingPage> {
         _isPressed!.value = true;
       }
       Future.delayed(const Duration(seconds: 3), () {
-        GoRouter.of(context).pushNamed(RootPath.registration);
+        if (mounted) {
+          GoRouter.of(context).pushNamed(RootPath.registration);
+        }
       });
     });
   }
@@ -125,9 +126,9 @@ class OnboardingPageState extends State<OnboardingPage> {
   Widget build(BuildContext context) {
     final Brightness themeBrightness = Theme.of(context).brightness;
     final colorScheme = Theme.of(context).colorScheme;
-    final _shareHandlerService = ShareHandlerService();
+    final shareHandlerService = ShareHandlerService();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _shareHandlerService.setContext(context);
+      shareHandlerService.setContext(context);
     });
     return StoreConnector<AppState, Store<AppState>>(
       converter: (store) => store,
@@ -184,7 +185,7 @@ class OnboardingPageState extends State<OnboardingPage> {
         // Semi-transparent overlay
         Container(
           decoration: BoxDecoration(
-            color: colorScheme.surface.withOpacity(0.2),
+            color: colorScheme.surface.withValues(alpha: 0.2),
           ),
         ),
 
@@ -193,13 +194,13 @@ class OnboardingPageState extends State<OnboardingPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              SizedBox(height: 50), // Spacer at the top
+              const SizedBox(height: 50), // Spacer at the top
               // Centered Affirmation
               Center(
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   decoration: BoxDecoration(
-                    color: _buttonBackgroundColor.withOpacity(0.5),
+                    color: _buttonBackgroundColor.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:teja/presentation/onboarding/widgets/slide_item_widget.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class SliderWidget extends StatefulWidget {
   const SliderWidget({super.key});
 

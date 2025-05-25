@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:teja/shared/helpers/color.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class WeeklyMoodChart extends StatefulWidget {
   final List<FlSpot> currentWeekSpots;
   final List<FlSpot> previousWeekSpots;

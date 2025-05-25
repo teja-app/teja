@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class TypingIndicator extends StatefulWidget {
   const TypingIndicator({Key? key}) : super(key: key);
 
@@ -35,8 +37,8 @@ class _TypingIndicatorState extends State<TypingIndicator> with SingleTickerProv
       children: List.generate(3, (index) {
         return ScaleTransition(
           scale: _animation,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 2.0),
+          child: const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 2.0),
             child: Dot(),
           ),
         );
@@ -46,6 +48,8 @@ class _TypingIndicatorState extends State<TypingIndicator> with SingleTickerProv
 }
 
 class Dot extends StatelessWidget {
+  const Dot({super.key});
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;

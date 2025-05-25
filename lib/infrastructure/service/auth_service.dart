@@ -4,19 +4,15 @@ import 'package:redux/redux.dart';
 import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/auth/auth_action.dart';
 import 'package:teja/infrastructure/api/auth_api.dart';
-import 'package:teja/infrastructure/service/token_service.dart';
 import 'package:teja/infrastructure/utils/token_helper.dart';
 import 'package:teja/shared/storage/secure_storage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 class AuthService {
   final AuthApi _authApi;
-  final TokenService _tokenService;
 
   final SecureStorage _secureStorage = SecureStorage();
-  AuthService()
-      : _authApi = AuthApi(),
-        _tokenService = TokenService();
+  AuthService() : _authApi = AuthApi();
 
   Future<String> fetchRecoveryPhrase() async {
     final response = await _authApi.fetchRecoveryPhrase();
@@ -40,7 +36,23 @@ class AuthService {
   }
 
   Future<Map<String, String>> authenticate(String mnemonic) async {
-    return _tokenService.authenticateWithRecoveryCode(mnemonic);
+    final challengeResponse = await _authApi.authenticateChallenge();
+    final nonce = challengeResponse.data['nonce'];
+    final dynamicKey = challengeResponse.data['dynamicKey'];
+
+    final hashedMnemonic = sha256.convert(utf8.encode(mnemonic)).toString();
+    final encryptedHashedMnemonic = encryptText(dynamicKey, hashedMnemonic);
+
+    final payload = {
+      'encryptedHashedMnemonic': encryptedHashedMnemonic,
+      'nonce': nonce,
+    };
+
+    final response = await _authApi.authenticate(payload);
+    return {
+      'accessToken': response.data['accessToken'],
+      'refreshToken': response.data['refreshToken'],
+    };
   }
 
   Future<String> refreshToken(String refreshToken) async {

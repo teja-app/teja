@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+
+// ignore_for_file: library_private_types_in_public_api
 class CustomSwipeable extends StatefulWidget {
   final Widget child;
   final double threshold;
@@ -27,7 +29,7 @@ class _CustomSwipeableState extends State<CustomSwipeable>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 200),
       value: 0, // start at 0
     );
 
@@ -82,7 +84,7 @@ class _CustomSwipeableState extends State<CustomSwipeable>
         children: [
           // Progress bar background
           Container(
-            color: widget.progressColor.withOpacity(_colorTween.value),
+            color: widget.progressColor.withValues(alpha: _colorTween.value),
             width: double.infinity,
             height: double.infinity,
           ),

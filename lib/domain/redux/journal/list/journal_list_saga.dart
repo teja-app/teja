@@ -1,9 +1,9 @@
-import 'package:isar/isar.dart';
-import 'package:redux_saga/redux_saga.dart';
+import 'package:redux_saga/redux_saga.dart' as redux_saga;
+import 'package:redux_saga/redux_saga.dart' hide Result, Select;
 import 'package:teja/domain/entities/journal_entry_entity.dart';
-import 'package:teja/domain/redux/journal/journal_logs/journal_logs_actions.dart';
 import 'package:teja/domain/redux/journal/list/journal_list_actions.dart';
 import 'package:teja/infrastructure/repositories/journal_entry_repository.dart';
+import 'package:cbl/cbl.dart' as cbl;
 
 class JournalListSaga {
   Iterable<void> saga() sync* {
@@ -18,12 +18,12 @@ class JournalListSaga {
 
   _fetchJournalEntries({required LoadJournalEntriesListAction action}) sync* {
     yield Try(() sync* {
-      var isarResult = Result<Isar>();
-      yield GetContext('isar', result: isarResult);
-      Isar isar = isarResult.value!;
+      var cblResult = redux_saga.Result<cbl.Database>();
+      yield GetContext('cbl', result: cblResult);
+      cbl.Database cblDatabase = cblResult.value!;
 
-      var journalEntriesResult = Result<List<JournalEntryEntity>>();
-      yield Call(JournalEntryRepository(isar).getJournalEntriesPage,
+      var journalEntriesResult = redux_saga.Result<List<JournalEntryEntity>>();
+      yield Call(JournalEntryRepository(cblDatabase).getJournalEntriesPage,
           args: [action.pageKey, action.pageSize], result: journalEntriesResult);
 
       if (journalEntriesResult.value != null) {
@@ -32,7 +32,7 @@ class JournalListSaga {
       } else {
         yield Put(JournalEntriesListFetchFailedAction('No journal entries found for the requested page.'));
       }
-      yield Put(const FetchJournalLogsAction());
+      // yield Put(const FetchJournalLogsAction());
     }, Catch: (e, s) sync* {
       yield Put(JournalEntriesListFetchFailedAction(e.toString()));
     });

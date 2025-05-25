@@ -1,15 +1,14 @@
-import 'package:isar/isar.dart';
+import 'package:cbl/cbl.dart' as cbl;
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/entities/app_error.dart';
 import 'package:teja/domain/entities/master_factor.dart';
 import 'package:teja/domain/redux/app_error/app_error_actions.dart';
 import 'package:teja/domain/redux/mood/master_factor/actions.dart';
 import 'package:teja/infrastructure/api/factor_api.dart';
-import 'package:teja/infrastructure/database/isar_collections/master_factor.dart';
+import 'package:teja/infrastructure/database/cbl_collections/master_factor.dart' as master_factor;
 import 'package:teja/infrastructure/repositories/master_factor.dart';
 import 'package:teja/shared/helpers/errors.dart';
 import 'package:teja/shared/helpers/logger.dart';
-import 'package:teja/shared/storage/secure_storage.dart';
 
 class MasterFactorSaga {
   Iterable<void> saga() sync* {
@@ -21,10 +20,10 @@ class MasterFactorSaga {
     yield Try(() sync* {
       yield Put(FetchMasterFactorsInProgressAction());
 
-      var isarResult = Result<Isar>();
-      yield GetContext('isar', result: isarResult);
-      Isar isar = isarResult.value!;
-      var factorRepo = MasterFactorRepository(isar);
+      var cblResult = Result<cbl.Database>();
+      yield GetContext('cbl', result: cblResult);
+      cbl.Database database = cblResult.value!;
+      var factorRepo = MasterFactorRepository(database);
 
       var cachedFactors = Result<List<MasterFactorEntity>>();
       yield Call(factorRepo.getAllFactorEntities, result: cachedFactors);
@@ -43,14 +42,13 @@ class MasterFactorSaga {
     yield Try(() sync* {
       yield Put(FetchMasterFactorsInProgressAction());
 
-      var isarResult = Result<Isar>();
-      yield GetContext('isar', result: isarResult);
-      Isar isar = isarResult.value!;
-      var factorRepo = MasterFactorRepository(isar);
+      var cblResult = Result<cbl.Database>();
+      yield GetContext('cbl', result: cblResult);
+      cbl.Database database = cblResult.value!;
+      var factorRepo = MasterFactorRepository(database);
 
       var factorsResult = Result<List<MasterFactorEntity>>();
 
-      final accessToken = Result<String?>();
 
       FactorApi factorApi = FactorApi();
       yield Call(
@@ -59,22 +57,20 @@ class MasterFactorSaga {
       );
 
       if (factorsResult.value != null && factorsResult.value!.isNotEmpty) {
-        List<MasterFactor> domainFactors = factorsResult.value!.map((entity) {
-          var factor = MasterFactor()
-            ..slug = entity.slug
-            ..title = entity.title;
-
+        List<master_factor.MasterFactor> domainFactors = factorsResult.value!.map((entity) {
           // Create a list of SubCategory from the subcategories in the entity
-          List<SubCategory> subCategoryList = entity.subcategories.map((subEntity) {
-            return SubCategory()
-              ..slug = subEntity.slug
-              ..title = subEntity.title;
+          List<master_factor.SubCategory> subCategoryList = entity.subcategories.map((subEntity) {
+            return master_factor.SubCategory(
+              slug: subEntity.slug,
+              title: subEntity.title,
+            );
           }).toList();
 
-          // Assign the list directly to the factor's subcategories
-          factor.subcategories = subCategoryList;
-
-          return factor;
+          return master_factor.MasterFactor(
+            slug: entity.slug,
+            title: entity.title,
+            subcategories: subCategoryList,
+          );
         }).toList();
 
         yield Call(factorRepo.addOrUpdateFactors, args: [domainFactors]);
@@ -96,7 +92,7 @@ class MasterFactorSaga {
       } else {
         yield Put(const MasterFactorsFetchFailedAction("An unexpected error occurred"));
         yield Put(AddAppErrorAction(createAppError({
-          'code': StaticErrorCodes.UNKNOWN_ERROR,
+          'code': StaticErrorCodes.unknownError,
           'message': "An unexpected error occurred while fetching from API",
           'details': {'error': e.toString()}
         })));

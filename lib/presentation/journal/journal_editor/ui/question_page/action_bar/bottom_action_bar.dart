@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:teja/infrastructure/database/isar_collections/journal_entry.dart';
+import 'package:teja/infrastructure/database/cbl_collections/journal_entry.dart';
 import 'package:teja/infrastructure/utils/helpers.dart';
 import 'package:teja/infrastructure/utils/image_storage_helper.dart';
 import 'package:teja/infrastructure/utils/video_storage_helper.dart';
@@ -85,11 +85,12 @@ Future<void> handleMediaType(XFile media, JournalQuestionViewModel viewModel) as
 
     var fileBytes = await media.readAsBytes();
     // Create an ImageEntry object with the permanent path
-    ImageEntry imageEntry = ImageEntry()
-      ..id = Helpers.generateUniqueId()
-      ..filePath = relativePath // Use the relative path from permanent storage
-      ..caption = ''
-      ..hash = Helpers.generateHash(fileBytes);
+    ImageEntry imageEntry = ImageEntry(
+      id: Helpers.generateUniqueId(),
+      filePath: relativePath, // Use the relative path from permanent storage
+      caption: '',
+      hash: Helpers.generateHash(fileBytes),
+    );
 
     // Dispatch the action to add the image
     viewModel.addImage(
@@ -103,11 +104,12 @@ Future<void> handleMediaType(XFile media, JournalQuestionViewModel viewModel) as
 
     var fileBytes = await media.readAsBytes();
     // Create a VideoEntry object with the permanent path
-    VideoEntry videoEntry = VideoEntry()
-      ..id = Helpers.generateUniqueId()
-      ..filePath = relativePath // Use the relative path from permanent storage
-      ..duration = 0 // You can update this with the actual video duration if needed
-      ..hash = Helpers.generateHash(fileBytes);
+    VideoEntry videoEntry = VideoEntry(
+      id: Helpers.generateUniqueId(),
+      filePath: relativePath, // Use the relative path from permanent storage
+      duration: 0, // You can update this with the actual video duration if needed
+      hash: Helpers.generateHash(fileBytes),
+    );
 
     // Dispatch the action to add the video
     viewModel.addVideo(

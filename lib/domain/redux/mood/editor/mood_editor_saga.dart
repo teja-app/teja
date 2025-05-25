@@ -1,4 +1,4 @@
-import 'package:isar/isar.dart';
+import 'package:cbl/cbl.dart' as cbl;
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/entities/feeling.dart';
 import 'package:teja/domain/entities/master_factor.dart';
@@ -12,7 +12,7 @@ import 'package:teja/domain/redux/mood/mood_sync/mood_sync_actions.dart';
 import 'package:teja/infrastructure/repositories/master_factor.dart';
 import 'package:teja/infrastructure/repositories/master_feeling.dart';
 import 'package:teja/infrastructure/repositories/mood_log_repository.dart';
-import 'package:teja/infrastructure/database/isar_collections/mood_log.dart';
+import 'package:teja/infrastructure/database/cbl_collections/mood_log.dart' as mood_log;
 
 class MoodEditorSaga {
   Iterable<void> saga() sync* {
@@ -70,11 +70,11 @@ class MoodEditorSaga {
   }
 
   _handleUpdateBroadFactorsAction({required UpdateBroadFactorsAction action}) sync* {
-    var isarResult = Result<Isar>();
-    yield GetContext('isar', result: isarResult);
-    Isar isar = isarResult.value!;
+    var cblResult = Result<cbl.Database>();
+    yield GetContext('cbl', result: cblResult);
+    cbl.Database database = cblResult.value!;
 
-    var moodLogRepository = MoodLogRepository(isar);
+    var moodLogRepository = MoodLogRepository(database);
 
     yield Try(() sync* {
       // Update the broad factors in the repository
@@ -89,11 +89,11 @@ class MoodEditorSaga {
   }
 
   _handleUpdateMoodLogComment({required UpdateMoodLogCommentAction action}) sync* {
-    var isarResult = Result<Isar>();
-    yield GetContext('isar', result: isarResult);
-    Isar isar = isarResult.value!;
+    var cblResult = Result<cbl.Database>();
+    yield GetContext('cbl', result: cblResult);
+    cbl.Database database = cblResult.value!;
 
-    var moodLogRepository = MoodLogRepository(isar);
+    var moodLogRepository = MoodLogRepository(database);
 
     yield Try(() sync* {
       // Update the comment in the repository
@@ -109,67 +109,69 @@ class MoodEditorSaga {
 
   _handleInitializeMoodEditor({required InitializeMoodEditorAction action}) sync* {
     yield Try(() sync* {
-      var isarResult = Result<Isar>();
-      yield GetContext('isar', result: isarResult);
-      Isar isar = isarResult.value!;
+      var cblResult = Result<cbl.Database>();
+      yield GetContext('cbl', result: cblResult);
+      cbl.Database database = cblResult.value!;
 
-      var moodLogRepository = MoodLogRepository(isar);
-      var masterFeelingRepository = MasterFeelingRepository(isar);
-      var masterFactorRepository = MasterFactorRepository(isar);
+      var moodLogRepository = MoodLogRepository(database);
+      var masterFeelingRepository = MasterFeelingRepository(database);
+      var masterFactorRepository = MasterFactorRepository(database);
       // Fetch mood log by ID and initialize the mood editor state
-      var moodLogResult = Result<MoodLog>();
+      var moodLogResult = Result<mood_log.MoodLog?>();
       yield Call(moodLogRepository.getMoodLogById, args: [action.moodLogId], result: moodLogResult);
 
-      MoodLog moodLog = moodLogResult.value!;
-      yield Put(SelectMoodSuccessAction(moodLogRepository.toEntity(moodLog)));
+      mood_log.MoodLog? moodLog = moodLogResult.value;
+      if (moodLog != null) {
+        yield Put(SelectMoodSuccessAction(moodLogRepository.toEntity(moodLog)));
 
-      if (moodLog.feelings != null && moodLog.feelings!.isNotEmpty) {
-        var masterFeelingEntitiesResult = Result<Map<String, MasterFeelingEntity>>();
-        List<String?> feelingSlug = moodLog.feelings!.map((feeling) => feeling.feeling).toList();
-        yield Call(masterFeelingRepository.getFeelingsBySlugs,
-            args: [feelingSlug], result: masterFeelingEntitiesResult);
-        final Map<String, MasterFeelingEntity>? selectedFeelingsMap = masterFeelingEntitiesResult.value;
+        if (moodLog.feelings != null && moodLog.feelings!.isNotEmpty) {
+          var masterFeelingEntitiesResult = Result<Map<String, MasterFeelingEntity>>();
+          List<String?> feelingSlug = moodLog.feelings!.map((feeling) => feeling.feeling).toList();
+          yield Call(masterFeelingRepository.getFeelingsBySlugs,
+              args: [feelingSlug], result: masterFeelingEntitiesResult);
+          final Map<String, MasterFeelingEntity>? selectedFeelingsMap = masterFeelingEntitiesResult.value;
 
-        List<FeelingEntity> feelingsEntities = [];
+          List<FeelingEntity> feelingsEntities = [];
 
-        for (var moodFeeling in moodLog.feelings!) {
-          if (moodFeeling.feeling != null) {
-            var masterFeeling = selectedFeelingsMap?[moodFeeling.feeling];
-            if (masterFeeling != null) {
-              feelingsEntities.add(FeelingEntity(
-                id: masterFeeling.id,
-                feeling: masterFeeling.slug,
-                factors: moodFeeling.factors,
-                // additional fields if needed
-              ));
+          for (var moodFeeling in moodLog.feelings!) {
+            if (moodFeeling.feeling != null) {
+              var masterFeeling = selectedFeelingsMap?[moodFeeling.feeling];
+              if (masterFeeling != null) {
+                feelingsEntities.add(FeelingEntity(
+                  id: masterFeeling.id,
+                  feeling: masterFeeling.slug,
+                  factors: moodFeeling.factors,
+                  // additional fields if needed
+                ));
+              }
             }
           }
-        }
 
-        yield Put(
-          UpdateFeelingsSuccessAction(
-            action.moodLogId,
-            feelingsEntities,
-            selectedFeelingsMap?.values.toList() ?? [],
-          ),
-        );
+          yield Put(
+            UpdateFeelingsSuccessAction(
+              action.moodLogId,
+              feelingsEntities,
+              selectedFeelingsMap?.values.toList() ?? [],
+            ),
+          );
 
-        for (var feelingEntity in feelingsEntities) {
-          // Dispatch success action
-          int feelingEntityId = feelingEntity.id!;
-          if (feelingEntity.factors != null && feelingEntity.factors!.isNotEmpty) {
-            List<String> factorSlugList = feelingEntity.factors!;
-            var masterFactorEntitiesResult = Result<List<SubCategoryEntity>>();
-            yield Call(
-              masterFactorRepository.filterSubCategoryBySlugs,
-              args: [factorSlugList],
-              result: masterFactorEntitiesResult,
-            );
-            yield Put(UpdateFactorsSuccessAction(
-              moodLogId: action.moodLogId,
-              feelingId: feelingEntityId,
-              factors: masterFactorEntitiesResult.value,
-            ));
+          for (int i = 0; i < feelingsEntities.length; i++) {
+            var feelingEntity = feelingsEntities[i];
+            // Dispatch success action
+            if (feelingEntity.factors != null && feelingEntity.factors!.isNotEmpty) {
+              List<String> factorSlugList = feelingEntity.factors!;
+              var masterFactorEntitiesResult = Result<List<SubCategoryEntity>>();
+              yield Call(
+                masterFactorRepository.filterSubCategoryBySlugs,
+                args: [factorSlugList],
+                result: masterFactorEntitiesResult,
+              );
+              yield Put(UpdateFactorsSuccessAction(
+                moodLogId: action.moodLogId,
+                feelingId: i,
+                factors: masterFactorEntitiesResult.value,
+              ));
+            }
           }
         }
       }
@@ -179,32 +181,53 @@ class MoodEditorSaga {
   }
 
   _handleSelectMoodAction({required TriggerSelectMoodAction action}) sync* {
-    var isarResult = Result<Isar>();
-    yield GetContext('isar', result: isarResult);
-    Isar isar = isarResult.value!;
+    var cblResult = Result<cbl.Database>();
+    yield GetContext('cbl', result: cblResult);
+    cbl.Database database = cblResult.value!;
 
-    var moodLogRepository = MoodLogRepository(isar);
+    var moodLogRepository = MoodLogRepository(database);
 
     if (action.moodLogId != null) {
       // Use Result to capture the returned mood log
-      var moodLogResult = Result<MoodLog>();
+      var moodLogResult = Result<mood_log.MoodLog?>();
       yield Call(moodLogRepository.getMoodLogById, args: [action.moodLogId], result: moodLogResult);
 
-      MoodLog moodLog = moodLogResult.value!;
-      moodLog.moodRating = action.moodRating;
+      mood_log.MoodLog? moodLog = moodLogResult.value;
+      if (moodLog != null) {
+        // Create a new mutable instance with updated rating
+        final updatedMoodLog = mood_log.MoodLog(
+          id: moodLog.id,
+          timestamp: moodLog.timestamp,
+          createdAt: moodLog.createdAt,
+          updatedAt: moodLog.updatedAt,
+          moodRating: action.moodRating,
+          comment: moodLog.comment,
+          senderId: moodLog.senderId,
+          feelings: moodLog.feelings,
+          factors: moodLog.factors,
+          attachments: moodLog.attachments,
+          ai: moodLog.ai,
+          isDeleted: moodLog.isDeleted,
+        );
 
-      // Proceed with updating the mood log
-      yield Call(moodLogRepository.addOrUpdateMoodLog, args: [moodLog]);
+        // Proceed with updating the mood log
+        yield Call(moodLogRepository.addOrUpdateMoodLog, args: [updatedMoodLog]);
 
-      // Dispatch an action to update the Redux state
-      yield Put(SelectMoodSuccessAction(moodLogRepository.toEntity(moodLog)));
-      yield Put(const ChangePageAction(1));
+        // Dispatch an action to update the Redux state
+        yield Put(SelectMoodSuccessAction(moodLogRepository.toEntity(updatedMoodLog)));
+        yield Put(const ChangePageAction(1));
+      }
     } else {
       // Create new mood log if no ID is provided
-      MoodLog newMoodLog = MoodLog()..moodRating = action.moodRating;
-      if (action.timestamp != null) {
-        newMoodLog.timestamp = action.timestamp!;
-      }
+      final newMoodLog = mood_log.MoodLog(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        timestamp: action.timestamp ?? DateTime.now(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+        moodRating: action.moodRating,
+        isDeleted: false,
+      );
+      
       yield Call(moodLogRepository.addOrUpdateMoodLog, args: [newMoodLog]);
 
       // Dispatch an action to update the Redux state
@@ -218,24 +241,24 @@ class MoodEditorSaga {
   }
 
   _handleUpdateFeelingsAction({required TriggerUpdateFeelingsAction action}) sync* {
-    var isarResult = Result<Isar>();
-    yield GetContext('isar', result: isarResult);
-    Isar isar = isarResult.value!;
+    var cblResult = Result<cbl.Database>();
+    yield GetContext('cbl', result: cblResult);
+    cbl.Database database = cblResult.value!;
 
-    var moodLogRepository = MoodLogRepository(isar);
+    var moodLogRepository = MoodLogRepository(database);
 
     yield Try(() sync* {
       // Retrieve the current mood log
-      var currentMoodLogResult = Result<MoodLog>();
+      var currentMoodLogResult = Result<mood_log.MoodLog?>();
       yield Call(moodLogRepository.getMoodLogById, args: [action.moodLogId], result: currentMoodLogResult);
-      MoodLog? currentMoodLog = currentMoodLogResult.value;
+      mood_log.MoodLog? currentMoodLog = currentMoodLogResult.value;
 
       List<FeelingEntity> feelingsEntities = [];
-      List<MoodLogFeeling> updatedMoodLogFeelings = [];
+      List<mood_log.MoodLogFeeling> updatedMoodLogFeelings = [];
 
       if (currentMoodLog != null) {
         // Create a map of existing feelings for easy lookup
-        Map<String, MoodLogFeeling> existingFeelingsMap = {};
+        Map<String, mood_log.MoodLogFeeling> existingFeelingsMap = {};
         for (var feeling in currentMoodLog.feelings ?? []) {
           existingFeelingsMap[feeling.feeling ?? ''] = feeling;
         }
@@ -253,15 +276,16 @@ class MoodEditorSaga {
           ));
 
           // Update or add to MoodLogFeelings
-          updatedMoodLogFeelings.add(MoodLogFeeling()
-                ..feeling = masterFeeling.slug
-                ..factors = existingFeeling?.factors ?? [] // Retain existing factors if present
-              );
+          updatedMoodLogFeelings.add(mood_log.MoodLogFeeling(
+            feeling: masterFeeling.slug,
+            factors: existingFeeling?.factors ?? [], // Retain existing factors if present
+            comment: existingFeeling?.comment,
+            detailed: existingFeeling?.detailed,
+          ));
         }
 
         // Update the feelings in the mood log
-        currentMoodLog.feelings = updatedMoodLogFeelings;
-        yield Call(moodLogRepository.addOrUpdateMoodLog, args: [currentMoodLog]);
+        yield Call(moodLogRepository.updateFeelingsForMoodLog, args: [action.moodLogId, updatedMoodLogFeelings]);
       }
 
       // Dispatch success action with the correct parameters

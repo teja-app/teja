@@ -20,7 +20,6 @@ class BroadFactorsScreenState extends State<BroadFactorsScreen> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
     return StoreConnector<AppState, BroadFactorsViewModel>(
       converter: (store) => BroadFactorsViewModel.fromStore(store),
       builder: (context, viewModel) {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:teja/presentation/profile/ui/MoodGaugePainter.dart';
+import 'package:teja/presentation/profile/ui/mood_gauge_painter.dart';
 
 class MoodGaugeChart extends StatelessWidget {
   final double averageMood;
@@ -86,7 +86,7 @@ class MoodGaugeChart extends StatelessWidget {
       package: "assets",
       width: iconSize,
       height: iconSize,
-      color: iconColor,
+      colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
     );
   }
 }

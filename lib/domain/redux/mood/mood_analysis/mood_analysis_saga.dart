@@ -1,12 +1,11 @@
-import 'package:isar/isar.dart';
+import 'package:cbl/cbl.dart' as cbl;
 
 import 'package:redux_saga/redux_saga.dart';
 import 'package:teja/domain/redux/mood/detail/mood_detail_actions.dart';
-import 'package:teja/domain/redux/mood/mood_sync/mood_sync_actions.dart';
 
 import 'package:teja/infrastructure/api/mood_analysis_api.dart';
 import 'package:teja/infrastructure/repositories/mood_log_repository.dart';
-import 'package:teja/infrastructure/database/isar_collections/mood_log.dart';
+import 'package:teja/infrastructure/database/cbl_collections/mood_log.dart' as mood_log;
 
 import 'package:teja/domain/redux/mood/mood_analysis/mood_analysis_actions.dart';
 
@@ -36,26 +35,38 @@ class MoodAnalysisSaga {
   }
 
   _updateMoodEntry(String moodEntryId, Map<String, dynamic> analysisResult) sync* {
-    var isarResult = Result<Isar>();
-    yield GetContext('isar', result: isarResult);
-    Isar isar = isarResult.value!;
+    var cblResult = Result<cbl.Database>();
+    yield GetContext('cbl', result: cblResult);
+    cbl.Database database = cblResult.value!;
 
-    MoodLogRepository repository = MoodLogRepository(isar);
+    MoodLogRepository repository = MoodLogRepository(database);
 
-    var moodLogResult = Result<MoodLog?>();
+    var moodLogResult = Result<mood_log.MoodLog?>();
     yield Call(repository.getMoodLogById, args: [moodEntryId], result: moodLogResult);
 
-    print("analysisResult['suggestion'] ${analysisResult['ai']['suggestion']}");
     if (moodLogResult.value != null) {
-      MoodLog existingEntry = moodLogResult.value!;
-      existingEntry
-        ..ai = MoodLogAI()
-        ..ai!.suggestion = analysisResult['ai']['suggestion']
-        ..ai!.title = analysisResult['ai']['title']
-        ..ai!.affirmation = analysisResult['ai']['affirmation']
-        ..updatedAt = DateTime.now();
+      mood_log.MoodLog existingEntry = moodLogResult.value!;
+      
+      // Create a new MutableMoodLog from the existing entry
+      mood_log.MutableMoodLog mutableEntry = mood_log.MutableMoodLog(
+        id: existingEntry.id,
+        timestamp: existingEntry.timestamp,
+        createdAt: existingEntry.createdAt,
+        updatedAt: DateTime.now(),
+        moodRating: existingEntry.moodRating,
+        comment: existingEntry.comment,
+        ai: mood_log.MoodLogAI(
+          suggestion: analysisResult['ai']['suggestion'],
+          title: analysisResult['ai']['title'],
+          affirmation: analysisResult['ai']['affirmation'],
+        ),
+        feelings: existingEntry.feelings,
+        factors: existingEntry.factors,
+        attachments: existingEntry.attachments,
+        isDeleted: existingEntry.isDeleted,
+      );
 
-      yield Call(repository.addOrUpdateMoodLog, args: [existingEntry]);
+      yield Call(repository.addOrUpdateMoodLog, args: [mutableEntry]);
       yield Put(LoadMoodDetailAction(moodEntryId));
       // yield Put(const SyncMoodLogs());
     } else {

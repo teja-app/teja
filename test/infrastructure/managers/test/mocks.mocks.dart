@@ -5,17 +5,14 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i5;
 
-import 'package:isar/isar.dart' as _i2;
+import 'package:cbl/cbl.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:teja/domain/entities/mood_log.dart' as _i3;
-import 'package:teja/domain/redux/mood/list/state.dart' as _i9;
-import 'package:teja/infrastructure/database/isar_collections/badge.dart'
+import 'package:teja/domain/redux/mood/list/state.dart' as _i7;
+import 'package:teja/infrastructure/database/cbl_collections/mood_log.dart'
     as _i6;
-import 'package:teja/infrastructure/database/isar_collections/mood_log.dart'
-    as _i8;
-import 'package:teja/infrastructure/repositories/badge_repository.dart' as _i4;
 import 'package:teja/infrastructure/repositories/mood_log_repository.dart'
-    as _i7;
+    as _i4;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -30,8 +27,8 @@ import 'package:teja/infrastructure/repositories/mood_log_repository.dart'
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeIsar_0 extends _i1.SmartFake implements _i2.Isar {
-  _FakeIsar_0(
+class _FakeDatabase_0 extends _i1.SmartFake implements _i2.Database {
+  _FakeDatabase_0(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -50,108 +47,22 @@ class _FakeMoodLogEntity_1 extends _i1.SmartFake implements _i3.MoodLogEntity {
         );
 }
 
-/// A class which mocks [BadgeRepository].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockBadgeRepository extends _i1.Mock implements _i4.BadgeRepository {
-  MockBadgeRepository() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  _i2.Isar get isar => (super.noSuchMethod(
-        Invocation.getter(#isar),
-        returnValue: _FakeIsar_0(
-          this,
-          Invocation.getter(#isar),
-        ),
-      ) as _i2.Isar);
-
-  @override
-  _i5.Future<void> addBadge(
-    _i6.Badge? badge, {
-    bool? inTransaction = false,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #addBadge,
-          [badge],
-          {#inTransaction: inTransaction},
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<_i6.Badge?> getBadgeBySlug(String? slug) => (super.noSuchMethod(
-        Invocation.method(
-          #getBadgeBySlug,
-          [slug],
-        ),
-        returnValue: _i5.Future<_i6.Badge?>.value(),
-      ) as _i5.Future<_i6.Badge?>);
-
-  @override
-  _i5.Future<List<_i6.Badge>> getAllBadges() => (super.noSuchMethod(
-        Invocation.method(
-          #getAllBadges,
-          [],
-        ),
-        returnValue: _i5.Future<List<_i6.Badge>>.value(<_i6.Badge>[]),
-      ) as _i5.Future<List<_i6.Badge>>);
-
-  @override
-  _i5.Future<void> updateBadge(
-    _i6.Badge? badge, {
-    bool? inTransaction = false,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #updateBadge,
-          [badge],
-          {#inTransaction: inTransaction},
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<void> deleteBadgeById(int? id) => (super.noSuchMethod(
-        Invocation.method(
-          #deleteBadgeById,
-          [id],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<List<_i6.Badge>> getBadgesByType(_i6.BadgeType? type) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getBadgesByType,
-          [type],
-        ),
-        returnValue: _i5.Future<List<_i6.Badge>>.value(<_i6.Badge>[]),
-      ) as _i5.Future<List<_i6.Badge>>);
-}
-
 /// A class which mocks [MoodLogRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockMoodLogRepository extends _i1.Mock implements _i7.MoodLogRepository {
+class MockMoodLogRepository extends _i1.Mock implements _i4.MoodLogRepository {
   MockMoodLogRepository() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i2.Isar get isar => (super.noSuchMethod(
-        Invocation.getter(#isar),
-        returnValue: _FakeIsar_0(
+  _i2.Database get database => (super.noSuchMethod(
+        Invocation.getter(#database),
+        returnValue: _FakeDatabase_0(
           this,
-          Invocation.getter(#isar),
+          Invocation.getter(#database),
         ),
-      ) as _i2.Isar);
+      ) as _i2.Database);
 
   @override
   _i5.Future<void> updateLastSyncTimestamp(DateTime? timestamp) =>
@@ -225,13 +136,13 @@ class MockMoodLogRepository extends _i1.Mock implements _i7.MoodLogRepository {
       ) as _i5.Future<void>);
 
   @override
-  _i5.Future<_i8.MoodLog?> getMoodLogById(String? id) => (super.noSuchMethod(
+  _i5.Future<_i6.MoodLog?> getMoodLogById(String? id) => (super.noSuchMethod(
         Invocation.method(
           #getMoodLogById,
           [id],
         ),
-        returnValue: _i5.Future<_i8.MoodLog?>.value(),
-      ) as _i5.Future<_i8.MoodLog?>);
+        returnValue: _i5.Future<_i6.MoodLog?>.value(),
+      ) as _i5.Future<_i6.MoodLog?>);
 
   @override
   _i5.Future<List<_i3.MoodLogEntity>> getAllMoodLogs(
@@ -247,10 +158,10 @@ class MockMoodLogRepository extends _i1.Mock implements _i7.MoodLogRepository {
       ) as _i5.Future<List<_i3.MoodLogEntity>>);
 
   @override
-  _i5.Future<List<dynamic>> getMoodLogsPage(
+  _i5.Future<List<_i3.MoodLogEntity>> getMoodLogsPage(
     int? pageKey,
     int? pageSize, [
-    _i9.MoodLogFilter? filter,
+    _i7.MoodLogFilter? filter,
   ]) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -261,8 +172,9 @@ class MockMoodLogRepository extends _i1.Mock implements _i7.MoodLogRepository {
             filter,
           ],
         ),
-        returnValue: _i5.Future<List<dynamic>>.value(<dynamic>[]),
-      ) as _i5.Future<List<dynamic>>);
+        returnValue:
+            _i5.Future<List<_i3.MoodLogEntity>>.value(<_i3.MoodLogEntity>[]),
+      ) as _i5.Future<List<_i3.MoodLogEntity>>);
 
   @override
   _i5.Future<void> addAttachmentToMoodLog(
@@ -350,7 +262,7 @@ class MockMoodLogRepository extends _i1.Mock implements _i7.MoodLogRepository {
       ) as _i5.Future<Map<DateTime, double>>);
 
   @override
-  _i5.Future<void> addOrUpdateMoodLog(_i8.MoodLog? moodLog) =>
+  _i5.Future<void> addOrUpdateMoodLog(_i6.MoodLog? moodLog) =>
       (super.noSuchMethod(
         Invocation.method(
           #addOrUpdateMoodLog,
@@ -373,7 +285,7 @@ class MockMoodLogRepository extends _i1.Mock implements _i7.MoodLogRepository {
   @override
   _i5.Future<void> updateFeelingsForMoodLog(
     String? moodLogId,
-    List<_i8.MoodLogFeeling>? updatedFeelings,
+    List<_i6.MoodLogFeeling>? updatedFeelings,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -424,16 +336,16 @@ class MockMoodLogRepository extends _i1.Mock implements _i7.MoodLogRepository {
       ) as _i5.Future<void>);
 
   @override
-  _i5.Future<_i8.MoodLog?> getTodaysMoodLog() => (super.noSuchMethod(
+  _i5.Future<_i6.MoodLog?> getTodaysMoodLog() => (super.noSuchMethod(
         Invocation.method(
           #getTodaysMoodLog,
           [],
         ),
-        returnValue: _i5.Future<_i8.MoodLog?>.value(),
-      ) as _i5.Future<_i8.MoodLog?>);
+        returnValue: _i5.Future<_i6.MoodLog?>.value(),
+      ) as _i5.Future<_i6.MoodLog?>);
 
   @override
-  _i5.Future<List<_i8.MoodLog>> getMoodLogsInDateRange(
+  _i5.Future<List<_i6.MoodLog>> getMoodLogsInDateRange(
     DateTime? start,
     DateTime? end,
   ) =>
@@ -445,18 +357,18 @@ class MockMoodLogRepository extends _i1.Mock implements _i7.MoodLogRepository {
             end,
           ],
         ),
-        returnValue: _i5.Future<List<_i8.MoodLog>>.value(<_i8.MoodLog>[]),
-      ) as _i5.Future<List<_i8.MoodLog>>);
+        returnValue: _i5.Future<List<_i6.MoodLog>>.value(<_i6.MoodLog>[]),
+      ) as _i5.Future<List<_i6.MoodLog>>);
 
   @override
-  _i5.Future<_i8.MoodLog?> getMoodLogByDate(DateTime? date) =>
+  _i5.Future<_i6.MoodLog?> getMoodLogByDate(DateTime? date) =>
       (super.noSuchMethod(
         Invocation.method(
           #getMoodLogByDate,
           [date],
         ),
-        returnValue: _i5.Future<_i8.MoodLog?>.value(),
-      ) as _i5.Future<_i8.MoodLog?>);
+        returnValue: _i5.Future<_i6.MoodLog?>.value(),
+      ) as _i5.Future<_i6.MoodLog?>);
 
   @override
   _i5.Future<int> calculateCurrentStreak() => (super.noSuchMethod(
@@ -468,7 +380,7 @@ class MockMoodLogRepository extends _i1.Mock implements _i7.MoodLogRepository {
       ) as _i5.Future<int>);
 
   @override
-  _i3.MoodLogEntity toEntity(_i8.MoodLog? moodLog) => (super.noSuchMethod(
+  _i3.MoodLogEntity toEntity(_i6.MoodLog? moodLog) => (super.noSuchMethod(
         Invocation.method(
           #toEntity,
           [moodLog],

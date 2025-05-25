@@ -10,12 +10,9 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_actions.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.dart';
 import 'package:teja/infrastructure/api/ai_question_api.dart';
-import 'package:teja/presentation/journal/journal_editor/ui/typing_indicator.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:teja/presentation/journal/widgets/view/custom_quill_view.dart';
 import 'package:teja/router.dart';
-import 'package:teja/shared/common/button.dart';
 import 'package:teja/shared/helpers/logger.dart';
 import 'package:uuid/uuid.dart';
 
@@ -56,8 +53,8 @@ class JournalEntryPageState extends State<JournalEntryPage> {
   final ScrollController _scrollController = ScrollController();
   final quill.QuillController _quillController = quill.QuillController.basic();
 
-  LoadingState _loadingState = LoadingState();
-  String? _errorMessage;
+  LoadingState _loadingState = const LoadingState();
+  String? _errorMessage; // ignore: unused_field
   List<Map<String, String>> qaList = [];
 
   // final TextEditingController _textController = TextEditingController();
@@ -65,7 +62,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
   bool showingAlternatives = false;
   List<String> _alternativeQuestions = [];
   late final Store<AppState> _store;
-  final Uuid uuid = Uuid();
+  final Uuid uuid = const Uuid();
   String? _helpText;
   List<String> _inputSuggestions = [];
 
@@ -144,7 +141,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
     if (qaList.isNotEmpty) {
       // _textController.text = qaList.last['answer'] ?? '';
       _quillController.replaceText(0, 0, qaList.last['answer'] ?? '',
-          TextSelection.collapsed(offset: 0));
+          const TextSelection.collapsed(offset: 0));
       await _goDeeper(useExistingAnswer: true);
     }
   }
@@ -158,22 +155,11 @@ class JournalEntryPageState extends State<JournalEntryPage> {
 
       try {
         if (currentQuestionIndex < qaList.length) {
-          print('currentQuestionIndex: $currentQuestionIndex');
-          print(
-              'qaList[currentQuestionIndex]: ${qaList[currentQuestionIndex]}');
-          print(
-              '_quillController.document.toPlainText().trim(): ${_quillController.document.toPlainText().trim()}');
-          // qaList[currentQuestionIndex]['answer'] = _textController.text;
           qaList[currentQuestionIndex]['answer'] =
-              // _quillController.document.toPlainText().trim();
               jsonEncode(_quillController.document.toDelta().toJson());
         } else {
-          print(
-              '_quillController.document.toPlainText().trim()3: ${_quillController.document.toPlainText().trim()}');
           qaList.add({
             'question': qaList.last['question'] ?? '',
-            // 'answer': _textController.text
-            // 'answer': _quillController.document.toPlainText().trim()
             'answer': jsonEncode(_quillController.document.toDelta().toJson())
           });
         }
@@ -184,7 +170,6 @@ class JournalEntryPageState extends State<JournalEntryPage> {
           await _store.dispatch(UpdateQuestionAnswer(
             journalEntryId: journalEntry.id,
             questionId: qaList[currentQuestionIndex]['questionId'] ?? uuid.v4(),
-            // answerText: _textController.text,
             answerText:
                 jsonEncode(_quillController.document.toDelta().toJson()),
             questionText: qaList[currentQuestionIndex]['question']!,
@@ -249,7 +234,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
     setState(() {
       _errorMessage = message;
     });
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
         setState(() {
           _errorMessage = null;
@@ -311,14 +296,14 @@ class JournalEntryPageState extends State<JournalEntryPage> {
 
   Widget _buildBottomInputArea(ColorScheme colorScheme) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 4,
-            offset: Offset(0, -2),
+            offset: const Offset(0, -2),
           ),
         ],
       ),
@@ -331,7 +316,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
                 border: Border.all(color: Colors.grey),
                 borderRadius: BorderRadius.circular(4),
               ),
-              constraints: BoxConstraints(
+              constraints: const BoxConstraints(
                 maxHeight: 150, // Set a max height to allow scrolling
               ),
               child: quill.QuillEditor(
@@ -344,7 +329,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
                   showCursor: true,
                   textCapitalization: TextCapitalization.sentences,
                   scrollable: true,
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   autoFocus: true,
                   textInputAction: TextInputAction.done,
                   enableMarkdownStyleConversion: true,
@@ -352,15 +337,15 @@ class JournalEntryPageState extends State<JournalEntryPage> {
               ),
             ),
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           ElevatedButton(
             onPressed: _determineButtonAction(),
-            child: Icon(_isTyping ? AntDesign.right : AntDesign.check),
             style: ElevatedButton.styleFrom(
               backgroundColor: colorScheme.primary,
               foregroundColor: colorScheme.onPrimary,
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             ),
+            child: Icon(_isTyping ? AntDesign.right : AntDesign.check),
           ),
         ],
       ),
@@ -420,17 +405,17 @@ class JournalEntryPageState extends State<JournalEntryPage> {
               child: Text(_helpText!,
                   style: TextStyle(
                       fontStyle: FontStyle.italic,
-                      color: colorScheme.onSurface.withOpacity(0.6))),
+                      color: colorScheme.onSurface.withValues(alpha: 0.6))),
             ),
           Text(qaList[index]['question']!,
-              style: TextStyle(fontWeight: FontWeight.bold)),
+              style: const TextStyle(fontWeight: FontWeight.bold)),
           if (isCurrentQuestion &&
               !showingAlternatives &&
               !_loadingState.isGeneratingQuestion)
             TextButton(
               onPressed: _showAlternatives,
-              child: Text('Change Question'),
               style: TextButton.styleFrom(foregroundColor: colorScheme.primary),
+              child: const Text('Change Question'),
             ),
           if (!isCurrentQuestion)
             Padding(
@@ -464,11 +449,9 @@ class JournalEntryPageState extends State<JournalEntryPage> {
                   .map((suggestion) => GestureDetector(
                         onTap: () => _onInputSuggestionSelected(suggestion),
                         child: Chip(
-                          label:
-                              Text(suggestion, style: TextStyle(fontSize: 12)),
-                          padding: EdgeInsets.all(4),
-                          materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
+                          label: Text(suggestion, style: const TextStyle(fontSize: 12)),
+                          padding: const EdgeInsets.all(4),
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
                       ))
                   .toList(),
@@ -480,16 +463,10 @@ class JournalEntryPageState extends State<JournalEntryPage> {
     );
   }
 
+  // ignore: unused_element
   bool get _isLastQuestion =>
       qaList.length >= 2 && currentQuestionIndex == qaList.length - 1;
 
-  void _handleContinueOrDone() {
-    if (_isLastQuestion) {
-      _saveAndExit();
-    } else {
-      _goDeeper();
-    }
-  }
 
   Widget _buildAlternativesSection(ColorScheme colorScheme) {
     return Padding(
@@ -497,23 +474,23 @@ class JournalEntryPageState extends State<JournalEntryPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Choose a different question:',
+          const Text('Choose a different question:',
               style: TextStyle(fontWeight: FontWeight.bold)),
           ..._alternativeQuestions.map((question) => ListTile(
                 title: Text(question),
                 onTap: () => _selectAlternative(question),
               )),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
                   child: ElevatedButton(
-                      onPressed: _showAlternatives, child: Text('Regenerate'))),
-              SizedBox(width: 16),
+                      onPressed: _showAlternatives, child: const Text('Regenerate'))),
+              const SizedBox(width: 16),
               Expanded(
                   child: ElevatedButton(
                       onPressed: _backToWriting,
-                      child: Text('Back to writing'))),
+                      child: const Text('Back to writing'))),
             ],
           ),
         ],
@@ -521,32 +498,6 @@ class JournalEntryPageState extends State<JournalEntryPage> {
     );
   }
 
-  Widget _buildContinueButton() {
-    final bool isLastQuestion = qaList.length >= 2;
-    final String buttonText = (isLastQuestion &&
-            !_quillController.document.toPlainText().trim().isNotEmpty)
-        ? "Done"
-        : "Continue";
-    final IconData buttonIcon = (isLastQuestion &&
-            !_quillController.document.toPlainText().trim().isNotEmpty)
-        ? Icons.check
-        : Icons.arrow_downward;
-
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Button(
-        text: buttonText,
-        icon: buttonIcon,
-        onPressed: _quillController.document.toPlainText().trim().isEmpty ||
-                _loadingState.isGeneratingQuestion
-            ? null
-            : (isLastQuestion &&
-                    !_quillController.document.toPlainText().trim().isNotEmpty)
-                ? _saveAndExit
-                : _goDeeper,
-      ),
-    );
-  }
 
   void _onInputSuggestionSelected(String suggestion) {
     setState(() {
@@ -557,7 +508,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
         _quillController.replaceText(
             _quillController.document.toPlainText().trim().length,
             0,
-            '' + suggestion,
+            ' $suggestion',
             TextSelection.collapsed(
                 offset:
                     _quillController.document.length + suggestion.length + 1));
@@ -597,6 +548,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
       final journalEntry = _store.state.journalDetailState.selectedJournalEntry;
       if (journalEntry != null) {
         await _store.dispatch(LoadJournalDetailAction(journalEntry.id));
+        if (!mounted) return;
         _navigateToDetailPage(context, journalEntry.id);
       } else {
         throw Exception('Journal entry not found');
@@ -604,6 +556,7 @@ class JournalEntryPageState extends State<JournalEntryPage> {
     } catch (e) {
       logger.e("JournalEntryPageState:_saveAndExit", error: e);
       _showError('Failed to save and exit: $e');
+      if (!mounted) return;
       GoRouter.of(context).pushNamed(RootPath.home);
     } finally {
       if (mounted) {

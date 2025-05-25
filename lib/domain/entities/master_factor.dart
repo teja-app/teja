@@ -1,5 +1,5 @@
 class MasterFactorEntity {
-  final int? id;
+  final String? id;
   final String slug;
   final String title;
   final List<SubCategoryEntity> subcategories;
@@ -27,4 +27,7 @@ class SubCategoryEntity {
 
     return other is SubCategoryEntity && other.slug == slug;
   }
+
+  @override
+  int get hashCode => slug.hashCode;
 }

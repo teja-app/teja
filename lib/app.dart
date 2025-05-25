@@ -23,10 +23,10 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ShareHandlerService _shareHandlerService = ShareHandlerService();
+    final ShareHandlerService shareHandlerService = ShareHandlerService();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _shareHandlerService.setContext(context);
+      shareHandlerService.setContext(context);
     });
 
     return StoreProvider<AppState>(

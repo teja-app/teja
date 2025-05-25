@@ -43,16 +43,16 @@ class DayItem extends StatelessWidget {
       }
     } else {
       if (dayColor != null) {
-        baseColor = dayColor!.withOpacity(0.3);
+        baseColor = dayColor!.withValues(alpha: 0.3);
       } else {
-        baseColor = colorScheme.secondary.withOpacity(0.3);
+        baseColor = colorScheme.secondary.withValues(alpha: 0.3);
       }
     }
 
     // Color baseColor = available
     //     ? dayColor ?? colorScheme.secondary
-    //     : dayColor?.withOpacity(0.5) ??
-    //         Theme.of(context).colorScheme.secondary.withOpacity(0.5);
+    //     : dayColor?.withValues(alpha: 0.5) ??
+    //         Theme.of(context).colorScheme.secondary.withValues(alpha: 0.5);
 
     // Override base color if it's today
     Color finalColor = isToday ? colorScheme.primary : baseColor;

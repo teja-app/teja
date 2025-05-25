@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:teja/domain/entities/journal_entry_entity.dart';
-import 'package:teja/domain/entities/journal_template_entity.dart';
 import 'package:teja/presentation/journal/widgets/view/custom_quill_view.dart';
 import 'package:teja/presentation/mood/ui/attachement_image.dart';
 import 'package:teja/presentation/mood/ui/attachment_video.dart';
@@ -11,7 +10,6 @@ import 'package:teja/router.dart';
 import 'package:teja/shared/common/flexible_height_box.dart';
 
 Widget journalEntryLayout(
-  JournalTemplateEntity? template, // Make template nullable
   JournalEntryEntity journalEntry,
   BuildContext context, {
   double gridWidth = 4, // Optional parameter with default value
@@ -21,15 +19,15 @@ Widget journalEntryLayout(
       ? journalEntry.questions!.first
       : null;
 
-  Widget _buildMediaRow() {
+  Widget buildMediaRow() {
     final images = journalEntry.imageEntries?.take(3).toList() ?? [];
     final videos = journalEntry.videoEntries?.take(3).toList() ?? [];
 
     if (images.isEmpty && videos.isEmpty) {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
 
-    return Container(
+    return SizedBox(
       height: 60, // Adjust height accordingly
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
@@ -39,7 +37,7 @@ Widget journalEntryLayout(
             final imagePath = images[index].filePath;
             if (imagePath != null) {
               return Padding(
-                padding: EdgeInsets.only(right: 8),
+                padding: const EdgeInsets.only(right: 8),
                 child: AttachmentImage(
                   relativeImagePath: imagePath,
                   width: 100, // Adjust width as needed
@@ -52,7 +50,7 @@ Widget journalEntryLayout(
             final videoPath = videos[videoIndex].filePath;
             if (videoPath != null) {
               return Padding(
-                padding: EdgeInsets.only(right: 8),
+                padding: const EdgeInsets.only(right: 8),
                 child: AttachmentVideo(
                   relativeVideoPath: videoPath,
                   width: 100, // Adjust width as needed
@@ -61,7 +59,7 @@ Widget journalEntryLayout(
               );
             }
           }
-          return SizedBox.shrink();
+          return const SizedBox.shrink();
         },
       ),
     );
@@ -98,7 +96,7 @@ Widget journalEntryLayout(
                           journalEntry.emoticon!,
                           style: textTheme.titleLarge,
                         ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           journalEntry.title!,
@@ -107,16 +105,10 @@ Widget journalEntryLayout(
                       ),
                     ],
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                 ] else ...[
                   if (journalEntry.body != null) ...[
                     CustomQuillView(quillJson: journalEntry.body ?? ""),
-                  ],
-                  if (template != null) ...[
-                    Text(
-                      template.title ?? "",
-                      style: textTheme.titleMedium,
-                    ),
                   ],
                   if (firstQuestion != null) ...[
                     Text(
@@ -128,7 +120,7 @@ Widget journalEntryLayout(
                   ],
                 ],
                 const SizedBox(height: 16),
-                _buildMediaRow(),
+                buildMediaRow(),
                 Align(
                   alignment: Alignment.bottomRight,
                   child: Text(

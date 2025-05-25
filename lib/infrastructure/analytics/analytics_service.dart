@@ -71,7 +71,6 @@ class AnalyticsService {
 
   void identify(String userId, Map<String, Object> traits) {
     if (!_isInitialized) {
-      print('AnalyticsService not initialized. Call setup() first.');
       return;
     }
     _provider.identify(userId, traits);
@@ -79,7 +78,6 @@ class AnalyticsService {
 
   void track(String eventName, Map<String, Object> properties) {
     if (!_isInitialized) {
-      print('AnalyticsService not initialized. Call setup() first.');
       return;
     }
     _provider.track(eventName, properties);
@@ -87,7 +85,6 @@ class AnalyticsService {
 
   void screen(String screenName, Map<String, Object> properties) {
     if (!_isInitialized) {
-      print('AnalyticsService not initialized. Call setup() first.');
       return;
     }
     _provider.screen(screenName, properties);
