@@ -57,96 +57,47 @@ class _CustomQuillEditorState extends State<CustomQuillEditor> {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: SingleChildScrollView(
-        physics: const NeverScrollableScrollPhysics(), // Disable scrolling
-        child: Column(
-          children: [
-            // QuillEditor section
-            SizedBox(
-              height: widget.height ?? screenHeight * 0.4,
-              child: Padding(
-                padding: EdgeInsets.all(screenHeight * 0.02), // Dynamic padding
-                child: quill.QuillEditor(
-                  scrollController: _scrollController,
-                  focusNode: _focusNode,
-                  configurations: quill.QuillEditorConfigurations(
-                    controller: widget.controller,
-                    placeholder: 'Start writing...',
-                    enableMarkdownStyleConversion: true,
-                    autoFocus: true,
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                top: screenHeight * 0.05, // Dynamic top padding
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(padding: EdgeInsets.only(left: screenHeight * 0.01)),
-                  MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: GestureDetector(
-                      onTap: () {
-                        if (_focusNode.hasFocus) {
-                          _focusNode.unfocus();
-                        } else {
-                          _focusNode.requestFocus();
-                          // nss
-                        }
-                      },
-                      child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 100),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _focusNode.hasFocus
-                                ? Theme.of(context).primaryColor
-                                : Colors.transparent,
-                            border: Border.all(
-                              color: _focusNode.hasFocus
-                                  ? Theme.of(context).primaryColor
-                                  : Colors.grey,
-                              width: 2,
-                            ),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Icon(
-                            Icons.text_fields,
-                            color: _focusNode.hasFocus
-                                ? Colors.white
-                                : Theme.of(context).primaryColorLight,
-                          )),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (MediaQuery.of(context).viewInsets.bottom == 0)
-              Padding(
-                padding: EdgeInsets.only(
-                  bottom: screenHeight * 0.02, // Dynamic bottom padding
-                  top: screenHeight * 0.01, // Dynamic top padding
-                ),
-                child: QuillToolbar(
+      resizeToAvoidBottomInset: true,
+      body: Column(
+        children: [
+          // QuillEditor section
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.all(screenHeight * 0.02), // Dynamic padding
+              child: quill.QuillEditor(
+                scrollController: _scrollController,
+                focusNode: _focusNode,
+                configurations: quill.QuillEditorConfigurations(
                   controller: widget.controller,
+                  placeholder: 'Start writing...',
+                  enableMarkdownStyleConversion: true,
+                  autoFocus: true,
                 ),
               ),
-          ],
-        ),
+            ),
+          ),
+          // Always show toolbar, adjust for keyboard
+          Container(
+            padding: EdgeInsets.only(
+              bottom: keyboardHeight > 0 ? keyboardHeight : MediaQuery.of(context).padding.bottom,
+              left: 8,
+              right: 8,
+              top: 8,
+            ),
+            child: QuillToolbar(
+              controller: widget.controller,
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-class QuillToolbar extends StatelessWidget {
+class QuillToolbar extends StatefulWidget {
   final quill.QuillController controller;
 
   const QuillToolbar({
@@ -154,189 +105,479 @@ class QuillToolbar extends StatelessWidget {
     required this.controller,
   }) : super(key: key);
 
-  List<Widget> _buildToolbarButtons(BuildContext context) {
-    final buttonConfigs = [
-      [
-        _ToolbarButtonConfig(
-          label: "H1",
-          sublabel: "Header 1",
-          attribute: quill.Attribute.h1,
-        ),
-        _ToolbarButtonConfig(
-          label: "H2",
-          sublabel: "Header 2",
-          attribute: quill.Attribute.h2,
-        ),
-        _ToolbarButtonConfig(
-          label: "H3",
-          sublabel: "Header 3",
-          attribute: quill.Attribute.h3,
-        ),
-        _ToolbarButtonConfig(
-          icon: Icons.text_fields,
-          sublabel: "Body",
-          attribute: quill.Attribute.header,
-        ),
-      ],
-      [
-        _ToolbarButtonConfig(
-          icon: Icons.format_list_bulleted,
-          sublabel: "Bullet",
-          attribute: quill.Attribute.ul,
-        ),
-        _ToolbarButtonConfig(
-          icon: Icons.format_quote,
-          sublabel: "Quote",
-          attribute: quill.Attribute.blockQuote,
-        ),
-        _ToolbarButtonConfig(
-          icon: Icons.format_list_numbered,
-          sublabel: "Number",
-          attribute: quill.Attribute.ol,
-        ),
-        _ToolbarButtonConfig(
-          icon: Icons.horizontal_rule,
-          sublabel: "Divider",
-        ),
-        _ToolbarButtonConfig(
-          icon: Icons.check_box,
-          sublabel: "Checkbox",
-          attribute: quill.Attribute.checked,
-        ),
-        _ToolbarButtonConfig(
-          icon: Icons.link,
-          sublabel: "Link",
-          onPressed: () => _showLinkDialog(context),
-        ),
-      ],
-      [
-        _ToolbarButtonConfig(
-          label: "B",
-          // sublabel: "Bold",
-          attribute: quill.Attribute.bold,
-        ),
-        _ToolbarButtonConfig(
-          label: "I",
-          // sublabel: "Italic",
-          attribute: quill.Attribute.italic,
-        ),
-        _ToolbarButtonConfig(
-          label: "U",
-          // sublabel: "Underline",
-          attribute: quill.Attribute.underline,
-        ),
-        _ToolbarButtonConfig(
-          label: "S",
-          // sublabel: "Strike",
-          attribute: quill.Attribute.strikeThrough,
-        ),
-        _ToolbarButtonConfig(
-          icon: Icons.format_align_left,
-          // sublabel: "Left",
-          attribute: quill.Attribute.leftAlignment,
-        ),
-        _ToolbarButtonConfig(
-          icon: Icons.format_align_center,
-          // sublabel: "Center",
-          attribute: quill.Attribute.centerAlignment,
-        ),
-        _ToolbarButtonConfig(
-          icon: Icons.format_align_right,
-          // sublabel: "Right",
-          attribute: quill.Attribute.rightAlignment,
-        ),
-      ],
-    ];
+  @override
+  State<QuillToolbar> createState() => _QuillToolbarState();
+}
 
-    return buttonConfigs.asMap().entries.map((entry) {
-      final rowIndex = entry.key;
-      final row = entry.value;
+class _QuillToolbarState extends State<QuillToolbar> {
+  bool _isImageToolbarExpanded = false;
+  bool _isToolbarVisible = false;
 
-      return Wrap(
-        spacing: 6,
-        alignment: WrapAlignment.center,
-        children:
-            row.map((config) => _buildToolbarButton(config, rowIndex)).toList(),
-      );
-    }).toList();
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(_onSelectionChanged);
   }
 
-  Widget _buildToolbarButton(_ToolbarButtonConfig config, int rowIndex) {
-    final isActive =
-        config.attribute != null && _isAttributeActive(config.attribute!);
+  @override
+  void dispose() {
+    widget.controller.removeListener(_onSelectionChanged);
+    super.dispose();
+  }
 
-    // Define button dimensions based on the row index
-    final buttonDimensions = [
-      // Row 1: Big Buttons (e.g., "H1", "H2", etc.)
-      const Size(87, 10),
-      // Row 2: Vertically Long Buttons (e.g., "Bullet", "Quote", etc.)
-      const Size(180, 10),
-      // Row 3: Small Buttons (e.g., "B", "I", "U", etc.)
-      const Size(87, 30),
-    ];
+  void _onSelectionChanged() {
+    setState(() {
+      // This will trigger a rebuild to update the button states
+    });
+  }
 
-    final buttonSize = buttonDimensions[rowIndex.clamp(0, 2)];
+  String _getCurrentTextType() {
+    final attributes = widget.controller.getSelectionStyle().attributes;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            fixedSize: buttonSize,
-            backgroundColor: isActive ? Colors.blue : Colors.grey[800],
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            textStyle: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-            padding: EdgeInsets.zero,
-          ),
-          onPressed: config.onPressed ??
-              () {
-                if (config.attribute != null) {
-                  _applyFormatting(config.attribute!);
-                }
-              },
-          child: Row(
+    if (attributes.containsKey(quill.Attribute.h1.key)) {
+      return 'H1';
+    } else if (attributes.containsKey(quill.Attribute.h2.key)) {
+      return 'H2';
+    } else if (attributes.containsKey(quill.Attribute.h3.key)) {
+      return 'H3';
+    } else {
+      return 'Tt'; // Body text
+    }
+  }
+
+
+
+  Widget _buildExpandedTextToolbar() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1C1C1E) : theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: isDark ? null : Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        children: [
+          // First row: Headers and Body
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (config.icon != null) ...[
-                Icon(
-                  config.icon,
-                  color: Colors.white,
-                  size: 20,
-                ),
-                const SizedBox(width: 4), // Add spacing between icon and text
-              ],
-              if (config.label != null)
-                Text(
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  config.label!,
-                  // style: textStyle,
-                ),
-              // if (config.sublabel != null)
-              //   Text(
-              //     config.sublabel!,
-              //     // style: textStyle,
-              //   ),
+              _buildTextFormatButton('H1', 'Header 1', quill.Attribute.h1),
+              const SizedBox(width: 2),
+              _buildTextFormatButton('H2', 'Header 2', quill.Attribute.h2),
+              const SizedBox(width: 2),
+              _buildTextFormatButton('H3', 'Header 3', quill.Attribute.h3),
+              const SizedBox(width: 2),
+              _buildTextFormatButtonWithBodyIcon(
+                  'Tt', 'Body', null), // null for body text
             ],
           ),
+          const SizedBox(height: 4),
+
+          // Second row: Lists and formatting
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildTextFormatButtonWithIcon(
+                  Icons.format_list_bulleted, 'Bullet', quill.Attribute.ul),
+              const SizedBox(width: 2),
+              _buildTextFormatButtonWithIcon(
+                  Icons.format_quote, 'Quote', quill.Attribute.blockQuote),
+            ],
+          ),
+          const SizedBox(height: 4),
+
+          // Third row: More lists and elements
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildTextFormatButtonWithIcon(
+                  Icons.format_list_numbered, 'Number', quill.Attribute.ol),
+              const SizedBox(width: 2),
+              _buildTextFormatButtonWithIcon(
+                  Icons.horizontal_rule, 'Divider', null),
+            ],
+          ),
+          const SizedBox(height: 4),
+
+          // Fourth row: Additional elements
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildTextFormatButtonWithIcon(
+                  Icons.check_box, 'Checkbox', quill.Attribute.checked),
+              const SizedBox(width: 2),
+              _buildTextFormatButtonWithIcon(Icons.link, 'Link', null,
+                  onTap: () => _showLinkDialog(context)),
+            ],
+          ),
+          const SizedBox(height: 4),
+
+          // Fifth row: Text styling
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildSmallTextButton('B', quill.Attribute.bold),
+              const SizedBox(width: 2),
+              _buildSmallTextButton('I', quill.Attribute.italic),
+              const SizedBox(width: 2),
+              _buildSmallTextButton('U', quill.Attribute.underline),
+              const SizedBox(width: 2),
+              _buildSmallTextButton('S', quill.Attribute.strikeThrough),
+              const SizedBox(width: 2),
+              _buildSmallIconButton(
+                  Icons.format_align_left, quill.Attribute.leftAlignment),
+              const SizedBox(width: 2),
+              _buildSmallIconButton(
+                  Icons.format_align_center, quill.Attribute.centerAlignment),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRightSidebar() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1C1C1E) : theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: isDark ? null : Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildTopbarButton(
+            icon: Icons.text_fields,
+            sublabel: '',
+            isActive: _isToolbarVisible,
+            onTap: () {
+              setState(() {
+                _isToolbarVisible = !_isToolbarVisible;
+                if (!_isToolbarVisible) {
+                  _isImageToolbarExpanded = false;
+                }
+              });
+            },
+          ),
+          const SizedBox(width: 6),
+          _buildTopbarButton(
+            icon: Icons.image,
+            sublabel: '',
+            isActive: _isImageToolbarExpanded,
+            onTap: () {
+              setState(() {
+                _isImageToolbarExpanded = !_isImageToolbarExpanded;
+              });
+            },
+          ),
+          const SizedBox(width: 6),
+          _buildTopbarButton(
+            icon: Icons.more_horiz,
+            sublabel: '',
+            isActive: false,
+            onTap: () {
+              // Handle more options
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTopbarButton({
+    String? label,
+    IconData? icon,
+    required String sublabel,
+    required bool isActive,
+    required VoidCallback onTap,
+  }) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: sublabel.isEmpty ? 40 : 60,
+        height: sublabel.isEmpty ? 40 : 60,
+        decoration: BoxDecoration(
+          color: isActive ? theme.colorScheme.primary : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
+          borderRadius: BorderRadius.circular(12),
+          border: isActive
+              ? Border.all(color: theme.colorScheme.primary, width: 2)
+              : null,
         ),
-        // Text(
-        //   config.sublabel!,
-        //   style: textStyle,
-        // ),
-      ],
+        child: sublabel.isEmpty
+            ? Icon(
+                icon ?? Icons.text_fields,
+                color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black),
+                size: 20,
+              )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (label != null)
+                    Text(
+                      label,
+                      style: TextStyle(
+                        color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    )
+                  else if (icon != null)
+                    Icon(
+                      icon,
+                      color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black),
+                      size: 20,
+                    ),
+                  const SizedBox(height: 2),
+                  Text(
+                    sublabel,
+                    style: TextStyle(
+                      color: (isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black)).withValues(alpha: 0.7),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+      ),
+    );
+  }
+
+  Widget _buildTextFormatButton(
+      String label, String sublabel, quill.Attribute? attribute) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final isActive = attribute != null
+        ? _isAttributeActive(attribute)
+        : _getCurrentTextType() == 'Tt';
+
+    return GestureDetector(
+      onTap: () {
+        if (attribute != null) {
+          _applyFormatting(attribute);
+        } else {
+          // Clear all header formatting for body text
+          widget.controller
+              .formatSelection(quill.Attribute.clone(quill.Attribute.h1, null));
+          widget.controller
+              .formatSelection(quill.Attribute.clone(quill.Attribute.h2, null));
+          widget.controller
+              .formatSelection(quill.Attribute.clone(quill.Attribute.h3, null));
+        }
+        setState(() {});
+      },
+      child: Container(
+        width: 80,
+        height: 55,
+        decoration: BoxDecoration(
+          color: isActive ? theme.colorScheme.primary : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
+          borderRadius: BorderRadius.circular(12),
+          border: isActive
+              ? Border.all(color: theme.colorScheme.primary, width: 2)
+              : null,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black),
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              sublabel,
+              style: TextStyle(
+                color: (isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black)).withValues(alpha: 0.7),
+                fontSize: 10,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextFormatButtonWithBodyIcon(
+      String label, String sublabel, quill.Attribute? attribute) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final isActive = attribute != null
+        ? _isAttributeActive(attribute)
+        : _getCurrentTextType() == 'Tt';
+
+    return GestureDetector(
+      onTap: () {
+        if (attribute != null) {
+          _applyFormatting(attribute);
+        } else {
+          // Clear all header formatting for body text
+          widget.controller
+              .formatSelection(quill.Attribute.clone(quill.Attribute.h1, null));
+          widget.controller
+              .formatSelection(quill.Attribute.clone(quill.Attribute.h2, null));
+          widget.controller
+              .formatSelection(quill.Attribute.clone(quill.Attribute.h3, null));
+        }
+        setState(() {});
+      },
+      child: Container(
+        width: 80,
+        height: 55,
+        decoration: BoxDecoration(
+          color: isActive ? theme.colorScheme.primary : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
+          borderRadius: BorderRadius.circular(12),
+          border: isActive
+              ? Border.all(color: theme.colorScheme.primary, width: 2)
+              : null,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.text_fields,
+              color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black),
+              size: 18,
+            ),
+            const SizedBox(height: 2),
+            Text(
+              sublabel,
+              style: TextStyle(
+                color: (isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black)).withValues(alpha: 0.7),
+                fontSize: 10,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextFormatButtonWithIcon(
+      IconData icon, String label, quill.Attribute? attribute,
+      {VoidCallback? onTap}) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final isActive = attribute != null ? _isAttributeActive(attribute) : false;
+
+    return GestureDetector(
+      onTap: onTap ??
+          () {
+            if (attribute != null) {
+              _applyFormatting(attribute);
+            }
+            setState(() {});
+          },
+      child: Container(
+        width: 160,
+        height: 50,
+        decoration: BoxDecoration(
+          color: isActive ? theme.colorScheme.primary : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
+          borderRadius: BorderRadius.circular(12),
+          border: isActive
+              ? Border.all(color: theme.colorScheme.primary, width: 2)
+              : null,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black), size: 18),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: TextStyle(
+                color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black),
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSmallTextButton(String label, quill.Attribute attribute) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final isActive = _isAttributeActive(attribute);
+
+    return GestureDetector(
+      onTap: () {
+        _applyFormatting(attribute);
+        setState(() {});
+      },
+      child: Container(
+        width: 48,
+        height: 45,
+        decoration: BoxDecoration(
+          color: isActive ? theme.colorScheme.primary : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
+          borderRadius: BorderRadius.circular(8),
+          border: isActive
+              ? Border.all(color: theme.colorScheme.primary, width: 2)
+              : null,
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black),
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSmallIconButton(IconData icon, quill.Attribute attribute) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final isActive = _isAttributeActive(attribute);
+
+    return GestureDetector(
+      onTap: () {
+        _applyFormatting(attribute);
+        setState(() {});
+      },
+      child: Container(
+        width: 48,
+        height: 45,
+        decoration: BoxDecoration(
+          color: isActive ? theme.colorScheme.primary : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
+          borderRadius: BorderRadius.circular(8),
+          border: isActive
+              ? Border.all(color: theme.colorScheme.primary, width: 2)
+              : null,
+        ),
+        child: Center(
+          child: Icon(
+            icon,
+            color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black),
+            size: 16,
+          ),
+        ),
+      ),
     );
   }
 
   bool _isAttributeActive(quill.Attribute attribute) {
-    final attributes = controller.getSelectionStyle().attributes;
+    final attributes = widget.controller.getSelectionStyle().attributes;
     return attributes.containsKey(attribute.key) &&
         attributes[attribute.key] == attribute;
   }
@@ -344,9 +585,9 @@ class QuillToolbar extends StatelessWidget {
   void _applyFormatting(quill.Attribute attribute) {
     final isActive = _isAttributeActive(attribute);
     if (isActive) {
-      controller.formatSelection(quill.Attribute.clone(attribute, null));
+      widget.controller.formatSelection(quill.Attribute.clone(attribute, null));
     } else {
-      controller.formatSelection(attribute);
+      widget.controller.formatSelection(attribute);
     }
   }
 
@@ -354,7 +595,7 @@ class QuillToolbar extends StatelessWidget {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
-        return _LinkDialog(controller: controller);
+        return _LinkDialog(controller: widget.controller);
       },
     );
   }
@@ -362,31 +603,26 @@ class QuillToolbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(22.0),
-      color: Theme.of(context).primaryColorLight,
-      child: Wrap(
-        spacing: 8.0,
-        runSpacing: 8.0,
-        children: _buildToolbarButtons(context),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      child: Column(
+        children: [
+          // Right sidebar with toggle buttons at the top
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildRightSidebar(),
+            ],
+          ),
+
+          if (_isToolbarVisible) ...[
+            const SizedBox(height: 4),
+            // Main expanded toolbar
+            _buildExpandedTextToolbar(),
+          ],
+        ],
       ),
     );
   }
-}
-
-class _ToolbarButtonConfig {
-  final String? label;
-  final String? sublabel;
-  final quill.Attribute? attribute;
-  final IconData? icon;
-  final VoidCallback? onPressed;
-
-  _ToolbarButtonConfig({
-    this.label,
-    this.sublabel,
-    this.attribute,
-    this.icon,
-    this.onPressed,
-  });
 }
 
 class _LinkDialog extends StatelessWidget {
