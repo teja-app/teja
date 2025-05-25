@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:go_router/go_router.dart';
@@ -11,6 +13,7 @@ import 'package:teja/domain/redux/journal/journal_analysis/journal_analysis_acti
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.dart';
 import 'package:teja/domain/redux/permission/permissions_constants.dart';
 import 'package:teja/presentation/journal/journa_detail/ui/journal_setting_menu.dart';
+import 'package:teja/presentation/journal/widgets/view/custom_quill_view.dart';
 import 'package:teja/presentation/mood/ui/attachement_image.dart';
 import 'package:teja/presentation/mood/ui/attachment_video.dart';
 import 'package:teja/presentation/navigation/is_desktop.dart';
@@ -21,7 +24,8 @@ import 'package:teja/shared/common/button.dart';
 class JournalDetailPage extends StatefulWidget {
   final String journalEntryId;
 
-  const JournalDetailPage({Key? key, required this.journalEntryId}) : super(key: key);
+  const JournalDetailPage({Key? key, required this.journalEntryId})
+      : super(key: key);
 
   @override
   JournalDetailPageState createState() => JournalDetailPageState();
@@ -48,12 +52,19 @@ class JournalDetailPageState extends State<JournalDetailPage> {
   void _analyzeJournal(JournalDetailViewModel viewModel) {
     List<Map<String, String>> qaList = [];
 
-    if (viewModel.journalEntry!.body != null && viewModel.journalEntry!.body!.isNotEmpty) {
-      qaList.add({'question': 'What\'s on your mind?', 'answer': viewModel.journalEntry!.body!});
+    if (viewModel.journalEntry!.body != null &&
+        viewModel.journalEntry!.body!.isNotEmpty) {
+      qaList.add({
+        'question': 'What\'s on your mind?',
+        'answer': viewModel.journalEntry!.body!
+      });
     }
 
     for (var question in viewModel.journalEntry!.questions ?? []) {
-      qaList.add({'question': question.questionText ?? '', 'answer': question.answerText ?? ''});
+      qaList.add({
+        'question': question.questionText ?? '',
+        'answer': question.answerText ?? ''
+      });
     }
 
     viewModel.dispatchAnalyzeJournal(viewModel.journalEntry!.id, qaList);
@@ -78,11 +89,14 @@ class JournalDetailPageState extends State<JournalDetailPage> {
         }
 
         if (viewModel.journalEntry == null) {
-          return Center(child: Text(viewModel.errorMessage ?? 'Journal entry not found.'));
+          return Center(
+              child:
+                  Text(viewModel.errorMessage ?? 'Journal entry not found.'));
         }
 
         DateTime entryDate = viewModel.journalEntry!.createdAt;
-        String formattedDate = DateFormat('EEEE, MMMM d @ h:mm a').format(entryDate);
+        String formattedDate =
+            DateFormat('EEEE, MMMM d @ h:mm a').format(entryDate);
 
         bool hasAnalysis = _hasAnalysisData(viewModel.journalEntry!);
 
@@ -120,7 +134,8 @@ class JournalDetailPageState extends State<JournalDetailPage> {
                 // ),
                 JournalMenuSettings(
                   journalId: viewModel.journalEntry!.id,
-                  onDelete: () => _showDeleteConfirmationDialog(pageContext, viewModel),
+                  onDelete: () =>
+                      _showDeleteConfirmationDialog(pageContext, viewModel),
                   onEdit: () => onEditJournal(viewModel.journalEntry!.id),
                 ),
               ],
@@ -135,10 +150,12 @@ class JournalDetailPageState extends State<JournalDetailPage> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(16.0),
-                      child: viewModel.journalEntry!.title != null && viewModel.journalEntry!.title!.isNotEmpty
+                      child: viewModel.journalEntry!.title != null &&
+                              viewModel.journalEntry!.title!.isNotEmpty
                           ? Text(
                               viewModel.journalEntry!.title!,
-                              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                  fontSize: 24, fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center, // Center text
                             )
                           : ElevatedButton.icon(
@@ -172,7 +189,9 @@ class JournalDetailPageState extends State<JournalDetailPage> {
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                    color: _selectedTabIndex == 0 ? Colors.blue : Colors.transparent,
+                    color: _selectedTabIndex == 0
+                        ? Colors.blue
+                        : Colors.transparent,
                     width: 2,
                   ),
                 ),
@@ -196,7 +215,9 @@ class JournalDetailPageState extends State<JournalDetailPage> {
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                    color: _selectedTabIndex == 1 ? Colors.blue : Colors.transparent,
+                    color: _selectedTabIndex == 1
+                        ? Colors.blue
+                        : Colors.transparent,
                     width: 2,
                   ),
                 ),
@@ -228,16 +249,25 @@ class JournalDetailPageState extends State<JournalDetailPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                if (journalEntry.summary != null) _buildReflectionCard(journalEntry),
+                if (journalEntry.summary != null)
+                  _buildReflectionCard(journalEntry),
                 if (journalEntry.summary != null) const SizedBox(height: 16),
-                if (journalEntry.keyInsight != null) _buildKeyInsightCard(journalEntry),
+                if (journalEntry.keyInsight != null)
+                  _buildKeyInsightCard(journalEntry),
                 if (journalEntry.keyInsight != null) const SizedBox(height: 16),
-                if (journalEntry.affirmation != null) _buildAffirmation(journalEntry),
-                if (journalEntry.affirmation != null) const SizedBox(height: 16),
-                if (journalEntry.feelings != null && journalEntry.feelings!.isNotEmpty)
+                if (journalEntry.affirmation != null)
+                  _buildAffirmation(journalEntry),
+                if (journalEntry.affirmation != null)
+                  const SizedBox(height: 16),
+                if (journalEntry.feelings != null &&
+                    journalEntry.feelings!.isNotEmpty)
                   _buildEmotionsSection(journalEntry),
-                if (journalEntry.feelings != null && journalEntry.feelings!.isNotEmpty) const SizedBox(height: 16),
-                if (journalEntry.topics != null && journalEntry.topics!.isNotEmpty) _buildTopicsSection(journalEntry),
+                if (journalEntry.feelings != null &&
+                    journalEntry.feelings!.isNotEmpty)
+                  const SizedBox(height: 16),
+                if (journalEntry.topics != null &&
+                    journalEntry.topics!.isNotEmpty)
+                  _buildTopicsSection(journalEntry),
               ],
             ),
           ),
@@ -251,10 +281,8 @@ class JournalDetailPageState extends State<JournalDetailPage> {
       padding: const EdgeInsets.all(16.0),
       children: [
         if (journalEntry.body != null && journalEntry.body!.isNotEmpty) ...[
-          Text(
-            journalEntry.body!,
-            style: Theme.of(context).textTheme.bodyLarge,
-            textAlign: TextAlign.center, // Center text
+          Center(
+            child: CustomQuillView(quillJson: journalEntry.body!),
           ),
           const SizedBox(height: 16),
         ],
@@ -402,7 +430,8 @@ class JournalDetailPageState extends State<JournalDetailPage> {
     );
   }
 
-  void _showDeleteConfirmationDialog(BuildContext pageContext, JournalDetailViewModel viewModel) {
+  void _showDeleteConfirmationDialog(
+      BuildContext pageContext, JournalDetailViewModel viewModel) {
     showDialog(
       context: pageContext,
       builder: (BuildContext dialogContext) {
@@ -417,8 +446,8 @@ class JournalDetailPageState extends State<JournalDetailPage> {
             TextButton(
               child: const Text('Delete'),
               onPressed: () {
-                StoreProvider.of<AppState>(dialogContext)
-                    .dispatch(DeleteJournalDetailAction(viewModel.journalEntry!.id));
+                StoreProvider.of<AppState>(dialogContext).dispatch(
+                    DeleteJournalDetailAction(viewModel.journalEntry!.id));
                 Navigator.of(dialogContext).pop();
                 GoRouter.of(context).replaceNamed(RootPath.home);
               },
@@ -436,7 +465,8 @@ class JournalDetailPageState extends State<JournalDetailPage> {
     );
   }
 
-  Widget _buildQuestionCard(JournalEntryEntity journalEntry, QuestionAnswerPairEntity? question, int index) {
+  Widget _buildQuestionCard(JournalEntryEntity journalEntry,
+      QuestionAnswerPairEntity? question, int index) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       elevation: 0.5,
@@ -450,10 +480,19 @@ class JournalDetailPageState extends State<JournalDetailPage> {
               style: Theme.of(context).textTheme.bodySmall,
             ),
             const SizedBox(height: 8),
-            Text(
-              question?.answerText ?? 'No answer',
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
+            (() {
+              try {
+                // Attempt to parse the answerText as JSON
+                final quillJson = jsonDecode(question?.answerText ?? '');
+                return CustomQuillView(quillJson: question?.answerText ?? '');
+              } catch (e) {
+                // Fallback to Text widget if parsing fails
+                return Text(
+                  question?.answerText ?? 'No answer',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                );
+              }
+            })(),
             const SizedBox(height: 8),
             _buildMediaForQuestion(journalEntry, index),
           ],
@@ -462,16 +501,22 @@ class JournalDetailPageState extends State<JournalDetailPage> {
     );
   }
 
-  Widget _buildMediaForQuestion(JournalEntryEntity journalEntry, int questionIndex) {
+  Widget _buildMediaForQuestion(
+      JournalEntryEntity journalEntry, int questionIndex) {
     final imageEntryIds = journalEntry.questions![questionIndex].imageEntryIds;
     final videoEntryIds = journalEntry.questions![questionIndex].videoEntryIds;
 
-    final imageEntries =
-        journalEntry.imageEntries?.where((entry) => imageEntryIds?.contains(entry.id) ?? false).toList() ?? [];
-    final videoEntries =
-        journalEntry.videoEntries?.where((entry) => videoEntryIds?.contains(entry.id) ?? false).toList() ?? [];
+    final imageEntries = journalEntry.imageEntries
+            ?.where((entry) => imageEntryIds?.contains(entry.id) ?? false)
+            .toList() ??
+        [];
+    final videoEntries = journalEntry.videoEntries
+            ?.where((entry) => videoEntryIds?.contains(entry.id) ?? false)
+            .toList() ??
+        [];
 
-    if (imageEntries.isEmpty && videoEntries.isEmpty) return const SizedBox.shrink();
+    if (imageEntries.isEmpty && videoEntries.isEmpty)
+      return const SizedBox.shrink();
 
     return SizedBox(
       height: 60,
@@ -525,7 +570,8 @@ class JournalDetailViewModel {
       journalEntry: state.selectedJournalEntry,
       isLoading: state.isLoading,
       errorMessage: state.errorMessage,
-      dispatchAnalyzeJournal: (String journalEntryId, List<Map<String, String>> qaList) {
+      dispatchAnalyzeJournal:
+          (String journalEntryId, List<Map<String, String>> qaList) {
         store.dispatch(AnalyzeJournalAction(journalEntryId));
       },
     );
