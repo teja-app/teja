@@ -232,6 +232,22 @@ JournalEditorState _setAutoSaveState(
   );
 }
 
+// Keyboard state management reducers
+JournalEditorState _setKeyboardVisibility(
+    JournalEditorState state, SetKeyboardVisibility action) {
+  return state.copyWith(
+    isKeyboardVisible: action.isVisible,
+    keyboardHeight: action.height,
+  );
+}
+
+JournalEditorState _setFocusState(
+    JournalEditorState state, SetFocusState action) {
+  return state.copyWith(
+    hasFocus: action.hasFocus,
+  );
+}
+
 final journalEditorReducer = combineReducers<JournalEditorState>([
   TypedReducer<JournalEditorState, SaveJournalEntry>(_updateJournalEntry),
   TypedReducer<JournalEditorState, UpdateQuestionAnswer>(_updateQuestionAnswer),
@@ -302,4 +318,6 @@ final journalEditorReducer = combineReducers<JournalEditorState>([
   TypedReducer<JournalEditorState, AutoSaveJournalEntrySuccess>(_autoSaveJournalEntrySuccess),
   TypedReducer<JournalEditorState, AutoSaveJournalEntryFailure>(_autoSaveJournalEntryFailure),
   TypedReducer<JournalEditorState, SetAutoSaveState>(_setAutoSaveState),
+  TypedReducer<JournalEditorState, SetKeyboardVisibility>(_setKeyboardVisibility),
+  TypedReducer<JournalEditorState, SetFocusState>(_setFocusState),
 ]);

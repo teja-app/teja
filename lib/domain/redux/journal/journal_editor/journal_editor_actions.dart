@@ -198,3 +198,26 @@ class SetAutoSaveState {
 }
 
 enum AutoSaveStatus { idle, saving, saved, error }
+
+// Keyboard state management actions
+@immutable
+class SetKeyboardVisibility {
+  final bool isVisible;
+  final double height;
+
+  const SetKeyboardVisibility(this.isVisible, {this.height = 0.0});
+}
+
+@immutable
+class ToggleKeyboard {
+  final bool? forceShow; // null for toggle, true/false for explicit control
+
+  const ToggleKeyboard({this.forceShow});
+}
+
+@immutable
+class SetFocusState {
+  final bool hasFocus;
+
+  const SetFocusState(this.hasFocus);
+}

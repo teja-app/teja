@@ -108,6 +108,7 @@ dependencies:
   share_handler: ^0.0.21
   cbl_flutter_ee: ^3.3.2
   flutter_quill: ^9.0.0
+  flutter_keyboard_visibility: ^6.0.0
 
   convert: any
   path: any

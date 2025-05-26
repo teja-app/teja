@@ -9,6 +9,9 @@ class JournalEditorState {
   final String? error;
   final AutoSaveStatus autoSaveStatus;
   final String? autoSaveError;
+  final bool isKeyboardVisible;
+  final double keyboardHeight;
+  final bool hasFocus;
 
   const JournalEditorState({
     this.currentJournalEntry,
@@ -16,6 +19,9 @@ class JournalEditorState {
     this.error,
     this.autoSaveStatus = AutoSaveStatus.idle,
     this.autoSaveError,
+    this.isKeyboardVisible = false,
+    this.keyboardHeight = 0.0,
+    this.hasFocus = false,
   });
 
   JournalEditorState copyWith({
@@ -24,6 +30,9 @@ class JournalEditorState {
     String? error,
     AutoSaveStatus? autoSaveStatus,
     String? autoSaveError,
+    bool? isKeyboardVisible,
+    double? keyboardHeight,
+    bool? hasFocus,
   }) {
     return JournalEditorState(
       currentJournalEntry: currentJournalEntry ?? this.currentJournalEntry,
@@ -31,6 +40,9 @@ class JournalEditorState {
       error: error ?? this.error,
       autoSaveStatus: autoSaveStatus ?? this.autoSaveStatus,
       autoSaveError: autoSaveError ?? this.autoSaveError,
+      isKeyboardVisible: isKeyboardVisible ?? this.isKeyboardVisible,
+      keyboardHeight: keyboardHeight ?? this.keyboardHeight,
+      hasFocus: hasFocus ?? this.hasFocus,
     );
   }
 
