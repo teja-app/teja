@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
@@ -9,14 +10,10 @@ import 'package:teja/domain/redux/app_state.dart';
 import 'package:teja/domain/redux/journal/journal_editor/journal_editor_actions.dart';
 import 'package:teja/domain/redux/journal/journal_editor/quick_journal_editor_actions.dart';
 import 'package:teja/domain/redux/journal/detail/journal_detail_actions.dart';
-import 'package:teja/domain/redux/permission/permissions_constants.dart';
 import 'package:teja/infrastructure/service/link_preview_service.dart';
 import 'package:teja/presentation/journal/widgets/editor/custom_quill_editor.dart';
 import 'package:teja/presentation/journal/widgets/view/link_preview.dart';
-import 'package:teja/presentation/navigation/is_desktop.dart';
-import 'package:teja/presentation/onboarding/widgets/feature_gate.dart';
 import 'package:teja/router.dart';
-import 'package:teja/shared/common/button.dart';
 
 class QuickJournalEntryScreen extends StatefulWidget {
   final String? entryId;
@@ -44,6 +41,11 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
   String? _errorMessage; // ignore: unused_field
   bool _isLoadingLinkMetadata = false;
   LinkMetadata? _linkMetadata;
+  
+  // Auto-save related state
+  Timer? _autoSaveTimer;
+  String _localContent = '';
+  bool _hasUnsavedChanges = false;
 
   @override
   void initState() {
@@ -54,6 +56,9 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
     if (widget.url != null) {
       _fetchLinkMetadata(widget.url!);
     }
+    
+    // Setup auto-save listener
+    _quillController.addListener(_onQuillTextChanged);
   }
 
   Future<void> _fetchLinkMetadata(String url) async {
@@ -90,12 +95,52 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
     );
   }
 
+  Widget _buildAutoSaveIndicator(AutoSaveStatus status) {
+    switch (status) {
+      case AutoSaveStatus.saving:
+        return const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: 12,
+              height: 12,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+            SizedBox(width: 4),
+            Text('Saving...', style: TextStyle(fontSize: 12)),
+          ],
+        );
+      case AutoSaveStatus.saved:
+        return const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.check_circle, size: 16, color: Colors.green),
+            SizedBox(width: 4),
+            Text('Saved', style: TextStyle(fontSize: 12, color: Colors.green)),
+          ],
+        );
+      case AutoSaveStatus.error:
+        return const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.error, size: 16, color: Colors.red),
+            SizedBox(width: 4),
+            Text('Error', style: TextStyle(fontSize: 12, color: Colors.red)),
+          ],
+        );
+      case AutoSaveStatus.idle:
+        return const SizedBox.shrink();
+    }
+  }
+
   void _initializeJournalEntry() {
     _store.dispatch(InitializeQuickJournalEditor(journalEntryId: widget.entryId));
   }
 
   @override
   void dispose() {
+    _autoSaveTimer?.cancel();
+    _quillController.removeListener(_onQuillTextChanged);
     _store.dispatch(const ClearJournalEditor());
     super.dispose();
   }
@@ -117,10 +162,64 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
   String _getDeltaJsonString() {
     return jsonEncode(_quillController.document.toDelta().toJson());
   }
+  
+  // Auto-save functionality with cursor preservation
+  void _onQuillTextChanged() {
+    final newContent = _getDeltaJsonString();
+    if (newContent != _localContent) {
+      _localContent = newContent;
+      _hasUnsavedChanges = true;
+      _scheduleAutoSave();
+    }
+  }
+  
+  void _scheduleAutoSave() {
+    _autoSaveTimer?.cancel();
+    _autoSaveTimer = Timer(const Duration(milliseconds: 500), () {
+      _performAutoSave();
+    });
+  }
+  
+  Future<void> _performAutoSave() async {
+    if (!_hasUnsavedChanges || _localContent.isEmpty) return;
+    
+    final currentEntry = _store.state.journalEditorState.currentJournalEntry;
+    if (currentEntry == null) return;
+    
+    // Check if document is effectively empty
+    if (_quillController.document.isEmpty()) return;
+    
+    try {
+      _store.dispatch(SetAutoSaveState(AutoSaveStatus.saving));
+      
+      final updatedEntry = currentEntry.copyWith(body: _localContent);
+      
+      // Use silent auto-save to avoid cursor issues
+      await _store.dispatch(AutoSaveJournalEntry(updatedEntry, silent: true));
+      
+      _hasUnsavedChanges = false;
+      _store.dispatch(SetAutoSaveState(AutoSaveStatus.saved));
+      
+      // Clear saved status after 2 seconds
+      Timer(const Duration(seconds: 2), () {
+        if (mounted) {
+          _store.dispatch(SetAutoSaveState(AutoSaveStatus.idle));
+        }
+      });
+    } catch (e) {
+      _store.dispatch(SetAutoSaveState(AutoSaveStatus.error, error: e.toString()));
+    }
+  }
 
-  Future<void> _saveEntry(
+  // Simplified save and navigate method for the Done button
+  Future<void> _saveAndNavigate(
       BuildContext context, JournalEntryEntity? currentEntry) async {
-    // Check if the document is empty
+    // Ensure any pending auto-save completes first
+    if (_autoSaveTimer?.isActive == true) {
+      _autoSaveTimer?.cancel();
+      await _performAutoSave();
+    }
+    
     if (_quillController.document.isEmpty()) {
       _showError('Journal entry cannot be empty');
       return;
@@ -131,18 +230,14 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
       _errorMessage = null;
     });
 
-    // Capture the router before async operations
     final router = GoRouter.of(context);
 
     try {
-      // Convert Quill Delta to JSON string
       final deltaJsonString = _getDeltaJsonString();
-
-      final updatedEntry = currentEntry?.copyWith(
-        body: deltaJsonString,
-      );
+      final updatedEntry = currentEntry?.copyWith(body: deltaJsonString);
 
       if (updatedEntry != null) {
+        // Perform final save
         await _store.dispatch(SaveJournalEntry(updatedEntry));
 
         // Add link metadata if available
@@ -160,11 +255,9 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
 
         await Future.delayed(const Duration(milliseconds: 100));
         await _store.dispatch(LoadJournalDetailAction(updatedEntry.id));
-
-        // Wait for a short period to allow the state to update
         await Future.delayed(const Duration(milliseconds: 100));
+        
         if (!mounted) return;
-        // Use mounted check properly by not passing context
         final state = _store.state.journalDetailState;
         if (state.selectedJournalEntry != null &&
             state.selectedJournalEntry!.id == updatedEntry.id &&
@@ -190,63 +283,13 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
 
 
 
-  // Similar modifications for _saveAndContinue method would follow the same pattern
-  Future<void> _saveAndContinue(
-      BuildContext context, JournalEntryEntity? currentEntry) async {
-    if (_quillController.document.isEmpty()) {
-      _showError('Journal entry cannot be empty');
-      return;
-    }
-
-    setState(() {
-      _isSaving = true;
-      _errorMessage = null;
-    });
-
-    // Capture the router before async operations
-    final router = GoRouter.of(context);
-
-    try {
-      final deltaJsonString = _getDeltaJsonString();
-
-      final updatedEntry = currentEntry?.copyWith(
-        body: deltaJsonString,
-      );
-
-      if (updatedEntry != null) {
-        await _store.dispatch(SaveJournalEntry(updatedEntry));
-        await Future.delayed(const Duration(milliseconds: 100));
-        await _store.dispatch(LoadJournalDetailAction(updatedEntry.id));
-
-        // Wait for a short period to allow the state to update
-        await Future.delayed(const Duration(milliseconds: 100));
-
-        if (!mounted) return;
-        final state = _store.state.journalDetailState;
-        if (state.selectedJournalEntry != null &&
-            state.selectedJournalEntry!.id == updatedEntry.id &&
-            state.selectedJournalEntry!.body != null) {
-          router.pushNamed(
-            RootPath.journalEntryPage,
-            pathParameters: {'id': updatedEntry.id},
-          );
-        } else {
-          _showError('Failed to save entry. Please try again.');
-        }
-      }
-    } catch (e) {
-      _showError('Failed to save entry. Please try again.');
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isSaving = false;
-        });
-      }
-    }
-  }
+  // Removed _saveAndContinue method as it's no longer needed
 
   void _discardAndGoBack(
       BuildContext context, JournalEntryEntity? currentEntry) {
+    // Cancel any pending auto-save
+    _autoSaveTimer?.cancel();
+    
     if (currentEntry != null &&
         (currentEntry.body == null || currentEntry.body!.isEmpty)) {
       _store.dispatch(DeleteJournalDetailAction(currentEntry.id));
@@ -256,15 +299,17 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
     }
   }
 
-  // Modify _handleBack to check Quill document instead of text controller
+  // Updated _handleBack for auto-save workflow
   void _handleBack(BuildContext context, JournalEntryEntity? currentEntry) {
-    if (!_quillController.document.isEmpty()) {
+    // With auto-save, we can just go back since content is already saved
+    // Only show dialog if there are unsaved changes that haven't been auto-saved yet
+    if (_hasUnsavedChanges && !_quillController.document.isEmpty()) {
       showDialog(
         context: context,
         builder: (BuildContext dialogContext) {
           return AlertDialog(
-            title: const Text('Unsaved Changes'),
-            content: const Text('You have unsaved changes. Do you want to save before leaving?'),
+            title: const Text('Save Changes'),
+            content: const Text('You have recent changes. Save before leaving?'),
             actions: <Widget>[
               TextButton(
                 child: const Text('Discard'),
@@ -275,9 +320,12 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
               ),
               TextButton(
                 child: const Text('Save'),
-                onPressed: () {
+                onPressed: () async {
                   Navigator.of(dialogContext).pop();
-                  _saveEntry(context, currentEntry);
+                  await _performAutoSave();
+                  if (mounted) {
+                    GoRouter.of(context).pop();
+                  }
                 },
               ),
             ],
@@ -293,8 +341,11 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
   Widget build(BuildContext context) {
 
     return PopScope(
+      canPop: !_hasUnsavedChanges || _quillController.document.isEmpty(),
       onPopInvokedWithResult: (didPop, result) async {
-        _handleBack(context, _store.state.journalEditorState.currentJournalEntry);
+        if (!didPop) {
+          _handleBack(context, _store.state.journalEditorState.currentJournalEntry);
+        }
       },
       child: StoreConnector<AppState, QuickJournalEditViewModel>(
         converter: (store) => QuickJournalEditViewModel.fromStore(store),
@@ -328,9 +379,17 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
                 onPressed: _isSaving ? null : () => _handleBack(context, viewModel.currentJournalEntry),
               ),
               actions: [
+                // Auto-save status indicator
+                StoreConnector<AppState, AutoSaveStatus>(
+                  converter: (store) => store.state.journalEditorState.autoSaveStatus,
+                  builder: (context, autoSaveStatus) {
+                    return _buildAutoSaveIndicator(autoSaveStatus);
+                  },
+                ),
+                const SizedBox(width: 8),
                 IconButton(
                   icon: const Icon(Icons.done),
-                  onPressed: _isSaving ? null : () => _saveEntry(context, viewModel.currentJournalEntry),
+                  onPressed: _isSaving ? null : () => _saveAndNavigate(context, viewModel.currentJournalEntry),
                 ),
               ],
             ),
@@ -342,39 +401,7 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
                     controller: _quillController,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Button(
-                          onPressed: _isSaving
-                              ? null
-                              : () => _saveEntry(
-                                  context, viewModel.currentJournalEntry),
-                          text: 'Save',
-                          buttonType: ButtonType.secondary,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: FeatureGate(
-                          feature: AI_SUGGESTIONS,
-                          child: Button(
-                            width: isDesktop(context) ? 330 : 120,
-                            buttonType: ButtonType.primary,
-                            onPressed: _isSaving
-                                ? null
-                                : () => _saveAndContinue(
-                                    context, viewModel.currentJournalEntry),
-                            text: 'Continue',
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                    ],
-                  ),
-                ),
+                // Removed bottom action buttons - only Done button in app bar now
               ],
             ),
           );

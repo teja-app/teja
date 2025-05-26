@@ -162,3 +162,39 @@ class RemoveUrlMetadataFromJournalEntryFailure {
 
   const RemoveUrlMetadataFromJournalEntryFailure(this.error);
 }
+
+// Auto-save actions for cursor-safe background saving
+@immutable
+class AutoSaveJournalEntry {
+  final JournalEntryEntity journalEntry;
+  final bool silent; // Don't trigger UI state updates
+
+  const AutoSaveJournalEntry(this.journalEntry, {this.silent = true});
+}
+
+@immutable
+class AutoSaveJournalEntrySuccess {
+  final String journalEntryId;
+  final bool silent;
+
+  const AutoSaveJournalEntrySuccess(this.journalEntryId, {this.silent = true});
+}
+
+@immutable
+class AutoSaveJournalEntryFailure {
+  final String error;
+  final bool silent;
+
+  const AutoSaveJournalEntryFailure(this.error, {this.silent = true});
+}
+
+// Auto-save state tracking
+@immutable
+class SetAutoSaveState {
+  final AutoSaveStatus status;
+  final String? error;
+
+  const SetAutoSaveState(this.status, {this.error});
+}
+
+enum AutoSaveStatus { idle, saving, saved, error }

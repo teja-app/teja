@@ -195,6 +195,43 @@ JournalEditorState _removeUrlMetadataFromJournalEntryFailure(
   return state.copyWith(error: action.error);
 }
 
+// Auto-save reducers that don't trigger UI rebuilds for silent operations
+JournalEditorState _autoSaveJournalEntry(
+    JournalEditorState state, AutoSaveJournalEntry action) {
+  // If silent, only update status, not the journal entry to avoid cursor issues
+  if (action.silent) {
+    return state.copyWith(autoSaveStatus: AutoSaveStatus.saving);
+  }
+  return state.copyWith(
+    currentJournalEntry: action.journalEntry,
+    autoSaveStatus: AutoSaveStatus.saving,
+  );
+}
+
+JournalEditorState _autoSaveJournalEntrySuccess(
+    JournalEditorState state, AutoSaveJournalEntrySuccess action) {
+  return state.copyWith(
+    autoSaveStatus: AutoSaveStatus.saved,
+    autoSaveError: null,
+  );
+}
+
+JournalEditorState _autoSaveJournalEntryFailure(
+    JournalEditorState state, AutoSaveJournalEntryFailure action) {
+  return state.copyWith(
+    autoSaveStatus: AutoSaveStatus.error,
+    autoSaveError: action.error,
+  );
+}
+
+JournalEditorState _setAutoSaveState(
+    JournalEditorState state, SetAutoSaveState action) {
+  return state.copyWith(
+    autoSaveStatus: action.status,
+    autoSaveError: action.error,
+  );
+}
+
 final journalEditorReducer = combineReducers<JournalEditorState>([
   TypedReducer<JournalEditorState, SaveJournalEntry>(_updateJournalEntry),
   TypedReducer<JournalEditorState, UpdateQuestionAnswer>(_updateQuestionAnswer),
@@ -261,4 +298,8 @@ final journalEditorReducer = combineReducers<JournalEditorState>([
       _removeUrlMetadataFromJournalEntrySuccess),
   TypedReducer<JournalEditorState, RemoveUrlMetadataFromJournalEntryFailure>(
       _removeUrlMetadataFromJournalEntryFailure),
+  TypedReducer<JournalEditorState, AutoSaveJournalEntry>(_autoSaveJournalEntry),
+  TypedReducer<JournalEditorState, AutoSaveJournalEntrySuccess>(_autoSaveJournalEntrySuccess),
+  TypedReducer<JournalEditorState, AutoSaveJournalEntryFailure>(_autoSaveJournalEntryFailure),
+  TypedReducer<JournalEditorState, SetAutoSaveState>(_setAutoSaveState),
 ]);
