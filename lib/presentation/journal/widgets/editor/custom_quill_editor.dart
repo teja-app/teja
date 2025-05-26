@@ -29,7 +29,7 @@ class _CustomQuillEditorState extends State<CustomQuillEditor> {
   late FocusNode _focusNode;
   late ScrollController _scrollController;
   late KeyboardVisibilityController _keyboardVisibilityController;
-  
+
   // Method to handle keyboard toggle with enhanced focus management
   void _handleKeyboardToggle(bool shouldShow) {
     if (shouldShow && !_focusNode.hasFocus) {
@@ -47,22 +47,23 @@ class _CustomQuillEditorState extends State<CustomQuillEditor> {
     _focusNode = FocusNode();
     _scrollController = ScrollController();
     _keyboardVisibilityController = KeyboardVisibilityController();
-    
+
     widget.controller.addListener(_onControllerChanged);
     _focusNode.addListener(_onFocusChanged);
-    
+
     // Use FocusScope for better focus management
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         FocusScope.of(context).requestFocus(_focusNode);
       }
     });
-    
+
     // Listen to keyboard visibility changes
     _keyboardVisibilityController.onChange.listen((bool visible) {
       if (mounted) {
         final store = StoreProvider.of<AppState>(context, listen: false);
-        final keyboardHeight = visible ? MediaQuery.of(context).viewInsets.bottom : 0.0;
+        final keyboardHeight =
+            visible ? MediaQuery.of(context).viewInsets.bottom : 0.0;
         store.dispatch(SetKeyboardVisibility(visible, height: keyboardHeight));
       }
     });
@@ -76,7 +77,7 @@ class _CustomQuillEditorState extends State<CustomQuillEditor> {
   void _onFocusChanged() {
     final store = StoreProvider.of<AppState>(context, listen: false);
     store.dispatch(SetFocusState(_focusNode.hasFocus));
-    
+
     if (!_focusNode.hasFocus && widget.onFocusLost != null) {
       widget.onFocusLost!();
     }
@@ -119,7 +120,9 @@ class _CustomQuillEditorState extends State<CustomQuillEditor> {
           // Always show toolbar, adjust for keyboard
           Container(
             padding: EdgeInsets.only(
-              bottom: keyboardHeight > 0 ? keyboardHeight : MediaQuery.of(context).padding.bottom,
+              bottom: keyboardHeight > 0
+                  ? keyboardHeight
+                  : MediaQuery.of(context).padding.bottom,
               left: 8,
               right: 8,
               top: 8,
@@ -299,13 +302,16 @@ class _SmartQuillToolbarState extends State<SmartQuillToolbar> {
   Widget _buildRightSidebar() {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1C1C1E) : theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: isDark ? null : Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+        border: isDark
+            ? null
+            : Border.all(
+                color: theme.colorScheme.outline.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -368,13 +374,16 @@ class _SmartQuillToolbarState extends State<SmartQuillToolbar> {
   Widget _buildExpandedTextToolbar() {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1C1C1E) : theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: isDark ? null : Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+        border: isDark
+            ? null
+            : Border.all(
+                color: theme.colorScheme.outline.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -466,14 +475,16 @@ class _SmartQuillToolbarState extends State<SmartQuillToolbar> {
   }) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: sublabel.isEmpty ? 40 : 60,
         height: sublabel.isEmpty ? 40 : 60,
         decoration: BoxDecoration(
-          color: isActive ? theme.colorScheme.primary : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
+          color: isActive
+              ? theme.colorScheme.primary
+              : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
           borderRadius: BorderRadius.circular(12),
           border: isActive
               ? Border.all(color: theme.colorScheme.primary, width: 2)
@@ -482,7 +493,9 @@ class _SmartQuillToolbarState extends State<SmartQuillToolbar> {
         child: sublabel.isEmpty
             ? Icon(
                 icon ?? Icons.text_fields,
-                color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black),
+                color: isActive
+                    ? theme.colorScheme.onPrimary
+                    : (isDark ? Colors.white : Colors.black),
                 size: 20,
               )
             : Column(
@@ -492,7 +505,9 @@ class _SmartQuillToolbarState extends State<SmartQuillToolbar> {
                     Text(
                       label,
                       style: TextStyle(
-                        color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black),
+                        color: isActive
+                            ? theme.colorScheme.onPrimary
+                            : (isDark ? Colors.white : Colors.black),
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -500,14 +515,19 @@ class _SmartQuillToolbarState extends State<SmartQuillToolbar> {
                   else if (icon != null)
                     Icon(
                       icon,
-                      color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black),
+                      color: isActive
+                          ? theme.colorScheme.onPrimary
+                          : (isDark ? Colors.white : Colors.black),
                       size: 20,
                     ),
                   const SizedBox(height: 2),
                   Text(
                     sublabel,
                     style: TextStyle(
-                      color: (isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black)).withValues(alpha: 0.7),
+                      color: (isActive
+                              ? theme.colorScheme.onPrimary
+                              : (isDark ? Colors.white : Colors.black))
+                          .withValues(alpha: 0.7),
                       fontSize: 10,
                       fontWeight: FontWeight.w400,
                     ),
@@ -553,7 +573,9 @@ class _SmartQuillToolbarState extends State<SmartQuillToolbar> {
         width: 80,
         height: 55,
         decoration: BoxDecoration(
-          color: isActive ? theme.colorScheme.primary : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
+          color: isActive
+              ? theme.colorScheme.primary
+              : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
           borderRadius: BorderRadius.circular(12),
           border: isActive
               ? Border.all(color: theme.colorScheme.primary, width: 2)
@@ -565,7 +587,9 @@ class _SmartQuillToolbarState extends State<SmartQuillToolbar> {
             Text(
               label,
               style: TextStyle(
-                color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black),
+                color: isActive
+                    ? theme.colorScheme.onPrimary
+                    : (isDark ? Colors.white : Colors.black),
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
@@ -574,7 +598,10 @@ class _SmartQuillToolbarState extends State<SmartQuillToolbar> {
             Text(
               sublabel,
               style: TextStyle(
-                color: (isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black)).withValues(alpha: 0.7),
+                color: (isActive
+                        ? theme.colorScheme.onPrimary
+                        : (isDark ? Colors.white : Colors.black))
+                    .withValues(alpha: 0.7),
                 fontSize: 10,
                 fontWeight: FontWeight.w400,
               ),
@@ -614,7 +641,9 @@ class _SmartQuillToolbarState extends State<SmartQuillToolbar> {
         width: 80,
         height: 55,
         decoration: BoxDecoration(
-          color: isActive ? theme.colorScheme.primary : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
+          color: isActive
+              ? theme.colorScheme.primary
+              : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
           borderRadius: BorderRadius.circular(12),
           border: isActive
               ? Border.all(color: theme.colorScheme.primary, width: 2)
@@ -625,14 +654,19 @@ class _SmartQuillToolbarState extends State<SmartQuillToolbar> {
           children: [
             Icon(
               Icons.text_fields,
-              color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black),
+              color: isActive
+                  ? theme.colorScheme.onPrimary
+                  : (isDark ? Colors.white : Colors.black),
               size: 18,
             ),
             const SizedBox(height: 2),
             Text(
               sublabel,
               style: TextStyle(
-                color: (isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black)).withValues(alpha: 0.7),
+                color: (isActive
+                        ? theme.colorScheme.onPrimary
+                        : (isDark ? Colors.white : Colors.black))
+                    .withValues(alpha: 0.7),
                 fontSize: 10,
                 fontWeight: FontWeight.w400,
               ),
@@ -668,7 +702,9 @@ class _SmartQuillToolbarState extends State<SmartQuillToolbar> {
         width: 160,
         height: 50,
         decoration: BoxDecoration(
-          color: isActive ? theme.colorScheme.primary : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
+          color: isActive
+              ? theme.colorScheme.primary
+              : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
           borderRadius: BorderRadius.circular(12),
           border: isActive
               ? Border.all(color: theme.colorScheme.primary, width: 2)
@@ -677,12 +713,18 @@ class _SmartQuillToolbarState extends State<SmartQuillToolbar> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black), size: 18),
+            Icon(icon,
+                color: isActive
+                    ? theme.colorScheme.onPrimary
+                    : (isDark ? Colors.white : Colors.black),
+                size: 18),
             const SizedBox(width: 8),
             Text(
               label,
               style: TextStyle(
-                color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black),
+                color: isActive
+                    ? theme.colorScheme.onPrimary
+                    : (isDark ? Colors.white : Colors.black),
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
@@ -707,7 +749,9 @@ class _SmartQuillToolbarState extends State<SmartQuillToolbar> {
         width: 48,
         height: 45,
         decoration: BoxDecoration(
-          color: isActive ? theme.colorScheme.primary : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
+          color: isActive
+              ? theme.colorScheme.primary
+              : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
           borderRadius: BorderRadius.circular(8),
           border: isActive
               ? Border.all(color: theme.colorScheme.primary, width: 2)
@@ -717,7 +761,9 @@ class _SmartQuillToolbarState extends State<SmartQuillToolbar> {
           child: Text(
             label,
             style: TextStyle(
-              color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black),
+              color: isActive
+                  ? theme.colorScheme.onPrimary
+                  : (isDark ? Colors.white : Colors.black),
               fontSize: 16,
               fontWeight: FontWeight.w600,
             ),
@@ -741,7 +787,9 @@ class _SmartQuillToolbarState extends State<SmartQuillToolbar> {
         width: 48,
         height: 45,
         decoration: BoxDecoration(
-          color: isActive ? theme.colorScheme.primary : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
+          color: isActive
+              ? theme.colorScheme.primary
+              : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
           borderRadius: BorderRadius.circular(8),
           border: isActive
               ? Border.all(color: theme.colorScheme.primary, width: 2)
@@ -750,7 +798,9 @@ class _SmartQuillToolbarState extends State<SmartQuillToolbar> {
         child: Center(
           child: Icon(
             icon,
-            color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black),
+            color: isActive
+                ? theme.colorScheme.onPrimary
+                : (isDark ? Colors.white : Colors.black),
             size: 16,
           ),
         ),
@@ -819,18 +869,19 @@ class _QuillToolbarState extends State<QuillToolbar> {
     }
   }
 
-
-
   Widget _buildExpandedTextToolbar() {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1C1C1E) : theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: isDark ? null : Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+        border: isDark
+            ? null
+            : Border.all(
+                color: theme.colorScheme.outline.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -916,13 +967,16 @@ class _QuillToolbarState extends State<QuillToolbar> {
   Widget _buildRightSidebar() {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1C1C1E) : theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: isDark ? null : Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+        border: isDark
+            ? null
+            : Border.all(
+                color: theme.colorScheme.outline.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -974,14 +1028,16 @@ class _QuillToolbarState extends State<QuillToolbar> {
   }) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: sublabel.isEmpty ? 40 : 60,
         height: sublabel.isEmpty ? 40 : 60,
         decoration: BoxDecoration(
-          color: isActive ? theme.colorScheme.primary : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
+          color: isActive
+              ? theme.colorScheme.primary
+              : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
           borderRadius: BorderRadius.circular(12),
           border: isActive
               ? Border.all(color: theme.colorScheme.primary, width: 2)
@@ -990,7 +1046,9 @@ class _QuillToolbarState extends State<QuillToolbar> {
         child: sublabel.isEmpty
             ? Icon(
                 icon ?? Icons.text_fields,
-                color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black),
+                color: isActive
+                    ? theme.colorScheme.onPrimary
+                    : (isDark ? Colors.white : Colors.black),
                 size: 20,
               )
             : Column(
@@ -1000,7 +1058,9 @@ class _QuillToolbarState extends State<QuillToolbar> {
                     Text(
                       label,
                       style: TextStyle(
-                        color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black),
+                        color: isActive
+                            ? theme.colorScheme.onPrimary
+                            : (isDark ? Colors.white : Colors.black),
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -1008,14 +1068,19 @@ class _QuillToolbarState extends State<QuillToolbar> {
                   else if (icon != null)
                     Icon(
                       icon,
-                      color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black),
+                      color: isActive
+                          ? theme.colorScheme.onPrimary
+                          : (isDark ? Colors.white : Colors.black),
                       size: 20,
                     ),
                   const SizedBox(height: 2),
                   Text(
                     sublabel,
                     style: TextStyle(
-                      color: (isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black)).withValues(alpha: 0.7),
+                      color: (isActive
+                              ? theme.colorScheme.onPrimary
+                              : (isDark ? Colors.white : Colors.black))
+                          .withValues(alpha: 0.7),
                       fontSize: 10,
                       fontWeight: FontWeight.w400,
                     ),
@@ -1053,7 +1118,9 @@ class _QuillToolbarState extends State<QuillToolbar> {
         width: 80,
         height: 55,
         decoration: BoxDecoration(
-          color: isActive ? theme.colorScheme.primary : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
+          color: isActive
+              ? theme.colorScheme.primary
+              : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
           borderRadius: BorderRadius.circular(12),
           border: isActive
               ? Border.all(color: theme.colorScheme.primary, width: 2)
@@ -1065,7 +1132,9 @@ class _QuillToolbarState extends State<QuillToolbar> {
             Text(
               label,
               style: TextStyle(
-                color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black),
+                color: isActive
+                    ? theme.colorScheme.onPrimary
+                    : (isDark ? Colors.white : Colors.black),
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
@@ -1074,7 +1143,10 @@ class _QuillToolbarState extends State<QuillToolbar> {
             Text(
               sublabel,
               style: TextStyle(
-                color: (isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black)).withValues(alpha: 0.7),
+                color: (isActive
+                        ? theme.colorScheme.onPrimary
+                        : (isDark ? Colors.white : Colors.black))
+                    .withValues(alpha: 0.7),
                 fontSize: 10,
                 fontWeight: FontWeight.w400,
               ),
@@ -1112,7 +1184,9 @@ class _QuillToolbarState extends State<QuillToolbar> {
         width: 80,
         height: 55,
         decoration: BoxDecoration(
-          color: isActive ? theme.colorScheme.primary : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
+          color: isActive
+              ? theme.colorScheme.primary
+              : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
           borderRadius: BorderRadius.circular(12),
           border: isActive
               ? Border.all(color: theme.colorScheme.primary, width: 2)
@@ -1123,14 +1197,19 @@ class _QuillToolbarState extends State<QuillToolbar> {
           children: [
             Icon(
               Icons.text_fields,
-              color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black),
+              color: isActive
+                  ? theme.colorScheme.onPrimary
+                  : (isDark ? Colors.white : Colors.black),
               size: 18,
             ),
             const SizedBox(height: 2),
             Text(
               sublabel,
               style: TextStyle(
-                color: (isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black)).withValues(alpha: 0.7),
+                color: (isActive
+                        ? theme.colorScheme.onPrimary
+                        : (isDark ? Colors.white : Colors.black))
+                    .withValues(alpha: 0.7),
                 fontSize: 10,
                 fontWeight: FontWeight.w400,
               ),
@@ -1160,7 +1239,9 @@ class _QuillToolbarState extends State<QuillToolbar> {
         width: 160,
         height: 50,
         decoration: BoxDecoration(
-          color: isActive ? theme.colorScheme.primary : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
+          color: isActive
+              ? theme.colorScheme.primary
+              : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
           borderRadius: BorderRadius.circular(12),
           border: isActive
               ? Border.all(color: theme.colorScheme.primary, width: 2)
@@ -1169,12 +1250,18 @@ class _QuillToolbarState extends State<QuillToolbar> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black), size: 18),
+            Icon(icon,
+                color: isActive
+                    ? theme.colorScheme.onPrimary
+                    : (isDark ? Colors.white : Colors.black),
+                size: 18),
             const SizedBox(width: 8),
             Text(
               label,
               style: TextStyle(
-                color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black),
+                color: isActive
+                    ? theme.colorScheme.onPrimary
+                    : (isDark ? Colors.white : Colors.black),
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
@@ -1199,7 +1286,9 @@ class _QuillToolbarState extends State<QuillToolbar> {
         width: 48,
         height: 45,
         decoration: BoxDecoration(
-          color: isActive ? theme.colorScheme.primary : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
+          color: isActive
+              ? theme.colorScheme.primary
+              : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
           borderRadius: BorderRadius.circular(8),
           border: isActive
               ? Border.all(color: theme.colorScheme.primary, width: 2)
@@ -1209,7 +1298,9 @@ class _QuillToolbarState extends State<QuillToolbar> {
           child: Text(
             label,
             style: TextStyle(
-              color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black),
+              color: isActive
+                  ? theme.colorScheme.onPrimary
+                  : (isDark ? Colors.white : Colors.black),
               fontSize: 16,
               fontWeight: FontWeight.w600,
             ),
@@ -1233,7 +1324,9 @@ class _QuillToolbarState extends State<QuillToolbar> {
         width: 48,
         height: 45,
         decoration: BoxDecoration(
-          color: isActive ? theme.colorScheme.primary : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
+          color: isActive
+              ? theme.colorScheme.primary
+              : (isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade100),
           borderRadius: BorderRadius.circular(8),
           border: isActive
               ? Border.all(color: theme.colorScheme.primary, width: 2)
@@ -1242,7 +1335,9 @@ class _QuillToolbarState extends State<QuillToolbar> {
         child: Center(
           child: Icon(
             icon,
-            color: isActive ? theme.colorScheme.onPrimary : (isDark ? Colors.white : Colors.black),
+            color: isActive
+                ? theme.colorScheme.onPrimary
+                : (isDark ? Colors.white : Colors.black),
             size: 16,
           ),
         ),
