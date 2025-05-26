@@ -114,8 +114,10 @@ class _CustomQuillEditorState extends State<CustomQuillEditor> {
               ),
             ),
           ),
-          // Always show toolbar, adjust for keyboard
-          Container(
+          // Always show toolbar, adjust for keyboard with animation
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOut,
             padding: EdgeInsets.only(
               bottom: keyboardHeight > 0
                   ? keyboardHeight

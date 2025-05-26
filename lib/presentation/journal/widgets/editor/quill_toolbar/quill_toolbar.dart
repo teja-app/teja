@@ -127,11 +127,34 @@ class _SmartQuillToolbarState extends State<SmartQuillToolbar> with ToolbarButto
         // Right sidebar with toggle buttons at the top
         _buildRightSidebar(),
 
-        if (_isToolbarVisible) ...[
-          const SizedBox(height: 8),
-          // Main expanded toolbar
-          _buildExpandedTextToolbar(),
-        ],
+        // Animated toolbar expansion
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          transitionBuilder: (child, animation) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0, -0.3),
+                end: Offset.zero,
+              ).animate(CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeOutCubic,
+              )),
+              child: FadeTransition(
+                opacity: animation,
+                child: child,
+              ),
+            );
+          },
+          child: _isToolbarVisible
+              ? Column(
+                  key: const ValueKey('toolbar-expanded'),
+                  children: [
+                    const SizedBox(height: 8),
+                    _buildExpandedTextToolbar(),
+                  ],
+                )
+              : const SizedBox.shrink(key: ValueKey('toolbar-collapsed')),
+        ),
       ],
     );
   }

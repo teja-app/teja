@@ -96,40 +96,112 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
   }
 
   Widget _buildAutoSaveIndicator(AutoSaveStatus status) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 300),
+      transitionBuilder: (child, animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0.3, 0),
+              end: Offset.zero,
+            ).animate(CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeOutCubic,
+            )),
+            child: child,
+          ),
+        );
+      },
+      child: _buildAutoSaveIndicatorContent(status),
+    );
+  }
+
+  Widget _buildAutoSaveIndicatorContent(AutoSaveStatus status) {
     switch (status) {
       case AutoSaveStatus.saving:
-        return const Row(
+        return Row(
+          key: const ValueKey('saving'),
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(
-              width: 12,
-              height: 12,
-              child: CircularProgressIndicator(strokeWidth: 2),
+            TweenAnimationBuilder<double>(
+              duration: const Duration(milliseconds: 1000),
+              tween: Tween<double>(begin: 0, end: 1),
+              builder: (context, value, child) {
+                return Transform.rotate(
+                  angle: value * 2 * 3.14159,
+                  child: const SizedBox(
+                    width: 12,
+                    height: 12,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                );
+              },
             ),
-            SizedBox(width: 4),
-            Text('Saving...', style: TextStyle(fontSize: 12)),
+            const SizedBox(width: 4),
+            const Text('Saving...', style: TextStyle(fontSize: 12)),
           ],
         );
       case AutoSaveStatus.saved:
-        return const Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.check_circle, size: 16, color: Colors.green),
-            SizedBox(width: 4),
-            Text('Saved', style: TextStyle(fontSize: 12, color: Colors.green)),
-          ],
+        return TweenAnimationBuilder<double>(
+          key: const ValueKey('saved'),
+          duration: const Duration(milliseconds: 500),
+          tween: Tween<double>(begin: 0, end: 1),
+          builder: (context, value, child) {
+            return Transform.scale(
+              scale: value,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.check_circle,
+                    size: 16,
+                    color: Color.lerp(Colors.grey, Colors.green, value),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Saved',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Color.lerp(Colors.grey, Colors.green, value),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         );
       case AutoSaveStatus.error:
-        return const Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.error, size: 16, color: Colors.red),
-            SizedBox(width: 4),
-            Text('Error', style: TextStyle(fontSize: 12, color: Colors.red)),
-          ],
+        return TweenAnimationBuilder<double>(
+          key: const ValueKey('error'),
+          duration: const Duration(milliseconds: 300),
+          tween: Tween<double>(begin: 0, end: 1),
+          builder: (context, value, child) {
+            return Transform.scale(
+              scale: 0.8 + (0.2 * value),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.error,
+                    size: 16,
+                    color: Color.lerp(Colors.grey, Colors.red, value),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Error',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Color.lerp(Colors.grey, Colors.red, value),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         );
       case AutoSaveStatus.idle:
-        return const SizedBox.shrink();
+        return const SizedBox.shrink(key: ValueKey('idle'));
     }
   }
 
@@ -387,9 +459,27 @@ class QuickJournalEntryScreenState extends State<QuickJournalEntryScreen> {
                   },
                 ),
                 const SizedBox(width: 8),
-                IconButton(
-                  icon: const Icon(Icons.done),
-                  onPressed: _isSaving ? null : () => _saveAndNavigate(context, viewModel.currentJournalEntry),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  child: _isSaving
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : TweenAnimationBuilder<double>(
+                          duration: const Duration(milliseconds: 200),
+                          tween: Tween<double>(begin: 1.0, end: 1.0),
+                          builder: (context, value, child) {
+                            return Transform.scale(
+                              scale: value,
+                              child: IconButton(
+                                icon: const Icon(Icons.done),
+                                onPressed: () => _saveAndNavigate(context, viewModel.currentJournalEntry),
+                              ),
+                            );
+                          },
+                        ),
                 ),
               ],
             ),
