@@ -1,5 +1,7 @@
 # Teja: Your AI-Powered Mental Health Companion
 
+> **Important Notice:** Due to intellectual property considerations and the implementation of new features, this open-source version of Teja.app has transitioned to legacy status and is no longer actively maintained. While we remain committed to open-source principles, our closed-source development model enables faster deployment cycles and more agile feature delivery. We are actively developing a new version of the application with enhanced capabilities.
+
 Join a growing community of people turning a new page this year, improving their mental health and living happier lives with Teja - your personal AI-powered self-care companion.
 
 ## Connect With Us

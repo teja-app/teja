@@ -208,6 +208,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.3.1"
+  cbl_flutter_ee:
+    dependency: transitive
+    description:
+      name: cbl_flutter_ee
+      sha256: "2b85ea5710f23fa83c823d9b843c95f525f6f0ba09d5dd9127ae6304ff926cb0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.3.2"
+  cbl_flutter_install:
+    dependency: transitive
+    description:
+      name: cbl_flutter_install
+      sha256: "1a98c1176fd3a4adc12ddd70ba08feb08b08a68be57013e12f1db0a04b7f28d0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0+2"
   cbl_flutter_platform_interface:
     dependency: transitive
     description:
@@ -220,10 +236,10 @@ packages:
     dependency: transitive
     description:
       name: cbl_libcblite_api
-      sha256: a447f887fc9e239007fa8793b05169921564903abcf574018d41b45c5869ccf4
+      sha256: a7ce720190ea31990cc0d6a8c93993839d32d77fb0af3edc5d4bb7258fce1645
       url: "https://pub.dev"
     source: hosted
-    version: "3.2.3"
+    version: "3.2.0"
   cbl_libcblitedart_api:
     dependency: transitive
     description:
@@ -247,7 +263,7 @@ packages:
       sha256: fb0f1107cac15a5ea6ef0a6ef71a807b9e4267c713bb93e00e92d737cc8dbd8a
       url: "https://pub.dev"
     source: hosted
-    version: "1.3.0"
+    version: "1.4.0"
   checked_yaml:
     dependency: transitive
     description:
@@ -1028,22 +1044,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
-  isar:
-    dependency: transitive
-    description:
-      name: isar
-      sha256: "99165dadb2cf2329d3140198363a7e7bff9bbd441871898a87e26914d25cf1ea"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.1.0+1"
-  isar_flutter_libs:
-    dependency: transitive
-    description:
-      name: isar_flutter_libs
-      sha256: bc6768cc4b9c61aabff77152e7f33b4b17d2fc93134f7af1c3dd51500fe8d5e8
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.1.0+1"
   js:
     dependency: transitive
     description:
